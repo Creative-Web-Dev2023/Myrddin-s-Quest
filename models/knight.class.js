@@ -4,4 +4,4 @@ class Knight extends MovableObject{
       
         this.x = 200 + Math.random() * 500;
     }
-}git 
+}
