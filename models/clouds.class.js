@@ -5,11 +5,8 @@ class Cloud extends MovableObject{
 
       // Liste der Wolkenbilder
       cloudImages = [
-        'img/clouds/Shape2/cloud_1.png',
-        'img/clouds/Shape2/cloud_2.png',
-        'img/clouds/Shape2/cloud_3.png',
-        'img/clouds/Shape2/cloud_4.png',
-        'img/clouds/Shape2/cloud_5.png',
+       'img/clouds/1.png',
+       'img/clouds/2.png' 
     ];
     constructor(){
         super();

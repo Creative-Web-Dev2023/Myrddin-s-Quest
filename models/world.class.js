@@ -5,7 +5,12 @@ class World {
              new Knight()];
   clouds = [];      
   backgroundObjects =[
-    new BackgroundObject('img/game_backgrounds/3/1.png',0) //0 = x, 80 = y
+    new BackgroundObject('img/game_backgrounds/4/7.png',0), //0 = x, 80 = y
+    new BackgroundObject('img/game_backgrounds/4/6.png', 0), // 0 = x, 0 = ynew BackgroundObject('img/game_backgrounds/3/3.png',20,100), // 719 = x, 80 = y
+    new BackgroundObject('img/game_backgrounds/4/4.png',0, 0), // 719 = x, 80 = y 
+    new BackgroundObject('img/game_backgrounds/3/3.png',  98, 100), // 719 = x, 80 = y
+    new BackgroundObject('img/game_backgrounds/3/2.png',0), // 719 = x, 80 = y
+    new BackgroundObject('img/game_backgrounds/4/1.png',0), // 719 = x, 80 = y
   ];    
   canvas;
   ctx;
@@ -13,8 +18,8 @@ class World {
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
-     // Erzeuge 5 Wolken (oder eine andere Anzahl)
-     for (let i = 0; i < 5; i++) {
+     // Erzeuge 3 Wolken (oder eine andere Anzahl)
+     for (let i = 0; i < 3; i++) {
       this.clouds.push(new Cloud());
     }
     this.draw();
