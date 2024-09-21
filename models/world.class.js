@@ -18,9 +18,8 @@ class World {
   constructor(canvas) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
-     // Erzeuge 3 Wolken (oder eine andere Anzahl)
-     for (let i = 0; i < 3; i++) {
-      this.clouds.push(new Cloud());
+    for (let i = 0; i < 2; i++) {
+      this.clouds.push(new Cloud()); //erstellt 2 Wolken
     }
     this.draw();
   }

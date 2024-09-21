@@ -3,17 +3,15 @@ class Cloud extends MovableObject{
     height = 100;
     width = 200;
 
-      // Liste der Wolkenbilder
-      cloudImages = [
-       'img/clouds/1.png',
-       'img/clouds/2.png' 
-    ];
     constructor(){
-        super();
-         // Zufällig ein Bild aus der Liste auswählen
-         let randomImage = this.cloudImages[Math.floor(Math.random() * this.cloudImages.length)];
-         this.loadImage(randomImage);
+        super().loadImage('img/clouds/2.png'); // Zufällig ein Bild aus der Liste auswählen
     
-        this.x =  Math.random() * 500; //Zahlen zwischen 200 und 700
+         this.x =  Math.random() * 500; //Zahlen zwischen 200 und 700 zufällig generierte Zahl
+         this.animate();
+    }
+animate(){
+        setInterval(() =>{
+            this.x = this.x - 0.15;//  die X-Koordinate wird um 0.15 nach links verschoben
+        }, 1000 / 60); // 60x pro Sekunde
     }
 }
