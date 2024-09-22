@@ -14,7 +14,7 @@ class Character extends MovableObject{
                         'img/wizard/walk/walk_008.png',
                         'img/wizard/walk/walk_009.png',];
           
-    currentImage = 0;
+    
 
     constructor(){
         super().loadImage('img/wizard/walk/walk_000.png');

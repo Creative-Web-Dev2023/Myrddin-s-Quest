@@ -4,7 +4,9 @@ class MovableObject {
   img;
   height = 150;
   width = 280;
-  imageCache = {}; //leeres Objekt
+  imageCache = {};
+  currentImage = 0;
+ 
 
   //loadImage ('img/test.png');
   loadImage(path) {
@@ -36,5 +38,9 @@ class MovableObject {
     console.log("Moving right");
   }
 
-  moveLeft() {}
+  moveLeft(){ 
+    setInterval(() =>{
+        this.x -= this.speed//  die X-Koordinate wird um 0.15 nach links verschoben
+    }, 1000 / 60); // 60x pro Sekunde
+ }   
 }
