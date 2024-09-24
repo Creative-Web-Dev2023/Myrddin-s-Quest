@@ -3,6 +3,8 @@ class Character extends MovableObject{
     width = 510; 
      x = 0; // x ist die Position des Charakters auf der x-Achse
      y = 146;
+     speed = 10;
+   
 
     IMAGES_WALKING = ['img/wizard/walk/walk_001.png',
                         'img/wizard/walk/walk_002.png',
@@ -13,22 +15,37 @@ class Character extends MovableObject{
                         'img/wizard/walk/walk_007.png',
                         'img/wizard/walk/walk_008.png',
                         'img/wizard/walk/walk_009.png',];
-          
+  world;
     
 
-    constructor(){
+    constructor(){ // constructor bedeutet dass die function aufgerufen wird wenn ein neues Objekt erstellt wird
+
+
         super().loadImage('img/wizard/walk/walk_000.png');
         this.loadImages(this.IMAGES_WALKING); 
         this.animate();
     }
+
     animate(){
+       setInterval(() => {
+        if(this.world.keyboard.RIGHT) {
+        this.x += this.speed;
+        }
+        if(this.world.keyboard.LEFT) {
+            this.x -= this.speed;
+            }
+         }, 1000 / 60); //60x pro Sekunde
+
         setInterval(() => {
-        let i = this.currentImage % this.IMAGES_WALKING.length; //let i =0 % 9 = 0; 1%9 = 1; 2%9 = 2; 3%9 = 3; 4%9 = 4; 5%9 = 5; 6%9 = 6; 7%9 = 7; 8%9 = 8; 9%9 = 0
-        // i=0,1,2,3,4,5,6,7,8, 0, 1,2,3,4,5,6,7,8, 0,1,2 usw.
-        let path = this.IMAGES_WALKING[i];
-        this.img = this.imageCache[path];
-        this.currentImage++;
-    }, 150);          
+            if(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+           
+                //walk animation
+               let i = this.currentImage % this.IMAGES_WALKING.length; //% bedeutet dass der Rest der Division genommen wird
+               let path = this.IMAGES_WALKING[i];
+               this.img = this.imageCache[path];
+               this.currentImage++;
+            }
+        }, 50);          
     }
     
     jump(){

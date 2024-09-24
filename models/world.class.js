@@ -14,14 +14,21 @@ class World {
   ];    
   canvas;
   ctx;
+  keyboard;
 
-  constructor(canvas) {
+  constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     for (let i = 0; i < 2; i++) {
       this.clouds.push(new Cloud()); //erstellt 2 Wolken
     }
+    this.keyboard = keyboard;
     this.draw();
+    this.setWorld();
+  }
+
+  setWorld(){
+    this.character.world = this;
   }
 
   draw() { // die function wird 60x/pro Sekunde aufgerufen
@@ -31,8 +38,7 @@ class World {
     this.addObjectsToMap (this.enemies);
     this.addObjectsToMap (this.clouds);
 
-    //Draw wird immer wieder aufgerufen
-    let self = this;
+    let self = this; // self ist das World Objekt
     requestAnimationFrame(function () {
       self.draw();
     });
