@@ -49,6 +49,14 @@ class World {
     });
   }
   addToMap(mo){
-    this.ctx.drawImage( mo.img, mo.x, mo.y,mo.width,mo.height);
+    if(mo.otherDirection){ //wir schauen ob das Objekt in die andere Richtung schaut
+      this.ctx.save(); //speichert den aktuellen Zustand des Canvas
+      this.ctx.translate(mo.x + mo.width, 0); // verschiebt das Bild um die Breite des Bildes
+      this.ctx.scale(-1, 1); // spiegelt das Bild
+    }
+    this.ctx.drawImage(mo.img, mo.otherDirection ? 0 : mo.x, mo.y, mo.width, mo.height); //zeichnet das Bild
+    if(mo.otherDirection){
+      this.ctx.restore(); // stellt den gespeicherten Zustand wieder her
+    }
   }
 }
