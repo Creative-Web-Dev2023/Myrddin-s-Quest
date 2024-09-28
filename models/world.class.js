@@ -1,8 +1,6 @@
 class World {
   character = new Character();
-  enemies = level1.enemies;
-  clouds = level1.clouds;      
-  backgroundObjects = level1.backgroundObjects;    
+  level = level1;    
   canvas;
   ctx;
   keyboard;
@@ -12,9 +10,9 @@ class World {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
 
-    for (let i = 0; i < 2; i++) {
-      this.clouds.push(new Cloud()); //erstellt 2 Wolken
-    }
+    // for (let i = 0; i < 2; i++) {
+    //   this.clouds.push(new Cloud()); //erstellt 2 Wolken
+    // }
     this.keyboard = keyboard;
     this.draw();
     this.setWorld();
@@ -25,10 +23,12 @@ class World {
   draw() { // die function wird 60x/pro Sekunde aufgerufen
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //Welt wird geleert
     this.ctx.translate(this.camera_x, 0); // die Welt wird um 100 nach links verschoben
-    this.addObjectsToMap (this.backgroundObjects);
+   
+    this.addObjectsToMap (this.level.backgroundObjects);
     this.addToMap(this.character);
-    this.addObjectsToMap (this.enemies);
-    this.addObjectsToMap (this.clouds);
+    this.addObjectsToMap (this.level.enemies);
+    this.addObjectsToMap (this.level.clouds);
+
     this.ctx.translate(-this.camera_x,0);// die Welt wird wieder zurückgeschoben
 
     let self = this; // self ist das World Objekt
