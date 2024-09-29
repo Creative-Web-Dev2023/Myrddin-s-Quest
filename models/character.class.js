@@ -16,38 +16,34 @@ class Character extends MovableObject{
                         'img/wizard/walk/walk_008.png',
                         'img/wizard/walk/walk_009.png',];
   world;
-    
+  walking_sound = new Audio('audio/walking.mp3');  
 
     constructor(){ // constructor bedeutet dass die function aufgerufen wird wenn ein neues Objekt erstellt wird
-
-
         super().loadImage('img/wizard/walk/walk_000.png');
         this.loadImages(this.IMAGES_WALKING); 
         this.animate();
     }
 
-    animate(){
+    animate(){ // laufende Animation
        setInterval(() => {
-      
+        this.walking_sound.pause();
         if(this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // der character kann nicht über den Rand hinausgehen
         this.x += this.speed;
         this.otherDirection = false;    
+        this.walking_sound.play();
         }
+
         if(this.world.keyboard.LEFT && this.x > 0) { // der character kann nicht über den Rand hinausgehen
             this.x -= this.speed;
             this.otherDirection = true;
+            this.walking_sound.play();
             }
             this.world.camera_x = -this.x - 190;
          }, 1000 / 60); //60x pro Sekunde
 
         setInterval(() => {
-            if(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-           
-                //walk animation
-               let i = this.currentImage % this.IMAGES_WALKING.length; //% bedeutet dass der Rest der Division genommen wird
-               let path = this.IMAGES_WALKING[i];
-               this.img = this.imageCache[path];
-               this.currentImage++;
+            if(this.world.keyboard.RIGHT || this.world.keyboard.LEFT) { //walk animation
+              this.playAnimation(this.IMAGES_WALKING);
             }
         }, 50);          
     }

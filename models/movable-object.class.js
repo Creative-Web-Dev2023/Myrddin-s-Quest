@@ -35,6 +35,12 @@ class MovableObject {
       this.imageCache[path] = img;
     });
   }
+  playAnimation(images){
+    let i = this.currentImage % this.IMAGES_WALKING.length; // Auf das übergebene Array zugreifen
+    let path = images[i]; // Bildpfad aus dem Array
+    this.img = this.imageCache[path]; // Bild aus dem Cache setzen
+    this.currentImage++;
+  }
   moveRight() {
     console.log("Moving right");
   }

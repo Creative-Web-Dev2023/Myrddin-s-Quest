@@ -3,6 +3,7 @@ const level1 = new Level(
         new Knight(),
         new Knight(),
         new Knight(),
+        new Endboss()
     ],
     [
         new Cloud()

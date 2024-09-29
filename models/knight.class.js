@@ -22,11 +22,8 @@ class Knight extends MovableObject{
         this.moveLeft();
         
         setInterval(() => {
-        let i = this.currentImage % this.IMAGES_WALKING.length; //let i =0 % 9 = 0; 1%9 = 1; 2%9 = 2; 3%9 = 3; 4%9 = 4; 5%9 = 5; 6%9 = 6; 7%9 = 7; 8%9 = 8; 9%9 = 0
-        let path = this.IMAGES_WALKING[i];
-        this.img = this.imageCache[path];
+        this.playAnimation(this.IMAGES_WALKING);
         
-        this.currentImage++;
     }, 300);          
     }
 }
