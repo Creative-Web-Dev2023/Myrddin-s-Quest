@@ -2,7 +2,7 @@ class Character extends MovableObject{
     height =290;
     width = 510; 
      x = 0; // x ist die Position des Charakters auf der x-Achse
-     y = 146;
+     y = 80;
      speed = 10;
    
 
@@ -21,6 +21,7 @@ class Character extends MovableObject{
     constructor(){ // constructor bedeutet dass die function aufgerufen wird wenn ein neues Objekt erstellt wird
         super().loadImage('img/wizard/walk/walk_000.png');
         this.loadImages(this.IMAGES_WALKING); 
+        this.applyGravity();
         this.animate();
     }
 

@@ -8,13 +8,25 @@ class MovableObject {
   currentImage = 0;
   speed = 0.15;
   otherDirection = false;
+  speedY = 0;
+  acceleration = 2.5;
 
+  applyGravity() {
+    setInterval(() => {
+      if ( this.isAboveGrund() ) {
+        this.y -= this.speedY;
+        this.speedY -= this.acceleration;
+      }
+    }, 1000 / 25);
+  }
+ isAboveGrund() {
+    return this.y < 150;
+  }
   //loadImage ('img/test.png');
   loadImage(path) {
     this.img = new Image(); // ist das gleiche wie this.img=document.createElement('img')
     this.img.src = path;
   }
-
   /**
    *
    * @param {Array} arr -['img/wizard/walk/walk_001.png',
@@ -27,7 +39,6 @@ class MovableObject {
    *                      'img/wizard/walk/walk_008.png',
    *                      'img/wizard/walk/walk_009.png',]
    */              
-
   loadImages(arr) {
     arr.forEach((path) => {
       let img = new Image();
