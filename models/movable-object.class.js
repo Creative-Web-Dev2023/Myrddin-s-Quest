@@ -54,15 +54,15 @@ class MovableObject {
   }
   moveRight() {
     this.x += this.speed;
-    this.otherDirection = false;    
+     
     this.walking_sound.play();
   }
 
   moveLeft(){ 
     this.x -= this.speed;
-    this.otherDirection = true;
-    setInterval(() => {
-   }, 1000 / 60);
+    
+     setInterval(() => {
+    }, 1000 / 60);
   }
  
  jump() {

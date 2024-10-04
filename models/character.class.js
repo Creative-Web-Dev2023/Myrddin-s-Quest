@@ -43,11 +43,13 @@ class Character extends MovableObject{
         this.walking_sound.pause();
         if(this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // der character kann nicht über den Rand hinausgehen
         this.moveRight();
+        this.otherDirection = false;  
         this.walking_sound.play();
         }
 
         if(this.world.keyboard.LEFT && this.x > 0) { // der character kann nicht über den Rand hinausgehen
             this.moveLeft();
+            this.otherDirection = true;
             this.walking_sound.play();
             }
          // Hier fügen wir die Überwachung der Nach-oben-Taste hinzu
