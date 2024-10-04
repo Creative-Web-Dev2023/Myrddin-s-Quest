@@ -13,13 +13,13 @@ class MovableObject {
 
   applyGravity() {
     setInterval(() => {
-      if ( this.isAboveGrund() ) {
+      if ( this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
-      }
+      } 
     }, 1000 / 25);
   }
- isAboveGrund() {
+ isAboveGround() {
     return this.y < 150;
   }
   //loadImage ('img/test.png');
@@ -53,12 +53,20 @@ class MovableObject {
     this.currentImage++;
   }
   moveRight() {
-    console.log("Moving right");
+    this.x += this.speed;
+    this.otherDirection = false;    
+    this.walking_sound.play();
   }
 
   moveLeft(){ 
-    setInterval(() =>{
-        this.x -= this.speed//  die X-Koordinate wird um 0.15 nach links verschoben
-    }, 1000 / 60); // 60x pro Sekunde
- }   
+    this.x -= this.speed;
+    this.otherDirection = true;
+    setInterval(() => {
+   }, 1000 / 60);
+  }
+ 
+ jump() {
+  this.speedY =30;
+ }
 }
+
