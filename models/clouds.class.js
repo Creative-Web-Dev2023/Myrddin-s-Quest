@@ -3,6 +3,7 @@ class Cloud extends MovableObject{
     height = 100;
     width = 200;
     speed = 0.15 + Math.random() * 0.15;
+    drawRectangle = false;
 
     constructor(){
         super().loadImage('img/clouds/2.png'); // Zufällig ein Bild aus der Liste auswählen

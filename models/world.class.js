@@ -9,20 +9,18 @@ class World {
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
-
-    // for (let i = 0; i < 2; i++) {
-    //   this.clouds.push(new Cloud()); //erstellt 2 Wolken
-    // }
     this.keyboard = keyboard;
     this.draw();
     this.setWorld();
   }
+
   setWorld() {
     this.character.world = this;
   }
+
   draw() {
     // die function wird 60x/pro Sekunde aufgerufen
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //Welt wird geleert
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Welt wird geleert
     this.ctx.translate(this.camera_x, 0); // die Welt wird um 100 nach links verschoben
 
     this.addObjectsToMap(this.level.backgroundObjects);
@@ -37,29 +35,36 @@ class World {
       self.draw();
     });
   }
+
   addObjectsToMap(objects) {
     objects.forEach((o) => {
       this.addToMap(o);
     });
   }
-  addToMap(mo) {
-    if (mo.otherDirection) {
-      //wir schauen ob das Objekt in die andere Richtung schaut
-      this.ctx.save(); //speichert den aktuellen Zustand des Canvas
-      this.ctx.translate(mo.width, 0); // verschiebt das Bild um die Breite des Bildes
-      this.ctx.scale(-1, 1); // spiegelt das Bild
-      mo.x = mo.x * -1; // dreht das Bild um 180 Grad
-    }
-    this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
-    this.ctx.beginPath();
-    this.ctx.lineWidth = '4';
-    this.ctx.strokeStyle = 'blue';
-    this.ctx.rect( mo.x, mo.y, mo.x + mo.width,mo.y + mo.height);
-    this.ctx.stroke();
 
-    if (mo.otherDirection) {
-      mo.x = mo.x * -1; // dreht das Bild um 180 Grad
-      this.ctx.restore(); // stellt den gespeicherten Zustand wieder her
+  addToMap(mo) {
+    if (mo.otherDirection) { 
+        this.flipImage(mo); // Bild spiegeln, falls nötig
     }
+
+    mo.draw(this.ctx); // Bild zeichnen
+
+   
+    if (mo.otherDirection) {
+        this.flipImageBack(mo); // Bild zurückdrehen
+    }
+}
+
+
+  flipImage(mo) {
+    this.ctx.save(); // speichert den aktuellen Zustand des Canvas
+    this.ctx.translate(mo.width, 0); // verschiebt das Bild um die Breite des Bildes
+    this.ctx.scale(-1, 1); // spiegelt das Bild
+    mo.x = mo.x * -1; // dreht das Bild um 180 Grad
+  }
+
+  flipImageBack(mo) {
+    mo.x = mo.x * -1; // dreht das Bild um 180 Grad zurück
+    this.ctx.restore(); // stellt den gespeicherten Zustand wieder her
   }
 }

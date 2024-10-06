@@ -1,9 +1,9 @@
-class Endboss extends  MovableObject{
-
-    height = 600;
-    width = 450; 
-    y = -100;
-    x = 2500;
+class Endboss extends MovableObject {
+    height = 600;  // Höhe des Endbosses
+    width = 450;   // Breite des Endbosses
+    y = -100;      // y-Position
+    x = 2500;      // x-Position
+   
 
     IMAGES_WALKING = [
         'img/troll/idle/idle_000.png',
@@ -18,14 +18,17 @@ class Endboss extends  MovableObject{
         'img/troll/idle/idle_009.png',
     ];
 
-    constructor (){
-        super().loadImage(this.IMAGES_WALKING[0]);
-        this.loadImages(this.IMAGES_WALKING); // lädt alle Bilder
+    constructor() {
+        super();
+        this.loadImage(this.IMAGES_WALKING[0]);
+        this.loadImages(this.IMAGES_WALKING);
         this.animate();
     }
-animate() {
-    setInterval(() => {
-        this.playAnimation(this.IMAGES_WALKING);
-    }, 100);
-}
+
+    animate() {
+        setInterval(() => {
+            this.playAnimation(this.IMAGES_WALKING);
+        }, 100);
+    }
+
 }

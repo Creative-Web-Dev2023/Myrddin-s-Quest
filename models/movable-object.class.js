@@ -1,9 +1,10 @@
 class MovableObject {
-  x = 120;
-  y = 280;
+  x = 100;
+  y = 250;
   img;
-  height = 150;
-  width = 280;
+  height = 120;
+  width = 240;
+   drawRectangle = true; // Standardmäßig kein Rechteck
   imageCache = {};
   currentImage = 0;
   speed = 0.15;
@@ -27,6 +28,33 @@ class MovableObject {
     this.img = new Image(); // ist das gleiche wie this.img=document.createElement('img')
     this.img.src = path;
   }
+
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    if (this.drawRectangle) { // Überprüfen, ob das Rechteck gezeichnet werden soll
+      this.drawFrame(ctx);
+    }
+  }
+  
+
+  drawFrame(ctx) {
+    ctx.beginPath();
+    ctx.lineWidth = '5';
+    ctx.strokeStyle = 'blue';
+    const frameWidth = this.width * 0.3;  // 90% der Breite
+    const frameHeight = this.height * 0.89; // 85% der Höhe
+    const xOffset = (this.width - frameWidth) / 2; // zentrieren
+    const yOffset = (this.height - frameHeight) / 2; // zentrieren
+    ctx.rect(
+        this.x + xOffset, // Linke obere Ecke X
+        this.y + yOffset, // Linke obere Ecke Y
+        frameWidth,       // Angepasste Breite
+        frameHeight       // Angepasste Höhe
+    );
+    ctx.stroke();
+    ctx.closePath();
+}
+
   /**
    *
    * @param {Array} arr -['img/wizard/walk/walk_001.png',
