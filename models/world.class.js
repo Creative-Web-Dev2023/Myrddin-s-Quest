@@ -19,7 +19,6 @@ class World {
   }
 
   draw() {
-    // die function wird 60x/pro Sekunde aufgerufen
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Welt wird geleert
     this.ctx.translate(this.camera_x, 0); // die Welt wird um 100 nach links verschoben
 
@@ -48,13 +47,13 @@ class World {
     }
 
     mo.draw(this.ctx); // Bild zeichnen
+    mo.drawFrame(this.ctx); // Bild aktualisieren
 
    
     if (mo.otherDirection) {
         this.flipImageBack(mo); // Bild zurückdrehen
     }
 }
-
 
   flipImage(mo) {
     this.ctx.save(); // speichert den aktuellen Zustand des Canvas

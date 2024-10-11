@@ -1,16 +1,24 @@
 class MovableObject {
-  x = 100;
-  y = 250;
+  x = 120;
+  y = 400;
   img;
-  height = 120;
-  width = 240;
-   drawRectangle = true; // Standardmäßig kein Rechteck
+  height = 260; // Höhe des Bildes
+  width = 110; // Breite des Bildes
+  drawRectangle = true; // Standardmäßig kein Rechteck
   imageCache = {};
   currentImage = 0;
   speed = 0.15;
   otherDirection = false;
   speedY = 0;
   acceleration = 2.5;
+ 
+    // Offsets für das Rechteck
+    offset = {
+      top: 0,     // Wie viel kleiner das Rechteck von oben sein soll
+      bottom: 0,  // Wie viel kleiner das Rechteck von unten sein soll
+      left:0,    // Wie viel kleiner das Rechteck von links sein soll
+      right: 0    // Wie viel kleiner das Rechteck von rechts sein soll
+    };
 
   applyGravity() {
     setInterval(() => {
@@ -26,35 +34,29 @@ class MovableObject {
   //loadImage ('img/test.png');
   loadImage(path) {
     this.img = new Image(); // ist das gleiche wie this.img=document.createElement('img')
-    this.img.src = path;
+    this.img.src = path
   }
 
   draw(ctx) {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    if (this.drawRectangle) { // Überprüfen, ob das Rechteck gezeichnet werden soll
-      this.drawFrame(ctx);
-    }
   }
-  
-
+  // Angepasste drawFrame Methode
   drawFrame(ctx) {
+    if (this instanceof Character || this instanceof Knight || this instanceof Endboss) {
+      this.drawRectangle = true;
+    
     ctx.beginPath();
     ctx.lineWidth = '5';
     ctx.strokeStyle = 'blue';
-    const frameWidth = this.width * 0.3;  // 90% der Breite
-    const frameHeight = this.height * 0.89; // 85% der Höhe
-    const xOffset = (this.width - frameWidth) / 2; // zentrieren
-    const yOffset = (this.height - frameHeight) / 2; // zentrieren
-    ctx.rect(
-        this.x + xOffset, // Linke obere Ecke X
-        this.y + yOffset, // Linke obere Ecke Y
-        frameWidth,       // Angepasste Breite
-        frameHeight       // Angepasste Höhe
+    ctx.rect(  // Rechteck wird um die Offsets kleiner gezeichnet
+      this.x + this.offset.left,
+      this.y + this.offset.top,
+      this.width - this.offset.left - this.offset.right, // breite-Offest links und rechts
+      this.height - this.offset.top - this.offset.bottom // höhe-Offset oben und unten
     );
     ctx.stroke();
-    ctx.closePath();
-}
-
+  }
+  }
   /**
    *
    * @param {Array} arr -['img/wizard/walk/walk_001.png',
@@ -85,16 +87,14 @@ class MovableObject {
      
     this.walking_sound.play();
   }
-
   moveLeft(){ 
     this.x -= this.speed;
     
      setInterval(() => {
     }, 1000 / 60);
   }
- 
  jump() {
-  this.speedY =30;
+  this.speedY = 30;
  }
 }
 

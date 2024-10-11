@@ -4,6 +4,12 @@ class Endboss extends MovableObject {
     y = -100;      // y-Position
     x = 2500;      // x-Position
    
+    offset = {
+        top: 180,    // Reduziert das Rechteck von oben
+        bottom: 65, // Reduziert das Rechteck von unten
+        left: 90,   // Reduziert das Rechteck von links
+        right: 90   // Reduziert das Rechteck von rechts
+      };
 
     IMAGES_WALKING = [
         'img/troll/idle/idle_000.png',
