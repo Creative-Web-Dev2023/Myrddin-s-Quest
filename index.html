@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">  
+    <link rel="stylesheet" href="">
     <script src="models/movable-object.class.js"></script>
     <script src="models/character.class.js"></script>
     <script src="models/knight.class.js"></script>
@@ -18,9 +19,15 @@
     <title>Myrddin's Quest</title>
 </head>
 <body onload="init()">
-   <h1>Myrddin's Quest</h1> 
-   <canvas id="canvas" width="720" height="480" >
-
-   </canvas>
-</body>
+    <body onload="init()">
+        <canvas id="canvas" width="720" height="480"></canvas>
+        <div class="overlay">
+            <h1 class="overlay-title">Myrddin's Quest</h1> <!-- Titel im Overlay -->
+            <p class="overlay-text">Embark on an Epic Adventure</p> <!-- Text im Overlay -->
+            <button onclick="startGame()">Start Game</button>
+        </div>
+    </body>
+    
+ </body>
+ 
 </html>

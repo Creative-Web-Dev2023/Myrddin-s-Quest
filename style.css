@@ -2,8 +2,84 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; /* Zentriert den Inhalt vertikal */
+  background-image: url('img/game_backgrounds/castle-in-the-clouds-with-ethereal-light-1235950751889625108.jpeg'); /* Hintergrundbild */
+  background-size: cover; /* Bild an den Bildschirm anpassen */
+  background-position: center; /* Bild zentrieren */
+  height: 100vh; /* Höhe des Viewports */
+  margin: 0; /* Entfernt Standardabstand */
+  font-family: 'sylfaen'; /* Schriftart */
+}
+@font-face {
+  font-family: 'sylfaen'; 
+  src: url('fonts/sylfaen.ttf') format('woff'); 
+ 
 }
 
-canvas {
-  background-color: black;
+#canvas {
+  background-color: black; /* Hintergrundfarbe des Canvas */
+  position: relative; /* Positionierung für das Overlay */
+  z-index: 1; /* Canvas über dem Overlay */
+}
+
+.overlay {
+  position: absolute; /* Overlay absolut positionieren */
+  top: 50%; /* Zentriert vertikal */
+  left: 50%; /* Zentriert horizontal */
+  transform: translate(-50%, -50%); /* Korrigiert die Position */
+  width: 720px; /* Breite des Canvas */
+  height: 496px; /* Höhe des Canvas */
+  background-image: url('img/game_ui/login&pass/loghin_pass_fullwindow.png'); /* Overlay-Bild */
+  background-size: cover; /* Bild auf die Größe des Containers anpassen */
+  background-position: center; /* Bild zentrieren */
+  display: flex; /* Flexbox für den Button */
+  justify-content: center; /* Horizontale Zentrierung */
+  align-items: center; /* Vertikale Zentrierung */
+  color: white; /* Textfarbe */
+  font-size: 2rem; /* Schriftgröße */
+  z-index: 2; /* Overlay über dem Canvas */
+
+}
+
+.overlay-title {
+  position: absolute; /* Absolute Positionierung für das Titel */
+  top: 10px; /* Abstand vom oberen Rand */
+  left: 50%; /* Zentriert horizontal */
+  transform: translateX(-50%); /* Korrigiert die horizontale Position */
+  font-size: 2.5rem; /* Schriftgröße für den Titel */
+  text-align: center; /* Text zentrieren */
+  color: rgb(69, 69, 6);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Schatteneffekt */
+}
+
+.overlay button {
+  position: absolute; /* Ermöglicht die Positionierung innerhalb des Overlays */
+  bottom: 40px; /* Abstand vom unteren Rand des Overlays */
+  right: 20px; /* Abstand vom linken Rand des Overlays */
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: #a8bfc5; /* Hintergrundfarbe des Buttons */
+  color: rgb(18, 18, 1); /* Textfarbe */
+  border-radius: 5px; /* Abgerundete Ecken */
+  transition: background-color 0.3s;
+  border: 2px solid #14141594; /* Umrandung des Buttons */ 
+}
+
+.overlay button:hover {
+  background-color: #4073ad; /* Dunklere Farbe beim Hover */
+}
+p {
+  color: white; /* Textfarbe */
+  font-size: 1.5rem; /* Schriftgröße */
+  text-align: center; /* Text zentrieren */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Schatteneffekt */
+}
+/* Responsive Anpassungen */
+@media (max-width: 720px) {
+  .overlay {
+      width: 100%; /* Overlay nimmt die volle Breite ein */
+      height: 100%; /* Overlay nimmt die volle Höhe ein */
+  }
 }

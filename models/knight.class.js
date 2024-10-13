@@ -35,7 +35,7 @@ class Knight extends MovableObject {
 
         setInterval(() => {
             this.playAnimation(this.IMAGES_WALKING);
-        }, 300);
+        }, 500); // 
     }
     
 }
