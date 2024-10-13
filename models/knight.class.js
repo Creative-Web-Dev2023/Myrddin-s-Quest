@@ -24,7 +24,7 @@ class Knight extends MovableObject {
         super().loadImage('img/knight/walk/walk_0.png');
         this.loadImages(this.IMAGES_WALKING);
         this.x = 200 + Math.random() * 500;
-        this.speed = 0.15 + Math.random() * 0.5;
+        this.speed = 0.15 + Math.random() * 0.2;
         this.animate();
     }
 

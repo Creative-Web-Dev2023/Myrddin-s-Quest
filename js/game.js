@@ -5,6 +5,7 @@ let keyboard = new Keyboard();
 
 function startGame() {
   document.querySelector('.overlay').style.display = 'none'; // Blende das Overlay a
+  init();
 }
 
 function init() {

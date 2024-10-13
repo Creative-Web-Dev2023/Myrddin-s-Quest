@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="style.css">  
     <link rel="stylesheet" href="">
     <script src="models/movable-object.class.js"></script>
@@ -19,15 +20,30 @@
     <title>Myrddin's Quest</title>
 </head>
 <body onload="init()">
-    <body onload="init()">
-        <canvas id="canvas" width="720" height="480"></canvas>
-        <div class="overlay">
-            <h1 class="overlay-title">Myrddin's Quest</h1> <!-- Titel im Overlay -->
-            <p class="overlay-text">Embark on an Epic Adventure</p> <!-- Text im Overlay -->
-            <button onclick="startGame()">Start Game</button>
+    <canvas id="canvas" width="720" height="480"></canvas>
+    <div class="overlay">
+        
+        <h1 class="overlay-title">Myrddin's Quest</h1> <!-- Titel im Overlay -->
+        <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> <!-- Bild des Charakters -->
+        <!-- Gebogener Text -->
+        <svg width="750" height="190" style="margin: 20px 0;">
+            <defs>
+                <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent"/>
+            </defs>
+            <text font-size="30" font-family="Roboto" style="text-shadow: 2px 2px 4px black;">
+                <textPath href="#curve" startOffset="50%" text-anchor="middle" fill="yellow"> <!-- Text in hellgrün -->
+                    Embark on an Epic Adventure
+                </textPath>
+            </text>
+        </svg>
+    
+        <div class="button-container"> <!-- Neuer Container für die Buttons -->
+            <a href="javascript:startGame();" class="start-button"><span>Start Game</span></a> <!-- Start Game Button -->
+            <a href="how_to_play.html" class="how-to-play-button"><span>How to Play</span></a>
         </div>
+    </div>
+    
+    
     </body>
     
- </body>
- 
 </html>

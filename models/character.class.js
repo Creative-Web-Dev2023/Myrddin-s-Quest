@@ -1,17 +1,29 @@
 class Character extends MovableObject {
   height = 290;
-  width = 520; // Die Breite des Charakters
-  x = 130; // Position des Charakters auf der x-Achse
+  width = 520;
+  x = 130;
   y = 80;
-  speed = 15;
-  isDeadAnimationPlaying = false;  // Überwacht die Dead-Animation
+  speed = 5;
+  
 
   offset = {
-    top: 13,    // Reduziert das Rechteck von oben
+    top: 13, // Reduziert das Rechteck von oben
     bottom: 15, // Reduziert das Rechteck von unten
-    left: 199,  // Reduziert das Rechteck von links
-    right: 190  // Reduziert das Rechteck von rechts
+    left: 199, // Reduziert das Rechteck von links
+    right: 190, // Reduziert das Rechteck von rechts
   };
+  IMAGES_IDLE = [
+    "img/wizard/idle/idle_000.png",
+    "img/wizard/idle/idle_001.png",
+    "img/wizard/idle/idle_002.png",
+    "img/wizard/idle/idle_003.png",
+    "img/wizard/idle/idle_004.png",
+    "img/wizard/idle/idle_005.png",
+    "img/wizard/idle/idle_006.png",
+    "img/wizard/idle/idle_007.png",
+    "img/wizard/idle/idle_008.png",
+    "img/wizard/idle/idle_009.png",
+  ];
 
   IMAGES_WALKING = [
     "img/wizard/walk/walk_001.png",
@@ -48,7 +60,7 @@ class Character extends MovableObject {
     "img/wizard/die/die_006.png",
     "img/wizard/die/die_007.png",
     "img/wizard/die/die_008.png",
-    "img/wizard/die/die_009.png"
+    "img/wizard/die/die_009.png",
   ];
 
   IMAGES_HURT = [
@@ -61,14 +73,15 @@ class Character extends MovableObject {
     "img/wizard/hurt/hurt_006.png",
     "img/wizard/hurt/hurt_007.png",
     "img/wizard/hurt/hurt_008.png",
-    "img/wizard/hurt/hurt_009.png"
+    "img/wizard/hurt/hurt_009.png",
   ];
 
   world;
   walking_sound = new Audio("audio/walking.mp3");
 
   constructor() {
-    super().loadImage("img/wizard/walk/walk_000.png");
+    super().loadImage(this.IMAGES_IDLE[0]);
+    this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEAD);
@@ -76,9 +89,12 @@ class Character extends MovableObject {
     this.applyGravity();
     this.animate();
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
+    this.playAnimation(this.IMAGES_IDLE);
   }
 
-  animate() {    // Laufende Animation
+  animate() {
+    let deadAnimationPlayed = false; // Flag für die tote Animation
+
     setInterval(() => {
       this.walking_sound.pause();
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -98,17 +114,22 @@ class Character extends MovableObject {
     }, 1000 / 60); // 60x pro Sekunde
 
     setInterval(() => {
-      if (this.isDead()) {
-        if (!this.isDeadAnimationPlaying) {
-          this.playAnimation(this.IMAGES_DEAD);  // Dead-Animation einmal abspielen
-          this.isDeadAnimationPlaying = true;   // Markiere Dead-Animation als abgespielt
-        }
+      if (this.isDead() && !deadAnimationPlayed) {
+        this.playAnimation(this.IMAGES_DEAD);
+        deadAnimationPlayed = true; // Setze das Flag, um die Animation nicht erneut abzuspielen
       } else if (this.isHurt()) {  
-          this.playAnimation(this.IMAGES_HURT);
+        this.playAnimation(this.IMAGES_HURT);
+        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter verletzt ist
       } else if (this.isAboveGround()) {
-          this.playAnimation(this.IMAGES_JUMPING);
+        this.playAnimation(this.IMAGES_JUMPING);
+        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter springt
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-          this.playAnimation(this.IMAGES_WALKING);
+        this.playAnimation(this.IMAGES_WALKING);
+        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter läuft
+      } else {
+        // Hier wird die Idle-Animation abgespielt, wenn keine anderen Bedingungen erfüllt sind
+        this.playAnimation(this.IMAGES_IDLE);  
+        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter inaktiv ist
       }
     }, 120);
   }
@@ -118,16 +139,17 @@ class Character extends MovableObject {
   }
 
   hit() {
-    if (!this.invulnerable) {  // Schaden wird nur erlitten, wenn der Charakter nicht unverwundbar ist
-      this.energy -= 5;  // Verringere die Energie bei einem Treffer
+    if (!this.invulnerable) {
+      console.log("Character hit! Energy:", this.energy); // Log-Ausgabe hinzugefügt
+      this.energy -= 5; // Verringere die Energie bei einem Treffer
       if (this.energy <= 0) {
-        this.energy = 0;  // Energie kann nicht unter 0 fallen
+        this.energy = 0; // Energie kann nicht unter 0 fallen
       }
     }
   }
 
   isHurt() {
-    return this.energy < 100 && this.energy > 0;  // Beispielhafte Bedingung für Verletzung
+    return this.energy < 100 && this.energy > 0; // Beispielhafte Bedingung für Verletzung
   }
 
   isDead() {

@@ -2,84 +2,344 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Zentriert den Inhalt vertikal */
-  background-image: url('img/game_backgrounds/castle-in-the-clouds-with-ethereal-light-1235950751889625108.jpeg'); /* Hintergrundbild */
-  background-size: cover; /* Bild an den Bildschirm anpassen */
-  background-position: center; /* Bild zentrieren */
-  height: 100vh; /* Höhe des Viewports */
-  margin: 0; /* Entfernt Standardabstand */
-  font-family: 'sylfaen'; /* Schriftart */
+  justify-content: center;
+  background-image: url("img/game_backgrounds/castle-in-the-clouds-with-ethereal-light-1235950751889625108.jpeg");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "sylfaen";
 }
+
 @font-face {
-  font-family: 'sylfaen'; 
-  src: url('fonts/sylfaen.ttf') format('woff'); 
- 
+  font-family: "sylfaen";
+  src: url("fonts/sylfaen.ttf") format("woff");
+}
+
+.start-button {
+  position: absolute; /* Benutze absolute Positionierung für Button */
+  bottom: 70px; /* Abstand vom unteren Rand */
+  left: 117px; 
+  width: 140px;
+  height: 50px;
+  background: #41431e;
+  text-transform: uppercase;
+  font-size: 25px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: rgba(255,255,255,0.2); 
+  transition: 0.5s;
+  -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
+  margin-top: 20px; 
+  border: 3px solid rgba(255, 255, 255, 0.5); /* Beispiel: Weißer Rand */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Optional: Schatten für den Rand */
+  font-family: "sylfaen";
+}
+
+.start-button span {
+  position: absolute;
+  bottom: 40px; /* Abstand vom unteren Rand */
+  left: 40px; /* Abstand vom linken Rand */
+  display: block;
+  top: -19px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  text-align: center;
+  background: #41431e;
+  transition: 0.5s;
+}
+
+.start-button:hover span {
+  color: rgba(255, 255, 255, 1); /* Heller Text beim Hover */
+}
+
+.start-button span::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 10;
+}
+
+.start-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    #6a1b9a, 
+    #8e24aa, 
+    #ab47bc, 
+    #ba68c8, 
+    #f06292, 
+    #ff8a65,
+    #ffb74d, 
+    #ffd54f, 
+    #aeea00, 
+    #76ff03, 
+    #64ffda, 
+    #1de9b6, 
+    #00b0ff, 
+    #2979ff, 
+    #448aff, 
+    #3d5afe, 
+    #536dfe 
+  );
+  background-size: 400%;
+  opacity: 0;
+  transition: 2.5s;
+  animation: eff 20s linear infinite;
+}
+
+
+.start-button:hover::before,
+.start-button:hover::after {
+  opacity: 1;
+}
+
+.start-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    #c0392b,
+    #f39c12,
+    #f1c40f,
+    #2ecc71,
+    #3498db,
+    #2980b9,
+    #9b59b6,
+    #8e44ad,
+    #c0392b,
+    #f39c12,
+    #f1c40f,
+    #2ecc71,
+    #3498db,
+    #2980b9,
+    #9b59b6,
+    #8e44ad
+  );
+  background-size: 400%;
+  opacity: 0;
+  filter: blur(20px);
+  transition: 0.5s;
+  animation: eff 20s ease infinite;
+}
+
+@keyframes eff {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
 }
 
 #canvas {
-  background-color: black; /* Hintergrundfarbe des Canvas */
-  position: relative; /* Positionierung für das Overlay */
-  z-index: 1; /* Canvas über dem Overlay */
+  background-color: black;
+  position: relative;
+  z-index: 1;
 }
-
 .overlay {
-  position: absolute; /* Overlay absolut positionieren */
-  top: 50%; /* Zentriert vertikal */
-  left: 50%; /* Zentriert horizontal */
-  transform: translate(-50%, -50%); /* Korrigiert die Position */
-  width: 720px; /* Breite des Canvas */
-  height: 496px; /* Höhe des Canvas */
-  background-image: url('img/game_ui/login&pass/loghin_pass_fullwindow.png'); /* Overlay-Bild */
-  background-size: cover; /* Bild auf die Größe des Containers anpassen */
-  background-position: center; /* Bild zentrieren */
-  display: flex; /* Flexbox für den Button */
-  justify-content: center; /* Horizontale Zentrierung */
-  align-items: center; /* Vertikale Zentrierung */
-  color: white; /* Textfarbe */
-  font-size: 2rem; /* Schriftgröße */
-  z-index: 2; /* Overlay über dem Canvas */
-
+  position: absolute; 
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  width: 850px; 
+  height: 520px; 
+  background-image: 
+    url('img/game_ui/login&pass/loghin_pass_fullwindow.png'), /* Vordergrund-Bild */
+    url('img/game_backgrounds/wood.png'); /* Hintergrund-Bild */
+    background-size: contain, cover; /* Erster Wert für das Vordergrund-Bild, zweiter für das Hintergrund-Bild */
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    z-index: 2; /* Overlay im Vordergrund */
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .overlay-title {
-  position: absolute; /* Absolute Positionierung für das Titel */
-  top: 10px; /* Abstand vom oberen Rand */
-  left: 50%; /* Zentriert horizontal */
-  transform: translateX(-50%); /* Korrigiert die horizontale Position */
-  font-size: 2.5rem; /* Schriftgröße für den Titel */
-  text-align: center; /* Text zentrieren */
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.5rem;
+  text-align: center;
   color: rgb(69, 69, 6);
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Schatteneffekt */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
-.overlay button {
-  position: absolute; /* Ermöglicht die Positionierung innerhalb des Overlays */
-  bottom: 40px; /* Abstand vom unteren Rand des Overlays */
-  right: 20px; /* Abstand vom linken Rand des Overlays */
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  background-color: #a8bfc5; /* Hintergrundfarbe des Buttons */
-  color: rgb(18, 18, 1); /* Textfarbe */
-  border-radius: 5px; /* Abgerundete Ecken */
-  transition: background-color 0.3s;
-  border: 2px solid #14141594; /* Umrandung des Buttons */ 
+.overlay-text {
+  font-size: 1.5rem;
+  text-align: center;
+  color: rgba(30, 26, 26, 0.799);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3; /* Höherer z-index für Overlay-Text */
+  margin-top: 100px; /* Abstand nach oben, um den Text nach unten zu verschieben */
 }
 
-.overlay button:hover {
-  background-color: #4073ad; /* Dunklere Farbe beim Hover */
+.overlay-character {
+  position: absolute;
+  bottom: 138px;
+  left: -100px;
+  width: 550px;
+  height: auto;
 }
-p {
-  color: white; /* Textfarbe */
-  font-size: 1.5rem; /* Schriftgröße */
-  text-align: center; /* Text zentrieren */
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Schatteneffekt */
+svg {
+  position: absolute;
+  bottom: 290px; 
+  left: 0;
+  z-index: 3;
 }
-/* Responsive Anpassungen */
-@media (max-width: 720px) {
-  .overlay {
-      width: 100%; /* Overlay nimmt die volle Breite ein */
-      height: 100%; /* Overlay nimmt die volle Höhe ein */
+.how-to-play-button {
+position: absolute;
+bottom: 68px;
+right: 117px;
+width: 140px;
+height: 50px;
+background: #41431e;
+text-transform: uppercase;
+font-size: 25px;
+text-align: center;
+letter-spacing: 0.1em;
+text-decoration: none;
+color: rgba(255,255,255,0.2);
+transition: 0.5s;
+-webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
+margin-top: 20px;
+border: 3px solid rgba(255, 255, 255, 0.5);
+box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.how-to-play-button span {
+  position: absolute;
+  bottom: 40px; /* Abstand vom unteren Rand */
+  left: 40px; /* Abstand vom linken Rand */
+  display: block;
+  top: -19px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  text-align: center;
+  background: #41431e;
+  transition: 0.5s;
+}
+
+.how-to-play-button:hover span {
+  color: rgba(255, 255, 255, 1); /* Heller Text beim Hover */
+}
+
+.how-to-play-button span::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 10;
+}
+
+.how-to-play-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    #6a1b9a, 
+    #8e24aa, 
+    #ab47bc, 
+    #ba68c8, 
+    #f06292, 
+    #ff8a65,
+    #ffb74d, 
+    #ffd54f, 
+    #aeea00, 
+    #76ff03, 
+    #64ffda, 
+    #1de9b6, 
+    #00b0ff, 
+    #2979ff, 
+    #448aff, 
+    #3d5afe, 
+    #536dfe 
+  );
+  background-size: 400%;
+  opacity: 0;
+  transition: 2.5s;
+  animation: eff 20s linear infinite;
+}
+
+
+.how-to-play-button:hover::before,
+.how-to-play-button:hover::after {
+  opacity: 1;
+}
+
+.how-to-play-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    #c0392b,
+    #f39c12,
+    #f1c40f,
+    #2ecc71,
+    #3498db,
+    #2980b9,
+    #9b59b6,
+    #8e44ad,
+    #c0392b,
+    #f39c12,
+    #f1c40f,
+    #2ecc71,
+    #3498db,
+    #2980b9,
+    #9b59b6,
+    #8e44ad
+  );
+  background-size: 400%;
+  opacity: 0;
+  filter: blur(20px);
+  transition: 0.5s;
+  animation: eff 20s ease infinite;
+}
+
+@keyframes eff {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
   }
 }
+
