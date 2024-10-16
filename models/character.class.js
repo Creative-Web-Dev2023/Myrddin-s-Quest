@@ -87,72 +87,82 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.applyGravity();
-    this.animate();
+   
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
+    this.animate();
+   
   }
 
-  animate() {
+animate() {
     let deadAnimationPlayed = false; // Flag für die tote Animation
 
     setInterval(() => {
-      this.walking_sound.pause();
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.moveRight();
-        this.otherDirection = false;
-        this.walking_sound.play();
-      }
-      if (this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        this.walking_sound.play();
-      }
-      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
-      }
-      this.world.camera_x = -this.x - 190;
+        this.walking_sound.pause();
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.otherDirection = false;
+            this.walking_sound.play();
+        }
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+            this.walking_sound.play();
+        }
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+        }
+        this.world.camera_x = -this.x - 190;
     }, 1000 / 60); // 60x pro Sekunde
 
     setInterval(() => {
-      if (this.isDead() && !deadAnimationPlayed) {
-        this.playAnimation(this.IMAGES_DEAD);
-        deadAnimationPlayed = true; // Setze das Flag, um die Animation nicht erneut abzuspielen
-      } else if (this.isHurt()) {  
-        this.playAnimation(this.IMAGES_HURT);
-        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter verletzt ist
-      } else if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMPING);
-        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter springt
-      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playAnimation(this.IMAGES_WALKING);
-        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter läuft
-      } else {
-        // Hier wird die Idle-Animation abgespielt, wenn keine anderen Bedingungen erfüllt sind
-        this.playAnimation(this.IMAGES_IDLE);  
-        deadAnimationPlayed = false; // Setze das Flag zurück, wenn der Charakter inaktiv ist
-      }
+        if (this.isDead() && !deadAnimationPlayed) {
+            this.playAnimation(this.IMAGES_DEAD);
+            deadAnimationPlayed = true;
+        } else if (this.isHurt()) {  
+            this.playAnimation(this.IMAGES_HURT);
+           deadAnimationPlayed
+        } else if (this.isAboveGround()) {
+            this.playAnimation(this.IMAGES_JUMPING);
+          deadAnimationPlayed = false;
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+            deadAnimationPlayed = false;
+        } else {
+            this.playAnimation(this.IMAGES_IDLE);  
+        }
     }, 120);
-  }
+}
+
 
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
   }
 
-  hit() {
-    if (!this.invulnerable) {
-      console.log("Character hit! Energy:", this.energy); // Log-Ausgabe hinzugefügt
+  
+  isMoving() {
+    return this.keyboard.RIGHT || this.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
+}
+
+hit() {
+  if (!this.invulnerable) {
       this.energy -= 5; // Verringere die Energie bei einem Treffer
       if (this.energy <= 0) {
-        this.energy = 0; // Energie kann nicht unter 0 fallen
+          this.energy = 0; // Energie kann nicht unter 0 fallen
+          this.invulnerable = true; // Setze den Charakter für eine kurze Zeit unverwundbar
+          setTimeout(() => {
+              this.invulnerable = false; // Nach 1 Sekunde wieder verwundbar machen
+          }, 1000);
       }
-    }
   }
+}
 
-  isHurt() {
+
+isHurt() {
     return this.energy < 100 && this.energy > 0; // Beispielhafte Bedingung für Verletzung
-  }
+}
 
-  isDead() {
+isDead() {
     return this.energy == 0;
-  }
+}
 }

@@ -3,7 +3,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-image: url("img/game_backgrounds/castle-in-the-clouds-with-ethereal-light-1235950751889625108.jpeg");
+  background-image: url("img/game_backgrounds/8YGJao.png");
   background-size: cover;
   background-position: center;
   height: 100vh;
@@ -19,7 +19,7 @@ body {
 .start-button {
   position: absolute; /* Benutze absolute Positionierung für Button */
   bottom: 70px; /* Abstand vom unteren Rand */
-  left: 117px; 
+  left: 117px;
   width: 140px;
   height: 50px;
   background: #41431e;
@@ -28,10 +28,10 @@ body {
   text-align: center;
   letter-spacing: 0.1em;
   text-decoration: none;
-  color: rgba(255,255,255,0.2); 
+  color: rgba(255, 255, 255, 0.2);
   transition: 0.5s;
   -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
-  margin-top: 20px; 
+  margin-top: 20px;
   border: 3px solid rgba(255, 255, 255, 0.5); /* Beispiel: Weißer Rand */
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Optional: Schatten für den Rand */
   font-family: "sylfaen";
@@ -75,30 +75,29 @@ body {
   height: 100%;
   background: linear-gradient(
     45deg,
-    #6a1b9a, 
-    #8e24aa, 
-    #ab47bc, 
-    #ba68c8, 
-    #f06292, 
+    #6a1b9a,
+    #8e24aa,
+    #ab47bc,
+    #ba68c8,
+    #f06292,
     #ff8a65,
-    #ffb74d, 
-    #ffd54f, 
-    #aeea00, 
-    #76ff03, 
-    #64ffda, 
-    #1de9b6, 
-    #00b0ff, 
-    #2979ff, 
-    #448aff, 
-    #3d5afe, 
-    #536dfe 
+    #ffb74d,
+    #ffd54f,
+    #aeea00,
+    #76ff03,
+    #64ffda,
+    #1de9b6,
+    #00b0ff,
+    #2979ff,
+    #448aff,
+    #3d5afe,
+    #536dfe
   );
   background-size: 400%;
   opacity: 0;
   transition: 2.5s;
   animation: eff 20s linear infinite;
 }
-
 
 .start-button:hover::before,
 .start-button:hover::after {
@@ -155,24 +154,35 @@ body {
   position: relative;
   z-index: 1;
 }
+.audio-icon {
+  position: absolute;
+  top: 29vh; 
+  right: 34vw; 
+  width: 35px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.hidden {
+  display: none;
+}
 .overlay {
-  position: absolute; 
-  top: 50%; 
+  position: absolute;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); 
-  width: 850px; 
-  height: 520px; 
-  background-image: 
-    url('img/game_ui/login&pass/loghin_pass_fullwindow.png'), /* Vordergrund-Bild */
-    url('img/game_backgrounds/wood.png'); /* Hintergrund-Bild */
-    background-size: contain, cover; /* Erster Wert für das Vordergrund-Bild, zweiter für das Hintergrund-Bild */
-    background-position: center, center;
-    background-repeat: no-repeat, no-repeat;
-    z-index: 2; /* Overlay im Vordergrund */
-    display: flex; 
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  transform: translate(-50%, -50%);
+  width: 850px;
+  height: 531px;
+  background-image: url("img/game_ui/login&pass/loghin_pass_fullwindow.png"),
+    /* Vordergrund-Bild */ url("img/game_backgrounds/wood.png"); /* Hintergrund-Bild */
+  background-size: contain, cover; /* Erster Wert für das Vordergrund-Bild, zweiter für das Hintergrund-Bild */
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  z-index: 2; /* Overlay im Vordergrund */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .overlay-title {
@@ -200,35 +210,42 @@ body {
 
 .overlay-character {
   position: absolute;
-  bottom: 138px;
-  left: -100px;
-  width: 550px;
+  bottom: 133px;
+  left: -146px;
+  width: 649px;
+  height: auto;
+}
+.how-to-play-img {
+  position: absolute;
+  bottom: 141px;
+  left: 589px;
+  width: 154px;
   height: auto;
 }
 svg {
   position: absolute;
-  bottom: 290px; 
+  bottom: 290px;
   left: 0;
   z-index: 3;
 }
 .how-to-play-button {
-position: absolute;
-bottom: 68px;
-right: 117px;
-width: 140px;
-height: 50px;
-background: #41431e;
-text-transform: uppercase;
-font-size: 25px;
-text-align: center;
-letter-spacing: 0.1em;
-text-decoration: none;
-color: rgba(255,255,255,0.2);
-transition: 0.5s;
--webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
-margin-top: 20px;
-border: 3px solid rgba(255, 255, 255, 0.5);
-box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  position: absolute;
+  bottom: 68px;
+  right: 117px;
+  width: 140px;
+  height: 50px;
+  background: #41431e;
+  text-transform: uppercase;
+  font-size: 25px;
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.2);
+  transition: 0.5s;
+  -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
+  margin-top: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 .how-to-play-button span {
   position: absolute;
@@ -268,30 +285,29 @@ box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   height: 100%;
   background: linear-gradient(
     45deg,
-    #6a1b9a, 
-    #8e24aa, 
-    #ab47bc, 
-    #ba68c8, 
-    #f06292, 
+    #6a1b9a,
+    #8e24aa,
+    #ab47bc,
+    #ba68c8,
+    #f06292,
     #ff8a65,
-    #ffb74d, 
-    #ffd54f, 
-    #aeea00, 
-    #76ff03, 
-    #64ffda, 
-    #1de9b6, 
-    #00b0ff, 
-    #2979ff, 
-    #448aff, 
-    #3d5afe, 
-    #536dfe 
+    #ffb74d,
+    #ffd54f,
+    #aeea00,
+    #76ff03,
+    #64ffda,
+    #1de9b6,
+    #00b0ff,
+    #2979ff,
+    #448aff,
+    #3d5afe,
+    #536dfe
   );
   background-size: 400%;
   opacity: 0;
   transition: 2.5s;
   animation: eff 20s linear infinite;
 }
-
 
 .how-to-play-button:hover::before,
 .how-to-play-button:hover::after {
@@ -342,4 +358,3 @@ box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     background-position: 0 0;
   }
 }
-

@@ -3,8 +3,12 @@ let world;
 let keyboard = new Keyboard();
 
 
+
+
 function startGame() {
-  document.querySelector('.overlay').style.display = 'none'; // Blende das Overlay a
+  document.querySelector('.overlay').style.display = 'none'; // Blende das Overlay an
+  document.getElementById('audioSwitcher').classList.remove('hidden');
+  document.getElementById('audioSwitcher').setAttribute('onclick', 'musicSwitcher()');
   init();
 }
 
