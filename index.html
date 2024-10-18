@@ -17,23 +17,20 @@
     <script src="models/level.class.js"></script>
     <script src="models/endboss.class.js"></script>
     <script src="models/keyboard.class.js"></script>
-    
     <script src="models/status-bar.js"></script>
     <script src="models/music.js"></script>
     <script src="levels/level1.js"></script>
     <script src="js/game.js"></script>
     <title>Myrddin's Quest</title>
+    
 </head>
 
 <body onload="init()">
     <canvas id="canvas" width="720" height="480"></canvas>
     <!-- Das Sound-Icon versteckt sich zu Beginn -->
-    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()" alt="Sound Control">
-
-
-
+    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
+        alt="Sound Control">
     <div class="overlay">
-
         <h1 class="overlay-title">Myrddin's Quest</h1> <!-- Titel im Overlay -->
         <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> <!-- Bild des Charakters -->
         <img src="img/game_ui/main/how to play.png" alt="Scroll" class="how-to-play-img"> <!-- Bild der Schriftrolle -->
@@ -52,10 +49,34 @@
         <div class="button-container"> <!-- Neuer Container für die Buttons -->
             <a href="javascript:startGame();" class="start-button"><span>Start Game</span></a>
             <!-- Start Game Button -->
-            <a href="how_to_play.html" class="how-to-play-button"><span>How to Play</span></a>
+            <div id="description-container" class="how-to-play-button" onclick="handleDescription()">
+                <span>How to Play</span>
+            </div>
+            <div id="description" class="description hidden">
+                <h3>How to Play</h3>
+                <p class="description-text">Use the following keys:</p>
+                <table class="table-keys">
+                    <tbody>
+                        <tr>
+                            <td class="key">Right Arrow</td>
+                            <td class="action">Move right</td>
+                        </tr>
+                        <tr>
+                            <td class="key">Left Arrow</td>
+                            <td class="action">Move left</td>
+                        </tr>
+                        <tr>
+                            <td class="key">Space</td>
+                            <td class="action">Jump</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="description-text"></p>
+                <p class="back-link" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
+                
+            </div>
         </div>
-    </div>
-
+            
 
 </body>
 

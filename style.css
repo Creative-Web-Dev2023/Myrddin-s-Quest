@@ -156,16 +156,57 @@ body {
 }
 .audio-icon {
   position: absolute;
-  top: 29vh; 
-  right: 34vw; 
+  top: 29vh;
+  right: 34vw;
   width: 35px;
   cursor: pointer;
   z-index: 10;
+}
+.description {
+  position: absolute;
+  top: 110px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background-color:#4E6A76 ;
+  border-radius: 10px;
+  color: rgb(202, 189, 49);
+  padding: 20px;
+  display: none;
+  overflow-y: auto;  /* Vertikaler Scrollbalken, wenn der Inhalt die Höhe überschreitet */
+ 
 }
 
 .hidden {
   display: none;
 }
+
+.show {
+  display: block;
+}
+.table-keys {
+  width: 30%;
+  
+}
+h3{
+  text-align: center;
+  color: rgb(214, 158, 36);
+  font-size: 24px;
+
+}
+.back-link {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+  margin-top: 20px;
+  font-size: 24px;
+}
+
+.back-link:hover {
+  color: rgb(150, 150, 222);
+}
+
+
 .overlay {
   position: absolute;
   top: 50%;
