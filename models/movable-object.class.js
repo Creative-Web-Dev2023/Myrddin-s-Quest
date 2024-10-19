@@ -1,5 +1,4 @@
 class MovableObject extends DrawableObject {
-
   drawRectangle = true; // Standardmäßig kein Rechteck
   speed = 0.15;
   otherDirection = false;
@@ -26,9 +25,6 @@ class MovableObject extends DrawableObject {
   isAboveGround() {
     return this.y < 150;
   }
- 
-  
-  // Angepasste drawFrame Methode
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Knight || this instanceof Endboss) {
       this.drawRectangle = true;

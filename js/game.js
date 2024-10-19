@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let candleImage = new Image(); // Erstelle das Bild-Objekt
 
 function startGame() {
   document.querySelector(".overlay").style.display = "none"; // Blende das Overlay an
@@ -14,6 +15,7 @@ function startGame() {
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas, keyboard);
+  
 }
 function handleDescription() {
   let description = document.getElementById("description");
