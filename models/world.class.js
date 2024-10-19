@@ -7,6 +7,7 @@ class World {
   camera_x = 0; // die Kamera wird um 100 nach links verschoben
   lastCloudSpawn = 0; // Zeitpunkt, an dem die letzte Wolke erzeugt wurde
   cloudSpawnInterval = 3000; // Intervall (3 Sekunden)
+  statusBar = new Statusbar();
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -43,8 +44,8 @@ class World {
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.translate(this.camera_x, 0);
-  
     this.addObjectsToMap(this.level.backgroundObjects);
+    this.addToMap(this.statusBar); // Statusbar richtig hinzufügen
     this.addToMap(this.character);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.clouds);
@@ -54,6 +55,7 @@ class World {
       self.draw();
     });
   }
+  
   
   addObjectsToMap(objects) {
     objects.forEach((o) => {
