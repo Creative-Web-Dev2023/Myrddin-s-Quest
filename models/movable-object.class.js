@@ -70,7 +70,11 @@ class MovableObject extends DrawableObject {
     let path = images[i]; // Bildpfad aus dem Array
     this.img = this.imageCache[path]; // Bild aus dem Cache setzen
     this.currentImage++;
+    if (this.currentImage >= images.length) { // 
+      this.currentImage = 0; // Setze auf den ersten Frame zurück
   }
+  }
+  
 
   moveRight() {
     this.x += this.speed;

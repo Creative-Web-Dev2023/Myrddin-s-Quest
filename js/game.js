@@ -1,6 +1,7 @@
 let canvas;
-let world;
 let keyboard = new Keyboard();
+let world;
+
 let candleImage = new Image(); // Erstelle das Bild-Objekt
 
 function startGame() {
@@ -36,15 +37,14 @@ function goBack() {
 }
 
 
+// Event Listener für Tastendrücke
 window.addEventListener("keydown", (e) => {
-  //wenn eine Taste gedrückt wird)
   if (e.keyCode == 39) {
     keyboard.RIGHT = true;
   }
   if (e.keyCode == 37) {
     keyboard.LEFT = true;
   }
-
   if (e.keyCode == 38) {
     keyboard.UP = true;
   }
@@ -54,10 +54,13 @@ window.addEventListener("keydown", (e) => {
   if (e.keyCode == 32) {
     keyboard.SPACE = true;
   }
+  if (e.code === "KeyA") {
+    keyboard.ATTACK = true; // Angriffstaste
+  }
 });
 
+// Event Listener für das Loslassen der Tasten
 window.addEventListener("keyup", (e) => {
-  // wenn eine Taste losgelassen wird
   if (e.keyCode == 39) {
     keyboard.RIGHT = false;
   }
@@ -72,5 +75,8 @@ window.addEventListener("keyup", (e) => {
   }
   if (e.keyCode == 32) {
     keyboard.SPACE = false;
+  }
+  if (e.code === "KeyA") {
+    keyboard.ATTACK = false; // Angriffstaste loslassen
   }
 });

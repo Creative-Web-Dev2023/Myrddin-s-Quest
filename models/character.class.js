@@ -2,10 +2,9 @@ class Character extends MovableObject {
   height = 290;
   width = 520;
   x = 130;
-  y = 80;
+  y = 150;
   speed = 5;
   
-
   offset = {
     top: 13, // Reduziert das Rechteck von oben
     bottom: 15, // Reduziert das Rechteck von unten
@@ -49,7 +48,18 @@ class Character extends MovableObject {
     "img/wizard/jump/jump_008.png",
     "img/wizard/jump/jump_009.png",
   ];
-
+  IMAGES_ATTACK = [
+    'img/wizard/attack/attack_000.png',
+    'img/wizard/attack/attack_001.png',
+    'img/wizard/attack/attack_002.png',
+    'img/wizard/attack/attack_003.png',
+    'img/wizard/attack/attack_004.png',
+    'img/wizard/attack/attack_005.png',
+    'img/wizard/attack/attack_006.png',
+    'img/wizard/attack/attack_007.png',
+    'img/wizard/attack/attack_008.png',
+    'img/wizard/attack/attack_009.png',
+  ];
   IMAGES_DEAD = [
     "img/wizard/die/die_000.png",
     "img/wizard/die/die_001.png",
@@ -78,6 +88,8 @@ class Character extends MovableObject {
 
   world;
   walking_sound = new Audio("audio/walking.mp3");
+  attack_sound = new Audio("audio/wizard_attack.mp3");
+
 
   constructor() {
     super().loadImage(this.IMAGES_IDLE[0]);
@@ -86,6 +98,7 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_ATTACK);
     this.applyGravity();
    
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
@@ -94,9 +107,10 @@ class Character extends MovableObject {
    
   }
 
-animate() {
+  animate() {
     let deadAnimationPlayed = false; // Flag für die tote Animation
 
+    // Bewegungseingaben und Kamerabewegung
     setInterval(() => {
         this.walking_sound.pause();
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -115,23 +129,28 @@ animate() {
         this.world.camera_x = -this.x - 190;
     }, 1000 / 60); // 60x pro Sekunde
 
+    // Animationen für den Charakter
     setInterval(() => {
         if (this.isDead() && !deadAnimationPlayed) {
             this.playAnimation(this.IMAGES_DEAD);
             deadAnimationPlayed = true;
         } else if (this.isHurt()) {  
             this.playAnimation(this.IMAGES_HURT);
-           deadAnimationPlayed
+            deadAnimationPlayed = false;
+        } else if (this.world.keyboard.ATTACK) {  // Angriff abspielen
+            this.playAnimation(this.IMAGES_ATTACK);
+            this.attack_sound.play(); // Angriffston abspielen
+            deadAnimationPlayed = false;
         } else if (this.isAboveGround()) {
             this.playAnimation(this.IMAGES_JUMPING);
-          deadAnimationPlayed = false;
+            deadAnimationPlayed = false;
         } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.playAnimation(this.IMAGES_WALKING);
             deadAnimationPlayed = false;
         } else {
             this.playAnimation(this.IMAGES_IDLE);  
         }
-    }, 120);
+    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
 }
 
 

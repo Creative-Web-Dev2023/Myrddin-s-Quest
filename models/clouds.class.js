@@ -1,8 +1,8 @@
 class Cloud extends MovableObject {
     x = 90;
-    y = 10;
+    y = 9;
     height = 200;
-    width = 700;
+    width = 600;
     drawRectangle = false;
 
     constructor() {
