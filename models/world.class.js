@@ -8,11 +8,13 @@ class World {
   lastCloudSpawn = 0; // Zeitpunkt, an dem die letzte Wolke erzeugt wurde
   cloudSpawnInterval = 3000; // Intervall (3 Sekunden)
   statusBar = new Statusbar();
+  coinStatusBar; // Hier als Klassenattribut definiert
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
     this.draw();
     this.setWorld();
     this.checkCollisions();
@@ -46,6 +48,7 @@ class World {
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.level.backgroundObjects);
     this.addToMap(this.statusBar); // Statusbar richtig hinzufügen
+    this.addToMap(this.coinStatusBar); // Münzstatusleiste richtig hinzufügen
     this.addToMap(this.character);
     this.addObjectsToMap(this.level.enemies);
     this.addObjectsToMap(this.level.clouds);
@@ -55,8 +58,7 @@ class World {
       self.draw();
     });
   }
-  
-  
+
   addObjectsToMap(objects) {
     objects.forEach((o) => {
       this.addToMap(o);

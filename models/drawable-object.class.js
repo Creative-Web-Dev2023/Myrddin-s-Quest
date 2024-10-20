@@ -17,11 +17,16 @@ class DrawableObject {
    //loadImage ('img/test.png');
    loadImage(path) {
     this.img = new Image(); // ist das gleiche wie this.img=document.createElement('img')
-    this.img.src = path
+    this.img.src = path;
   }
   draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    if (this.img) { // Überprüfen, ob das Bild geladen ist
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  } else {
+    console.warn(`Image not loaded for object at (${this.x}, ${this.y})`);
   }
+}
+
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Knight || this instanceof Endboss) {
       this.drawRectangle = true;

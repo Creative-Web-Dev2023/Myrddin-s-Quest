@@ -1,7 +1,6 @@
 let canvas;
 let keyboard = new Keyboard();
 let world;
-
 let candleImage = new Image(); // Erstelle das Bild-Objekt
 
 function startGame() {
@@ -35,8 +34,6 @@ function goBack() {
   description.classList.add("hidden");
 
 }
-
-
 // Event Listener für Tastendrücke
 window.addEventListener("keydown", (e) => {
   if (e.keyCode == 39) {
