@@ -27,7 +27,6 @@ function handleDescription() {
       description.classList.add("hidden");
   }
 }
-
 function goBack() {
   let description = document.getElementById("description");
   description.classList.remove("show");
@@ -75,5 +74,15 @@ window.addEventListener("keyup", (e) => {
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = false; // Angriffstaste loslassen
+  }
+});
+
+// Füge einen Event Listener für den Start-Button hinzu
+window.addEventListener("DOMContentLoaded", () => {
+  const startButton = document.getElementById("startButton");
+  if (startButton) {
+    startButton.addEventListener("click", startGame);
+  } else {
+    console.error("Element mit ID 'startButton' nicht gefunden.");
   }
 });
