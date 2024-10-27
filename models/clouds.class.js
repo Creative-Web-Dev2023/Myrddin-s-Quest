@@ -4,20 +4,22 @@ class Cloud extends MovableObject {
     height = 200;
     width = 600;
     drawRectangle = false;
+    speed= 0.2;
 
     constructor() {
-        super().loadImage(this.getRandomCloudImage()); // Zufällig ein Bild aus der Liste auswählen
-        this.x = Math.random() * 2100; // Größerer Bereich für die X-Position
-        this.y = Math.random() * 90; // Kleinere Bereich für die Y-Position
-  
+        super().loadImage('img/clouds/full.png');
+        this.x = Math.random() * 2400;
+        // this.y = Math.random() * 90;
+        this.animate();
     }
 
-    // Funktion zum zufälligen Auswählen eines Wolkenbildes
-    getRandomCloudImage() {
-        const images = [
-            'img/clouds/full.png', // Füge hier weitere Wolkenbilder hinzu
-        ];
-        const randomIndex = Math.floor(Math.random() * images.length);
-        return images[randomIndex];
-    }
+    animate() {
+     this.moveLeft();   
+        
+}
+moveLeft() {
+    setInterval(() => {
+        this.x -= this.speed;
+    }, 1000 / 60);
+}
 }

@@ -1,8 +1,9 @@
 class Knight extends MovableObject {
     height = 270;
     width = 500;
-    y = 240; // Die Höhe des Ritters
-    x = 200; // Die Breite des Ritters
+    y = 240; // Die Höhe des Ritter
+    isMoving = false; // Neue Variable, um die Bewegung zu steuern
+    delay = 3000; // Wartezeit von 3 Sekunden
 
     offset = {
         top: 80,    // Reduziert das Rechteck von oben
@@ -21,21 +22,30 @@ class Knight extends MovableObject {
     ];
 
     constructor() {
-        super().loadImage('img/knight/walk/walk_0.png');
+        super();
+        this.x = 800 + Math.random() * 500;
+        this.loadImage('img/knight/walk/walk_0.png');
         this.loadImages(this.IMAGES_WALKING);
-        this.x = 200 + Math.random() * 500;
         this.speed = 0.15 + Math.random() * 0.2;
+        setTimeout(() => {
+            this.isMoving = true;
+        }, this.delay);
         this.animate();
     }
 
     animate() {
         setInterval(() => {
-            this.moveLeft();
+            if (this.isMoving) {
+                this.moveLeft();
+            }
         }, 1000 / 60);
 
         setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+            if (this.isMoving) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 500); // 
     }
-    
 }
+    
+

@@ -81,6 +81,7 @@ class MovableObject extends DrawableObject {
     this.walking_sound.play();
   }
   moveLeft() {
+    setInterval
     this.x -= this.speed;
     
   }
