@@ -49,6 +49,7 @@ body {
   text-align: center;
   background: #41431e;
   transition: 0.5s;
+  cursor: pointer;
 }
 
 .start-button:hover span {
@@ -158,9 +159,10 @@ body {
   position: absolute;
   top: 29vh;
   right: 34vw;
-  width: 35px;
+  width: 30px;
   cursor: pointer;
   z-index: 10;
+  
 }
 .description {
   position: absolute;
@@ -300,6 +302,7 @@ svg {
   text-align: center;
   background: #41431e;
   transition: 0.5s;
+  cursor: pointer;
 }
 
 .how-to-play-button:hover span {

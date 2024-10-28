@@ -21,16 +21,17 @@ class Knight extends MovableObject {
         'img/knight/walk/walk_5.png',
     ];
 
-    constructor() {
+    constructor(delay=0, startX =800) { // Verzögerung von 0 Sekunden
         super();
-        this.x = 800 + Math.random() * 500;
+        this.x = startX; // Setzt die individuelle Startposition
         this.loadImage('img/knight/walk/walk_0.png');
         this.loadImages(this.IMAGES_WALKING);
-        this.speed = 0.15 + Math.random() * 0.2;
+        this.speed = 0.15 + Math.random() * 0.25;
+
         setTimeout(() => {
             this.isMoving = true;
-        }, this.delay);
-        this.animate();
+            this.animate();
+        }, delay);
     }
 
     animate() {

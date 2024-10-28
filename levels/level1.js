@@ -1,10 +1,18 @@
 const level1 = new Level(
     [
-        new Knight(),
-        new Knight(),
-        new Knight(),
+         // Erste Formation von drei Rittern
+         new Knight(0, 900),      // erster Ritter startet bei x = 900
+         new Knight(2000, 1200),  // zweiter Ritter startet mit 2 Sekunden Verzögerung bei x = 1200
+         new Knight(4000, 1500),  // dritter Ritter startet mit 4 Sekunden Verzögerung bei x = 1500
+ 
+         // Zweite Formation von drei Rittern
+         new Knight(8000, 2000),  // erster Ritter der zweiten Formation startet bei x = 2000 mit 8 Sekunden Verzögerung
+         new Knight(10000, 2300), // zweiter Ritter startet mit 10 Sekunden Verzögerung bei x = 2300
+         new Knight(12000, 2600), // dritter Ritter startet mit 12 Sekunden Verzögerung bei x = 2600
+ 
         new Endboss()
     ],
+
     [
         new Cloud(),
         new Cloud(),
@@ -52,11 +60,11 @@ const level1 = new Level(
         new BackgroundObject('img/game_items/candle.png', 2200, 50, 10, 30), // Kerze 5 x = 1110 y = 50 width = 50 height = 80
         new BackgroundObject('img/game_backgrounds/4/1.png', 719 * 3), // 
     
-        new Coin(-700, 50, 100, 30),
-        new Coin(500, 50, 100, 30),
-        new Coin(1000, 50, 100, 30),
-        new Coin(1500, 50, 100, 30),
-        new Coin(2230, 50, 100, 30),
+        new Coin(900, 50, 100, 30), //
+        new Coin(1300, 50, 100, 30),
+        new Coin(1700, 50, 100, 30),
+        new Coin(2100, 50, 100, 30),
+        new Coin(2530, 50, 100, 30),
     
     ],
     

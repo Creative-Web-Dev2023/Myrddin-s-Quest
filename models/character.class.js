@@ -107,50 +107,57 @@ class Character extends MovableObject {
    
   }
 
-  animate() {
-    let deadAnimationPlayed = false; // Flag für die tote Animation
+animate() {
+  let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
 
-    // Bewegungseingaben und Kamerabewegung
-    setInterval(() => {
-        this.walking_sound.pause();
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-            this.moveRight();
-            this.otherDirection = false;
-            this.walking_sound.play();
-        }
-        if (this.world.keyboard.LEFT && this.x > 0) {
-            this.moveLeft();
-            this.otherDirection = true;
-            this.walking_sound.play();
-        }
-        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-            this.jump();
-        }
-        this.world.camera_x = -this.x - 190;
-    }, 1000 / 60); // 60x pro Sekunde
+  // Bewegungseingaben und Kamerabewegung
+  setInterval(() => {
+      if (!this.isDead()) {  // Nur bewegen, wenn der Charakter nicht tot ist
+          this.walking_sound.pause();
+          if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+              this.moveRight();
+              this.otherDirection = false;
+              this.walking_sound.play();
+          }
+          if (this.world.keyboard.LEFT && this.x > 0) {
+              this.moveLeft();
+              this.otherDirection = true;
+              this.walking_sound.play();
+          }
+          if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+              this.jump();
+          }
+          this.world.camera_x = -this.x - 190;
+      }
+  }, 1000 / 60); // 60x pro Sekunde
 
-    // Animationen für den Charakter
-    setInterval(() => {
-        if (this.isDead() && !deadAnimationPlayed) {
-            this.playAnimation(this.IMAGES_DEAD);
-            deadAnimationPlayed = true;
-        } else if (this.isHurt()) {  
-            this.playAnimation(this.IMAGES_HURT);
-            deadAnimationPlayed = false;
-        } else if (this.world.keyboard.ATTACK) {  // Angriff abspielen
-            this.playAnimation(this.IMAGES_ATTACK);
-            this.attack_sound.play(); // Angriffston abspielen
-            deadAnimationPlayed = false;
-        } else if (this.isAboveGround()) {
-            this.playAnimation(this.IMAGES_JUMPING);
-            deadAnimationPlayed = false;
-        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_WALKING);
-            deadAnimationPlayed = false;
-        } else {
-            this.playAnimation(this.IMAGES_IDLE);  
-        }
-    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+  // Animationen für den Charakter
+  setInterval(() => {
+      if (this.isDead() && !deadAnimationPlayed) {
+          this.playAnimation(this.IMAGES_DEAD);
+          deadAnimationPlayed = true;  // Animation nur einmal abspielen
+          this.speed = 0; // Stoppt alle Bewegungen
+          this.speedY = 0;
+          setTimeout(() => {
+              // Letztes Bild der DEAD-Animation anzeigen, um das Wiederholen zu verhindern
+              this.loadImage(this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]);
+          }, (this.IMAGES_DEAD.length - 1) * 100); // Wartezeit basierend auf Frameanzahl
+      } else if (!this.isDead()) {
+          deadAnimationPlayed = false;  // Setze Flag zurück, wenn der Charakter nicht tot ist
+          if (this.isHurt()) {  
+              this.playAnimation(this.IMAGES_HURT);
+          } else if (this.world.keyboard.ATTACK) {  // Angriff abspielen
+              this.playAnimation(this.IMAGES_ATTACK);
+              this.attack_sound.play();
+          } else if (this.isAboveGround()) {
+              this.playAnimation(this.IMAGES_JUMPING);
+          } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+              this.playAnimation(this.IMAGES_WALKING);
+          } else {
+              this.playAnimation(this.IMAGES_IDLE);  
+          }
+      }
+  }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
 }
 
 
@@ -163,18 +170,19 @@ class Character extends MovableObject {
     return this.keyboard.RIGHT || this.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
 }
 
-hit() {
+hit(enemy) {
   if (!this.invulnerable) {
       this.energy -= 5; // Verringere die Energie bei einem Treffer
       if (this.energy <= 0) {
           this.energy = 0; // Energie kann nicht unter 0 fallen
+      }
           this.invulnerable = true; // Setze den Charakter für eine kurze Zeit unverwundbar
           setTimeout(() => {
               this.invulnerable = false; // Nach 1 Sekunde wieder verwundbar machen
           }, 1000);
       }
   }
-}
+
 
 
 isHurt() {
