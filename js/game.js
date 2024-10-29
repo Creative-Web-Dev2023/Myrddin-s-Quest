@@ -6,10 +6,10 @@ let candleImage = new Image(); // Erstelle das Bild-Objekt
 function startGame() {
   document.querySelector(".overlay").style.display = "none"; // Blende das Overlay an
   document.getElementById("audioSwitcher").classList.remove("hidden");
-  document
-    .getElementById("audioSwitcher")
+  document.getElementById("audioSwitcher")
     .setAttribute("onclick", "musicSwitcher()");
   init();
+  
 }
 
 function init() {
@@ -27,12 +27,23 @@ function handleDescription() {
       description.classList.add("hidden");
   }
 }
+
+
 function goBack() {
   let description = document.getElementById("description");
+  let impressum = document.getElementById("impressum");
+  
+  // Beschreibung ausblenden
   description.classList.remove("show");
   description.classList.add("hidden");
-
+  
+  // Impressum ausblenden
+  if (!impressum.classList.contains("hidden")) {
+      impressum.classList.remove("show");
+      impressum.classList.add("hidden");
+  }
 }
+
 // Event Listener für Tastendrücke
 window.addEventListener("keydown", (e) => {
   if (e.keyCode == 39) {
@@ -86,3 +97,11 @@ window.addEventListener("DOMContentLoaded", () => {
     console.error("Element mit ID 'startButton' nicht gefunden.");
   }
 });
+
+function handleImpressum() {
+  let impressum = document.getElementById("impressum");
+    impressum.classList.toggle("hidden");
+    impressum.classList.toggle("show");
+  
+}
+

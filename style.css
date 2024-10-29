@@ -170,19 +170,43 @@ body {
   left: 10px;
   right: 10px;
   bottom: 10px;
-  background-color:#4E6A76 ;
+  background-color: #4E6A76;
   border-radius: 10px;
   color: rgb(202, 189, 49);
   padding: 20px;
   display: none;
-  overflow-y: auto;  /* Vertikaler Scrollbalken, wenn der Inhalt die Höhe überschreitet */
- 
+  scrollbar-width: thin; 
+  scrollbar-color:#4e6a76 orange;
+  scrollbar-width: thin;
+  overflow-y: auto; /* Vertikaler Scrollbalken, wenn der Inhalt die Höhe überschreitet */
 }
 
+
+.impressum-button{
+  font-size: 24px;
+  color: rgb(202, 189, 49);
+  margin-top: 420px;
+  cursor: pointer;
+}
+.impressum{
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 720px; /* dieselbe Breite wie dein Canvas */
+  height: 480px; /* dieselbe Höhe wie dein Canvas */
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+  text-align: center;
+  border-radius: 10px;
+}
 .hidden {
   display: none;
 }
-
 .show {
   display: block;
 }
@@ -207,8 +231,16 @@ h3{
 .back-link:hover {
   color: rgb(150, 150, 222);
 }
-
-
+.back-link2 {
+  cursor: pointer;
+  color: rgb(188, 194, 178);
+  text-decoration: underline;
+  margin-top: 20px;
+  font-size: 24px;
+}
+.back-link2:hover {
+  color: rgb(174, 186, 124);
+}
 .overlay {
   position: absolute;
   top: 50%;

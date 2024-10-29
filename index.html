@@ -21,10 +21,10 @@
     <script src="models/endboss.class.js"></script>
     <script src="models/keyboard.class.js"></script>
     <script src="models/music.js"></script>
-    <script src="levels/level1.js"></script> 
+    <script src="levels/level1.js"></script>
     <script src="js/game.js"></script>
     <title>Myrddin's Quest</title>
-    
+
 </head>
 
 <body onload="init()">
@@ -78,15 +78,30 @@
                     </tbody>
                 </table>
                 <p class="description-text">
-                    Thema: Der Wizard (Myrddin) wurde von einem bösen Troll verflucht, der sein Königreich mit Rittern übernommen hat. Um das Königreich zu befreien, muss der Wizard gegen die Ritter kämpfen und schließlich den Troll besiegen.
-Ziel des Spiels: Der Wizard muss verschiedene magische Artefakte sammeln, die in Form von Münzen oder Kristallen vorliegen. Diese Artefakte geben ihm neue Fähigkeiten, die ihn schließlich stark genug machen, den Endboss zu besiegen.
+                    The wizard (Myrddin) has been cursed by an evil troll who has taken over his kingdom with knights.
+                    To free the kingdom, the wizard must fight against the knights and ultimately defeat the troll. Goal
+                    of the game: The magician must collect various magical artifacts that come in the form of coins or
+                    crystals. These artifacts give him new abilities that eventually make him strong enough to defeat
+                    the final boss.
                 </p>
                 <p class="back-link" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
-                
             </div>
         </div>
-            
-        
+        <div id="impressum-container" class="impressum-button" onclick="handleImpressum()">
+            <span>Impressum</span>
+        </div>
+    
+        <div id="impressum" class="impressum hidden">
+            <h3>Impressum</h3>
+            <p>@ Gabriela Ströbl 2024</p>
+            <p>Gabriela Ströbl<br>
+               Münchnerstr. 20<br>
+              80333 München<br>
+            </p>
+            <p>Font:Sylfaen</p>
+            <p>Images:CraftPix.net</p>
+            <p class="back-link2" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
+        </div>
 </body>
 
 </html>
