@@ -23,6 +23,7 @@ class Coin extends DrawableObject {
       this.currentImageIndex = 0;
       this.img = new Image();
       this.img.src = this.IMAGES_COIN[this.currentImageIndex];
+      this.isActive = true; // Münze ist aktiv, bis sie gesammelt wird
       this.animate();
     }
   
@@ -37,6 +38,10 @@ class Coin extends DrawableObject {
     }
     draw(ctx) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+    
+    deactivate() {
+      this.isActive = false; // Mache die Münze inaktiv, nachdem sie gesammelt wurde
     }
   }
   

@@ -1,5 +1,5 @@
 class World {
-  character = new Character();
+  character;
   level = level1;
   canvas;
   ctx;
@@ -14,6 +14,7 @@ class World {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.character = new Character(this.keyboard, this.coinStatusBar); // Pass keyboard to Character
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
     this.draw();
     this.setWorld();

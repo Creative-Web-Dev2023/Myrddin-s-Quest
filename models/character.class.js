@@ -4,6 +4,10 @@ class Character extends MovableObject {
   x = 130;
   y = 150;
   speed = 5;
+  coins = 0;
+
+  coinStatusBar;
+
   
   offset = {
     top: 13, // Reduziert das Rechteck von oben
@@ -86,12 +90,12 @@ class Character extends MovableObject {
     "img/wizard/hurt/hurt_009.png",
   ];
 
-  world;
+  world = {};
   walking_sound = new Audio("audio/walking.mp3");
   attack_sound = new Audio("audio/wizard_attack.mp3");
 
 
-  constructor() {
+  constructor(world, coinStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_WALKING);
@@ -99,11 +103,15 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_ATTACK);
+    this.world = world || {}; // Ensure world is initialized
+    this.world.keyboard = {}; // Initialize keyboard property
     this.applyGravity();
    
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
+
+    this.coinStatusBar = coinStatusBar; // Statusleiste für Münzen
    
   }
 
@@ -163,9 +171,23 @@ animate() {
 
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
+    this.collectCoins();
   }
 
-  
+  collectCoins() {
+    // Hier kannst du die Münzsammlung implementieren, z.B. wenn der Charakter über eine Münze springt
+    if (this.world.coins) { // Überprüfen, ob Münzen im Level vorhanden sind
+      this.world.coins.forEach((coin) => {
+        if (this.isColliding(coin) && coin.isActive) { // Prüfe auf Kollision
+          this.coins += 1; // Erhöhe die Münzen um 1
+          console.log(`Münzen gesammelt: ${this.coins}`); // Debugging
+          this.world.coinStatusBar.increasePercentage(20); // Aktualisiere die Statusleiste
+          coin.deactivate(); // Deaktiviere die Münze, nachdem sie gesammelt wurde
+        }
+      });
+    }
+  }
+
   isMoving() {
     return this.keyboard.RIGHT || this.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
 }

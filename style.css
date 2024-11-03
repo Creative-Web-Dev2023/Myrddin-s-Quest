@@ -152,6 +152,7 @@ body {
 
 #canvas {
   background-color: black;
+  
   position: relative;
   z-index: 1;
 }

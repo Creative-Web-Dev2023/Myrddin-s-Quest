@@ -15,7 +15,6 @@ class Level{
         for (let i = 0; i < 5; i++) {
             let coin = new Coin(810 + i * 150, 300); // Platziere 5 Münzen in horizontaler Linie
             this.coins.push(coin);
-            console.log(coin);
         }
     }
     draw(ctx) {
