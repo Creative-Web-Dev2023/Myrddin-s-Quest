@@ -32,17 +32,16 @@ function handleDescription() {
 function goBack() {
   let description = document.getElementById("description");
   let impressum = document.getElementById("impressum");
-  
-  // Beschreibung ausblenden
-  description.classList.remove("show");
+
+  // Beschreibung und Impressum ausblenden und das Overlay zeigen
   description.classList.add("hidden");
+  description.classList.remove("show");
   
-  // Impressum ausblenden
-  if (!impressum.classList.contains("hidden")) {
-      impressum.classList.remove("show");
-      impressum.classList.add("hidden");
-  }
+  impressum.classList.add("hidden");
+  impressum.classList.remove("show");
+
 }
+
 
 // Event Listener für Tastendrücke
 window.addEventListener("keydown", (e) => {
@@ -103,4 +102,4 @@ function handleImpressum() {
     impressum.classList.toggle("hidden");
     impressum.classList.toggle("show");
   
-}
+}  
