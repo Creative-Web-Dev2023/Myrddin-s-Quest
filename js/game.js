@@ -15,8 +15,18 @@ function startGame() {
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas, keyboard);
+
+  gameLoop();
   
 }
+function gameLoop() {
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Canvas leeren für den nächsten Frame
+  world.update(); // Kollisionsprüfungen und andere Updates
+  world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
+  requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
+}
+
 function handleDescription() {
   let description = document.getElementById("description");
   if (description.classList.contains("hidden")) {
@@ -41,7 +51,6 @@ function goBack() {
   impressum.classList.remove("show");
 
 }
-
 
 // Event Listener für Tastendrücke
 window.addEventListener("keydown", (e) => {

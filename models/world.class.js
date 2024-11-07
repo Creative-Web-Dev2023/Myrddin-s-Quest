@@ -14,18 +14,30 @@ class World {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.coinsArray = this.initializeCoins();
     this.character = new Character(this.keyboard, this.coinStatusBar); // Pass keyboard to Character
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
+    this.backgroundObjects ;
     this.draw();
     this.setWorld();
-    this.checkCollisions();
+    this.checkCollisionsWithEnemy();
   }
 
   setWorld() {
     this.character.world = this;
-  }
+  } 
+  initializeCoins() {
+    return [
+        new Coin(500, 230),
+        new Coin(800, 250),
+        new Coin(1000.230),
+        new Coin(1500, 250),
+        new Coin(1800, 230),
+        new Coin(2100, 250),
+    ];
+}
 
-  checkCollisions() {
+  checkCollisionsWithEnemy() {
     setInterval(() => {
       this.level.enemies.forEach((enemy) => {
         if (this.character.isColliding(enemy)) {
@@ -34,6 +46,25 @@ class World {
         }
       });
     }, 100); 
+  }
+  checkCollision(object1, object2) {
+    return (
+        object1.x < object2.x + object2.width &&
+        object1.x + object1.width > object2.x &&
+        object1.y < object2.y + object2.height &&
+        object1.y + object1.height > object2.y
+    );
+}
+
+update() {
+    this.coinsArray.forEach((coin, index) => {
+        if (coin.isActive && this.checkCollision(this.character, coin)) {
+            coin.deactivate(); // Münze inaktiv setzen
+            this.coinsArray.splice(index, 1); // Münze aus dem Array entfernen
+            this.character.coinsCollected++; // Münzenzähler erhöhen
+           
+        }
+    });
   }
 
   addCloudsWhenCharacterMoves() {
@@ -47,20 +78,20 @@ class World {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.ctx.translate(this.camera_x, 0);// Kamera verschieben
     this.addObjectsToMap(this.level.backgroundObjects); // Hintergrundobjekte hinzufügen
+    
     this.addObjectsToMap(this.level.clouds);
     this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
     //Space for fix objects
     this.addToMap(this.statusBar); // Statusbar richtig hinzufügen
     this.addToMap(this.coinStatusBar); // Münzstatusleiste richtig hinzufügen
+    this.coinStatusBar.draw(this.ctx);
     this.ctx.translate(this.camera_x, 0);// Kamera verschieben
-  
     this.addObjectsToMap(this.level.enemies);
     this.addToMap(this.character);
+    this.coinsArray.forEach(coin => coin.draw(this.ctx));
     this.ctx.translate(-this.camera_x, 0);
-    
     let self = this;
     requestAnimationFrame(function () {
       self.draw();

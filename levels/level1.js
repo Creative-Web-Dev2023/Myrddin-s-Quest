@@ -60,11 +60,11 @@ const level1 = new Level(
         new BackgroundObject('img/game_items/candle.png', 2200, 50, 10, 30), // Kerze 5 x = 1110 y = 50 width = 50 height = 80
         new BackgroundObject('img/game_backgrounds/4/1.png', 719 * 3), // 
     
-        new Coin(900, 50, 100, 30), //
-        new Coin(1300, 50, 100, 30),
-        new Coin(1700, 50, 100, 30),
-        new Coin(2100, 50, 100, 30),
-        new Coin(2530, 50, 100, 30),
+        // new Coin(900, 350, 100, 30), //
+        // new Coin(1300, 350, 100, 30),
+        // new Coin(1700, 350, 100, 30),
+        // new Coin(2100, 350, 100, 30),
+        // new Coin(2530, 350, 100, 30),
     
     ],
     

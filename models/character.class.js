@@ -5,10 +5,8 @@ class Character extends MovableObject {
   y = 150;
   speed = 5;
   coins = 0;
-
   coinStatusBar;
 
-  
   offset = {
     top: 13, // Reduziert das Rechteck von oben
     bottom: 15, // Reduziert das Rechteck von unten
@@ -53,16 +51,16 @@ class Character extends MovableObject {
     "img/wizard/jump/jump_009.png",
   ];
   IMAGES_ATTACK = [
-    'img/wizard/attack/attack_000.png',
-    'img/wizard/attack/attack_001.png',
-    'img/wizard/attack/attack_002.png',
-    'img/wizard/attack/attack_003.png',
-    'img/wizard/attack/attack_004.png',
-    'img/wizard/attack/attack_005.png',
-    'img/wizard/attack/attack_006.png',
-    'img/wizard/attack/attack_007.png',
-    'img/wizard/attack/attack_008.png',
-    'img/wizard/attack/attack_009.png',
+    "img/wizard/attack/attack_000.png",
+    "img/wizard/attack/attack_001.png",
+    "img/wizard/attack/attack_002.png",
+    "img/wizard/attack/attack_003.png",
+    "img/wizard/attack/attack_004.png",
+    "img/wizard/attack/attack_005.png",
+    "img/wizard/attack/attack_006.png",
+    "img/wizard/attack/attack_007.png",
+    "img/wizard/attack/attack_008.png",
+    "img/wizard/attack/attack_009.png",
   ];
   IMAGES_DEAD = [
     "img/wizard/die/die_000.png",
@@ -94,7 +92,6 @@ class Character extends MovableObject {
   walking_sound = new Audio("audio/walking.mp3");
   attack_sound = new Audio("audio/wizard_attack.mp3");
 
-
   constructor(world, coinStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
@@ -105,80 +102,90 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_ATTACK);
     this.world = world || {}; // Ensure world is initialized
     this.world.keyboard = {}; // Initialize keyboard property
+    this.coinsCollected = 0; // Münzen gesammelt
     this.applyGravity();
-   
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
-
     this.coinStatusBar = coinStatusBar; // Statusleiste für Münzen
-   
   }
-
-animate() {
-  let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
-
-  // Bewegungseingaben und Kamerabewegung
-  setInterval(() => {
-      if (!this.isDead()) {  // Nur bewegen, wenn der Charakter nicht tot ist
-          this.walking_sound.pause();
-          if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-              this.moveRight();
-              this.otherDirection = false;
-              this.walking_sound.play();
-          }
-          if (this.world.keyboard.LEFT && this.x > 0) {
-              this.moveLeft();
-              this.otherDirection = true;
-              this.walking_sound.play();
-          }
-          if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-              this.jump();
-          }
-          this.world.camera_x = -this.x - 190;
+  animate() {
+    let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
+    // Bewegungseingaben und Kamerabewegung
+    setInterval(() => {
+      if (!this.isDead()) {
+        // Nur bewegen, wenn der Charakter nicht tot ist
+        this.walking_sound.pause();
+        if (
+          this.world.keyboard.RIGHT &&
+          this.x < this.world.level.level_end_x
+        ) {
+          this.moveRight();
+          this.otherDirection = false;
+          this.walking_sound.play();
+        }
+        if (this.world.keyboard.LEFT && this.x > 0) {
+          this.moveLeft();
+          this.otherDirection = true;
+          this.walking_sound.play();
+        }
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+          this.jump();
+        }
+        this.world.camera_x = -this.x - 190;
       }
-  }, 1000 / 60); // 60x pro Sekunde
+    }, 1000 / 60); // 60x pro Sekunde
 
-  // Animationen für den Charakter
-  setInterval(() => {
+    // Animationen für den Charakter
+    setInterval(() => {
       if (this.isDead() && !deadAnimationPlayed) {
-          this.playAnimation(this.IMAGES_DEAD);
-          deadAnimationPlayed = true;  // Animation nur einmal abspielen
-          this.speed = 0; // Stoppt alle Bewegungen
-          this.speedY = 0;
-          setTimeout(() => {
-              // Letztes Bild der DEAD-Animation anzeigen, um das Wiederholen zu verhindern
-              this.loadImage(this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]);
-          }, (this.IMAGES_DEAD.length - 1) * 100); // Wartezeit basierend auf Frameanzahl
+        this.playAnimation(this.IMAGES_DEAD);
+        deadAnimationPlayed = true; // Animation nur einmal abspielen
+        this.speed = 0; // Stoppt alle Bewegungen
+        this.speedY = 0;
+        setTimeout(() => {
+          // Letztes Bild der DEAD-Animation anzeigen, um das Wiederholen zu verhindern
+          this.loadImage(this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]);
+        }, (this.IMAGES_DEAD.length - 1) * 100); // Wartezeit basierend auf Frameanzahl
       } else if (!this.isDead()) {
-          deadAnimationPlayed = false;  // Setze Flag zurück, wenn der Charakter nicht tot ist
-          if (this.isHurt()) {  
-              this.playAnimation(this.IMAGES_HURT);
-          } else if (this.world.keyboard.ATTACK) {  // Angriff abspielen
-              this.playAnimation(this.IMAGES_ATTACK);
-              this.attack_sound.play();
-          } else if (this.isAboveGround()) {
-              this.playAnimation(this.IMAGES_JUMPING);
-          } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-              this.playAnimation(this.IMAGES_WALKING);
-          } else {
-              this.playAnimation(this.IMAGES_IDLE);  
-          }
+        deadAnimationPlayed = false; // Setze Flag zurück, wenn der Charakter nicht tot ist
+        if (this.isHurt()) {
+          this.playAnimation(this.IMAGES_HURT);
+        } else if (this.world.keyboard.ATTACK) {
+          // Angriff abspielen
+          this.playAnimation(this.IMAGES_ATTACK);
+          this.attack_sound.play();
+        } else if (this.isAboveGround()) {
+          this.playAnimation(this.IMAGES_JUMPING);
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+          this.playAnimation(this.IMAGES_WALKING);
+        } else {
+          this.playAnimation(this.IMAGES_IDLE);
+        }
       }
-  }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
-}
-
-
+    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+  }
+  
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
     this.collectCoins();
   }
+  checkCollision(character, coin) {
+    return (
+      character.x < coin.x + coin.width &&
+      character.x + character.width > coin.x &&
+      character.y < coin.y + coin.height &&
+      character.y + character.height > coin.y
+    );
+  }
 
   collectCoins() {
     // Hier kannst du die Münzsammlung implementieren, z.B. wenn der Charakter über eine Münze springt
-    if (this.world.coins) { // Überprüfen, ob Münzen im Level vorhanden sind
+    if (this.world.coins) {
+      // Überprüfen, ob Münzen im Level vorhanden sind
       this.world.coins.forEach((coin) => {
-        if (this.isColliding(coin) && coin.isActive) { // Prüfe auf Kollision
+        if (this.isColliding(coin) && coin.isActive) {
+          // Prüfe auf Kollision
           this.coins += 1; // Erhöhe die Münzen um 1
           console.log(`Münzen gesammelt: ${this.coins}`); // Debugging
           this.world.coinStatusBar.increasePercentage(20); // Aktualisiere die Statusleiste
@@ -187,31 +194,26 @@ animate() {
       });
     }
   }
-
+  
   isMoving() {
     return this.keyboard.RIGHT || this.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
-}
-
-hit(enemy) {
-  if (!this.invulnerable) {
+  }
+  hit(enemy) {
+    if (!this.invulnerable) {
       this.energy -= 5; // Verringere die Energie bei einem Treffer
       if (this.energy <= 0) {
-          this.energy = 0; // Energie kann nicht unter 0 fallen
+        this.energy = 0; // Energie kann nicht unter 0 fallen
       }
-          this.invulnerable = true; // Setze den Charakter für eine kurze Zeit unverwundbar
-          setTimeout(() => {
-              this.invulnerable = false; // Nach 1 Sekunde wieder verwundbar machen
-          }, 1000);
-      }
+      this.invulnerable = true; // Setze den Charakter für eine kurze Zeit unverwundbar
+      setTimeout(() => {
+        this.invulnerable = false; // Nach 1 Sekunde wieder verwundbar machen
+      }, 1000);
+    }
   }
-
-
-
-isHurt() {
+  isHurt() {
     return this.energy < 100 && this.energy > 0; // Beispielhafte Bedingung für Verletzung
-}
-
-isDead() {
+  }
+  isDead() {
     return this.energy == 0;
-}
+  }
 }

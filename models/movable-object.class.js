@@ -42,23 +42,25 @@ class MovableObject extends DrawableObject {
   }
   // character.isColliding(knight)
   isColliding(mo) {
+    if (mo instanceof Knight || mo instanceof Endboss) {
+      return false;
+    }
     return this.x + this.width> mo.x &&  
       this.y + this.height > mo.y && 
            this.x< mo.x &&  
            this.y < mo.y + mo.height; 
   }
 
-  hit() {
-    this.energy = Math.max(this.energy - 5, 0); // Energie um 5 verringern, aber nicht unter 0
-    if (this.energy > 0) {
-      this.lastHit = new Date().getTime();
-    }
-  }
+  // hit() {
+  //   this.energy = Math.max(this.energy - 5, 0); // Energie um 5 verringern, aber nicht unter 0
+  //   if (this.energy > 0) {
+  //     this.lastHit = new Date().getTime();
+  //   }
+  // }
 
   isHurt(){
    let timepassed = new Date().getTime() - this.lastHit;
    timepassed = timepassed / 1000;
-   console.log(timepassed );
    return timepassed < 5;
   }
   isDead(){

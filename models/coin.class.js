@@ -28,17 +28,20 @@ class Coin extends DrawableObject {
     }
   
     animate() {
-      setInterval(() => {
-        this.currentImageIndex++;
-        if (this.currentImageIndex >= this.IMAGES_COIN.length) {
-          this.currentImageIndex = 0; // Zurücksetzen, wenn das Ende erreicht ist
+      this.animationInterval = setInterval(() => {
+        if (!this.isActive) {
+          clearInterval(this.animationInterval); // Stoppe die Animation, wenn die Münze inaktiv wird
+          return;
         }
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.IMAGES_COIN.length;
         this.img = this.imageCache[this.IMAGES_COIN[this.currentImageIndex]];
       }, 100);
     }
     draw(ctx) {
+      if (this.isActive) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
+      }
+  }
     
     deactivate() {
       this.isActive = false; // Mache die Münze inaktiv, nachdem sie gesammelt wurde
