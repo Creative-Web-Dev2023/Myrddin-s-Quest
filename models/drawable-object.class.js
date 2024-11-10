@@ -1,5 +1,5 @@
 class DrawableObject {
-  x = 120;
+  x = 120;  // 
   y = 400;
   img;
   imageCache = {};
@@ -18,13 +18,19 @@ class DrawableObject {
    loadImage(path) {
     this.img = new Image(); // ist das gleiche wie this.img=document.createElement('img')
     this.img.src = path;
-  }
-  draw(ctx) {
-    if (this.img) { // Überprüfen, ob das Bild geladen ist
+    this.img.onload = () => {
+        console.log(`Image loaded: ${path}`);
+    };
+    this.img.onerror = () => {
+        console.error(`Failed to load image: ${path}`);
+    };
+    }
+    draw(ctx) {
+    if (this.img && ctx) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  } else {
-    console.warn(`Image not loaded for object at (${this.x}, ${this.y})`);
-  }
+    } else {
+        console.error('Image or context is not defined');
+    }
 }
 
   drawFrame(ctx) {
@@ -55,10 +61,36 @@ class DrawableObject {
    *                      'img/wizard/walk/walk_009.png',]
    */
     loadImages(arr) {
-        arr.forEach((path) => {
-          let img = new Image();
-          img.src = path;
-          this.imageCache[path] = img;
-        });
+        if (!Array.isArray(arr)) {
+            return;
+        }
+          arr.forEach((path) => {
+            let img = new Image();
+            img.src = path;
+            this.imageCache[path] = img;
+          });
+      }
+      
+      playAnimation(images) {
+        let i = this.currentImage % images.length; // let i = 0 % 6; => 0, Rest 0
+        let path = images[i];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+      }
+
+      resolveImageIndex() {
+        if (this.percentage == 100) {
+          return 5;
+        } else if (this.percentage > 80) {
+          return 4;
+        } else if (this.percentage > 60) {
+          return 3;
+        } else if (this.percentage > 40) {
+          return 2;
+        } else if (this.percentage > 20) {
+          return 1;
+        } else {
+          return 0;
+        }
       }
 }

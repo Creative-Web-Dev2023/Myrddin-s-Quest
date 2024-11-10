@@ -1,17 +1,19 @@
 class Knight extends MovableObject {
     height = 270;
     width = 500;
-    y = 240; // Die Höhe des Ritter
-    isMoving = false; // Neue Variable, um die Bewegung zu steuern
-    isAttacking = false; // Neue Variable, um den Angriff zu steuern
-    delay = 3000; // Wartezeit von 3 Sekunden
-    direction = 'left'; // Neue Variable, um die Bewegungsrichtung zu steuern
+    y = 240;
+    isMoving = false;
+    isAttacking = false;
+    delay = 3000;
+    direction = 'left';
+    moveRange = 100; // Standardbewegungsbereich
+    startX = 800; // Startposition
 
     offset = {
-        top: 80,    // Reduziert das Rechteck von oben
-        bottom: 80, // Reduziert das Rechteck von unten
-        left: 200,   // Reduziert das Rechteck von links
-        right: 200  // Reduziert das Rechteck von rechts
+        top: 80,
+        bottom: 80,
+        left: 200,
+        right: 200
     };
 
     IMAGES_WALKING = [
@@ -22,6 +24,7 @@ class Knight extends MovableObject {
         'img/knight/walk/walk_4.png',
         'img/knight/walk/walk_5.png',
     ];
+
     IMAGES_ATTACKING = [
         'img/knight/attack/attack 000.png',
         'img/knight/attack/attack 001.png',
@@ -29,13 +32,16 @@ class Knight extends MovableObject {
         'img/knight/attack/attack 003.png',
     ];
 
-    constructor(delay=0, startX =800) { // Verzögerung von 0 Sekunden
+    constructor(delay = 0, startX = 800, moveRange = 100) {
         super();
-        this.x = startX; // Setzt die individuelle Startposition
+        this.x = startX;
+        this.startX = startX;
+        this.moveRange = moveRange;
+        this.otherDirection = false;  // Hier hinzufügen
         this.loadImage('img/knight/walk/walk_0.png');
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ATTACKING);
-        this.speed = 0.05 + Math.random() * 0.4; // Reduziere die Geschwindigkeit
+        this.speed = 0.05 + Math.random() * 0.4;
 
         setTimeout(() => {
             this.isMoving = true;
@@ -67,7 +73,6 @@ class Knight extends MovableObject {
     startAttacking() {
         this.isAttacking = true;
         this.playAnimation(this.IMAGES_ATTACKING);
-        
     }
 
     stopAttacking() {
@@ -77,12 +82,12 @@ class Knight extends MovableObject {
 
     moveLeft() {
         this.x -= this.speed;
-        this.otherDirection = true; // Drehe das Gesicht nach links
+        this.otherDirection = true;
     }
 
     moveRight() {
         this.x += this.speed;
-        this.otherDirection = false; // Drehe das Gesicht nach rechts
+        this.otherDirection = false;
     }
 
     checkCollisionWithCharacter(character) {
@@ -101,10 +106,18 @@ class Knight extends MovableObject {
     animate() {
         setInterval(() => {
             if (this.isMoving && !this.isAttacking) {
-                if (this.direction === 'left') { // Bewege nach links
+                if (this.direction === 'left') {
                     this.moveLeft();
+                    if (this.x <= this.startX - this.moveRange) {
+                        this.direction = 'right';
+                        this.otherDirection = false; // Richtungswechsel
+                    }
                 } else {
                     this.moveRight();
+                    if (this.x >= this.startX + this.moveRange) {
+                        this.direction = 'left';
+                        this.otherDirection = true; // Richtungswechsel
+                    }
                 }
             }
         }, 1000 / 60);
@@ -113,41 +126,37 @@ class Knight extends MovableObject {
             if (this.isMoving && !this.isAttacking) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
-        }, 1000 / 5); // Ändere das Bild alle 200 Millisekunden
+        }, 1000 / 5);
 
-        // Ändere die Bewegungsrichtung in kürzeren Abständen
+        // Häufiger Richtungswechsel
         setInterval(() => {
-            this.direction = this.direction === 'left' ? 'right' : 'left'; 
-            // bedeutet wenn die Richtung links ist, ändere sie in rechts, sonst ändere sie in links
-        }, 4000); // Ändere die Richtung alle 4 Sekunden
+            this.direction = this.direction === 'left' ? 'right' : 'left';
+            this.otherDirection = !this.otherDirection;
+        }, 1000); // Alle 1 Sekunden die Richtung wechseln
     }
 }
 
-// Function to find the nearest knight to the character
 function findNearestKnight(knights, character) {
-    let nearestKnight = null; // Initialize the nearest knight to null
-    let minDistance = Infinity; // Initialize the minimum distance to infinity
+    let nearestKnight = null;
+    let minDistance = Infinity;
 
-    knights.forEach(knight => { // Loop through all knights
-        const distance = Math.abs(knight.x - character.x); // Calculate the distance between the knight and the character
+    knights.forEach(knight => {
+        const distance = Math.abs(knight.x - character.x);
         if (distance < minDistance) { 
-            minDistance = distance; // Update the minimum distance
-            nearestKnight = knight; // Update the nearest knight
+            minDistance = distance;
+            nearestKnight = knight;
         }
     });
 
     return nearestKnight;
 }
 
-// Example of creating knight instances and checking for collisions
 const knights = [new Knight(), new Knight(0, 1000), new Knight(0, 2000)];
-const character = new Character(); // Assuming you have a Character class
+const character = new Character();
 
 setInterval(() => {
     const nearestKnight = findNearestKnight(knights, character);
     if (nearestKnight) {
         nearestKnight.checkCollisionWithCharacter(character);
     }
-}, 1000 / 40); // Check for collisions 60 times per second
-
-
+}, 1000 / 40);

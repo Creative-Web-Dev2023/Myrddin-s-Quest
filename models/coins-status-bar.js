@@ -49,7 +49,7 @@ class CoinStatusBar extends DrawableObject {
   increasePercentage(amount) {
     this.percentage = Math.min(100, this.percentage + amount);
     this.setPercentage(this.percentage);
-    console.log(`Münzen: ${this.percentage}`); // Zum Debuggen
+ 
   }
 }
 

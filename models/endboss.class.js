@@ -2,7 +2,7 @@ class Endboss extends MovableObject {
     height = 600;  // Höhe des Endbosses
     width = 450;   // Breite des Endbosses
     y = -100;      // y-Position
-    x = 2500;      // x-Position
+    x = 5500;      // x-Position
    
     offset = {
         top: 180,    // Reduziert das Rechteck von oben

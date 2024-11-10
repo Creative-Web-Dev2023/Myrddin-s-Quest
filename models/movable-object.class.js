@@ -45,18 +45,11 @@ class MovableObject extends DrawableObject {
     if (mo instanceof Knight || mo instanceof Endboss) {
       return false;
     }
-    return this.x + this.width> mo.x &&  
-      this.y + this.height > mo.y && 
-           this.x< mo.x &&  
-           this.y < mo.y + mo.height; 
+    return   this.x + this.width > mo.x &&
+    this.x < mo.x + mo.width &&
+    this.y + this.height > mo.y &&
+    this.y < mo.y + mo.height
   }
-
-  // hit() {
-  //   this.energy = Math.max(this.energy - 5, 0); // Energie um 5 verringern, aber nicht unter 0
-  //   if (this.energy > 0) {
-  //     this.lastHit = new Date().getTime();
-  //   }
-  // }
 
   isHurt(){
    let timepassed = new Date().getTime() - this.lastHit;
@@ -77,7 +70,6 @@ class MovableObject extends DrawableObject {
   }
   }
   
-
   moveRight() {
     this.x += this.speed;
     this.walking_sound.play();

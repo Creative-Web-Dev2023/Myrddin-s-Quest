@@ -2,29 +2,25 @@ let canvas;
 let keyboard = new Keyboard();
 let world;
 let candleImage = new Image(); // Erstelle das Bild-Objekt
+let IntervallIDs = [];
 
 function startGame() {
-  document.querySelector(".overlay").style.display = "none"; // Blende das Overlay an
-  document.getElementById("audioSwitcher").classList.remove("hidden");
-  document.getElementById("audioSwitcher")
-    .setAttribute("onclick", "musicSwitcher()");
-  init();
-  
+    document.querySelector(".overlay").style.display = "none"; // Blende das Overlay aus
+    document.getElementById("audioSwitcher").classList.remove("hidden");
+    document.getElementById("audioSwitcher").setAttribute("onclick", "musicSwitcher()");
+    init();
 }
 
 function init() {
-  canvas = document.getElementById("canvas");
-  world = new World(canvas, keyboard);
-
-  gameLoop();
-  
+    canvas = document.getElementById("canvas");
+    world = new World(canvas, keyboard);
+    gameLoop();
 }
+
 function gameLoop() {
-  const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Canvas leeren für den nächsten Frame
-  world.update(); // Kollisionsprüfungen und andere Updates
-  world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
-  requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
+    world.update(); // Kollisionsprüfungen und andere Updates
+    world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
+    requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
 }
 
 function handleDescription() {
@@ -38,21 +34,17 @@ function handleDescription() {
   }
 }
 
-
 function goBack() {
   let description = document.getElementById("description");
   let impressum = document.getElementById("impressum");
-
-  // Beschreibung und Impressum ausblenden und das Overlay zeigen
-  description.classList.add("hidden");
+  description.classList.add("hidden"); // Beschreibung und Impressum ausblenden und das Overlay zeigen
   description.classList.remove("show");
-  
   impressum.classList.add("hidden");
   impressum.classList.remove("show");
-
 }
 
-// Event Listener für Tastendrücke
+// Event Listener für Tastendrücke+
+
 window.addEventListener("keydown", (e) => {
   if (e.keyCode == 39) {
     keyboard.RIGHT = true;
@@ -98,12 +90,12 @@ window.addEventListener("keyup", (e) => {
 
 // Füge einen Event Listener für den Start-Button hinzu
 window.addEventListener("DOMContentLoaded", () => {
-  const startButton = document.getElementById("startButton");
-  if (startButton) {
-    startButton.addEventListener("click", startGame);
-  } else {
-    console.error("Element mit ID 'startButton' nicht gefunden.");
-  }
+    const startButton = document.getElementById("startButton");
+    if (startButton) {
+        startButton.addEventListener("click", startGame);
+    } else {
+        console.error("Element mit ID 'startButton' nicht gefunden.");
+    }
 });
 
 function handleImpressum() {
@@ -111,4 +103,4 @@ function handleImpressum() {
     impressum.classList.toggle("hidden");
     impressum.classList.toggle("show");
   
-}  
+}

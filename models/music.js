@@ -2,7 +2,7 @@ let backgroundMusic = new Audio('audio/background music .mp3');
 let musicIsOn =false;
 
 function musicSwitcher(){
-    const audioIcon = document.getElementById('audioSwitcher');
+    const audioIcon = document.getElementById('audioSwitcher'); // Icon für Sound an/ausn
     if(musicIsOn){
         stopMusic();
         audioIcon.src = 'img/app_icons/soundoff.png'; // Icon für Sound aus

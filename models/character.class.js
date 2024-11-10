@@ -117,28 +117,31 @@ class Character extends MovableObject {
         // Nur bewegen, wenn der Charakter nicht tot ist
         this.walking_sound.pause();
         if (
-          this.world.keyboard.RIGHT &&
-          this.x < this.world.level.level_end_x
+          this.world.keyboard.RIGHT && // Prüfen, ob die rechte Pfeiltaste gedrückt ist
+          this.x < this.world.level.level_end_x // Prüfen, ob der Charakter das Ende des Levels erreicht hat
         ) {
-          this.moveRight();
-          this.otherDirection = false;
-          this.walking_sound.play();
+          this.moveRight(); // Charakter nach rechts bewegen
+          this.otherDirection = false; // Richtung des Charakters auf rechts setzen
+          this.walking_sound.play(); // Abspielen des Laufgeräuschs
         }
         if (this.world.keyboard.LEFT && this.x > 0) {
-          this.moveLeft();
-          this.otherDirection = true;
-          this.walking_sound.play();
+          // Prüfen, ob die linke Pfeiltaste gedrückt ist und der Charakter nicht am linken Rand ist
+          this.moveLeft(); // Charakter nach links bewegen
+          this.otherDirection = true; // Richtung des Charakters auf links setzen
+          this.walking_sound.play(); // Abspielen des Laufgeräuschs
         }
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-          this.jump();
+          // Prüfen, ob die Leertaste gedrückt ist und der Charakter nicht in der Luft ist
+          this.jump(); // Charakter springen lassen
         }
-        this.world.camera_x = -this.x - 190;
+        this.world.camera_x = -this.x - 190; // Kamera an die Position des Charakters anpassen
       }
     }, 1000 / 60); // 60x pro Sekunde
 
     // Animationen für den Charakter
     setInterval(() => {
       if (this.isDead() && !deadAnimationPlayed) {
+        //
         this.playAnimation(this.IMAGES_DEAD);
         deadAnimationPlayed = true; // Animation nur einmal abspielen
         this.speed = 0; // Stoppt alle Bewegungen
@@ -146,7 +149,7 @@ class Character extends MovableObject {
         setTimeout(() => {
           // Letztes Bild der DEAD-Animation anzeigen, um das Wiederholen zu verhindern
           this.loadImage(this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]);
-        }, (this.IMAGES_DEAD.length - 1) * 100); // Wartezeit basierend auf Frameanzahl
+        }, (this.IMAGES_DEAD.length - 1) * 100); // 100 ms zwischen den Frames
       } else if (!this.isDead()) {
         deadAnimationPlayed = false; // Setze Flag zurück, wenn der Charakter nicht tot ist
         if (this.isHurt()) {
@@ -165,36 +168,32 @@ class Character extends MovableObject {
       }
     }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
   }
-  
+
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
     this.collectCoins();
   }
-  checkCollision(character, coin) {
-    return (
-      character.x < coin.x + coin.width &&
-      character.x + character.width > coin.x &&
-      character.y < coin.y + coin.height &&
-      character.y + character.height > coin.y
-    );
+
+  // Methode zur Kollisionserkennung
+  checkCollision(coin) {
+   return (
+    this.x < coin.x + coin.width &&  // Der Charakter geht bis zum rechten Rand der Münze
+    this.x + this.width > coin.x &&  // Der Charakter geht bis zum linken Rand der Münze
+    this.y < coin.y + coin.height &&  // Der Charakter geht bis zum unteren Rand der Münze
+    this.y + this.height > coin.y   // Der Charakter geht bis zum oberen Rand der Münze
+   );
   }
 
   collectCoins() {
-    // Hier kannst du die Münzsammlung implementieren, z.B. wenn der Charakter über eine Münze springt
-    if (this.world.coins) {
-      // Überprüfen, ob Münzen im Level vorhanden sind
-      this.world.coins.forEach((coin) => {
-        if (this.isColliding(coin) && coin.isActive) {
-          // Prüfe auf Kollision
-          this.coins += 1; // Erhöhe die Münzen um 1
-          console.log(`Münzen gesammelt: ${this.coins}`); // Debugging
-          this.world.coinStatusBar.increasePercentage(20); // Aktualisiere die Statusleiste
-          coin.deactivate(); // Deaktiviere die Münze, nachdem sie gesammelt wurde
-        }
-      });
+   this.world.coins.forEach((coin) => {
+    if (coin.isActive && this.checkCollision(coin)) {
+      coin.deactivate();
+      this.coinsCollected++;
+      this.coinStatusBar.update(this.coinsCollected);
     }
+   });
   }
-  
+
   isMoving() {
     return this.keyboard.RIGHT || this.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
   }
@@ -211,9 +210,9 @@ class Character extends MovableObject {
     }
   }
   isHurt() {
-    return this.energy < 100 && this.energy > 0; // Beispielhafte Bedingung für Verletzung
+    return this.energy < 100 && this.energy > 0; // wenn seine < 100 und > 0 ist, dann ist er verletzt
   }
   isDead() {
-    return this.energy == 0;
+    return this.energy == 0;// wenn seine Energie 0 ist, dann ist er tot
   }
 }

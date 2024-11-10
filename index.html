@@ -10,17 +10,21 @@
     <script src="models/drawable-object.class.js"></script>
     <script src="models/movable-object.class.js"></script>
     <script src="models/coins-status-bar.js"></script>
+    <script src="models/health-status-bar.js"></script>
     <script src="models/character.class.js"></script>
     <script src="models/knight.class.js"></script>
     <script src="models/clouds.class.js"></script>
-    <script src="models/status-bar.js"></script>
+    <script src="models/poison-status-bar.js"></script>
     <script src="models/world.class.js"></script>
     <script src="models/background-object.class.js"></script>
+    <script src="models/collectable-object.class.js"></script>
+    <script src="models/poison.class.js"></script>
     <script src="models/coin.class.js"></script>
     <script src="models/level.class.js"></script>
     <script src="models/endboss.class.js"></script>
     <script src="models/keyboard.class.js"></script>
     <script src="models/music.js"></script>
+    <script src="models/snake.class.js"></script>
     <script src="levels/level1.js"></script>
     <script src="js/game.js"></script>
     <title>Myrddin's Quest</title>
@@ -28,16 +32,17 @@
 </head>
 
 <body onload="init()">
+   <h2>Myrddin's Quest</h2>
     <canvas id="canvas" width="720" height="480"></canvas>
     <!-- Das Sound-Icon versteckt sich zu Beginn -->
     <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
         alt="Sound Control">
+        
     <div class="overlay">
-        <h1 class="overlay-title">Myrddin's Quest</h1> <!-- Titel im Overlay -->
         <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> <!-- Bild des Charakters -->
         <img src="img/game_ui/main/how to play.png" alt="Scroll" class="how-to-play-img"> <!-- Bild der Schriftrolle -->
         <!-- Gebogener Text -->
-        <svg width="750" height="190" style="margin: 20px 0;">
+        <svg width="750" height="190" style="margin: 47px 0;">
             <defs>
                 <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent" />
             </defs>
