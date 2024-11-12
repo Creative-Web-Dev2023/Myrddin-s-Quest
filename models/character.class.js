@@ -107,7 +107,8 @@ class Character extends MovableObject {
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
-    this.coinStatusBar = coinStatusBar; // Statusleiste für Münzen
+    this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
+    this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
   }
   animate() {
     let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
@@ -133,6 +134,9 @@ class Character extends MovableObject {
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
           // Prüfen, ob die Leertaste gedrückt ist und der Charakter nicht in der Luft ist
           this.jump(); // Charakter springen lassen
+        }
+        if (this.world.keyboard.ATTACK) {
+          this.attack(); // Angriff ausführen
         }
         this.world.camera_x = -this.x - 190; // Kamera an die Position des Charakters anpassen
       }
@@ -185,13 +189,27 @@ class Character extends MovableObject {
   }
 
   collectCoins() {
-   this.world.coins.forEach((coin) => {
-    if (coin.isActive && this.checkCollision(coin)) {
-      coin.deactivate();
-      this.coinsCollected++;
-      this.coinStatusBar.update(this.coinsCollected);
-    }
-   });
+   if (this.world.coinsArray) {
+     this.world.coinsArray.forEach((coin) => {
+       if (coin.isActive && this.checkCollision(coin)) {
+         coin.deactivate();
+         this.coinsCollected++;
+         this.coinStatusBar.setPercentage(this.coinsCollected * 20); // Update the status bar
+       }
+     });
+   }
+  }
+
+  attack() {
+    this.world.enemies.forEach((enemy) => {
+      if (this.isColliding(enemy)) {
+        enemy.energy -= 10; // Verringere die Energie des Feindes bei einem Treffer
+        if (enemy.energy <= 0) {
+          enemy.energy = 0; // Energie kann nicht unter 0 fallen
+          enemy.isDead = true; // Setze den Feind auf tot
+        }
+      }
+    });
   }
 
   isMoving() {

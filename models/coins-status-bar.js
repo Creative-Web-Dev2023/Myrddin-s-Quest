@@ -10,14 +10,13 @@ class CoinStatusBar extends DrawableObject {
   
   percentage = 0; // Start with an empty status bar
   
-  constructor(coinStatusBar) {
+  constructor() {
     super();
     this.loadImages(this.IMAGES);
     this.x = 2; 
     this.y = 45; // Position der Statusbar
     this.width = 190;  // Passe die Breite an
     this.height = 50;  // Passe die Höhe an
-    this.coinStatusBar = coinStatusBar;
     this.setPercentage(0); // Initialize with 0%
   }
   
@@ -49,7 +48,6 @@ class CoinStatusBar extends DrawableObject {
   increasePercentage(amount) {
     this.percentage = Math.min(100, this.percentage + amount);
     this.setPercentage(this.percentage);
- 
   }
 }
 

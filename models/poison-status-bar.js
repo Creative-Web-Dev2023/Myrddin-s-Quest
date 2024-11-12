@@ -1,13 +1,13 @@
 class PoisonStatusbar extends DrawableObject {
   POISON = [
-    "img/game_ui/statusbars/statusbar-poison/0 .png", // 0 Bild
-    "img/game_ui/statusbars/statusbar-poison/20 .png",
-    "img/game_ui/statusbars/statusbar-poison/40 .png",
-    "img/game_ui/statusbars/statusbar-poison/60 .png",
-    "img/game_ui/statusbars/statusbar-poison/80.png",
-    "img/game_ui/statusbars/statusbar-poison/100.png", // 6 Bild
+    "img/game_ui/statusbars/statusbar-poison/0.png", // 0 Bild
+    "img/game_ui/statusbars/statusbar-poison/20.png", // 20 Bild
+    "img/game_ui/statusbars/statusbar-poison/40.png", // 40 Bild
+    "img/game_ui/statusbars/statusbar-poison/60.png", // 60 Bild
+    "img/game_ui/statusbars/statusbar-poison/80.png", // 80 Bild
+    "img/game_ui/statusbars/statusbar-poison/100.png", //
   ];
-  percetage = 0;
+  percentage = 0;
 
   constructor() {
     super();

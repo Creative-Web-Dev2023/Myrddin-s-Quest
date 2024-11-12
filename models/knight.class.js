@@ -8,6 +8,7 @@ class Knight extends MovableObject {
     direction = 'left';
     moveRange = 100; // Standardbewegungsbereich
     startX = 800; // Startposition
+    energy = 100; // Energie des Ritters
 
     offset = {
         top: 80,
@@ -41,7 +42,7 @@ class Knight extends MovableObject {
         this.loadImage('img/knight/walk/walk_0.png');
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ATTACKING);
-        this.speed = 0.05 + Math.random() * 0.4;
+        this.speed = 0.02 + Math.random() * 0.1;
 
         setTimeout(() => {
             this.isMoving = true;
@@ -120,19 +121,19 @@ class Knight extends MovableObject {
                     }
                 }
             }
-        }, 1000 / 60);
+        }, 1000 / 30);
 
         setInterval(() => {
             if (this.isMoving && !this.isAttacking) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
-        }, 1000 / 5);
+        }, 1000 / 10); // Reduzieren Sie die Häufigkeit der Animationen
 
         // Häufiger Richtungswechsel
         setInterval(() => {
             this.direction = this.direction === 'left' ? 'right' : 'left';
             this.otherDirection = !this.otherDirection;
-        }, 1000); // Alle 1 Sekunden die Richtung wechseln
+        }, 3000); // Erhöhen Sie das Intervall für den Richtungswechsel
     }
 }
 

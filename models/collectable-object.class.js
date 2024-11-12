@@ -1,4 +1,4 @@
-class  CollectableObject extends DrawableObject{
+class CollectableObject extends DrawableObject {
     constructor() {
         super();
         this.IntervallIDs = [];

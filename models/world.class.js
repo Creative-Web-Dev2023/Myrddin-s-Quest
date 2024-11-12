@@ -7,8 +7,8 @@ class World {
   camera_x = 0; // die Kamera wird um 100 nach links verschoben
   lastCloudSpawn = 0; // Zeitpunkt, an dem die letzte Wolke erzeugt wurde
   cloudSpawnInterval = 3000; // Intervall (3 Sekunden)
+  coinsArray = [];
   coinStatusBar; // Hier als Klassenattribut definiert
-  poisonStatusBar = new PoisonStatusbar();
   statusBar; // Add statusBar as a class attribute
   characters = [];
   enemies = [];
@@ -69,6 +69,7 @@ class World {
         coin.deactivate(); // Münze inaktiv setzen
         this.coinsArray.splice(index, 1); // Münze aus dem Array entfernen
         this.character.coinsCollected++; // Münzenzähler erhöhen
+        this.coinStatusBar.increasePercentage(20); // Statusbar aktualisieren
       }
     });
   }

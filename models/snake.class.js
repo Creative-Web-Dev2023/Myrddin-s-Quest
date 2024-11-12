@@ -1,13 +1,12 @@
-// ...ursprünglicher Code vor der Klasse Snake...
-
 class Snake extends MovableObject {
     height = 100;
     width = 150;
     y = 350;
-    isMoving = false;
+    isMoving = true; // Schlange bewegt sich immer
     direction = 'left';
     moveRange = 200; // Standardbewegungsbereich
-    startX = 800; // Startposition
+    startX = 1200; // Startposition geändert, damit die Schlange von rechts kommt
+    isIdle = false; // Schlange ist nicht idle
 
     offset = {
         top: 20,
@@ -23,43 +22,46 @@ class Snake extends MovableObject {
         'img/snake/walk/Walk4.png',
     ];
 
-    constructor(startX = 800, moveRange = 200) {
+    IMAGES_IDLE = [
+        'img/snake/idle/idle 000.png',
+        'img/snake/idle/idle 001.png',
+        'img/snake/idle/idle 002.png',
+        'img/snake/idle/idle 003.png',
+    ];
+
+    constructor(startX = 1200, moveRange = 200) { // Startposition geändert
         super();
         this.x = startX;
         this.startX = startX;
         this.moveRange = moveRange;
-        this.otherDirection = false;
+        this.otherDirection = true; // Schlange schaut nach links
         this.loadImage('img/snake/walk/Walk1.png'); // Stellen Sie sicher, dass dieser Pfad korrekt ist
         this.loadImages(this.IMAGES_WALKING);
-        this.speed = 0.1 + Math.random() * 0.2;
+        this.loadImages(this.IMAGES_IDLE); // Lade Idle-Bilder
+        this.speed = 0.02 + Math.random() * 0.05; // Geschwindigkeit reduziert
 
-        this.isMoving = true;
         this.animate();
     }
 
     animate() {
         setInterval(() => {
-            if (this.isMoving) {
-                if (this.direction === 'left') {
-                    this.moveLeft();
-                    if (this.x <= this.startX - this.moveRange) {
-                        this.direction = 'right';
-                        this.otherDirection = false; // Richtungswechsel
-                    }
-                } else {
-                    this.moveRight();
-                    if (this.x >= this.startX + this.moveRange) {
-                        this.direction = 'left';
-                        this.otherDirection = true; // Richtungswechsel
-                    }
+            if (this.direction === 'left') {
+                this.moveLeft();
+                if (this.x <= this.startX - this.moveRange) {
+                    this.direction = 'right';
+                    this.otherDirection = false; // Richtungswechsel
+                }
+            } else {
+                this.moveRight();
+                if (this.x >= this.startX + this.moveRange) {
+                    this.direction = 'left';
+                    this.otherDirection = true; // Richtungswechsel
                 }
             }
         }, 1000 / 60);
 
         setInterval(() => {
-            if (this.isMoving) {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
+            this.playAnimation(this.IMAGES_WALKING);
         }, 1000 / 5);
     }
 }

@@ -72,12 +72,15 @@ class MovableObject extends DrawableObject {
   
   moveRight() {
     this.x += this.speed;
-    this.walking_sound.play();
+    if (this.walking_sound) {
+      this.walking_sound.play();
+    }
   }
   moveLeft() {
-    setInterval
     this.x -= this.speed;
-    
+    if (this.walking_sound) {
+      this.walking_sound.play();
+    }
   }
   jump() {
     this.speedY = 30;

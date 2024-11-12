@@ -18,12 +18,6 @@ class DrawableObject {
    loadImage(path) {
     this.img = new Image(); // ist das gleiche wie this.img=document.createElement('img')
     this.img.src = path;
-    this.img.onload = () => {
-        console.log(`Image loaded: ${path}`);
-    };
-    this.img.onerror = () => {
-        console.error(`Failed to load image: ${path}`);
-    };
     }
     draw(ctx) {
     if (this.img && ctx) {
