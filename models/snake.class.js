@@ -29,7 +29,7 @@ class Snake extends MovableObject {
         'img/snake/idle/idle 003.png',
     ];
 
-    constructor(startX = 1200, moveRange = 200) { // Startposition geändert
+    constructor(startX = 1500, moveRange = 200) { // Startposition geändert
         super();
         this.x = startX;
         this.startX = startX;

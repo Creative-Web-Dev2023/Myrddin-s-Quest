@@ -11,10 +11,10 @@ const level1 = new Level(
     new Knight(12000, 3900, 100), // dritter Ritter startet mit 12 Sekunden Verzögerung bei x = 3900 und bewegt sich auf einem Bereich von 100px
 
     // Schlangen hinzufügen
-    new Snake(1000, 200),
-    new Snake(2000, 200),
-    new Snake(3000, 200),
-    new Snake(4000, 200),
+   
+    // new Snake(2000, 200),
+    // new Snake(3000, 200),
+    // new Snake(4000, 200),
 
     // Endboss am Schluss
     new Endboss(),

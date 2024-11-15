@@ -26,7 +26,7 @@ class MovableObject extends DrawableObject {
     return this.y < 150;
   }
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Knight || this instanceof Endboss) {
+    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake) {
       this.drawRectangle = true;
       ctx.beginPath();
     ctx.lineWidth = '5';
@@ -42,13 +42,10 @@ class MovableObject extends DrawableObject {
   }
   // character.isColliding(knight)
   isColliding(mo) {
-    if (mo instanceof Knight || mo instanceof Endboss) {
-      return false;
-    }
-    return   this.x + this.width > mo.x &&
-    this.x < mo.x + mo.width &&
-    this.y + this.height > mo.y &&
-    this.y < mo.y + mo.height
+    return this.x + this.width > mo.x && //Rechteck Kollision
+           this.x < mo.x + mo.width &&  
+           this.y + this.height > mo.y &&
+           this.y < mo.y + mo.height;
   }
 
   isHurt(){

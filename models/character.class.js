@@ -6,6 +6,7 @@ class Character extends MovableObject {
   speed = 5;
   coins = 0;
   coinStatusBar;
+  invulnerable = false; // Neue Eigenschaft hinzufügen
 
   offset = {
     top: 13, // Reduziert das Rechteck von oben
@@ -109,7 +110,38 @@ class Character extends MovableObject {
     this.animate();
     this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
+    this.addKeyboardListeners();
   }
+
+  addKeyboardListeners() {
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'a' || event.key === 'A') {
+        this.killNearestKnight();
+      }
+    });
+  }
+
+  killNearestKnight() {
+    if (this.world.enemies && Array.isArray(this.world.enemies)) {
+      let nearestKnight = null;
+      let minDistance = Infinity;
+      this.world.enemies.forEach((enemy) => {
+        if (enemy instanceof Knight) {
+          const distance = Math.abs(this.x - enemy.x);
+          if (distance < minDistance) {
+            minDistance = distance;
+            nearestKnight = enemy;
+          }
+        }
+      });
+      if (nearestKnight) {
+        nearestKnight.energy = 0;
+        nearestKnight.isDead = true;
+        nearestKnight.playAnimation(nearestKnight.IMAGES_DEAD); // Play death animation
+      }
+    }
+  }
+
   animate() {
     let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
     // Bewegungseingaben und Kamerabewegung
@@ -216,7 +248,8 @@ class Character extends MovableObject {
     return this.keyboard.RIGHT || this.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
   }
   hit(enemy) {
-    if (!this.invulnerable) {
+    const distance = Math.abs(this.x - enemy.x); // Berechne den Abstand zwischen Charakter und Feind
+    if (!this.invulnerable && distance < 100) { // Wenn der Charakter nicht unverwundbar ist und der Abstand kleiner als 100 ist
       this.energy -= 5; // Verringere die Energie bei einem Treffer
       if (this.energy <= 0) {
         this.energy = 0; // Energie kann nicht unter 0 fallen

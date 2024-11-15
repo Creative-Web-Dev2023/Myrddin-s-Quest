@@ -33,6 +33,13 @@ class Knight extends MovableObject {
         'img/knight/attack/attack 003.png',
     ];
 
+    IMAGES_DEAD = [
+        'img/knight/die/death 000.png',
+         'img/knight/die/death 001.png',
+         'img/knight/die/death 002.png',
+         'img/knight/die/death 003.png',
+    ];
+
     constructor(delay = 0, startX = 800, moveRange = 100) {
         super();
         this.x = startX;
@@ -42,6 +49,7 @@ class Knight extends MovableObject {
         this.loadImage('img/knight/walk/walk_0.png');
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ATTACKING);
+        this.loadImages(this.IMAGES_DEAD);
         this.speed = 0.02 + Math.random() * 0.1;
 
         setTimeout(() => {
@@ -106,7 +114,7 @@ class Knight extends MovableObject {
 
     animate() {
         setInterval(() => {
-            if (this.isMoving && !this.isAttacking) {
+            if (this.isMoving && !this.isAttacking && !this.isDead()) { // Use this.isDead() as a function
                 if (this.direction === 'left') {
                     this.moveLeft();
                     if (this.x <= this.startX - this.moveRange) {
@@ -124,7 +132,7 @@ class Knight extends MovableObject {
         }, 1000 / 30);
 
         setInterval(() => {
-            if (this.isMoving && !this.isAttacking) {
+            if (this.isMoving && !this.isAttacking && !this.isDead()) { // Use this.isDead() as a function
                 this.playAnimation(this.IMAGES_WALKING);
             }
         }, 1000 / 10); // Reduzieren Sie die Häufigkeit der Animationen
@@ -134,6 +142,10 @@ class Knight extends MovableObject {
             this.direction = this.direction === 'left' ? 'right' : 'left';
             this.otherDirection = !this.otherDirection;
         }, 3000); // Erhöhen Sie das Intervall für den Richtungswechsel
+    }
+
+    isDead() {
+        return this.energy <= 0;
     }
 }
 
