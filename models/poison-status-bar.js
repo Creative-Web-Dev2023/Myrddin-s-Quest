@@ -5,7 +5,7 @@ class PoisonStatusbar extends DrawableObject {
     "img/game_ui/statusbars/statusbar-poison/40.png", // 40 Bild
     "img/game_ui/statusbars/statusbar-poison/60.png", // 60 Bild
     "img/game_ui/statusbars/statusbar-poison/80.png", // 80 Bild
-    "img/game_ui/statusbars/statusbar-poison/100.png", //
+    "img/game_ui/statusbars/statusbar-poison/100.png", // 100 Bild
   ];
   percentage = 0;
 
@@ -21,6 +21,9 @@ class PoisonStatusbar extends DrawableObject {
   
   setPercentage(percentage) {
     this.percentage = percentage;
+    if (this.percentage > 100) {
+      this.percentage = 100;
+    }
     let path = this.POISON[this.resolveImageIndex()];
     this.img = this.imageCache[path];
   }

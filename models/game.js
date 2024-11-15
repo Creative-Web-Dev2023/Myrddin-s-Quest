@@ -95,7 +95,16 @@ class World {
       this.enemies.push(enemy);
     }
   
-    draw() {
+    draw(ctx) {
+      if (!ctx) {
+        console.error('Context is not defined');
+        return;
+      }
+      // Zeichne das Bild nur, wenn ctx definiert ist
+      if (this.img && this.img.complete) {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      }
+    
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.translate(this.camera_x, 0); // Verschiebe die Kamera nach links
       this.addObjectsToMap(this.backgroundObjects); // Zeichne den Hintergrund
@@ -163,3 +172,21 @@ class World {
       this.ctx.restore(); // stellt den gespeicherten Zustand wieder her
     }
   }
+
+class Game {
+  // ...existing code...
+  init() {
+    this.world = new World(this.canvas, this.keyboard);
+    this.startGameLoop();
+  }
+
+  startGameLoop() {
+    const gameLoop = () => {
+      this.world.update();
+      this.world.draw();
+      requestAnimationFrame(gameLoop);
+    };
+    gameLoop();
+  }
+  // ...existing code...
+}

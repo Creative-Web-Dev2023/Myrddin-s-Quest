@@ -34,13 +34,12 @@ class World {
   }
   initializeCoins() {
     return [
-      new Coin(350, 230, 20, 40),
       new Coin(950, 250, 20, 20),
       new Coin(1350, 230, 20, 40),
-      new Coin(1600, 250, 20, 20),
-      new Coin(1900, 230, 20, 40),
-      new Coin(2150, 250, 20, 20),
-      new Coin(2500, 230, 20, 40),
+      new Coin(1700, 250, 20, 20),
+      new Coin(2000, 230, 20, 40),
+      new Coin(2200, 250, 20, 20),
+      new Coin(2700, 230, 20, 40),
     ];
   }
 

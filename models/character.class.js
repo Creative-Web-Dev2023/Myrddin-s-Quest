@@ -109,39 +109,8 @@ class Character extends MovableObject {
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
     this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
-    this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
-    this.addKeyboardListeners();
+    this.coinStatusBar.setPercentage(20); // Initialize coin status bar to 20%
   }
-
-  addKeyboardListeners() {
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'a' || event.key === 'A') {
-        this.killNearestKnight();
-      }
-    });
-  }
-
-  killNearestKnight() {
-    if (this.world.enemies && Array.isArray(this.world.enemies)) {
-      let nearestKnight = null;
-      let minDistance = Infinity;
-      this.world.enemies.forEach((enemy) => {
-        if (enemy instanceof Knight) {
-          const distance = Math.abs(this.x - enemy.x);
-          if (distance < minDistance) {
-            minDistance = distance;
-            nearestKnight = enemy;
-          }
-        }
-      });
-      if (nearestKnight) {
-        nearestKnight.energy = 0;
-        nearestKnight.isDead = true;
-        nearestKnight.playAnimation(nearestKnight.IMAGES_DEAD); // Play death animation
-      }
-    }
-  }
-
   animate() {
     let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
     // Bewegungseingaben und Kamerabewegung
@@ -226,22 +195,42 @@ class Character extends MovableObject {
        if (coin.isActive && this.checkCollision(coin)) {
          coin.deactivate();
          this.coinsCollected++;
-         this.coinStatusBar.setPercentage(this.coinsCollected * 20); // Update the status bar
+         this.coinStatusBar.setPercentage(20 + this.coinsCollected * 20); // Update the status bar starting from 20%
        }
      });
    }
   }
 
   attack() {
-    this.world.enemies.forEach((enemy) => {
-      if (this.isColliding(enemy)) {
-        enemy.energy -= 10; // Verringere die Energie des Feindes bei einem Treffer
-        if (enemy.energy <= 0) {
-          enemy.energy = 0; // Energie kann nicht unter 0 fallen
-          enemy.isDead = true; // Setze den Feind auf tot
+    if (this.world.enemies && Array.isArray(this.world.enemies)) {
+      let nearestKnight = null; // Setze den nächsten Ritter auf null
+      let minDistance = Infinity; // Setze den Abstand auf unendlich
+      this.world.enemies.forEach((enemy) => {
+        if (enemy instanceof Knight) { // Prüfen, ob der Feind ein Ritter ist
+          const distance = Math.abs(this.x - enemy.x); // Berechne den Abstand zwischen Charakter und Feind
+          if (distance < minDistance) { // Wenn der Abstand kleiner als der bisherige kleinste Abstand ist
+            minDistance = distance; // Setze den Abstand auf den neuen kleinsten Abstand
+            nearestKnight = enemy; // Setze den Feind auf den nächsten Ritter
+          }
+        }
+      });
+      if (nearestKnight) {
+        nearestKnight.energy -= 10; // Verringere die Energie des Feindes bei einem Treffer
+        if (nearestKnight.energy <= 0) { // Wenn die Energie des Feindes 0 erreicht
+          nearestKnight.energy = 0; // Energie kann nicht unter 0 fallen
+          nearestKnight.isDead = true; // Setze den Feind auf tot
+          nearestKnight.playAnimation(nearestKnight.IMAGES_DEAD); // Play death animation
+          setTimeout(() => {
+            const index = this.world.enemies.indexOf(nearestKnight);
+            if (index > -1) {
+              this.world.enemies.splice(index, 1); // Entferne den Feind aus dem Array
+            }
+          }, 2000); // Entferne den Feind nach 2 Sekunden
+        } else {
+          nearestKnight.playAnimation(nearestKnight.IMAGES_HURT); // Play hurt animation
         }
       }
-    });
+    }
   }
 
   isMoving() {
