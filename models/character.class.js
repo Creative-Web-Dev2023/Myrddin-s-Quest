@@ -2,11 +2,12 @@ class Character extends MovableObject {
   height = 290;
   width = 520;
   x = 130;
-  y = 150;
+  y = 150; // Stellen Sie sicher, dass dies eine angemessene Höhe ist
   speed = 5;
   coins = 0;
   coinStatusBar;
   invulnerable = false;
+  poisonCollected = 0; // Gift gesammelt
 
   offset = {
     top: 50, // Reduziert das Rechteck von oben
@@ -103,7 +104,6 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_ATTACK);
     this.world = world || {}; // Ensure world is initialized
-    this.world.keyboard = {}; // Initialize keyboard property
     this.coinsCollected = 0; // Münzen gesammelt
     
     this.applyGravity();
@@ -112,70 +112,52 @@ class Character extends MovableObject {
     this.animate();
     this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
+    this.poisonStatusBar = new PoisonStatusbar(); // Statusleiste für Gift
+    this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
   }
+
   animate() {
-    let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
-    // Bewegungseingaben und Kamerabewegung
-    setInterval(() => {
-      if (!this.isDead()) {
-        // Nur bewegen, wenn der Charakter nicht tot ist
-        this.walking_sound.pause(); 
-        // Bewegung nach rechts
-        if (
-          this.world.keyboard.RIGHT &&
-          this.x < this.world.level.level_end_x
-        ) {
-          this.moveRight();
-          this.otherDirection = false;
-          this.walking_sound.play();
-        }
-        // Bewegung nach links
-        if (this.world.keyboard.LEFT && this.x > 0) {
-          this.moveLeft();
-          this.otherDirection = true;
-          this.walking_sound.play();
-        }
-        // Springen
-        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-          this.jump();
-        }
-        // Angriff
-        if (this.world.keyboard.ATTACK) {
-          this.attack();
-        }
-        // Kamera-Bewegung
-        this.world.camera_x = -this.x - 190;
-        // **Münzen sammeln**
-        this.collectCoins(); // Prüfe Kollisionen mit Münzen bei jeder Bewegung
-      }
-    }, 1000 / 60); // 60x pro Sekunde
-  
-    // Animationen für den Charakter
-    setInterval(() => {
-      if (this.isDead() && !deadAnimationPlayed) {
+    this.animationInterval = setInterval(() => {
+      if (this.isDead()) {
         this.playAnimation(this.IMAGES_DEAD);
-        deadAnimationPlayed = true;
-        this.speed = 0;
-        this.speedY = 0;
-        setTimeout(() => {
-          this.loadImage(this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]);
-        }, (this.IMAGES_DEAD.length - 1) * 100);
-      } else if (!this.isDead()) {
-        deadAnimationPlayed = false;
-        if (this.isHurt()) {
-          this.playAnimation(this.IMAGES_HURT);
-        } else if (this.world.keyboard.ATTACK) {
-          this.playAnimation(this.IMAGES_ATTACK);
-          this.attack_sound.play();
-        } else if (this.isAboveGround()) {
-          this.playAnimation(this.IMAGES_JUMPING);
-        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-          this.playAnimation(this.IMAGES_WALKING);
-        } else {
-          this.playAnimation(this.IMAGES_IDLE);
-        }
+        clearInterval(this.animationInterval);
+      } else if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT);
+      } else if (this.world.keyboard && this.world.keyboard.ATTACK) {
+        this.playAnimation(this.IMAGES_ATTACK);
+        this.attack_sound.play();
+      } else if (this.isAboveGround()) {
+        this.playAnimation(this.IMAGES_JUMPING);
+      } else if (this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+        this.playAnimation(this.IMAGES_WALKING);
+      } else {
+        this.playAnimation(this.IMAGES_IDLE);
       }
     }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+  }
+
+  update() {
+    if (!this.isDead()) {
+      this.walking_sound.pause();
+      if (this.world.keyboard && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+        this.moveRight();
+        this.otherDirection = false;
+        this.walking_sound.play();
+      }
+      if (this.world.keyboard && this.world.keyboard.LEFT && this.x > 0) {
+        this.moveLeft();
+        this.otherDirection = true;
+        this.walking_sound.play();
+      }
+      if (this.world.keyboard && this.world.keyboard.SPACE && !this.isAboveGround()) {
+        this.jump();
+      }
+      if (this.world.keyboard && this.world.keyboard.ATTACK) {
+        this.attack();
+      }
+      this.world.camera_x = -this.x - 190;
+      this.collectCoins();
+    }
   }
   
   jump() {
@@ -256,8 +238,25 @@ class Character extends MovableObject {
     }
   }
 
+  checkCollisionWithPoison() {
+    if (this.world.poisonObjects) {
+      this.world.poisonObjects.forEach((poison) => {
+        if (this.isColliding(poison)) {
+          poison.deactivate();
+          this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
+          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
+          this.world.killSnakes(); // Schlangen töten
+        }
+      });
+    }
+  }
+
+  isAboveGround() {
+    return this.y < 150; // Passen Sie dies an die tatsächliche Bodenhöhe an
+  }
+
   isMoving() {
-    return this.keyboard.RIGHT || this.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
+    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
   }
   hit(enemy) {
     const distance = Math.abs(this.x - enemy.x); // Berechne den Abstand zwischen Charakter und Feind

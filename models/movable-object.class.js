@@ -6,6 +6,7 @@ class MovableObject extends DrawableObject {
   acceleration = 2.5;
   energy = 100;
   lastHit = 0;
+  currentImage = 0;
 
   offset = {
       top: 0,     // Wie viel kleiner das Rechteck von oben sein soll
@@ -26,16 +27,16 @@ class MovableObject extends DrawableObject {
     return this.y < 150;
   }
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake) {
+    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof PoisonObject) {
       this.drawRectangle = true;
       ctx.beginPath();
-    ctx.lineWidth = '5';
-    ctx.strokeStyle = 'blue';
-    ctx.rect(  // Rechteck wird um die Offsets kleiner gezeichnet
-        this.x + this.offset.left,
-        this.y + this.offset.top,
-        this.width - this.offset.left - this.offset.right, // breite-Offest links und rechts
-        this.height - this.offset.top - this.offset.bottom // höhe-Offset oben und unten
+      ctx.lineWidth = '5';
+      ctx.strokeStyle = 'blue';
+      ctx.rect(  // Rechteck wird um die Offsets kleiner gezeichnet
+          this.x + this.offset.left,
+          this.y + this.offset.top,
+          this.width - this.offset.left - this.offset.right, // breite-Offest links und rechts
+          this.height - this.offset.top - this.offset.bottom // höhe-Offset oben und unten
       );
       ctx.stroke();
     }
@@ -64,7 +65,7 @@ class MovableObject extends DrawableObject {
     this.currentImage++;
     if (this.currentImage >= images.length) { // 
       this.currentImage = 0; // Setze auf den ersten Frame zurück
-  }
+    }
   }
   
   moveRight() {

@@ -56,7 +56,7 @@ class Knight extends MovableObject {
         this.loadImages(this.IMAGES_ATTACKING);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
-        this.speed = 0.02 + Math.random() * 0.1;
+        this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
 
         setTimeout(() => {
             this.isMoving = true;
@@ -141,7 +141,7 @@ class Knight extends MovableObject {
             if (this.isMoving && !this.isAttacking) { // Use this.isDead() as a function
                 this.playAnimation(this.IMAGES_WALKING);
             }
-        }, 1000 / 10); // Reduzieren Sie die Häufigkeit der Animationen
+        }, 1000 / 8); // Reduzieren Sie die Häufigkeit der Animationen
 
         // Häufiger Richtungswechsel
         setInterval(() => {

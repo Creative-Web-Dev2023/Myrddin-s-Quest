@@ -18,20 +18,22 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.level = level1; // Stellen Sie sicher, dass level1 hier verfügbar ist
-    this.character = new Character(); // Initialize character
-    this.coinsArray = this.initializeCoins();
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
     this.poisonStatusBar = new PoisonStatusbar();
     this.statusBar = new Statusbar(); // Instanz hier erstellen
+    this.character = new Character(this, this.coinStatusBar); // Initialize character with parameters
+    this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
+    this.coinsArray = this.initializeCoins();
     this.backgroundObjects = this.level.backgroundObjects || []; // Sicherstellen, dass es ein Array ist
     this.enemies = this.level.enemies || []; // Sicherstellen, dass es ein Array ist
     this.setWorld();
-    this.checkCollisionsWithEnemy();
+    this.startGameLoop();
   }
 
   setWorld() {
     this.character.world = this;
   }
+
   initializeCoins() {
     return [
       new Coin(950, 300, 60, 60),
@@ -43,26 +45,34 @@ class World {
     ];
   }
 
-  checkCollisionsWithEnemy() {
-    setInterval(() => {
-      this.level.enemies.forEach((enemy) => {
-        if (this.character.isColliding(enemy)) {
-          this.character.hit(enemy);
-          this.statusBar.setPercentage(this.character.energy);
-        }
-      });
-    }, 100);
-  }
-  checkCollision(object1, object2) {
-    return (
-      object1.x < object2.x + object2.width &&
-      object1.x + object1.width > object2.x &&
-      object1.y < object2.y + object2.height &&
-      object1.y + object1.height > object2.y
-    );
+  startGameLoop() {
+    const gameLoop = () => {
+      this.update();
+      this.draw();
+      requestAnimationFrame(gameLoop);
+    };
+    gameLoop();
   }
 
   update() {
+    this.checkCollisionsWithEnemy();
+    this.character.update();
+    this.updateCoins();
+    this.updatePoison();
+    this.addCloudsWhenCharacterMoves();
+  }
+
+  checkCollisionsWithEnemy() {
+    this.level.enemies.forEach((enemy) => {
+      if (this.character.isColliding(enemy)) {
+        this.character.hit(enemy);
+        this.statusBar.setPercentage(this.character.energy);
+      }
+    });
+    this.character.checkCollisionWithPoison();
+  }
+
+  updateCoins() {
     this.coinsArray.forEach((coin, index) => {
       if (coin.isActive && this.checkCollision(this.character, coin)) {
         coin.deactivate(); // Münze inaktiv setzen
@@ -71,6 +81,31 @@ class World {
         this.coinStatusBar.increasePercentage(20); // Statusbar aktualisieren
       }
     });
+  }
+
+  updatePoison() {
+    this.level.poisonObjects.forEach((poison, index) => {
+      if (poison.isActive && this.checkCollision(this.character, poison)) {
+        poison.deactivate(); // Gift inaktiv setzen
+        this.level.poisonObjects.splice(index, 1); // Gift aus dem Array entfernen
+        this.character.poisonCollected++; // Giftzähler erhöhen
+        this.poisonStatusBar.setPercentage(this.character.poisonCollected * 20); // Statusbar aktualisieren
+        this.killSnakes(); // Schlangen töten
+      }
+    });
+  }
+
+  killSnakes() {
+    this.level.enemies = this.level.enemies.filter(enemy => !(enemy instanceof Snake));
+  }
+
+  checkCollision(object1, object2) {
+    return (
+      object1.x < object2.x + object2.width &&
+      object1.x + object1.width > object2.x &&
+      object1.y < object2.y + object2.height &&
+      object1.y + object1.height > object2.y
+    );
   }
 
   addCloudsWhenCharacterMoves() {
@@ -115,16 +150,17 @@ class World {
         coin.draw(this.ctx, this.camera_x); // Münze zeichnen
         coin.drawCollisionBox(this.ctx); // Kollisionsbox der Münze
     });
-
+    if (this.level.poisonObjects) { // Überprüfen, ob poisonObjects definiert ist
+      this.level.poisonObjects.forEach((poison) => { // Giftobjekte zeichne
+        poison.draw(this.ctx, this.camera_x); // Giftobjekt zeichnen
+        poison.drawCollisionBox(this.ctx); // Kollisionsbox des Giftobjekts
+      });
+    }
     this.character.drawCollisionBox(this.ctx); // Kollisionsbox des Charakters anzeigen
     this.ctx.translate(-this.camera_x, 0);// Kamera zurücksetzen
     this.enemies.forEach(enemy => enemy.draw(this.ctx));// Zeichne Animationen für alle Gegner und Charaktere
     this.characters.forEach(character => character.draw(this.ctx));
-    let self = this;// Nächstes Frame zeichnen
-    requestAnimationFrame(function () {
-        self.draw(); // Zeichne das nächste Frame
-    });
-}
+  }
 
   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {

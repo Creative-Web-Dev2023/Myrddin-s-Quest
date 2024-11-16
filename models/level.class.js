@@ -3,13 +3,14 @@ class Level {
     clouds;
     backgroundObjects;
     coins;
+    poisonObjects;
     level_end_x = 5000; // Level endet bei x = 5000;
     
-  
-    constructor(enemies, clouds, backgroundObjects) {
+    constructor(enemies, clouds, backgroundObjects, poisonObjects) {
       this.enemies = enemies;
       this.clouds = clouds;
       this.backgroundObjects = backgroundObjects;
+      this.poisonObjects = poisonObjects || [];  // Poison-Objekte initialisieren
       this.coins = [];
       this.createCoins();
     }
@@ -25,14 +26,13 @@ class Level {
       this.backgroundObjects.forEach((bg) => bg.draw(ctx)); // Zeichne die Hintergrundobjekte
       this.clouds.forEach((cloud) => cloud.draw(ctx)); // Zeichne die Wolken
       this.enemies.forEach((enemy) => enemy.draw(ctx)); // Zeichne die Feinde
+      this.poisonObjects.forEach((poison) => poison.draw(ctx)); // Zeichne die Poison-Objekte
       this.coins.forEach((coin) => coin.draw(ctx)); // Zeichne die Münzen
     }
   
     // Beispiel für eine Kollisionserkennung zwischen dem Charakter und den Münzen
     checkCollisions(character) {
       this.coins.forEach((coin) => {
-
-        
         if (coin.isActive) {
           // Überprüfe die Kollision zwischen dem Charakter und der Münze
           if (
@@ -47,5 +47,4 @@ class Level {
         }
       });
     }
-  }
-  
+}
