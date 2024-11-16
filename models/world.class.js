@@ -34,12 +34,12 @@ class World {
   }
   initializeCoins() {
     return [
-      new Coin(950, 250, 20, 20),
-      new Coin(1350, 230, 20, 40),
-      new Coin(1700, 250, 20, 20),
-      new Coin(2000, 230, 20, 40),
-      new Coin(2200, 250, 20, 20),
-      new Coin(2700, 230, 20, 40),
+      new Coin(950, 300, 60, 60),
+      new Coin(1350, 300, 60, 60),
+      new Coin(1700, 300, 60, 60),
+      new Coin(2000, 300, 60, 60),
+      new Coin(2200, 300, 60, 60),
+      new Coin(2700, 300, 60, 60),
     ];
   }
 
@@ -97,31 +97,34 @@ class World {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.translate(this.camera_x, 0); // Verschiebe die Kamera nach links
-    this.addObjectsToMap(this.backgroundObjects); // Zeichne den Hintergrund
-    this.addObjectsToMap(this.level.clouds);
-    this.ctx.translate(-this.camera_x, 0); // Setze die Kamera zurück
 
-    // Zeichne fixierte Objekte (Statusleisten, Charaktere, Münzen, Gegner)
-    this.addToMap(this.coinStatusBar);
+    // Verschiebe die Kamera, um den Hintergrund anzupassen
+    this.ctx.translate(this.camera_x, 0);
+    this.addObjectsToMap(this.backgroundObjects); // Hintergrund zeichnen
+    this.addObjectsToMap(this.level.clouds);
+    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
+    this.addToMap(this.coinStatusBar);// Zeichne fixierte Objekte (Statusleisten)
     this.addToMap(this.poisonStatusBar);
     this.addToMap(this.statusBar);
-    this.statusBar.draw(this.ctx);
+    this.statusBar.draw(this.ctx); // Statusleisten separat zeichnen (falls erforderlich)
     this.coinStatusBar.draw(this.ctx);
-    this.ctx.translate(this.camera_x, 0);
+    this.ctx.translate(this.camera_x, 0);  // Zeichne Kamera-gebundene Objekte (Charakter, Gegner, Münzen)
     this.addObjectsToMap(this.enemies);
     this.addToMap(this.character);
-    this.coinsArray.forEach((coin) => coin.draw(this.ctx));
-    this.ctx.translate(-this.camera_x, 0);
+    this.coinsArray.forEach((coin) => { // Münzen zeichnen und Kollisionsbox anzeigen
+        coin.draw(this.ctx, this.camera_x); // Münze zeichnen
+        coin.drawCollisionBox(this.ctx); // Kollisionsbox der Münze
+    });
 
+    this.character.drawCollisionBox(this.ctx); // Kollisionsbox des Charakters anzeigen
+    this.ctx.translate(-this.camera_x, 0);// Kamera zurücksetzen
+    this.enemies.forEach(enemy => enemy.draw(this.ctx));// Zeichne Animationen für alle Gegner und Charaktere
     this.characters.forEach(character => character.draw(this.ctx));
-    this.enemies.forEach(enemy => enemy.draw(this.ctx));
-
-    let self = this;
+    let self = this;// Nächstes Frame zeichnen
     requestAnimationFrame(function () {
         self.draw(); // Zeichne das nächste Frame
     });
-  }
+}
 
   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {

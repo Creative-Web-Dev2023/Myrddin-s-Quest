@@ -6,14 +6,15 @@ class Character extends MovableObject {
   speed = 5;
   coins = 0;
   coinStatusBar;
-  invulnerable = false; // Neue Eigenschaft hinzufügen
+  invulnerable = false;
 
   offset = {
-    top: 13, // Reduziert das Rechteck von oben
-    bottom: 15, // Reduziert das Rechteck von unten
-    left: 199, // Reduziert das Rechteck von links
-    right: 190, // Reduziert das Rechteck von rechts
+    top: 50, // Reduziert das Rechteck von oben
+    bottom: 10, // Reduziert das Rechteck von unten
+    left: 200, // Reduziert das Rechteck von links
+    right: 200, // Reduziert das Rechteck von rechts
   };
+
   IMAGES_IDLE = [
     "img/wizard/idle/idle_000.png",
     "img/wizard/idle/idle_001.png",
@@ -104,12 +105,13 @@ class Character extends MovableObject {
     this.world = world || {}; // Ensure world is initialized
     this.world.keyboard = {}; // Initialize keyboard property
     this.coinsCollected = 0; // Münzen gesammelt
+    
     this.applyGravity();
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
     this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
-    this.coinStatusBar.setPercentage(20); // Initialize coin status bar to 20%
+    this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
   }
   animate() {
     let deadAnimationPlayed = false; // Flag, um die Dead-Animation nur einmal abzuspielen
@@ -117,50 +119,52 @@ class Character extends MovableObject {
     setInterval(() => {
       if (!this.isDead()) {
         // Nur bewegen, wenn der Charakter nicht tot ist
-        this.walking_sound.pause();
+        this.walking_sound.pause(); 
+        // Bewegung nach rechts
         if (
-          this.world.keyboard.RIGHT && // Prüfen, ob die rechte Pfeiltaste gedrückt ist
-          this.x < this.world.level.level_end_x // Prüfen, ob der Charakter das Ende des Levels erreicht hat
+          this.world.keyboard.RIGHT &&
+          this.x < this.world.level.level_end_x
         ) {
-          this.moveRight(); // Charakter nach rechts bewegen
-          this.otherDirection = false; // Richtung des Charakters auf rechts setzen
-          this.walking_sound.play(); // Abspielen des Laufgeräuschs
+          this.moveRight();
+          this.otherDirection = false;
+          this.walking_sound.play();
         }
+        // Bewegung nach links
         if (this.world.keyboard.LEFT && this.x > 0) {
-          // Prüfen, ob die linke Pfeiltaste gedrückt ist und der Charakter nicht am linken Rand ist
-          this.moveLeft(); // Charakter nach links bewegen
-          this.otherDirection = true; // Richtung des Charakters auf links setzen
-          this.walking_sound.play(); // Abspielen des Laufgeräuschs
+          this.moveLeft();
+          this.otherDirection = true;
+          this.walking_sound.play();
         }
+        // Springen
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-          // Prüfen, ob die Leertaste gedrückt ist und der Charakter nicht in der Luft ist
-          this.jump(); // Charakter springen lassen
+          this.jump();
         }
+        // Angriff
         if (this.world.keyboard.ATTACK) {
-          this.attack(); // Angriff ausführen
+          this.attack();
         }
-        this.world.camera_x = -this.x - 190; // Kamera an die Position des Charakters anpassen
+        // Kamera-Bewegung
+        this.world.camera_x = -this.x - 190;
+        // **Münzen sammeln**
+        this.collectCoins(); // Prüfe Kollisionen mit Münzen bei jeder Bewegung
       }
     }, 1000 / 60); // 60x pro Sekunde
-
+  
     // Animationen für den Charakter
     setInterval(() => {
       if (this.isDead() && !deadAnimationPlayed) {
-        //
         this.playAnimation(this.IMAGES_DEAD);
-        deadAnimationPlayed = true; // Animation nur einmal abspielen
-        this.speed = 0; // Stoppt alle Bewegungen
+        deadAnimationPlayed = true;
+        this.speed = 0;
         this.speedY = 0;
         setTimeout(() => {
-          // Letztes Bild der DEAD-Animation anzeigen, um das Wiederholen zu verhindern
           this.loadImage(this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1]);
-        }, (this.IMAGES_DEAD.length - 1) * 100); // 100 ms zwischen den Frames
+        }, (this.IMAGES_DEAD.length - 1) * 100);
       } else if (!this.isDead()) {
-        deadAnimationPlayed = false; // Setze Flag zurück, wenn der Charakter nicht tot ist
+        deadAnimationPlayed = false;
         if (this.isHurt()) {
           this.playAnimation(this.IMAGES_HURT);
         } else if (this.world.keyboard.ATTACK) {
-          // Angriff abspielen
           this.playAnimation(this.IMAGES_ATTACK);
           this.attack_sound.play();
         } else if (this.isAboveGround()) {
@@ -173,34 +177,53 @@ class Character extends MovableObject {
       }
     }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
   }
-
+  
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
-    this.collectCoins();
   }
 
-  // Methode zur Kollisionserkennung
   checkCollision(coin) {
-   return (
-    this.x < coin.x + coin.width &&  // Der Charakter geht bis zum rechten Rand der Münze
-    this.x + this.width > coin.x &&  // Der Charakter geht bis zum linken Rand der Münze
-    this.y < coin.y + coin.height &&  // Der Charakter geht bis zum unteren Rand der Münze
-    this.y + this.height > coin.y   // Der Charakter geht bis zum oberen Rand der Münze
-   );
+    const characterHitbox = {
+      x: this.x + this.offset.left, // Offset links hinzufügen
+      y: this.y + this.offset.top, // Offset oben hinzufügen
+      width: this.width - this.offset.left - this.offset.right, // Breite anpassen
+      height: this.height - this.offset.top - this.offset.bottom // Höhe anpassen
+    };
+ 
+    return (
+      characterHitbox.x < coin.x + coin.width &&
+      characterHitbox.x + characterHitbox.width > coin.x &&
+      characterHitbox.y < coin.y + coin.height &&
+      characterHitbox.y + characterHitbox.height > coin.y
+    );
+  }
+  
+
+  drawCollisionBox(ctx) {
+    ctx.beginPath();
+    ctx.lineWidth = "2";
+    ctx.strokeStyle = "red";
+    ctx.rect(
+      this.x + this.offset.left,
+      this.y + this.offset.top,
+      this.width - this.offset.left - this.offset.right,
+      this.height - this.offset.top - this.offset.bottom
+    ); // Zeichnet die angepasste Kollisionsbox
+    ctx.stroke();
   }
 
   collectCoins() {
-   if (this.world.coinsArray) {
-     this.world.coinsArray.forEach((coin) => {
-       if (coin.isActive && this.checkCollision(coin)) {
-         coin.deactivate();
-         this.coinsCollected++;
-         this.coinStatusBar.setPercentage(20 + this.coinsCollected * 20); // Update the status bar starting from 20%
-       }
-     });
-   }
+    if (this.world.coinsArray) {
+      this.world.coinsArray.forEach((coin) => {
+        if (coin.isActive && this.checkCollision(coin)) {
+          coin.deactivate();
+          this.coinsCollected += 1; // Erhöhe die gesammelten Münzen
+          this.coinStatusBar.setPercentage(this.coinsCollected * 20); // Update die Statusleiste
+        }
+      });
+    }
   }
-
+ 
   attack() {
     if (this.world.enemies && Array.isArray(this.world.enemies)) {
       let nearestKnight = null; // Setze den nächsten Ritter auf null

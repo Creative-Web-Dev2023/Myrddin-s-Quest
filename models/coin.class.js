@@ -57,4 +57,12 @@ class Coin extends DrawableObject {
   deactivate() {
     this.isActive = false; // Mache die Münze inaktiv, nachdem sie gesammelt wurde
   }
+
+  drawCollisionBox(ctx) {
+    ctx.beginPath();
+    ctx.lineWidth = "2";
+    ctx.strokeStyle = "blue";
+    ctx.rect(this.x, this.y, this.width, this.height); // Zeichnet die Kollisionsbox der Münze
+    ctx.stroke();
+  }
 }
