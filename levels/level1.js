@@ -95,10 +95,10 @@ const level1 = new Level(
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 8),
   ],
   [
-    new PoisonObject(1000, 380, 50, 50), 
-    new PoisonObject(1800, 380, 50, 50),
-    new PoisonObject(2500, 380 , 50, 50),
-    new PoisonObject(3000, 380, 50, 50),
-    new PoisonObject(3500, 380, 50, 50),
+    new PoisonObject(1500, 380, 50, 50), 
+    new PoisonObject(2500, 380, 50, 50),
+    new PoisonObject(3500, 380 , 50, 50),
+    new PoisonObject(4500, 380, 50, 50),
+    new PoisonObject(5500, 380, 50, 50),
   ]
 );

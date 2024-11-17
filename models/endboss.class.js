@@ -3,6 +3,7 @@ class Endboss extends MovableObject {
     width = 450;   // Breite des Endbosses
     y = -100;      // y-Position
     x = 5500;      // x-Position
+    energy = 100;  // Setze die Energie des Endbosses auf 100
    
     offset = {
         top: 180,    // Reduziert das Rechteck von oben
@@ -24,10 +25,38 @@ class Endboss extends MovableObject {
         'img/troll/idle/idle_009.png',
     ];
 
+    IMAGES_HURT = [
+        'img/troll/hurt/hurt_000.png',
+        'img/troll/hurt/hurt_001.png',
+        'img/troll/hurt/hurt_002.png',
+        'img/troll/hurt/hurt_003.png',
+        'img/troll/hurt/hurt_004.png',
+        'img/troll/hurt/hurt_005.png',
+        'img/troll/hurt/hurt_006.png',
+        'img/troll/hurt/hurt_007.png',
+        'img/troll/hurt/hurt_008.png',
+        'img/troll/hurt/hurt_009.png',
+    ];
+
+    IMAGES_DEAD = [
+        'img/troll/die/die_000.png',
+        'img/troll/die/die_001.png',
+        'img/troll/die/die_002.png',
+        'img/troll/die/die_003.png',
+        'img/troll/die/die_004.png',
+        'img/troll/die/die_005.png',
+        'img/troll/die/die_006.png',
+        'img/troll/die/die_007.png',
+        'img/troll/die/die_008.png',
+        'img/troll/die/die_009.png',
+    ];
+
     constructor() {
         super();
         this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
+        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_DEAD);
         this.animate();
     }
 

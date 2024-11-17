@@ -8,15 +8,18 @@ class World {
   lastCloudSpawn = 0; // Zeitpunkt, an dem die letzte Wolke erzeugt wurde
   cloudSpawnInterval = 3000; // Intervall (3 Sekunden)
   coinsArray = [];
+  poisonsArray = [];
   coinStatusBar; // Hier als Klassenattribut definiert
   statusBar; // Add statusBar as a class attribute
   characters = [];
   enemies = [];
+  endbossHealthBar; // Füge eine Statusleiste für den Endboss hinzu
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.keyboard.T = false; // Initialisiere die T-Taste
     this.level = level1; // Stellen Sie sicher, dass level1 hier verfügbar ist
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
     this.poisonStatusBar = new PoisonStatusbar();
@@ -24,8 +27,10 @@ class World {
     this.character = new Character(this, this.coinStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = this.initializeCoins();
+    this.poisonsArray = this.level.poisonObjects; // Initialisiere Giftobjekte
     this.backgroundObjects = this.level.backgroundObjects || []; // Sicherstellen, dass es ein Array ist
     this.enemies = this.level.enemies || []; // Sicherstellen, dass es ein Array ist
+    this.endbossHealthBar = new Statusbar(); // Instanz hier erstellen
     this.setWorld();
     this.startGameLoop();
   }
@@ -35,14 +40,16 @@ class World {
   }
 
   initializeCoins() {
-    return [
-      new Coin(950, 300, 60, 60),
-      new Coin(1350, 300, 60, 60),
-      new Coin(1700, 300, 60, 60),
-      new Coin(2000, 300, 60, 60),
-      new Coin(2200, 300, 60, 60),
-      new Coin(2700, 300, 60, 60),
-    ];
+    const coins = [];
+    const coinSpacing = 500; // Abstand zwischen den Münzen
+    const startX = 950; // Startposition der ersten Münze
+    const startY = 300; // Y-Position der Münzen
+
+    for (let i = 0; i < 10; i++) { // Anzahl der Münzen
+      coins.push(new Coin(startX + i * coinSpacing, startY));
+    }
+
+    return coins;
   }
 
   startGameLoop() {
@@ -60,6 +67,8 @@ class World {
     this.updateCoins();
     this.updatePoison();
     this.addCloudsWhenCharacterMoves();
+    this.checkCollisionsWithEndboss();
+    this.updateEndbossHealth();
   }
 
   checkCollisionsWithEnemy() {
@@ -70,6 +79,12 @@ class World {
       }
     });
     this.character.checkCollisionWithPoison();
+  }
+
+  checkCollisionsWithEndboss() {
+    if (this.level.endboss && this.character.isColliding(this.level.endboss)) {
+      this.character.attackEndboss(this.level.endboss);
+    }
   }
 
   updateCoins() {
@@ -84,15 +99,21 @@ class World {
   }
 
   updatePoison() {
-    this.level.poisonObjects.forEach((poison, index) => {
+    this.poisonsArray.forEach((poison, index) => {
       if (poison.isActive && this.checkCollision(this.character, poison)) {
         poison.deactivate(); // Gift inaktiv setzen
-        this.level.poisonObjects.splice(index, 1); // Gift aus dem Array entfernen
+        this.poisonsArray.splice(index, 1); // Gift aus dem Array entfernen
         this.character.poisonCollected++; // Giftzähler erhöhen
         this.poisonStatusBar.setPercentage(this.character.poisonCollected * 20); // Statusbar aktualisieren
         this.killSnakes(); // Schlangen töten
       }
     });
+  }
+
+  updateEndbossHealth() {
+    if (this.level.endboss) {
+      this.endbossHealthBar.setPercentage(this.level.endboss.energy);
+    }
   }
 
   killSnakes() {
@@ -132,7 +153,6 @@ class World {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     // Verschiebe die Kamera, um den Hintergrund anzupassen
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.backgroundObjects); // Hintergrund zeichnen
@@ -143,25 +163,27 @@ class World {
     this.addToMap(this.statusBar);
     this.statusBar.draw(this.ctx); // Statusleisten separat zeichnen (falls erforderlich)
     this.coinStatusBar.draw(this.ctx);
+    this.addToMap(this.endbossHealthBar); // Zeichne die Statusleiste des Endbosses
+    this.endbossHealthBar.draw(this.ctx);
     this.ctx.translate(this.camera_x, 0);  // Zeichne Kamera-gebundene Objekte (Charakter, Gegner, Münzen)
     this.addObjectsToMap(this.enemies);
     this.addToMap(this.character);
     this.coinsArray.forEach((coin) => { // Münzen zeichnen und Kollisionsbox anzeigen
-        coin.draw(this.ctx, this.camera_x); // Münze zeichnen
-        coin.drawCollisionBox(this.ctx); // Kollisionsbox der Münze
+        if (coin.isActive) {
+          coin.draw(this.ctx, this.camera_x); // Münze zeichnen
+          coin.drawCollisionBox(this.ctx); // Kollisionsbox der Münze
+        }
     });
-    if (this.level.poisonObjects) { // Überprüfen, ob poisonObjects definiert ist
-      this.level.poisonObjects.forEach((poison) => { // Giftobjekte zeichne
-        poison.draw(this.ctx, this.camera_x); // Giftobjekt zeichnen
-        poison.drawCollisionBox(this.ctx); // Kollisionsbox des Giftobjekts
-      });
-    }
+    this.poisonsArray.forEach((poison) => { // Giftobjekte zeichnen
+      poison.draw(this.ctx, this.camera_x); // Giftobjekt zeichnen
+      poison.drawCollisionBox(this.ctx, this.camera_x); // Kollisionsbox des Giftobjekts
+    });
     this.character.drawCollisionBox(this.ctx); // Kollisionsbox des Charakters anzeigen
     this.ctx.translate(-this.camera_x, 0);// Kamera zurücksetzen
     this.enemies.forEach(enemy => enemy.draw(this.ctx));// Zeichne Animationen für alle Gegner und Charaktere
     this.characters.forEach(character => character.draw(this.ctx));
   }
-
+  
   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {
         objects.forEach(object => {

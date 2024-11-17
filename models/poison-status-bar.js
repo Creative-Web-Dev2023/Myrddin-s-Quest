@@ -1,5 +1,5 @@
 class PoisonStatusbar extends DrawableObject {
-  POISON = [
+  IMAGES = [
     "img/game_ui/statusbars/statusbar-poison/0.png", // 0 Bild
     "img/game_ui/statusbars/statusbar-poison/20.png", // 20 Bild
     "img/game_ui/statusbars/statusbar-poison/40.png", // 40 Bild
@@ -7,11 +7,12 @@ class PoisonStatusbar extends DrawableObject {
     "img/game_ui/statusbars/statusbar-poison/80.png", // 80 Bild
     "img/game_ui/statusbars/statusbar-poison/100.png", // 100 Bild
   ];
-  percentage = 0;
-
+  
+  percentage = 0; // Start with an empty status bar
+  
   constructor() {
     super();
-    this.loadImages(this.POISON);
+    this.loadImages(this.IMAGES);
     this.x = 2; 
     this.y = 75; // Position der Statusbar
     this.width = 190;  // Passe die Breite an
@@ -21,26 +22,31 @@ class PoisonStatusbar extends DrawableObject {
   
   setPercentage(percentage) {
     this.percentage = percentage;
-    if (this.percentage > 100) {
-      this.percentage = 100;
-    }
-    let path = this.POISON[this.resolveImageIndex()];
+    let path = this.IMAGES[this.calculateImageIndex()];
     this.img = this.imageCache[path];
   }
-
-  resolveImageIndex() {
+  
+  calculateImageIndex() {
     if (this.percentage >= 100) {
       return 5;
-    } else if (this.percentage >= 80) {
-      return 4;
-    } else if (this.percentage >= 60) {
-      return 3;
-    } else if (this.percentage >= 40) {
-      return 2;
-    } else if (this.percentage >= 20) {
-      return 1;
-    } else {
-      return 0;
     }
+    if (this.percentage >= 80) {
+      return 4;
+    }
+    if (this.percentage >= 60) {
+      return 3;
+    }
+    if (this.percentage >= 40) {
+      return 2;
+    }
+    if (this.percentage >= 20) {
+      return 1;
+    }
+    return 0;
+  }
+
+  increasePercentage(amount) {
+    this.percentage = Math.min(100, this.percentage + amount);
+    this.setPercentage(this.percentage);
   }
 }

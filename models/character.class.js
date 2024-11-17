@@ -54,16 +54,13 @@ class Character extends MovableObject {
     "img/wizard/jump/jump_009.png",
   ];
   IMAGES_ATTACK = [
-    "img/wizard/attack/attack_000.png",
-    "img/wizard/attack/attack_001.png",
-    "img/wizard/attack/attack_002.png",
-    "img/wizard/attack/attack_003.png",
-    "img/wizard/attack/attack_004.png",
-    "img/wizard/attack/attack_005.png",
-    "img/wizard/attack/attack_006.png",
-    "img/wizard/attack/attack_007.png",
-    "img/wizard/attack/attack_008.png",
-    "img/wizard/attack/attack_009.png",
+    "img/wizard/attack/Attack1.png",
+    "img/wizard/attack/Attack2.png",
+    "img/wizard/attack/Attack3.png",
+    "img/wizard/attack/Attack4.png",
+    "img/wizard/attack/Attack5.png",
+    "img/wizard/attack/Attack6.png",
+    "img/wizard/attack/Attack7.png",
   ];
   IMAGES_DEAD = [
     "img/wizard/die/die_000.png",
@@ -90,10 +87,24 @@ class Character extends MovableObject {
     "img/wizard/hurt/hurt_008.png",
     "img/wizard/hurt/hurt_009.png",
   ];
+  IMAGES_FIRE_ATTACK = [
+    "img/wizard/fire/fire1.png",
+    "img/wizard/fire/fire2.png",
+    "img/wizard/fire/fire3.png",
+    "img/wizard/fire/fire4.png",
+    "img/wizard/fire/fire5.png",
+    "img/wizard/fire/fire6.png",
+    "img/wizard/fire/fire7.png",
+    "img/wizard/fire/fire8.png",
+    "img/wizard/fire/fire9.png",
+    "img/wizard/fire/fire10.png",
+  ];
 
   world = {};
   walking_sound = new Audio("audio/walking.mp3");
   attack_sound = new Audio("audio/wizard_attack.mp3");
+  fire_attack_sound = new Audio("audio/fire_attack.mp3");
+  collect_coin_sound = new Audio("audio/collect_coins.mp3");
 
   constructor(world, coinStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
@@ -103,9 +114,9 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_ATTACK);
+    this.loadImages(this.IMAGES_FIRE_ATTACK);
     this.world = world || {}; // Ensure world is initialized
     this.coinsCollected = 0; // Münzen gesammelt
-    
     this.applyGravity();
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
@@ -121,11 +132,18 @@ class Character extends MovableObject {
       if (this.isDead()) {
         this.playAnimation(this.IMAGES_DEAD);
         clearInterval(this.animationInterval);
-      } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
+      } else if (this.world.keyboard && this.world.keyboard.THROW) {
+        this.playAnimation(this.IMAGES_FIRE_ATTACK);
+        if (this.fire_attack_sound.paused) {
+          this.fire_attack_sound.play(); // Spiele den Angriffssound ab
+        }
       } else if (this.world.keyboard && this.world.keyboard.ATTACK) {
         this.playAnimation(this.IMAGES_ATTACK);
-        this.attack_sound.play();
+        if (this.attack_sound.paused) {
+          this.attack_sound.play();
+        }
+      } else if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT);
       } else if (this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
       } else if (this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
@@ -139,7 +157,7 @@ class Character extends MovableObject {
   update() {
     if (!this.isDead()) {
       this.walking_sound.pause();
-      if (this.world.keyboard && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      if (this.world.keyboard && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { 
         this.moveRight();
         this.otherDirection = false;
         this.walking_sound.play();
@@ -157,6 +175,20 @@ class Character extends MovableObject {
       }
       this.world.camera_x = -this.x - 190;
       this.collectCoins();
+      this.collectPoison(); // Überprüfe Kollision mit Giftflaschen
+    }
+  }
+
+  collectPoison() {
+    if (this.world.poisonsArray) {
+      this.world.poisonsArray.forEach((poison, index) => {
+        if (poison.isActive && this.checkCollision(poison)) {
+          poison.deactivate();
+          this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
+          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
+          this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
+        }
+      });
     }
   }
   
@@ -166,10 +198,10 @@ class Character extends MovableObject {
 
   checkCollision(coin) {
     const characterHitbox = {
-      x: this.x + this.offset.left, // Offset links hinzufügen
-      y: this.y + this.offset.top, // Offset oben hinzufügen
-      width: this.width - this.offset.left - this.offset.right, // Breite anpassen
-      height: this.height - this.offset.top - this.offset.bottom // Höhe anpassen
+      x: this.x, // Offset links entfernen
+      y: this.y, // Offset oben entfernen
+      width: this.width, // Breite anpassen
+      height: this.height // Höhe anpassen
     };
  
     return (
@@ -186,10 +218,10 @@ class Character extends MovableObject {
     ctx.lineWidth = "2";
     ctx.strokeStyle = "red";
     ctx.rect(
-      this.x + this.offset.left,
-      this.y + this.offset.top,
-      this.width - this.offset.left - this.offset.right,
-      this.height - this.offset.top - this.offset.bottom
+      this.x,
+      this.y,
+      this.width,
+      this.height
     ); // Zeichnet die angepasste Kollisionsbox
     ctx.stroke();
   }
@@ -201,6 +233,9 @@ class Character extends MovableObject {
           coin.deactivate();
           this.coinsCollected += 1; // Erhöhe die gesammelten Münzen
           this.coinStatusBar.setPercentage(this.coinsCollected * 20); // Update die Statusleiste
+          if (this.collect_coin_sound.paused) {
+            this.collect_coin_sound.play(); // Spiele den Münzensammelsound ab
+          }
         }
       });
     }
@@ -237,15 +272,33 @@ class Character extends MovableObject {
       }
     }
   }
+  attackEndboss(endboss) {
+    if (this.world.keyboard && this.world.keyboard.THROW) {
+      this.playAnimation(this.IMAGES_FIRE_ATTACK);
+      if (this.fire_attack_sound.paused) {
+        this.fire_attack_sound.play(); // Spiele den Angriffssound ab
+      }
+      endboss.energy -= 20; // Verringere die Energie des Endbosses
+      if (endboss.energy <= 0) {
+        endboss.energy = 0;
+        endboss.isDead = true;
+        endboss.playAnimation(endboss.IMAGES_DEAD);
+        setTimeout(() => {
+          this.world.level.endboss = null; // Entferne den Endboss aus der Welt
+        }, 2000);
+      } else {
+        endboss.playAnimation(endboss.IMAGES_HURT);
+      }
+    }
+  }
 
   checkCollisionWithPoison() {
-    if (this.world.poisonObjects) {
-      this.world.poisonObjects.forEach((poison) => {
-        if (this.isColliding(poison)) {
-          poison.deactivate();
-          this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
-          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
-          this.world.killSnakes(); // Schlangen töten
+    if (this.world.poisonArray) { // Überprüfe, ob es Giftobjekte gibt
+      this.world.poisonArray.forEach((poison) => {
+        if (poison.isActive && poison.checkCollision(this)) {
+          poison.deactivate(); // Giftflasche deaktivieren
+          this.poisonCollected += 1; // Sammelzähler für Gift erhöhen
+          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Statusleiste aktualisieren
         }
       });
     }

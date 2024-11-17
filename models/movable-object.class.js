@@ -16,7 +16,7 @@ class MovableObject extends DrawableObject {
   };
 
   applyGravity() {
-    setInterval(() => {
+    this.gravityInterval = setInterval(() => {
       if ( this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
@@ -43,10 +43,23 @@ class MovableObject extends DrawableObject {
   }
   // character.isColliding(knight)
   isColliding(mo) {
+    if (!mo) return false; // Überprüfen, ob das Objekt existiert
     return this.x + this.width > mo.x && //Rechteck Kollision
            this.x < mo.x + mo.width &&  
            this.y + this.height > mo.y &&
            this.y < mo.y + mo.height;
+  }
+
+  checkCollision(object) {
+    const hitbox1 = this.getHitbox();
+    const hitbox2 = object.getHitbox();
+    const collision = (
+      hitbox1.x < hitbox2.x + hitbox2.width &&
+      hitbox1.x + hitbox1.width > hitbox2.x &&
+      hitbox1.y < hitbox2.y + hitbox2.height &&
+      hitbox1.y + hitbox1.height > hitbox2.y
+    );
+    return collision;
   }
 
   isHurt(){
@@ -58,25 +71,27 @@ class MovableObject extends DrawableObject {
     return this.energy == 0;
   }
 
-  playAnimation(images){
-    let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
-    let path = images[i]; // Bildpfad aus dem Array
-    this.img = this.imageCache[path]; // Bild aus dem Cache setzen
-    this.currentImage++;
-    if (this.currentImage >= images.length) { // 
-      this.currentImage = 0; // Setze auf den ersten Frame zurück
+  playAnimation(images) {
+    if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
+      let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
+      let path = images[i]; // Bildpfad aus dem Array
+      this.img = this.imageCache[path]; // Bild aus dem Cache setzen
+      this.currentImage++;
+      if (this.currentImage >= images.length) { // 
+        this.currentImage = 0; // Setze auf den ersten Frame zurück
+      }
     }
   }
   
   moveRight() {
     this.x += this.speed;
-    if (this.walking_sound) {
+    if (this.walking_sound && this.walking_sound.paused) {
       this.walking_sound.play();
     }
   }
   moveLeft() {
     this.x -= this.speed;
-    if (this.walking_sound) {
+    if (this.walking_sound && this.walking_sound.paused) {
       this.walking_sound.play();
     }
   }

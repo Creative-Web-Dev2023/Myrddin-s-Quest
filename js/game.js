@@ -64,6 +64,9 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "KeyA") {
     keyboard.ATTACK = true; // Angriffstaste
   }
+  if (e.code === "KeyT") {
+    keyboard.THROW = true; // Feueranimationstaste
+  }
 });
 
 // Event Listener für das Loslassen der Tasten
@@ -85,6 +88,9 @@ window.addEventListener("keyup", (e) => {
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = false; // Angriffstaste loslassen
+  }
+  if (e.code === "KeyT") {
+    keyboard.THROW = false; // Feueranimationstaste loslassen
   }
 });
 

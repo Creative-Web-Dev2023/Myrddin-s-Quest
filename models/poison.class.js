@@ -10,42 +10,59 @@ class PoisonObject extends MovableObject {
     "img/poison/8.png",
   ];
 
-  isActive = true;
-
-  constructor(x, y, width, height) {
-    super();
-    this.x = x;
+  constructor(x, y) {
+    super(); // Konstruktor der Elternklasse aufrufen (MovableObject)
+    this.imageCache = {};
+    this.loadImages(this.IMAGES_POISON); // Bilder laden
+    this.x = x; // Position des Giftobjekts
     this.y = y;
-    this.width = width;
-    this.height = height;
-    this.loadImages(this.IMAGES_POISON);
-    this.animate();
+    this.width = 60; // Breite des Giftobjekts
+    this.height = 60; // Höhe des Giftobjekts
+    this.currentImageIndex = 0;
+    this.img = new Image();
+    this.img.src = this.IMAGES_POISON[this.currentImageIndex]; 
+    this.img.onload = () => {
+      this.animate(); // Beginne erst mit der Animation, wenn das Bild geladen ist
+    };
+    this.isActive = true;
   }
 
-  deactivate() {
-    this.isActive = false;
-    this.x = -1000; // Bewege das Objekt aus dem sichtbaren Bereich
+  loadImages(images) {
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+      this.imageCache[src] = img; // Speichern im Cache
+    });
   }
 
   animate() {
-    setInterval(() => {
-      this.playAnimation(this.IMAGES_POISON);
-    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+    this.animationInterval = setInterval(() => {
+      if (!this.isActive) { 
+        clearInterval(this.animationInterval); // Stoppe die Animation, wenn das Giftobjekt inaktiv wird
+        return;
+      }
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.IMAGES_POISON.length;
+      this.img = this.imageCache[this.IMAGES_POISON[this.currentImageIndex]]; // Aktualisiere das Bild
+    }, 100); // Geschwindigkeit der Animation (100ms pro Frame)
   }
 
-  draw(ctx, camera_x) {
+  draw(ctx) {
     if (this.isActive) {
-      ctx.drawImage(this.img, this.x + camera_x, this.y, this.width, this.height);
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
   }
 
-  drawCollisionBox(ctx, camera_x) {
-    if (this.isActive) {
-      ctx.beginPath();
-      ctx.lineWidth = "2";
-      ctx.strokeStyle = "red";
-      ctx.rect(this.x + camera_x, this.y, this.width, this.height);
-      ctx.stroke();
-    }
+  deactivate() {
+    this.isActive = false; // Mache das Giftobjekt inaktiv, nachdem es gesammelt wurde
+    this.x = -1000; // Bewege das Objekt aus dem sichtbaren Bereich
+    this.y = -1000; // Optional: Auch die Y-Koordinate anpassen
+  }
+
+  drawCollisionBox(ctx) {
+    ctx.beginPath();
+    ctx.lineWidth = "2";
+    ctx.strokeStyle = "red";
+    ctx.rect(this.x, this.y, this.width, this.height); // Zeichnet die Kollisionsbox des Giftobjekts
+    ctx.stroke();
   }
 }

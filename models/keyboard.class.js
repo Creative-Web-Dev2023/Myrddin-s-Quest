@@ -5,6 +5,7 @@ class Keyboard {
   DOWN = false;
   SPACE = false;
   ATTACK = false;
+  THROW = false; // Initialisiere die THROW-Taste
 
   constructor() {
     window.addEventListener('keydown', (event) => {
@@ -26,6 +27,9 @@ class Keyboard {
       if (event.key === 'a' || event.key === 'A') {
         this.ATTACK = true;
       }
+      if (event.key === 't' || event.key === 'T') {
+        this.THROW = true;
+      }
     });
 
     window.addEventListener('keyup', (event) => {
@@ -46,6 +50,9 @@ class Keyboard {
       }
       if (event.key === 'a' || event.key === 'A') {
         this.ATTACK = false;
+      }
+      if (event.key === 't' || event.key === 'T') {
+        this.THROW = false;
       }
     });
   }

@@ -22,11 +22,14 @@ class Level {
       }
     }
   
-    draw(ctx) {
+    draw(ctx, camera_x=0) {
       this.backgroundObjects.forEach((bg) => bg.draw(ctx)); // Zeichne die Hintergrundobjekte
       this.clouds.forEach((cloud) => cloud.draw(ctx)); // Zeichne die Wolken
       this.enemies.forEach((enemy) => enemy.draw(ctx)); // Zeichne die Feinde
-      this.poisonObjects.forEach((poison) => poison.draw(ctx)); // Zeichne die Poison-Objekte
+      this.poisonObjects.forEach((poison) => {
+        poison.draw(ctx, camera_x);         // Zeichne das Poison-Objekt
+        poison.drawCollisionBox(ctx, camera_x); // Zeichne die Kollisionbox
+      });
       this.coins.forEach((coin) => coin.draw(ctx)); // Zeichne die Münzen
     }
   
