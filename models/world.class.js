@@ -122,10 +122,10 @@ class World {
 
   checkCollision(object1, object2) {
     return (
-      object1.x < object2.x + object2.width &&
-      object1.x + object1.width > object2.x &&
-      object1.y < object2.y + object2.height &&
-      object1.y + object1.height > object2.y
+      object1.x + object1.offset.left < object2.x + object2.width && //  Kollision von links
+      object1.x + object1.width - object1.offset.right > object2.x && // Kollision von rechts
+      object1.y + object1.offset.top < object2.y + object2.height && // Kollision von oben
+      object1.y + object1.height - object1.offset.bottom > object2.y  // Kollision von unten
     );
   }
 

@@ -198,10 +198,10 @@ class Character extends MovableObject {
 
   checkCollision(coin) {
     const characterHitbox = {
-      x: this.x, // Offset links entfernen
-      y: this.y, // Offset oben entfernen
-      width: this.width, // Breite anpassen
-      height: this.height // Höhe anpassen
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
     };
  
     return (
