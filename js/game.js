@@ -43,7 +43,7 @@ function goBack() {
   impressum.classList.remove("show");
 }
 
-// Event Listener für Tastendrücke+
+// Event Listener für Tastendrücke
 
 window.addEventListener("keydown", (e) => {
   if (e.keyCode == 39) {

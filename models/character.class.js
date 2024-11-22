@@ -8,6 +8,7 @@ class Character extends MovableObject {
   coinStatusBar;
   invulnerable = false;
   poisonCollected = 0; // Gift gesammelt
+  attackCooldown = false;
 
   offset = {
     top: 50, // Reduziert das Rechteck von oben
@@ -106,7 +107,7 @@ class Character extends MovableObject {
   fire_attack_sound = new Audio("audio/fire_attack.mp3");
   collect_coin_sound = new Audio("audio/collect_coins.mp3");
 
-  constructor(world, coinStatusBar) {
+  constructor(world, coinStatusBar, poisonStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_WALKING);
@@ -123,8 +124,19 @@ class Character extends MovableObject {
     this.animate();
     this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
-    this.poisonStatusBar = new PoisonStatusbar(); // Statusleiste für Gift
+    this.poisonStatusBar = poisonStatusBar || new PoisonStatusbar(); // Statusleiste für Gift
     this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
+    this.healthBar = new Statusbar(); // Füge eine Statusleiste für den Charakter hinzu
+    this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
+    this.addKeyboardListeners();
+  }
+
+  addKeyboardListeners() {
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'a' || event.key === 'A') {
+        this.attackNearestKnight();
+      }
+    });
   }
 
   animate() {
@@ -191,6 +203,21 @@ class Character extends MovableObject {
       });
     }
   }
+
+  collectCoins() {
+    if (this.world.coinsArray) {
+      this.world.coinsArray.forEach((coin) => {
+        if (coin.isActive && this.checkCollision(coin)) {
+          coin.deactivate();
+          this.coinsCollected += 1; // Erhöhe die gesammelten Münzen
+          this.coinStatusBar.setPercentage(this.coinsCollected * 20); // Update die Statusleiste
+          if (this.collect_coin_sound.paused) {
+            this.collect_coin_sound.play(); // Spiele den Münzensammelsound ab
+          }
+        }
+      });
+    }
+  }
   
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
@@ -212,19 +239,6 @@ class Character extends MovableObject {
     );
   }
   
-
-  drawCollisionBox(ctx) {
-    ctx.beginPath();
-    ctx.lineWidth = "2";
-    ctx.strokeStyle = "red";
-    ctx.rect(
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    ); // Zeichnet die angepasste Kollisionsbox
-    ctx.stroke();
-  }
 
   collectCoins() {
     if (this.world.coinsArray) {
@@ -255,7 +269,7 @@ class Character extends MovableObject {
         }
       });
       if (nearestKnight) {
-        nearestKnight.energy -= 10; // Verringere die Energie des Feindes bei einem Treffer
+        nearestKnight.energy -= 5; // Verringere die Energie des Feindes bei einem Treffer
         if (nearestKnight.energy <= 0) { // Wenn die Energie des Feindes 0 erreicht
           nearestKnight.energy = 0; // Energie kann nicht unter 0 fallen
           nearestKnight.isDead = true; // Setze den Feind auf tot
@@ -293,9 +307,9 @@ class Character extends MovableObject {
   }
 
   checkCollisionWithPoison() {
-    if (this.world.poisonArray) { // Überprüfe, ob es Giftobjekte gibt
-      this.world.poisonArray.forEach((poison) => {
-        if (poison.isActive && poison.checkCollision(this)) {
+    if (this.world.poisonsArray) { // Überprüfe, ob es Giftobjekte gibt
+      this.world.poisonsArray.forEach((poison) => {
+        if (poison.isActive && this.checkCollision(poison)) {
           poison.deactivate(); // Giftflasche deaktivieren
           this.poisonCollected += 1; // Sammelzähler für Gift erhöhen
           this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Statusleiste aktualisieren
@@ -318,6 +332,7 @@ class Character extends MovableObject {
       if (this.energy <= 0) {
         this.energy = 0; // Energie kann nicht unter 0 fallen
       }
+      this.healthBar.setPercentage(this.energy); // Aktualisiere die Statusleiste des Charakters
       this.invulnerable = true; // Setze den Charakter für eine kurze Zeit unverwundbar
       setTimeout(() => {
         this.invulnerable = false; // Nach 1 Sekunde wieder verwundbar machen
@@ -329,5 +344,51 @@ class Character extends MovableObject {
   }
   isDead() {
     return this.energy == 0;// wenn seine Energie 0 ist, dann ist er tot
+  }
+  attackNearestKnight() {
+    if (this.attackCooldown) return;
+
+    const nearestKnight = this.findNearestKnight();
+    if (nearestKnight) {
+      nearestKnight.energy -= 5; // Verringere die Energie des Ritters
+      nearestKnight.healthBar.setPercentage(nearestKnight.energy); // Aktualisiere die Statusleiste des Ritters
+      if (nearestKnight.energy <= 0) {
+        nearestKnight.energy = 0;
+        nearestKnight.isDead = true;
+        nearestKnight.playAnimation(nearestKnight.IMAGES_DEAD); // Play death animation
+        setTimeout(() => {
+          const index = this.world.enemies.indexOf(nearestKnight);
+          if (index > -1) {
+            this.world.enemies.splice(index, 1); // Entferne den Feind aus dem Array
+          }
+        }, 7000); // Entferne den Feind nach 7 Sekunden
+      } else {
+        nearestKnight.playAnimation(nearestKnight.IMAGES_HURT); // Play hurt animation
+        nearestKnight.attackCharacter(this); // Ritter greift den Charakter an
+      }
+    }
+
+    this.attackCooldown = true;
+    setTimeout(() => {
+      this.attackCooldown = false;
+    }, 1500); // 1,5 Sekunden Abklingzeit
+  }
+
+  findNearestKnight() {
+    if (!this.world.enemies) {
+      return null;
+    }
+    let nearestKnight = null;
+    let minDistance = Infinity;
+    this.world.enemies.forEach((enemy) => {
+      if (enemy instanceof Knight) {
+        const distance = Math.abs(this.x - enemy.x);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearestKnight = enemy;
+        }
+      }
+    });
+    return nearestKnight;
   }
 }

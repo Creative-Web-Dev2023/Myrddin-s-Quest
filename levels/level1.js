@@ -99,6 +99,6 @@ const level1 = new Level(
     new PoisonObject(2500, 380, 50, 50),
     new PoisonObject(3500, 380 , 50, 50),
     new PoisonObject(4500, 380, 50, 50),
-    new PoisonObject(5500, 380, 50, 50),
+    new PoisonObject(5000, 380, 50, 50),
   ]
 );

@@ -24,7 +24,7 @@ class World {
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
     this.poisonStatusBar = new PoisonStatusbar();
     this.statusBar = new Statusbar(); // Instanz hier erstellen
-    this.character = new Character(this, this.coinStatusBar); // Initialize character with parameters
+    this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = this.initializeCoins();
     this.poisonsArray = this.level.poisonObjects; // Initialisiere Giftobjekte
@@ -40,6 +40,8 @@ class World {
   }
 
   initializeCoins() {
+
+    
     const coins = [];
     const coinSpacing = 500; // Abstand zwischen den Münzen
     const startX = 950; // Startposition der ersten Münze
@@ -69,6 +71,16 @@ class World {
     this.addCloudsWhenCharacterMoves();
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
+    this.updateKnightHealthBars(); // Fügen Sie diese Zeile hinzu
+  }
+
+  updateKnightHealthBars() {
+    this.level.enemies.forEach((enemy) => {
+      if (enemy instanceof Knight) {
+        enemy.update(); // Aktualisiere die Position der Statusleiste des Ritters
+        enemy.healthBar.setPercentage(enemy.energy);
+      }
+    });
   }
 
   checkCollisionsWithEnemy() {
@@ -89,7 +101,7 @@ class World {
 
   updateCoins() {
     this.coinsArray.forEach((coin, index) => {
-      if (coin.isActive && this.checkCollision(this.character, coin)) {
+      if (coin.isActive && this.character.checkCollision(coin)) {
         coin.deactivate(); // Münze inaktiv setzen
         this.coinsArray.splice(index, 1); // Münze aus dem Array entfernen
         this.character.coinsCollected++; // Münzenzähler erhöhen
@@ -100,12 +112,11 @@ class World {
 
   updatePoison() {
     this.poisonsArray.forEach((poison, index) => {
-      if (poison.isActive && this.checkCollision(this.character, poison)) {
+      if (poison.isActive && this.character.checkCollision(poison)) {
         poison.deactivate(); // Gift inaktiv setzen
         this.poisonsArray.splice(index, 1); // Gift aus dem Array entfernen
         this.character.poisonCollected++; // Giftzähler erhöhen
         this.poisonStatusBar.setPercentage(this.character.poisonCollected * 20); // Statusbar aktualisieren
-        this.killSnakes(); // Schlangen töten
       }
     });
   }
@@ -121,12 +132,12 @@ class World {
   }
 
   checkCollision(object1, object2) {
-    return (
-      object1.x + object1.offset.left < object2.x + object2.width && //  Kollision von links
-      object1.x + object1.width - object1.offset.right > object2.x && // Kollision von rechts
-      object1.y + object1.offset.top < object2.y + object2.height && // Kollision von oben
-      object1.y + object1.height - object1.offset.bottom > object2.y  // Kollision von unten
-    );
+    return object1.checkCollision(object2);
+  }
+
+  addCloudsWhenCharacterMoves() {
+    const now = new Date().getTime();
+    // Prüfen, ob der Charakter sich bewegt und nicht verletzt oder tot ist
   }
 
   addCloudsWhenCharacterMoves() {
@@ -171,16 +182,18 @@ class World {
     this.coinsArray.forEach((coin) => { // Münzen zeichnen und Kollisionsbox anzeigen
         if (coin.isActive) {
           coin.draw(this.ctx, this.camera_x); // Münze zeichnen
-          coin.drawCollisionBox(this.ctx); // Kollisionsbox der Münze
         }
     });
     this.poisonsArray.forEach((poison) => { // Giftobjekte zeichnen
       poison.draw(this.ctx, this.camera_x); // Giftobjekt zeichnen
-      poison.drawCollisionBox(this.ctx, this.camera_x); // Kollisionsbox des Giftobjekts
     });
-    this.character.drawCollisionBox(this.ctx); // Kollisionsbox des Charakters anzeigen
     this.ctx.translate(-this.camera_x, 0);// Kamera zurücksetzen
-    this.enemies.forEach(enemy => enemy.draw(this.ctx));// Zeichne Animationen für alle Gegner und Charaktere
+    this.enemies.forEach(enemy => {
+      enemy.draw(this.ctx);
+      if (enemy instanceof Knight) {
+        enemy.healthBar.draw(this.ctx); // Zeichne die Statusleiste des Ritters
+      }
+    });
     this.characters.forEach(character => character.draw(this.ctx));
   }
   

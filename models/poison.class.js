@@ -65,4 +65,27 @@ class PoisonObject extends MovableObject {
     ctx.rect(this.x, this.y, this.width, this.height); // Zeichnet die Kollisionsbox des Giftobjekts
     ctx.stroke();
   }
+
+  checkCollision(character) {
+    const poisonHitbox = {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    };
+
+    const characterHitbox = {
+      x: character.x + character.offset.left,
+      y: character.y + character.offset.top,
+      width: character.width - character.offset.left - character.offset.right,
+      height: character.height - character.offset.top - character.offset.bottom
+    };
+
+    return (
+      poisonHitbox.x < characterHitbox.x + characterHitbox.width &&
+      poisonHitbox.x + poisonHitbox.width > characterHitbox.x &&
+      poisonHitbox.y < characterHitbox.y + characterHitbox.height &&
+      poisonHitbox.y + poisonHitbox.height > characterHitbox.y
+    );
+  }
 }
