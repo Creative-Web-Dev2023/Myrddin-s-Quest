@@ -1,3 +1,6 @@
+// Ensure ThrowableObject class is imported or defined
+// import ThrowableObject from './throwable-object.class.js'; // Uncomment this line if using modules
+
 class Character extends MovableObject {
   height = 290;
   width = 520;
@@ -128,15 +131,15 @@ class Character extends MovableObject {
     this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
     this.healthBar = new Statusbar(); // Füge eine Statusleiste für den Charakter hinzu
     this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
-    this.addKeyboardListeners();
   }
 
-  addKeyboardListeners() {
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'a' || event.key === 'A') {
-        this.attackNearestKnight();
-      }
-    });
+  throwObject() {
+    if (this.world && this.world.throwableObjects) {
+      const throwableObject = new ThrowableObject(this.x, this.y);
+      this.world.throwableObjects.push(throwableObject);
+    } else {
+      console.error('throwableObjects array is not initialized in the world');
+    }
   }
 
   animate() {
@@ -188,6 +191,7 @@ class Character extends MovableObject {
       this.world.camera_x = -this.x - 190;
       this.collectCoins();
       this.collectPoison(); // Überprüfe Kollision mit Giftflaschen
+      this.checkJumpOnKnight(); // Überprüfe, ob auf einen Ritter gesprungen wurde
     }
   }
 
@@ -390,5 +394,82 @@ class Character extends MovableObject {
       }
     });
     return nearestKnight;
+  }
+
+  checkJumpOnKnight() {
+    this.world.enemies.forEach((enemy) => {
+      if (enemy instanceof Knight && this.isJumpingOn(enemy)) {
+        enemy.energy = 0; // Setze die Energie des Ritters auf 0
+        enemy.isDead = true; // Setze den Ritter auf tot
+        enemy.playAnimation(enemy.IMAGES_DEAD); // Play death animation
+        setTimeout(() => {
+          const index = this.world.enemies.indexOf(enemy);
+          if (index > -1) {
+            this.world.enemies.splice(index, 1); // Entferne den Feind aus dem Array
+          }
+        }, 2000); // Entferne den Feind nach 2 Sekunden
+      }
+    });
+  }
+
+  isJumpingOn(enemy) {
+    return (
+      this.isAboveGround() &&
+      this.speedY < 0 && // Ensure the character is falling
+      this.y + this.height > enemy.y && // Check if character's bottom is below enemy's top
+      this.y + this.height < enemy.y + enemy.height && // Check if character's bottom is above enemy's bottom
+      this.x + this.width > enemy.x && // Check if character's right is to the right of enemy's left
+      this.x < enemy.x + enemy.width // Check if character's left is to the left of enemy's right
+    );
+  }
+
+  checkSnakeAttack() {
+    this.world.enemies.forEach((enemy) => {
+      if (enemy instanceof Snake && this.isColliding(enemy)) {
+        enemy.attackCharacter(this); // Schlange greift den Charakter an
+      }
+    });
+  }
+
+  throwPoisonAtSnake() {
+    if (this.poisonCollected > 0) {
+      const nearestSnake = this.findNearestSnake();
+      if (nearestSnake) {
+        nearestSnake.energy -= 20; // Verringere die Energie der Schlange
+        if (nearestSnake.energy <= 0) {
+          nearestSnake.energy = 0;
+          nearestSnake.isDead = true;
+          nearestSnake.playAnimation(nearestSnake.IMAGES_DEAD); // Play death animation
+          setTimeout(() => {
+            const index = this.world.enemies.indexOf(nearestSnake);
+            if (index > -1) {
+              this.world.enemies.splice(index, 1); // Entferne die Schlange aus dem Array
+            }
+          }, 2000); // Entferne die Schlange nach 2 Sekunden
+        } else {
+          nearestSnake.playAnimation(nearestSnake.IMAGES_HURT); // Play hurt animation
+        }
+        this.poisonCollected -= 1; // Verringere die gesammelten Giftflaschen
+        this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
+      }
+    }
+  }
+
+  findNearestSnake() {
+    if (!this.world.enemies) {
+      return null;
+    }
+    let nearestSnake = null;
+    let minDistance = Infinity;
+    this.world.enemies.forEach((enemy) => {
+      if (enemy instanceof Snake) {
+        const distance = Math.abs(this.x - enemy.x);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearestSnake = enemy;
+        }
+      }
+    });
+    return nearestSnake;
   }
 }

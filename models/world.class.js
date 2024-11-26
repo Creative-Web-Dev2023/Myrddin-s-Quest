@@ -14,6 +14,7 @@ class World {
   characters = [];
   enemies = [];
   endbossHealthBar; // Füge eine Statusleiste für den Endboss hinzu
+  throwableObjects = [];
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -24,6 +25,7 @@ class World {
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
     this.poisonStatusBar = new PoisonStatusbar();
     this.statusBar = new Statusbar(); // Instanz hier erstellen
+    this.throwableObjects = []; // Ensure this array is initialized
     this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = this.initializeCoins();
@@ -31,6 +33,7 @@ class World {
     this.backgroundObjects = this.level.backgroundObjects || []; // Sicherstellen, dass es ein Array ist
     this.enemies = this.level.enemies || []; // Sicherstellen, dass es ein Array ist
     this.endbossHealthBar = new Statusbar(); // Instanz hier erstellen
+  
     this.setWorld();
     this.startGameLoop();
   }
@@ -40,8 +43,6 @@ class World {
   }
 
   initializeCoins() {
-
-    
     const coins = [];
     const coinSpacing = 500; // Abstand zwischen den Münzen
     const startX = 950; // Startposition der ersten Münze
@@ -138,11 +139,6 @@ class World {
   addCloudsWhenCharacterMoves() {
     const now = new Date().getTime();
     // Prüfen, ob der Charakter sich bewegt und nicht verletzt oder tot ist
-  }
-
-  addCloudsWhenCharacterMoves() {
-    const now = new Date().getTime();
-    // Prüfen, ob der Charakter sich bewegt und nicht verletzt oder tot ist
     if (
       this.character.isMoving() &&
       !this.character.isHurt() &&
@@ -176,6 +172,7 @@ class World {
     this.coinStatusBar.draw(this.ctx);
     this.addToMap(this.endbossHealthBar); // Zeichne die Statusleiste des Endbosses
     this.endbossHealthBar.draw(this.ctx);
+    this.addToMap(this.character.healthBar); // Zeichne die Statusleiste des Charakters
     this.ctx.translate(this.camera_x, 0);  // Zeichne Kamera-gebundene Objekte (Charakter, Gegner, Münzen)
     this.addObjectsToMap(this.enemies);
     this.addToMap(this.character);
@@ -186,6 +183,9 @@ class World {
     });
     this.poisonsArray.forEach((poison) => { // Giftobjekte zeichnen
       poison.draw(this.ctx, this.camera_x); // Giftobjekt zeichnen
+    });
+    this.throwableObjects.forEach((object) => { // Throwable objects zeichnen
+      object.draw(this.ctx, this.camera_x); // Throwable object zeichnen
     });
     this.ctx.translate(-this.camera_x, 0);// Kamera zurücksetzen
     this.enemies.forEach(enemy => {

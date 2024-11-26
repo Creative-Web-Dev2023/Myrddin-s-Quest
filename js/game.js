@@ -63,9 +63,15 @@ window.addEventListener("keydown", (e) => {
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = true; // Angriffstaste
+    world.character.attackNearestKnight(); // Call character method
   }
   if (e.code === "KeyT") {
     keyboard.THROW = true; // Feueranimationstaste
+    world.character.throwPoisonAtSnake(); // Call character method
+  }
+  if (e.code === "KeyD") {
+    keyboard.D = true; // D-Taste
+    world.character.throwObject(); // Call character method
   }
 });
 
@@ -91,6 +97,9 @@ window.addEventListener("keyup", (e) => {
   }
   if (e.code === "KeyT") {
     keyboard.THROW = false; // Feueranimationstaste loslassen
+  }
+  if (e.code === "KeyD") {
+    keyboard.D = false; // D-Taste loslassen
   }
 });
 

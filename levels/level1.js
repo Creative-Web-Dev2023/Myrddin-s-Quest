@@ -1,3 +1,6 @@
+// Ensure Snake class is imported or defined
+// import Snake from '../models/snake.class.js'; // Uncomment this line if using modules
+
 const level1 = new Level(
   [
     new Knight(0, 900, 100), // erster Ritter startet bei x = 900 und bewegt sich auf einem Bereich von 100px
