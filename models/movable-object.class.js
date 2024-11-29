@@ -23,8 +23,12 @@ class MovableObject extends DrawableObject {
       }
     }, 1000 / 25);
   }
-  isAboveGround() {
+  isAboveGround(){
+    if(this instanceof ThrowableObject){ 
+      return true;
+    }else{
     return this.y < 150;
+  }
   }
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof PoisonObject) {
@@ -60,6 +64,15 @@ class MovableObject extends DrawableObject {
       hitbox1.y + hitbox1.height > hitbox2.y
     );
     return collision;
+  }
+
+  getHitbox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
+    };
   }
 
   isHurt(){

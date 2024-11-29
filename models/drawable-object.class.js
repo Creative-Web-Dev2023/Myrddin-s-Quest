@@ -18,13 +18,11 @@ class DrawableObject {
     this.img.src = path;
   }
 
-  draw(ctx) {
-    if (this.img && this.img.complete && ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    } else {
-        console.error('Image or context is not defined or image not loaded');
-    }
+draw(ctx) {
+  if (this.img && this.img.complete && ctx) {
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }
+}
 
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Knight || this instanceof Endboss) {

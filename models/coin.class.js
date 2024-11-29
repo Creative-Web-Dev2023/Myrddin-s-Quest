@@ -20,8 +20,8 @@ class Coin extends DrawableObject {
     this.loadImages(this.IMAGES_COIN); // Bilder laden
     this.x = x; // Position der Münze
     this.y = y;
-    this.width = 60; // Breite des Münzbilder
-    this.height = 60; // Höhe des Münzbilder
+    this.width = 30; // Breite des Münzbilder
+    this.height = 30; // Höhe des Münzbilder
     this.currentImageIndex = 0;
     this.img = new Image();
     this.img.src = this.IMAGES_COIN[this.currentImageIndex]; 

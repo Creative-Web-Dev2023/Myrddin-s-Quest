@@ -1,12 +1,13 @@
 class ThrowableObject extends MovableObject {
   constructor(x, y) {
-    super();
-    this.x = 30;
-    this.y = 30;
-    this.speedY = 30;
-    this.speedX = 20;
-    this.loadImage('img/poison/1.png'); // Ensure this path is correct
-    this.throw();
+    super().loadImage("img/poison/1.png");
+    this.x = x; // Position des Objekts
+    this.y = y; // Position des Objekts
+    this.height = 90;
+    this.width = 40;
+    this.speedY = 30; // Erhöhte Geschwindigkeit, um den Bogen zu vergrößern
+    this.speedX = 15; // Erhöhte Geschwindigkeit, um den Bogen zu vergrößern
+    this.throw();                                    
   }
 
   throw() {

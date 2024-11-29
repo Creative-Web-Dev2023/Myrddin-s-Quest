@@ -1,3 +1,5 @@
+
+
 let canvas;
 let keyboard = new Keyboard();
 let world;
@@ -61,11 +63,14 @@ window.addEventListener("keydown", (e) => {
   if (e.keyCode == 32) {
     keyboard.SPACE = true;
   }
-  if (e.code === "KeyA") {
+  if (e.keyCode === 65) {
     keyboard.ATTACK = true; // Angriffstaste
   }
-  if (e.code === "KeyT") {
-    keyboard.THROW = true; // Taste für das Werfen der Giftflaschen
+  if (e.keyCode === 84) {
+    keyboard.THROW_FIRE = true; // Taste für Feuer spucken
+  }
+  if (e.keyCode === 68) {
+    keyboard.D = true; // Setze die D-Taste auf true
   }
 });
 
@@ -86,11 +91,14 @@ window.addEventListener("keyup", (e) => {
   if (e.keyCode == 32) {
     keyboard.SPACE = false;
   }
-  if (e.code === "KeyA") {
+  if (e.keyCode === 65) {
     keyboard.ATTACK = false; // Angriffstaste loslassen
   }
-  if (e.code === "KeyT") {
-    keyboard.THROW = false; // Taste für das Werfen der Giftflaschen loslassen
+  if (e.keyCode === 84) {
+    keyboard.THROW_FIRE = false; // Taste für Feuer spucken loslassen
+  }
+  if (e.keyCode === 68) {
+    keyboard.D = false; // Setze die D-Taste auf false
   }
 });
 

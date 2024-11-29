@@ -135,7 +135,7 @@ class Knight extends MovableObject {
 
     setInterval(() => {
       if (this.isMoving && !this.isAttacking) { // Use this.isDead() as a function
-        this.playAnimation(this.IMAGES_WALKING);
+        this.playAnimation(this.IMAGES_WALKING); 
       }
     }, 1000 / 8); // Reduzieren Sie die Häufigkeit der Animationen
 
@@ -145,24 +145,28 @@ class Knight extends MovableObject {
       this.otherDirection = !this.otherDirection;
     }, 3000); // Erhöhen Sie das Intervall für den Richtungswechsel
   }
-
+ 
+  
   isDead() {
     return this.energy <= 0;
 
   }
 
   attackCharacter(character) {
-    if (this.attackCooldown) return;
-
-    if (!this.isDead() && !character.isDead()) {
-      character.hit(this); // Rufe die hit-Methode des Charakters auf
+    if (this.attackCooldown || this.isDead()) return;
+  
+    // Prüfe, ob der Charakter in Reichweite ist (z. B. 100 Pixel)
+    const distance = Math.abs(this.x - character.x);
+    if (distance <= 100) {
+      character.hit(this); // Rufe die `hit()`-Methode des Charakters auf
     }
-
+  
     this.attackCooldown = true;
     setTimeout(() => {
       this.attackCooldown = false;
     }, 1500); // 1,5 Sekunden Abklingzeit
   }
+  
 
   update() {
     this.healthBar.x = this.x + this.width / 2 - this.healthBar.width / 2;

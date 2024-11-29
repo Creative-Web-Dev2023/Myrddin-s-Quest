@@ -1,13 +1,10 @@
-const level1 = new Level(
+const level2 = new Level(
   [
-    new Knight(0, 900, 100), // erster Ritter startet bei x = 900 und bewegt sich auf einem Bereich von 100px
-    new Knight(2000, 1500, 100), // zweiter Ritter startet mit 2 Sekunden Verzögerung bei x = 1500 und bewegt sich auf einem Bereich von 100px
-    new Knight(4000, 2100, 100), // dritter Ritter startet mit 4 Sekunden Verzögerung bei x = 2100 und bewegt sich auf einem Bereich von 100px
-    new Knight(8000, 2700, 100), // erster Ritter der zweiten Formation startet bei x = 2700 mit 8 Sekunden Verzögerung und bewegt sich auf einem Bereich von 100px
-    new Knight(10000, 3300, 100), // zweiter Ritter startet mit 10 Sekunden Verzögerung bei x = 3300 und bewegt sich auf einem Bereich von 100px
-    new Knight(12000, 3900, 100), // dritter Ritter startet mit 12 Sekunden Verzögerung bei x = 3900 und bewegt sich auf einem Bereich von 100px
+    new Snake(2000, 200),
+    new Snake(3000, 200),
+    new Snake(4000, 200),
     // Endboss am Schluss
-   
+    new Endboss(),
   ],
   [new Cloud(), new Cloud(), new Cloud()],
   [
@@ -91,5 +88,12 @@ const level1 = new Level(
     new BackgroundObject("img/skull/scull 000.png", 6000, 50, 10, 30), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 8),
   ],
-
+  [
+    new PoisonObject(1500, 380, 50, 50), 
+    new PoisonObject(2500, 380, 50, 50),
+    new PoisonObject(3500, 380 , 50, 50),
+    new PoisonObject(4500, 380, 50, 50),
+    new PoisonObject(5000, 380, 50, 50),
+  ]
+  
 );

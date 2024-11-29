@@ -5,7 +5,7 @@ class Keyboard {
   DOWN = false;
   SPACE = false;
   ATTACK = false;
-  THROW = false; // Initialisiere die THROW-Taste
+  THROW_FIRE = false; // Initialisiere die THROW-Taste
   D = false; // Initialisiere die D-Taste
 
  

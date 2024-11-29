@@ -9,6 +9,8 @@ class CoinStatusBar extends DrawableObject {
   ];
   
   percentage = 0; // Start with an empty status bar
+  totalCoins = 20; // Maximale Anzahl der Münzen
+  currentCoins = 0; // Anzahl der gesammelten Münzen
   
   constructor() {
     super();
@@ -20,8 +22,10 @@ class CoinStatusBar extends DrawableObject {
     this.setPercentage(0); // Initialize with 0%
   }
   
-  setPercentage(percentage) {
-    this.percentage = percentage;
+  // Methode zur Aktualisierung des Prozentsatzes
+  setPercentage(coins) {
+    this.currentCoins = coins;
+    this.percentage = (this.currentCoins / this.totalCoins) * 100; // Umrechnung der Münzen in Prozentsatz
     let path = this.IMAGES[this.calculateImageIndex()];
     this.img = this.imageCache[path];
   }
@@ -45,10 +49,9 @@ class CoinStatusBar extends DrawableObject {
     return 0;
   }
 
-  increasePercentage(amount) {
-    this.percentage = Math.min(100, this.percentage + amount);
-    this.setPercentage(this.percentage);
+  // Funktion zum Sammeln der Münzen und Aktualisieren der Statusbar
+  collectCoin() {
+    this.setPercentage(this.currentCoins + 1); // Eine Münze sammeln
   }
 }
-
 

@@ -1,6 +1,3 @@
-// Ensure ThrowableObject class is imported or defined
-// import ThrowableObject from './throwable-object.class.js'; // Uncomment this line if using modules
-
 class Character extends MovableObject {
   height = 290;
   width = 520;
@@ -135,7 +132,7 @@ class Character extends MovableObject {
 
   throwObject() {
     if (this.world && this.world.throwableObjects) {
-      const throwableObject = new ThrowableObject(this.x, this.y);
+      const throwableObject = new ThrowableObject(this.x + this.width / 2, this.y + this.height / 2);
       this.world.throwableObjects.push(throwableObject);
     } else {
       console.error('throwableObjects array is not initialized in the world');
@@ -146,7 +143,9 @@ class Character extends MovableObject {
     this.animationInterval = setInterval(() => {
       if (this.isDead()) {
         this.playAnimation(this.IMAGES_DEAD);
-        clearInterval(this.animationInterval);
+        if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
+          clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
+        }
       } else if (this.world.keyboard && this.world.keyboard.THROW) {
         this.playAnimation(this.IMAGES_FIRE_ATTACK);
         if (this.fire_attack_sound.paused) {
@@ -191,7 +190,6 @@ class Character extends MovableObject {
       this.world.camera_x = -this.x - 190;
       this.collectCoins();
       this.collectPoison(); // Überprüfe Kollision mit Giftflaschen
-      this.checkJumpOnKnight(); // Überprüfe, ob auf einen Ritter gesprungen wurde
     }
   }
 
@@ -213,8 +211,8 @@ class Character extends MovableObject {
       this.world.coinsArray.forEach((coin) => {
         if (coin.isActive && this.checkCollision(coin)) {
           coin.deactivate();
-          this.coinsCollected += 1; // Erhöhe die gesammelten Münzen
-          this.coinStatusBar.setPercentage(this.coinsCollected * 20); // Update die Statusleiste
+          this.coinsCollected++; // Erhöhe die gesammelten Münzen
+          this.coinStatusBar.setPercentage(this.coinsCollected); // Statusleiste aktualisieren
           if (this.collect_coin_sound.paused) {
             this.collect_coin_sound.play(); // Spiele den Münzensammelsound ab
           }
@@ -241,22 +239,6 @@ class Character extends MovableObject {
       characterHitbox.y < coin.y + coin.height &&
       characterHitbox.y + characterHitbox.height > coin.y
     );
-  }
-  
-
-  collectCoins() {
-    if (this.world.coinsArray) {
-      this.world.coinsArray.forEach((coin) => {
-        if (coin.isActive && this.checkCollision(coin)) {
-          coin.deactivate();
-          this.coinsCollected += 1; // Erhöhe die gesammelten Münzen
-          this.coinStatusBar.setPercentage(this.coinsCollected * 20); // Update die Statusleiste
-          if (this.collect_coin_sound.paused) {
-            this.collect_coin_sound.play(); // Spiele den Münzensammelsound ab
-          }
-        }
-      });
-    }
   }
  
   attack() {
@@ -396,33 +378,6 @@ class Character extends MovableObject {
     return nearestKnight;
   }
 
-  checkJumpOnKnight() {
-    this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight && this.isJumpingOn(enemy)) {
-        enemy.energy = 0; // Setze die Energie des Ritters auf 0
-        enemy.isDead = true; // Setze den Ritter auf tot
-        enemy.playAnimation(enemy.IMAGES_DEAD); // Play death animation
-        setTimeout(() => {
-          const index = this.world.enemies.indexOf(enemy);
-          if (index > -1) {
-            this.world.enemies.splice(index, 1); // Entferne den Feind aus dem Array
-          }
-        }, 2000); // Entferne den Feind nach 2 Sekunden
-      }
-    });
-  }
-
-  isJumpingOn(enemy) {
-    return (
-      this.isAboveGround() &&
-      this.speedY < 0 && // Ensure the character is falling
-      this.y + this.height > enemy.y && // Check if character's bottom is below enemy's top
-      this.y + this.height < enemy.y + enemy.height && // Check if character's bottom is above enemy's bottom
-      this.x + this.width > enemy.x && // Check if character's right is to the right of enemy's left
-      this.x < enemy.x + enemy.width // Check if character's left is to the left of enemy's right
-    );
-  }
-
   checkSnakeAttack() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Snake && this.isColliding(enemy)) {
@@ -471,5 +426,16 @@ class Character extends MovableObject {
       }
     });
     return nearestSnake;
+  }
+
+  resetForNewLevel() {
+    this.x = 130;
+    this.y = 150;
+    this.coinsCollected = 0;
+    this.poisonCollected = 0;
+    this.energy = 100;
+    this.healthBar.setPercentage(this.energy);
+    this.coinStatusBar.setPercentage(0);
+    this.poisonStatusBar.setPercentage(0);
   }
 }
