@@ -7,7 +7,7 @@ class ThrowableObject extends MovableObject {
     this.width = 40;
     this.speedY = 30; // Erhöhte Geschwindigkeit, um den Bogen zu vergrößern
     this.speedX = 15; // Erhöhte Geschwindigkeit, um den Bogen zu vergrößern
-    this.throw();                                    
+    this.throw();
   }
 
   throw() {

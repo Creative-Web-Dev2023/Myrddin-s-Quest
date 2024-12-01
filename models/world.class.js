@@ -85,18 +85,8 @@ class World {
     this.addCloudsWhenCharacterMoves();
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
-    this.updateKnightHealthBars(); // Fügen Sie diese Zeile hinzu
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
     this.checkLevelCompletion(); // Überprüfe, ob das Level abgeschlossen ist
-  }
-
-  updateKnightHealthBars() {
-    this.level.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight) {
-        enemy.update(); // Aktualisiere die Position der Statusleiste des Ritters
-        enemy.healthBar.setPercentage(enemy.energy);
-      }
-    });
   }
 
   checkCollisionsWithEnemy() {
@@ -187,9 +177,13 @@ class World {
     this.addToMap(this.statusBar);
     this.statusBar.draw(this.ctx); // Statusleisten separat zeichnen (falls erforderlich)
     this.coinStatusBar.draw(this.ctx);
-    this.addToMap(this.endbossHealthBar); // Zeichne die Statusleiste des Endbosses
-    this.endbossHealthBar.draw(this.ctx);
-    this.addToMap(this.character.healthBar); // Zedichne die Statusleiste des Charakters
+    if (this.currentLevelIndex === 1 && this.level.endboss) {
+      this.endbossHealthBar.x = this.level.endboss.x;
+      this.endbossHealthBar.y = this.level.endboss.y - 50; // Positioniere die Statusleiste über dem Endboss
+      this.addToMap(this.endbossHealthBar); // Zeichne die Statusleiste des Endbosses
+      this.endbossHealthBar.draw(this.ctx);
+    }
+    this.addToMap(this.character.healthBar); // Zeichne die Statusleiste des Charakters
     this.ctx.translate(this.camera_x, 0);  // Zeichne Kamera-gebundene Objekte (Charakter, Gegner, Münzen)
     this.addObjectsToMap(this.enemies);
     this.addToMap(this.character);
@@ -209,7 +203,7 @@ class World {
     this.enemies.forEach(enemy => {
       enemy.draw(this.ctx);
       if (enemy instanceof Knight) {
-        enemy.healthBar.draw(this.ctx); // Zeichne die Statusleiste des Ritters
+     
       }
     });
     this.characters.forEach(character => character.draw(this.ctx));
@@ -274,6 +268,7 @@ class World {
   checkThrowableObject() {
     if (this.keyboard.D && this.character.poisonCollected > 0) {
       this.character.throwObject();
+      playPoisonBottleSound(); // Sound abspielen, wenn die Flasche geworfen wird
     }
   }
 }

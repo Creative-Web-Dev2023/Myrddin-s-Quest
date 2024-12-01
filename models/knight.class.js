@@ -2,14 +2,13 @@ class Knight extends MovableObject {
   height = 270;
   width = 500;
   y = 240;
-  isMoving = false;
-  isAttacking = false;
   delay = 3000;
   direction = 'left';
   moveRange = 100; // Standardbewegungsbereich
   startX = 800; // Startposition
-  energy = 100; // Energie des Ritters
-  attackCooldown = false;
+  isMoving = false;
+  isAttacking = false;
+  dead = false; // Neuer Zustand für tot
 
   offset = {
     top: 80,
@@ -28,22 +27,18 @@ class Knight extends MovableObject {
   ];
 
   IMAGES_ATTACKING = [
-    'img/knight/attack/attack 000.png',
-    'img/knight/attack/attack 001.png',
-    'img/knight/attack/attack 002.png',
-    'img/knight/attack/attack 003.png',
+    'img/knight/attack/attack 0.png',
+    'img/knight/attack/attack 1.png',
+    'img/knight/attack/attack 2.png',
+    'img/knight/attack/attack 3.png',
   ];
-
+  
   IMAGES_DEAD = [
-    'img/knight/die/death 000.png',
-     'img/knight/die/death 001.png',
-     'img/knight/die/death 002.png',
-     'img/knight/die/death 003.png',
-  ];
+    'img/knight/die/death 0.png',
+    'img/knight/die/death 1.png',
+    'img/knight/die/death 2.png',
+    'img/knight/die/death 3.png',
 
-  IMAGES_HURT = [
-    'img/knight/hurt/hurt 000.png',
-    'img/knight/hurt/hurt 001.png',
   ];
 
   constructor(delay = 0, startX = 800, moveRange = 100) {
@@ -56,151 +51,96 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_DEAD);
-    this.loadImages(this.IMAGES_HURT);
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
-    this.healthBar = new KnightStatusbar(); 
-    this.healthBar.setPercentage(this.energy);
-
+   
     setTimeout(() => {
       this.isMoving = true;
       this.animate();
     }, delay);
-
-    this.addKeyboardListeners();
   }
 
-  addKeyboardListeners() {
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'f' || event.key === 'F') {
-        this.startAttacking();
-      }
-    });
-
-    window.addEventListener('keyup', (event) => {
-      if (event.key === 'f' || event.key === 'F') {
-        this.stopAttacking();
-      }
-    });
-  }
-
-  startMovement() {
-    this.isMoving = true;
-    this.animate();
-  }
-
-  startAttacking() {
-    this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
-  }
-
-  stopAttacking() {
-    this.isAttacking = false;
-    this.playAnimation(this.IMAGES_WALKING);
-  }
-
-  moveLeft() {
-    this.x -= this.speed;
-    this.otherDirection = true;
-  }
-
-  moveRight() {
-    this.x += this.speed;
-    this.otherDirection = false;
-  }
-
-  checkCollisionWithCharacter(character) {
-    if (this.isAttacking && this.isCollidingWith(character)) {
-      character.getHurt();
-    }
+  setWorld(world) {
+    this.world = world;
   }
 
   animate() {
     setInterval(() => {
-      if (this.isMoving && !this.isAttacking) { // Use this.isDead() as a function
+      if (!this.dead && this.isMoving && !this.isAttacking) {
         if (this.direction === 'left') {
           this.moveLeft();
           if (this.x <= this.startX - this.moveRange) {
             this.direction = 'right';
-            this.otherDirection = false; // Richtungswechsel
           }
         } else {
           this.moveRight();
           if (this.x >= this.startX + this.moveRange) {
             this.direction = 'left';
-            this.otherDirection = true; // Richtungswechsel
           }
         }
       }
     }, 1000 / 30);
 
     setInterval(() => {
-      if (this.isMoving && !this.isAttacking) { // Use this.isDead() as a function
-        this.playAnimation(this.IMAGES_WALKING); 
+      if (!this.dead) {
+        if (this.isMoving && !this.isAttacking) {
+          this.playAnimation(this.IMAGES_WALKING);
+        }
+      } else if (this.currentImage < this.IMAGES_DEAD.length) {
+        this.playAnimationOnce(this.IMAGES_DEAD);
       }
-    }, 1000 / 8); // Reduzieren Sie die Häufigkeit der Animationen
-
-    // Häufiger Richtungswechsel
-    setInterval(() => {
-      this.direction = this.direction === 'left' ? 'right' : 'left';
-      this.otherDirection = !this.otherDirection;
-    }, 3000); // Erhöhen Sie das Intervall für den Richtungswechsel
+    }, 1000 / 6); // Adjusted animation interval
   }
- 
-  
+
+  playAnimationOnce(images) {
+    if (this.currentImage < images.length) {
+      this.img = this.imageCache[images[this.currentImage]];
+      this.currentImage++;
+    }
+  }
+
   isDead() {
-    return this.energy <= 0;
-
+    return this.dead;
   }
 
-  attackCharacter(character) {
-    if (this.attackCooldown || this.isDead()) return;
-  
-    // Prüfe, ob der Charakter in Reichweite ist (z. B. 100 Pixel)
-    const distance = Math.abs(this.x - character.x);
-    if (distance <= 100) {
-      character.hit(this); // Rufe die `hit()`-Methode des Charakters auf
-    }
-  
-    this.attackCooldown = true;
+  die() {
+    this.dead = true;
+    this.isMoving = false; // Stoppe Bewegungen
+    this.speed = 0; // Keine Geschwindigkeit mehr
+    this.currentImage = 0; // Reset animation frame
     setTimeout(() => {
-      this.attackCooldown = false;
-    }, 1500); // 1,5 Sekunden Abklingzeit
-  }
-  
-
-  update() {
-    this.healthBar.x = this.x + this.width / 2 - this.healthBar.width / 2;
-    this.healthBar.y = this.y - this.healthBar.height - 15; // Abstand von oben anpassen
-    this.healthBar.setPercentage(this.energy); // Aktualisiere die Energie der Statusleiste
+      this.disappear();
+    }, 2000); // Stay on the ground for 2 seconds before disappearing
   }
 
-  draw(ctx) {
-    super.draw(ctx);
-    this.healthBar.draw(ctx); // Zeichne die Statusleiste des Ritters
-  }
-}
-
-function findNearestKnight(knights, mainCharacter) {
-  let nearestKnight = null;
-  let minDistance = Infinity;
-
-  knights.forEach(knight => {
-    const distance = Math.abs(knight.x - mainCharacter.x);
-    if (distance < minDistance) { 
-      minDistance = distance;
-      nearestKnight = knight;
+  disappear() {
+    if (this.world && this.world.enemies) {
+      const index = this.world.enemies.indexOf(this);
+      if (index > -1) {
+        this.world.enemies.splice(index, 1);
+      }
     }
-  });
-
-  return nearestKnight;
-}
-
-const knights = [new Knight(), new Knight(0, 1000), new Knight(0, 2000)];
-const character = new Character();
-
-setInterval(() => {
-  const nearestKnight = findNearestKnight(knights, character);
-  if (nearestKnight) {
-    nearestKnight.checkCollisionWithCharacter(character);
   }
-}, 1000 / 40);
+
+  /**
+   * Kollisionslogik mit dem Charakter.
+   */
+  checkCollisionWithCharacter(character) {
+    if (!this.isDead()) {
+      const collision = this.checkCollision(character);
+      if (collision && character.isJumping()) {
+        this.die(); // Ritter stirbt, wenn Charakter auf ihn springt
+      }
+    }
+  }
+
+  /**
+   * Überprüft, ob der Charakter springt.
+   */
+  checkCollision(character) {
+    return (
+      character.y + character.height - 20 <= this.y && // Charakter springt
+      character.x + character.width > this.x &&
+      character.x < this.x + this.width
+    );
+  }
+}

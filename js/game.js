@@ -21,6 +21,7 @@ function gameLoop() {
     world.update(); // Kollisionsprüfungen und andere Updates
     world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
     requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
+
 }
 
 function handleDescription() {
@@ -63,11 +64,10 @@ window.addEventListener("keydown", (e) => {
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = true; // Angriffstaste
-    world.character.attackNearestKnight(); // Call character method
+   
   }
   if (e.code === "KeyT") {
     keyboard.THROW = true; // Feueranimationstaste
-    world.character.throwPoisonAtSnake(); // Call character method
   }
   if (e.code === "KeyD") {
     keyboard.D = true; // D-Taste

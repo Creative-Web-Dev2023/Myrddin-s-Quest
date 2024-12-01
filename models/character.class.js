@@ -8,7 +8,6 @@ class Character extends MovableObject {
   coinStatusBar;
   invulnerable = false;
   poisonCollected = 0; // Gift gesammelt
-  attackCooldown = false;
 
   offset = {
     top: 50, // Reduziert das Rechteck von oben
@@ -102,10 +101,6 @@ class Character extends MovableObject {
   ];
 
   world = {};
-  walking_sound = new Audio("audio/walking.mp3");
-  attack_sound = new Audio("audio/wizard_attack.mp3");
-  fire_attack_sound = new Audio("audio/fire_attack.mp3");
-  collect_coin_sound = new Audio("audio/collect_coins.mp3");
 
   constructor(world, coinStatusBar, poisonStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
@@ -134,6 +129,7 @@ class Character extends MovableObject {
     if (this.world && this.world.throwableObjects) {
       const throwableObject = new ThrowableObject(this.x + this.width / 2, this.y + this.height / 2);
       this.world.throwableObjects.push(throwableObject);
+      playPoisonBottleSound(); // Spiele den Sound ab, wenn die Flasche geworfen wird
     } else {
       console.error('throwableObjects array is not initialized in the world');
     }
@@ -148,13 +144,13 @@ class Character extends MovableObject {
         }
       } else if (this.world.keyboard && this.world.keyboard.THROW) {
         this.playAnimation(this.IMAGES_FIRE_ATTACK);
-        if (this.fire_attack_sound.paused) {
-          this.fire_attack_sound.play(); // Spiele den Angriffssound ab
+        if (fireAttackSound.paused) {
+          playFireAttackSound(); // Spiele den Angriffssound ab
         }
       } else if (this.world.keyboard && this.world.keyboard.ATTACK) {
         this.playAnimation(this.IMAGES_ATTACK);
-        if (this.attack_sound.paused) {
-          this.attack_sound.play();
+        if (attackSound.paused) {
+          playAttackSound();
         }
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
@@ -162,6 +158,9 @@ class Character extends MovableObject {
         this.playAnimation(this.IMAGES_JUMPING);
       } else if (this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
         this.playAnimation(this.IMAGES_WALKING);
+        if (walkingSound.paused) {
+          playWalkingSound();
+        }
       } else {
         this.playAnimation(this.IMAGES_IDLE);
       }
@@ -170,26 +169,25 @@ class Character extends MovableObject {
 
   update() {
     if (!this.isDead()) {
-      this.walking_sound.pause();
+      walkingSound.pause();
       if (this.world.keyboard && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { 
         this.moveRight();
         this.otherDirection = false;
-        this.walking_sound.play();
+        playWalkingSound();
       }
       if (this.world.keyboard && this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
-        this.walking_sound.play();
+        playWalkingSound();
       }
       if (this.world.keyboard && this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
       }
-      if (this.world.keyboard && this.world.keyboard.ATTACK) {
-        this.attack();
-      }
       this.world.camera_x = -this.x - 190;
       this.collectCoins();
       this.collectPoison(); // Überprüfe Kollision mit Giftflaschen
+      this.checkJumpOnKnight(); // Überprüfe, ob der Charakter auf einen Ritter springt
+      this.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreifen soll
     }
   }
 
@@ -213,8 +211,8 @@ class Character extends MovableObject {
           coin.deactivate();
           this.coinsCollected++; // Erhöhe die gesammelten Münzen
           this.coinStatusBar.setPercentage(this.coinsCollected); // Statusleiste aktualisieren
-          if (this.collect_coin_sound.paused) {
-            this.collect_coin_sound.play(); // Spiele den Münzensammelsound ab
+          if (collectCoinSound.paused) {
+            playCollectCoinSound(); // Spiele den Münzensammelsound ab
           }
         }
       });
@@ -241,42 +239,11 @@ class Character extends MovableObject {
     );
   }
  
-  attack() {
-    if (this.world.enemies && Array.isArray(this.world.enemies)) {
-      let nearestKnight = null; // Setze den nächsten Ritter auf null
-      let minDistance = Infinity; // Setze den Abstand auf unendlich
-      this.world.enemies.forEach((enemy) => {
-        if (enemy instanceof Knight) { // Prüfen, ob der Feind ein Ritter ist
-          const distance = Math.abs(this.x - enemy.x); // Berechne den Abstand zwischen Charakter und Feind
-          if (distance < minDistance) { // Wenn der Abstand kleiner als der bisherige kleinste Abstand ist
-            minDistance = distance; // Setze den Abstand auf den neuen kleinsten Abstand
-            nearestKnight = enemy; // Setze den Feind auf den nächsten Ritter
-          }
-        }
-      });
-      if (nearestKnight) {
-        nearestKnight.energy -= 5; // Verringere die Energie des Feindes bei einem Treffer
-        if (nearestKnight.energy <= 0) { // Wenn die Energie des Feindes 0 erreicht
-          nearestKnight.energy = 0; // Energie kann nicht unter 0 fallen
-          nearestKnight.isDead = true; // Setze den Feind auf tot
-          nearestKnight.playAnimation(nearestKnight.IMAGES_DEAD); // Play death animation
-          setTimeout(() => {
-            const index = this.world.enemies.indexOf(nearestKnight);
-            if (index > -1) {
-              this.world.enemies.splice(index, 1); // Entferne den Feind aus dem Array
-            }
-          }, 2000); // Entferne den Feind nach 2 Sekunden
-        } else {
-          nearestKnight.playAnimation(nearestKnight.IMAGES_HURT); // Play hurt animation
-        }
-      }
-    }
-  }
   attackEndboss(endboss) {
     if (this.world.keyboard && this.world.keyboard.THROW) {
       this.playAnimation(this.IMAGES_FIRE_ATTACK);
-      if (this.fire_attack_sound.paused) {
-        this.fire_attack_sound.play(); // Spiele den Angriffssound ab
+      if (fireAttackSound.paused) {
+        playFireAttackSound(); // Spiele den Angriffssound ab
       }
       endboss.energy -= 20; // Verringere die Energie des Endbosses
       if (endboss.energy <= 0) {
@@ -291,7 +258,6 @@ class Character extends MovableObject {
       }
     }
   }
-
   checkCollisionWithPoison() {
     if (this.world.poisonsArray) { // Überprüfe, ob es Giftobjekte gibt
       this.world.poisonsArray.forEach((poison) => {
@@ -331,43 +297,13 @@ class Character extends MovableObject {
   isDead() {
     return this.energy == 0;// wenn seine Energie 0 ist, dann ist er tot
   }
-  attackNearestKnight() {
-    if (this.attackCooldown) return;
 
-    const nearestKnight = this.findNearestKnight();
-    if (nearestKnight) {
-      nearestKnight.energy -= 5; // Verringere die Energie des Ritters
-      nearestKnight.healthBar.setPercentage(nearestKnight.energy); // Aktualisiere die Statusleiste des Ritters
-      if (nearestKnight.energy <= 0) {
-        nearestKnight.energy = 0;
-        nearestKnight.isDead = true;
-        nearestKnight.playAnimation(nearestKnight.IMAGES_DEAD); // Play death animation
-        setTimeout(() => {
-          const index = this.world.enemies.indexOf(nearestKnight);
-          if (index > -1) {
-            this.world.enemies.splice(index, 1); // Entferne den Feind aus dem Array
-          }
-        }, 7000); // Entferne den Feind nach 7 Sekunden
-      } else {
-        nearestKnight.playAnimation(nearestKnight.IMAGES_HURT); // Play hurt animation
-        nearestKnight.attackCharacter(this); // Ritter greift den Charakter an
-      }
-    }
-
-    this.attackCooldown = true;
-    setTimeout(() => {
-      this.attackCooldown = false;
-    }, 1500); // 1,5 Sekunden Abklingzeit
-  }
-
-  findNearestKnight() {
-    if (!this.world.enemies) {
-      return null;
-    }
+  checkJumpOnKnight() {
     let nearestKnight = null;
     let minDistance = Infinity;
+  
     this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight) {
+      if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) {
         const distance = Math.abs(this.x - enemy.x);
         if (distance < minDistance) {
           minDistance = distance;
@@ -375,67 +311,26 @@ class Character extends MovableObject {
         }
       }
     });
-    return nearestKnight;
-  }
-
-  checkSnakeAttack() {
-    this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Snake && this.isColliding(enemy)) {
-        enemy.attackCharacter(this); // Schlange greift den Charakter an
-      }
-    });
-  }
-
-  throwPoisonAtSnake() {
-    if (this.poisonCollected > 0) {
-      const nearestSnake = this.findNearestSnake();
-      if (nearestSnake) {
-        nearestSnake.energy -= 20; // Verringere die Energie der Schlange
-        if (nearestSnake.energy <= 0) {
-          nearestSnake.energy = 0;
-          nearestSnake.isDead = true;
-          nearestSnake.playAnimation(nearestSnake.IMAGES_DEAD); // Play death animation
-          setTimeout(() => {
-            const index = this.world.enemies.indexOf(nearestSnake);
-            if (index > -1) {
-              this.world.enemies.splice(index, 1); // Entferne die Schlange aus dem Array
-            }
-          }, 2000); // Entferne die Schlange nach 2 Sekunden
-        } else {
-          nearestSnake.playAnimation(nearestSnake.IMAGES_HURT); // Play hurt animation
-        }
-        this.poisonCollected -= 1; // Verringere die gesammelten Giftflaschen
-        this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
-      }
+  
+    if (nearestKnight) {
+      nearestKnight.die(); // Set knight to dead state
     }
   }
-
-  findNearestSnake() {
-    if (!this.world.enemies) {
-      return null;
-    }
-    let nearestSnake = null;
-    let minDistance = Infinity;
+ 
+  checkKnightAttack() {
     this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Snake) {
+      if (enemy instanceof Knight) {
         const distance = Math.abs(this.x - enemy.x);
-        if (distance < minDistance) {
-          minDistance = distance;
-          nearestSnake = enemy;
+        if (distance <= 50 && !this.isAboveGround()) { // Überprüfen, ob der Charakter sehr nahe ist und nicht in der Luft
+          enemy.playAnimation(enemy.IMAGES_ATTACK); // Spiele die Angriffsanimation des Ritters
+          setTimeout(() => {
+            if (!this.isAboveGround() && distance <= 50) { // Überprüfe erneut, ob der Charakter nicht in der Luft ist und sehr nahe ist
+              this.hit(enemy); // Der Ritter greift den Charakter an
+            }
+          }, 500); // Warte 0,5 Sekunden, bevor der Angriff ausgeführt wird
         }
       }
     });
-    return nearestSnake;
   }
-
-  resetForNewLevel() {
-    this.x = 130;
-    this.y = 150;
-    this.coinsCollected = 0;
-    this.poisonCollected = 0;
-    this.energy = 100;
-    this.healthBar.setPercentage(this.energy);
-    this.coinStatusBar.setPercentage(0);
-    this.poisonStatusBar.setPercentage(0);
-  }
+ 
 }
