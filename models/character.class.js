@@ -8,6 +8,7 @@ class Character extends MovableObject {
   coinStatusBar;
   invulnerable = false;
   poisonCollected = 0; // Gift gesammelt
+  poisonStatusBar; // Füge die PoisonStatusBar hinzu
 
   offset = {
     top: 50, // Reduziert das Rechteck von oben
@@ -100,6 +101,8 @@ class Character extends MovableObject {
     "img/wizard/fire/fire10.png",
   ];
 
+  
+
   world = {};
 
   constructor(world, coinStatusBar, poisonStatusBar) {
@@ -123,6 +126,7 @@ class Character extends MovableObject {
     this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
     this.healthBar = new Statusbar(); // Füge eine Statusleiste für den Charakter hinzu
     this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
+    this.loadImages(this.IMAGES_YOU_LOST);
   }
 
   throwObject() {
@@ -141,6 +145,7 @@ class Character extends MovableObject {
         this.playAnimation(this.IMAGES_DEAD);
         if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
           clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
+          this.showYouLostAnimation(); // Zeige die "You Lost" Animation
         }
       } else if (this.world.keyboard && this.world.keyboard.THROW) {
         this.playAnimation(this.IMAGES_FIRE_ATTACK);
@@ -165,6 +170,14 @@ class Character extends MovableObject {
         this.playAnimation(this.IMAGES_IDLE);
       }
     }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+  }
+
+  showYouLostAnimation() {
+    this.currentImage = 0; // Reset animation frame
+    this.playAnimation(this.IMAGES_YOU_LOST);
+    setTimeout(() => {
+      // Optional: Füge hier Logik hinzu, um das Spiel neu zu starten oder zum Hauptmenü zurückzukehren
+    }, 2000); // Zeige die "You Lost" Animation für 3 Sekunden
   }
 
   update() {

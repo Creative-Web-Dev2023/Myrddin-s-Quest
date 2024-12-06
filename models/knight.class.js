@@ -1,3 +1,6 @@
+// Importiere oder definiere die Klasse Comet
+// import Comet from './comet.class.js'; // Wenn du Module verwendest
+
 class Knight extends MovableObject {
   height = 270;
   width = 500;
@@ -41,6 +44,19 @@ class Knight extends MovableObject {
 
   ];
 
+  IMAGES_HURT = [
+    'img/knight/hurt/hurt 000.png',
+    'img/knight/hurt/hurt 001.png',
+  ];
+
+  IMAGES_COMET = [
+    'img/knight/comet/comet_0.png',
+    'img/knight/comet/comet_1.png',
+    'img/knight/comet/comet_2.png',
+    'img/knight/comet/comet_3.png',
+  ]
+  comets = []; // Array für Kometen
+
   constructor(delay = 0, startX = 800, moveRange = 100) {
     super();
     this.x = startX;
@@ -51,6 +67,8 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_DEAD);
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_COMET);
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
    
     setTimeout(() => {
@@ -72,10 +90,8 @@ class Knight extends MovableObject {
             this.direction = 'right';
           }
         } else {
-          this.moveRight();
-          if (this.x >= this.startX + this.moveRange) {
-            this.direction = 'left';
-          }
+          // Entferne die Bewegung nach rechts
+          this.direction = 'left';
         }
       }
     }, 1000 / 30);
@@ -89,12 +105,28 @@ class Knight extends MovableObject {
         this.playAnimationOnce(this.IMAGES_DEAD);
       }
     }, 1000 / 6); // Adjusted animation interval
+
+    setInterval(() => {
+      if (!this.dead && this.world && this.world.character) {
+        this.shootComet();
+      }
+    }, 3000); // Schieße alle 3 Sekunden einen Kometen
   }
 
   playAnimationOnce(images) {
     if (this.currentImage < images.length) {
       this.img = this.imageCache[images[this.currentImage]];
       this.currentImage++;
+    } else {
+      this.currentImage = 0; // Reset animation frame
+    }
+  }
+
+  shootComet() {
+    const distanceToCharacter = Math.abs(this.x - this.world.character.x);
+    if (distanceToCharacter <= 50) {
+      const comet = new Comet(this.x, this.y, this.IMAGES_COMET);
+      this.comets.push(comet);
     }
   }
 
@@ -107,9 +139,13 @@ class Knight extends MovableObject {
     this.isMoving = false; // Stoppe Bewegungen
     this.speed = 0; // Keine Geschwindigkeit mehr
     this.currentImage = 0; // Reset animation frame
+    this.playAnimationOnce(this.IMAGES_HURT); // Spiele die Hurt-Animation
     setTimeout(() => {
-      this.disappear();
-    }, 2000); // Stay on the ground for 2 seconds before disappearing
+      this.playAnimationOnce(this.IMAGES_DEAD); // Spiele die Dead-Animation nach der Hurt-Animation
+      setTimeout(() => {
+        this.disappear();
+      }, 2000); // Bleibe 2 Sekunden auf dem Boden, bevor du verschwindest
+    }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
   }
 
   disappear() {
@@ -133,9 +169,7 @@ class Knight extends MovableObject {
     }
   }
 
-  /**
-   * Überprüft, ob der Charakter springt.
-   */
+ 
   checkCollision(character) {
     return (
       character.y + character.height - 20 <= this.y && // Charakter springt

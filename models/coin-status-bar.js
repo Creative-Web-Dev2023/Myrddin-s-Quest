@@ -54,4 +54,3 @@ class CoinStatusBar extends DrawableObject {
     this.setPercentage(this.currentCoins + 1); // Eine Münze sammeln
   }
 }
-

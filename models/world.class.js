@@ -17,11 +17,37 @@ class World {
   throwableObjects = []; // Füge ein werfbares Objekt hinzu
   currentLevelIndex = 0; // Aktuelles Level
   levels = [level1, level2]; // Liste der Levels
+  poisonStatusBar; // Füge die PoisonStatusBar hinzu
+  imageCache = {}; // Initialisiere den imageCache
+  IMAGES_YOU_LOST = [
+    "img/game_ui/game_over.png",
+  ];
+  quitButton;
+  quitButtonImage = "img/game_ui/quit.png"; // Pfad zum Quit-Button-Bild
+  tryAgainButton;
+  tryAgainButtonImage = "img/game_ui/try_again.png"; // Pfad zum Try Again-Button-Bild
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    const buttonWidth = 100;
+    const buttonHeight = 40;
+    const canvasCenterX = canvas.width / 2;
+    const buttonSpacing = 20;
+
+    this.quitButton = {
+      x: canvasCenterX - buttonWidth - buttonSpacing / 2,
+      y: this.canvas.height - buttonHeight - 20,
+      width: buttonWidth,
+      height: buttonHeight
+    };
+    this.tryAgainButton = {
+      x: canvasCenterX + buttonSpacing / 2,
+      y: this.quitButton.y,
+      width: buttonWidth,
+      height: buttonHeight
+    };
     this.keyboard.T = false; // Initialisiere die T-Taste
     this.keyboard.D = false; // Initialisiere die D-Taste
     this.level = this.levels[this.currentLevelIndex]; // Initialisiere das erste Level
@@ -30,6 +56,7 @@ class World {
       this.poisonStatusBar = new PoisonStatusbar(); // Nur in Level 2 erstellen
     }
     this.statusBar = new Statusbar(); // Instanz hier erstellen
+    this.poisonStatusBar = new PoisonStatusbar(); // Instanz hier erstellen
     this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = this.initializeCoins();
@@ -37,13 +64,23 @@ class World {
     this.backgroundObjects = this.level.backgroundObjects || []; // Sicherstellen, dass es ein Array ist
     this.enemies = this.level.enemies || []; // Sicherstellen, dass es ein Array ist
     this.endbossHealthBar = new Statusbar(); // Instanz hier erstellen
-  
+    this.updateComets = this.updateComets.bind(this); // Binde die Methode
+    this.loadImages(this.IMAGES_YOU_LOST); // Lade das "You Lost" Bild
+    this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
     this.setWorld();
     this.startGameLoop();
   }
 
   setWorld() {
     this.character.world = this;                                                                                                                                                                                                                                                                      
+  }
+
+  loadImages(images) {
+    images.forEach((path) => {
+      const img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
   }
 
   initializeCoins() {
@@ -69,6 +106,7 @@ class World {
   }
 
   startGameLoop() {
+    this.canvas.addEventListener("click", this.handleMouseClick.bind(this)); // Event-Listener hinzufügen
     const gameLoop = () => {
       this.update();
       this.draw();
@@ -87,6 +125,10 @@ class World {
     this.updateEndbossHealth();
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
     this.checkLevelCompletion(); // Überprüfe, ob das Level abgeschlossen ist
+    this.updateComets(); // Füge diese Zeile hinzu
+    if (this.character.isDead()) {
+      this.showYouLostAnimation(); // Zeige die "You Lost" Animation
+    }
   }
 
   checkCollisionsWithEnemy() {
@@ -184,6 +226,8 @@ class World {
       this.endbossHealthBar.draw(this.ctx);
     }
     this.addToMap(this.character.healthBar); // Zeichne die Statusleiste des Charakters
+    this.addToMap(this.poisonStatusBar); // Zeichne die PoisonStatusBar
+    this.poisonStatusBar.draw(this.ctx); // Zeichne die Statusleiste für Gift
     this.ctx.translate(this.camera_x, 0);  // Zeichne Kamera-gebundene Objekte (Charakter, Gegner, Münzen)
     this.addObjectsToMap(this.enemies);
     this.addToMap(this.character);
@@ -203,12 +247,55 @@ class World {
     this.enemies.forEach(enemy => {
       enemy.draw(this.ctx);
       if (enemy instanceof Knight) {
-     
+        enemy.comets.forEach(comet => {
+          comet.draw(this.ctx);
+        });
       }
     });
     this.characters.forEach(character => character.draw(this.ctx));
+    if (this.character.isDead()) {
+      this.drawYouLostImage(); // Zeichne das "You Lost" Bild
+    }
   }
-  
+
+  drawYouLostImage() {
+    const img = this.imageCache[this.IMAGES_YOU_LOST[0]]; // Nimm das "You Lost" Bild
+    const x = 0; // Setze die x-Position auf 0
+    const y = 0; // Setze die y-Position auf 0
+    const width = this.canvas.width; // Setze die Breite auf die Breite des Canvas
+    const height = this.canvas.height; // Setze die Höhe auf die Höhe des Canvas
+    this.ctx.drawImage(img, x, y, width, height); // Zeichne das Bild auf das Canvas
+    this.drawQuitButton(); // Zeichne den Quit-Button
+  }
+
+  drawQuitButton() {
+    const img = this.imageCache[this.quitButtonImage];
+    const aspectRatio = img.width / img.height;
+    const buttonHeight = 40;
+    const buttonWidth = buttonHeight * aspectRatio;
+    this.ctx.drawImage(img, this.quitButton.x, this.quitButton.y, buttonWidth, buttonHeight);
+  }
+
+  handleMouseClick(event) {
+    const rect = this.canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    if (
+      x >= this.quitButton.x &&
+      x <= this.quitButton.x + this.quitButton.width &&
+      y >= this.quitButton.y &&
+      y <= this.quitButton.y + this.quitButton.height
+    ) {
+      this.quitGame();
+    }
+  }
+
+  quitGame() {
+    // Logik zum Beenden des Spiels oder zum Zurückkehren zum Hauptmenü
+    console.log("Quit Game");
+  }
+
   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {
         objects.forEach(object => {
@@ -269,6 +356,40 @@ class World {
     if (this.keyboard.D && this.character.poisonCollected > 0) {
       this.character.throwObject();
       playPoisonBottleSound(); // Sound abspielen, wenn die Flasche geworfen wird
+    }
+  }
+
+  updateComets() {
+    this.enemies.forEach(enemy => {
+      if (enemy instanceof Knight) {
+        enemy.comets.forEach((comet, index) => {
+          comet.animate();
+          if (this.character.isColliding(comet)) {
+            this.character.hit(enemy);
+            enemy.comets.splice(index, 1); // Entferne den Kometen nach der Kollision
+          }
+        });
+      }
+    });
+  }
+
+  showYouLostAnimation() {
+    this.currentImage = 0; // Reset animation frame
+    this.playAnimation(this.IMAGES_YOU_LOST);
+    setTimeout(() => {
+      // Optional: Füge hier Logik hinzu, um das Spiel neu zu starten oder zum Hauptmenü zurückzukehren
+    }, 3000); // Zeige die "You Lost" Animation für 3 Sekunden
+  }
+
+  playAnimation(images) {
+    if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
+      let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
+      let path = images[i]; // Bildpfad aus dem Array
+      this.img = this.imageCache[path]; // Bild aus dem Cache setzen
+      this.currentImage++;
+      if (this.currentImage >= images.length) { // 
+        this.currentImage = 0; // Setze auf den ersten Frame zurück
+      }
     }
   }
 }

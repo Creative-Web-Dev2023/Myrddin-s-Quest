@@ -1,4 +1,4 @@
-let backgroundMusic = new Audio('audio/background music .mp3');
+let backgroundMusic = new Audio('audio/woodsounds.mp3');
 let walkingSound = new Audio("audio/walking.mp3");
 let attackSound = new Audio("audio/wizard_attack.mp3");
 let fireAttackSound = new Audio("audio/fire_attack.mp3");
