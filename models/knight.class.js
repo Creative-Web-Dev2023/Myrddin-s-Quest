@@ -1,80 +1,86 @@
-// Importiere oder definiere die Klasse Comet
-// import Comet from './comet.class.js'; // Wenn du Module verwendest
-
 class Knight extends MovableObject {
   height = 270;
   width = 500;
-  y = 240;
+  y = 200; // Erhöhe die Y-Position, damit der Ritter höher positioniert wird
   delay = 3000;
   direction = 'left';
-  moveRange = 100; // Standardbewegungsbereich
+  moveRange = 100; // Bewegungsbereich
   startX = 800; // Startposition
   isMoving = false;
   isAttacking = false;
-  dead = false; // Neuer Zustand für tot
+  dead = false; // Zustand für tot
 
   offset = {
-    top: 80,
-    bottom: 80,
-    left: 200,
-    right: 200
+    top: 70, // Verkleinere die oberen Offset-Werte
+    bottom: 30, // Verlängere die unteren Offset-Werte
+    left: 20, // Verkleinere die linken Offset-Werte
+    right: 180 // Verkleinere die rechten Offset-Werte
   };
 
+  // Animationen
   IMAGES_WALKING = [
-    'img/knight/walk/walk_0.png',
-    'img/knight/walk/walk_1.png',
-    'img/knight/walk/walk_2.png',
-    'img/knight/walk/walk_3.png',
-    'img/knight/walk/walk_4.png',
-    'img/knight/walk/walk_5.png',
+    'img/Boss2/walk/walk 0.png',
+    'img/Boss2/walk/walk 1.png',
+    'img/Boss2/walk/walk 2.png',
+    'img/Boss2/walk/walk 3.png',
+    'img/Boss2/walk/walk 4.png',
+    'img/Boss2/walk/walk 5.png',
   ];
 
   IMAGES_ATTACKING = [
-    'img/knight/attack/attack 0.png',
-    'img/knight/attack/attack 1.png',
-    'img/knight/attack/attack 2.png',
-    'img/knight/attack/attack 3.png',
+    'img/Boss2/attack/attack 0.png',
+    'img/Boss2/attack/attack 1.png',
+    'img/Boss2/attack/attack 2.png',
+    'img/Boss2/attack/attack 3.png',
+    'img/Boss2/attack/attack 4.png',
+    'img/Boss2/attack/attack 5.png',
+    'img/Boss2/attack/attack 6.png',
   ];
   
   IMAGES_DEAD = [
-    'img/knight/die/death 0.png',
-    'img/knight/die/death 1.png',
-    'img/knight/die/death 2.png',
-    'img/knight/die/death 3.png',
-
+    'img/Boss2/death/death 0.png',
+    'img/Boss2/death/death 1.png',
+    'img/Boss2/death/death 2.png',
+    'img/Boss2/death/death 3.png',
+    'img/Boss2/death/death 4.png',
+    'img/Boss2/death/death 5.png',
   ];
 
   IMAGES_HURT = [
-    'img/knight/hurt/hurt 000.png',
-    'img/knight/hurt/hurt 001.png',
+    'img/Boss2/hurt/hurt 0.png',
+    'img/Boss2/hurt/hurt 1.png',
   ];
-
-  IMAGES_COMET = [
-    'img/knight/comet/comet_0.png',
-    'img/knight/comet/comet_1.png',
-    'img/knight/comet/comet_2.png',
-    'img/knight/comet/comet_3.png',
-  ]
-  comets = []; // Array für Kometen
 
   constructor(delay = 0, startX = 800, moveRange = 100) {
     super();
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
-    this.otherDirection = false;  // Hier hinzufügen
-    this.loadImage('img/knight/walk/walk_0.png');
+    this.loadImage('img/Boss2/walk/walk 0.png');
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_COMET);
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
-   
+
     setTimeout(() => {
       this.isMoving = true;
       this.animate();
     }, delay);
+  }
+
+  loadImages(images) {
+    images.forEach((path) => {
+      const img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+      img.onload = () => {
+        console.log('Image loaded:', path);
+      };
+      img.onerror = () => {
+        console.error('Failed to load image:', path);
+      };
+    });
   }
 
   setWorld(world) {
@@ -82,56 +88,50 @@ class Knight extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
-      if (!this.dead && this.isMoving && !this.isAttacking) {
-        if (this.direction === 'left') {
-          this.moveLeft();
-          if (this.x <= this.startX - this.moveRange) {
-            this.direction = 'right';
-          }
-        } else {
-          // Entferne die Bewegung nach rechts
-          this.direction = 'left';
-        }
-      }
+    this.movementInterval = setInterval(() => {
+      this.handleMovement();
     }, 1000 / 30);
 
-    setInterval(() => {
-      if (!this.dead) {
-        if (this.isMoving && !this.isAttacking) {
-          this.playAnimation(this.IMAGES_WALKING);
-        }
-      } else if (this.currentImage < this.IMAGES_DEAD.length) {
-        this.playAnimationOnce(this.IMAGES_DEAD);
-      }
-    }, 1000 / 6); // Adjusted animation interval
-
-    setInterval(() => {
-      if (!this.dead && this.world && this.world.character) {
-        this.shootComet();
-      }
-    }, 3000); // Schieße alle 3 Sekunden einen Kometen
+    this.animationInterval = setInterval(() => {
+      this.handleAnimation();
+    }, 1000 / 6);
   }
 
+  handleMovement() {
+    if (!this.dead && this.isMoving) {
+      this.moveLeft(); // Immer nach links laufen
+      this.otherDirection = true; // Bild spiegeln
+      if (this.x <= this.startX - this.moveRange) {
+        this.x = this.startX; // Zurück zur Startposition, wenn das Ende des Bewegungsbereichs erreicht ist
+      }
+    }
+  }
+
+  handleAnimation() {
+    if (!this.dead) {
+      if (this.isMoving) {
+        this.playAnimation(this.IMAGES_WALKING);
+      }
+    } else if (this.currentImage < this.IMAGES_DEAD.length) {
+      this.playAnimationOnce(this.IMAGES_DEAD);
+    }
+  }
   playAnimationOnce(images) {
     if (this.currentImage < images.length) {
       this.img = this.imageCache[images[this.currentImage]];
       this.currentImage++;
     } else {
-      this.currentImage = 0; // Reset animation frame
+      this.currentImage = 0; // Animation zurücksetzen
     }
   }
 
-  shootComet() {
-    const distanceToCharacter = Math.abs(this.x - this.world.character.x);
-    if (distanceToCharacter <= 50) {
-      const comet = new Comet(this.x, this.y, this.IMAGES_COMET);
-      this.comets.push(comet);
-    }
-  }
-
-  isDead() {
-    return this.dead;
+  getCollisionBox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
+    };
   }
 
   die() {
@@ -155,26 +155,5 @@ class Knight extends MovableObject {
         this.world.enemies.splice(index, 1);
       }
     }
-  }
-
-  /**
-   * Kollisionslogik mit dem Charakter.
-   */
-  checkCollisionWithCharacter(character) {
-    if (!this.isDead()) {
-      const collision = this.checkCollision(character);
-      if (collision && character.isJumping()) {
-        this.die(); // Ritter stirbt, wenn Charakter auf ihn springt
-      }
-    }
-  }
-
- 
-  checkCollision(character) {
-    return (
-      character.y + character.height - 20 <= this.y && // Charakter springt
-      character.x + character.width > this.x &&
-      character.x < this.x + this.width
-    );
   }
 }

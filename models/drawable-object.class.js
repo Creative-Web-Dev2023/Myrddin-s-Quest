@@ -16,13 +16,21 @@ class DrawableObject {
   loadImage(path) {
     this.img = new Image(); // ist das gleiche wie this.img=document.createElement('img')
     this.img.src = path;
+    this.img.onload = () => {
+      console.log('Image loaded:', path);
+    };
+    this.img.onerror = () => {
+      console.error('Failed to load image:', path);
+    };
   }
 
-draw(ctx) {
-  if (this.img && this.img.complete && ctx) {
+  draw(ctx) {
+    if (this.img && this.img.complete && this.img.naturalHeight !== 0) {
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    } else {
+      console.error('Image not loaded or broken:', this.img);
+    }
   }
-}
 
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Knight || this instanceof Endboss) {

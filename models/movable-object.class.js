@@ -48,33 +48,25 @@ class MovableObject extends DrawableObject {
   // character.isColliding(knight)
   isColliding(mo) {
     if (!mo) return false; // Überprüfen, ob das Objekt existiert
-    return this.x + this.width > mo.x && //Rechteck Kollision
-           this.x < mo.x + mo.width &&  
-           this.y + this.height > mo.y &&
-           this.y < mo.y + mo.height;
+    const thisBox = this.getCollisionBox();
+    const moBox = mo.getCollisionBox();
+    return thisBox.x + thisBox.width > moBox.x && // Rechteck Kollision mit Offset
+           thisBox.x < moBox.x + moBox.width &&  
+           thisBox.y + thisBox.height > moBox.y &&
+           thisBox.y < moBox.y + moBox.height;
   }
 
-  checkCollision(object) {
-    const hitbox1 = this.getHitbox();
-    const hitbox2 = object.getHitbox();
-    const collision = (
-      hitbox1.x < hitbox2.x + hitbox2.width &&
-      hitbox1.x + hitbox1.width > hitbox2.x &&
-      hitbox1.y < hitbox2.y + hitbox2.height &&
-      hitbox1.y + hitbox1.height > hitbox2.y
-    );
-    return collision;
-  }
-
-  getHitbox() {
-    return {
+  getCollisionBox() {
+    const box = {
       x: this.x + this.offset.left,
       y: this.y + this.offset.top,
       width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom
+      height: this.height - this.offset.top - this.offset.bottom,
     };
+    console.log('Collision Box:', box);
+    return box;
   }
-
+  
   isHurt(){
    let timepassed = new Date().getTime() - this.lastHit;
    timepassed = timepassed / 1000;

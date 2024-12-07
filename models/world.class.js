@@ -62,9 +62,8 @@ class World {
     this.coinsArray = this.initializeCoins();
     this.poisonsArray = this.level.poisonObjects; // Initialisiere Giftobjekte
     this.backgroundObjects = this.level.backgroundObjects || []; // Sicherstellen, dass es ein Array ist
-    this.enemies = this.level.enemies || []; // Sicherstellen, dass es ein Array ist
+    this.enemies = this.level.enemies || []; // Initialisiere die Feinde aus dem Level
     this.endbossHealthBar = new Statusbar(); // Instanz hier erstellen
-    this.updateComets = this.updateComets.bind(this); // Binde die Methode
     this.loadImages(this.IMAGES_YOU_LOST); // Lade das "You Lost" Bild
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
     this.setWorld();
@@ -81,6 +80,12 @@ class World {
       const img = new Image();
       img.src = path;
       this.imageCache[path] = img;
+      img.onload = () => {
+        console.log('Image loaded:', path);
+      };
+      img.onerror = () => {
+        console.error('Failed to load image:', path);
+      };
     });
   }
 
@@ -125,7 +130,6 @@ class World {
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
-    this.updateComets(); // Füge diese Zeile hinzu
     if (this.character.isDead()) {
       setTimeout(() => {
         this.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
@@ -182,7 +186,12 @@ class World {
   }
 
   checkCollision(object1, object2) {
-    return object1.checkCollision(object2);
+    const box1 = object1.getCollisionBox();
+    const box2 = object2.getCollisionBox();
+    return box1.x + box1.width > box2.x &&
+           box1.x < box2.x + box2.width &&
+           box1.y + box1.height > box2.y &&
+           box1.y < box2.y + box2.height;
   }
 
   addCloudsWhenCharacterMoves() {
@@ -269,7 +278,7 @@ class World {
   drawEnemies() {
     this.enemies.forEach(enemy => {
       enemy.draw(this.ctx);
-      if (enemy instanceof Knight) {
+      if (enemy instanceof Knight && enemy.comets) { // Überprüfe, ob enemy.comets existiert
         enemy.comets.forEach(comet => {
           comet.draw(this.ctx);
         });
@@ -303,8 +312,6 @@ class World {
     ) {
     }
   }
-
- 
 
   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {
@@ -355,20 +362,7 @@ class World {
     }
   }
 
-  updateComets() {
-    this.enemies.forEach(enemy => {
-      if (enemy instanceof Knight) {
-        enemy.comets.forEach((comet, index) => {
-          comet.animate();
-          if (this.character.isColliding(comet)) {
-            this.character.hit(enemy);
-            enemy.comets.splice(index, 1); // Entferne den Kometen nach der Kollision
-          }
-        });
-      }
-    });
-  }
- 
+
   playAnimation(images) {
     if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
       let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
