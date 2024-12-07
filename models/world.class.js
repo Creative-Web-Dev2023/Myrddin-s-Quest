@@ -80,12 +80,6 @@ class World {
       const img = new Image();
       img.src = path;
       this.imageCache[path] = img;
-      img.onload = () => {
-        console.log('Image loaded:', path);
-      };
-      img.onerror = () => {
-        console.error('Failed to load image:', path);
-      };
     });
   }
 
