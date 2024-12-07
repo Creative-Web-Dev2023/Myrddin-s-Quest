@@ -12,7 +12,7 @@
     <script src="models/coin-status-bar.js"></script>
     <script src="models/health-status-bar.js"></script>
     <script src="models/poison-status-bar.js"></script>
-    <script src="models/throwable-object.class.js"></script> 
+    <script src="models/throwable-object.class.js"></script>
     <script src="models/character.class.js"></script>
     <script src="models/endboss-statusbar.class.js"></script>
     <script src="models/knight.class.js"></script>
@@ -32,16 +32,24 @@
     <script src="levels/level2.js"></script>
     <script src="js/game.js"></script>
     <title>Myrddin's Quest</title>
+    <script>
+        function quitGame() {
+            location.reload(); // Seite neu laden, um das Spiel neu zu starten
+        }
 
+        function tryAgain() {
+            location.reload(); // Seite neu laden, um das Spiel neu zu starten
+        }
+    </script>
 </head>
 
 <body onload="init()">
-   <h2>Myrddin's Quest</h2>
+    <h2>Myrddin's Quest</h2>
     <canvas id="canvas" width="720" height="480"></canvas>
     <!-- Das Sound-Icon versteckt sich zu Beginn -->
     <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
         alt="Sound Control">
-        
+
     <div class="overlay">
         <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> <!-- Bild des Charakters -->
         <img src="img/game_ui/main/how to play.png" alt="Scroll" class="how-to-play-img"> <!-- Bild der Schriftrolle -->
@@ -87,14 +95,10 @@
                     </tbody>
                 </table>
                 <p class="description-text">
-                    <!-- The wizard (Myrddin) has been cursed by an evil troll who has taken over his kingdom with knights.
-                    To free the kingdom, the wizard must fight against the knights and ultimately defeat the troll. Goal
-                    of the game: The magician must collect various magical artifacts that come in the form of coins or
-                    crystals. These artifacts give him new abilities that eventually make him strong enough to defeat
-                    the final boss. -->
-                    The powerful wizard Myrddin lives in a magical land that is threatened by dark forces. 
-                    An evil troll boss has stolen the source of the land's magic - a powerful crystal that sustains all life. 
-                    Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal. 
+                    The powerful wizard Myrddin lives in a magical land that is threatened by dark forces.
+                    An evil troll boss has stolen the source of the land's magic - a powerful crystal that sustains all
+                    life.
+                    Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal.
                     On his way, he must cross dangerous forests guarded by knights, poisonous snakes and dark magic.
                 </p>
                 <p class="back-link" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
@@ -103,18 +107,31 @@
         <div id="impressum-container" class="impressum-button" onclick="handleImpressum()">
             <span>Impressum</span>
         </div>
-    
+
         <div id="impressum" class="impressum">
             <h3>Impressum</h3>
             <p>@ Gabriela Ströbl 2024</p>
             <p>Gabriela Ströbl<br>
-               Münchnerstr. 20<br>
-              80333 München<br>
+                Münchnerstr. 20<br>
+                80333 München<br>
             </p>
             <p>Font:Sylfaen</p>
             <p>Images:CraftPix.net</p>
             <p class="back-link2" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
         </div>
+    </div>
+
+    <div id="game-over-container" style="display: none;">
+        <div class="you-lost-image"></div>
+        <div class="game-button-container">
+            <button id="quitButton" class="game-button" style="display: none;" onclick="quitGame()">
+                <img src="img/game_ui/quit.png" alt="Quit game">
+            </button>
+            <button id="tryAgain" class="game-button" style="display:none;" onclick="tryAgain()">
+                <img src="img/game_ui/try_again.png" alt="Try Again">
+            </button>
+        </div>
+    </div>
 </body>
 
 </html>

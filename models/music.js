@@ -4,8 +4,9 @@ let attackSound = new Audio("audio/wizard_attack.mp3");
 let fireAttackSound = new Audio("audio/fire_attack.mp3");
 let collectCoinSound = new Audio("audio/collect_coins.mp3");
 let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
+let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
-let allSounds = [backgroundMusic, walkingSound, attackSound, fireAttackSound, collectCoinSound, throwPoisonBottleSound];
+let allSounds = [backgroundMusic, walkingSound, attackSound, fireAttackSound, collectCoinSound, throwPoisonBottleSound, jumpSound];
 
 function musicSwitcher() {
     const audioIcon = document.getElementById('audioSwitcher'); // Icon für Sound an/aus
@@ -65,6 +66,12 @@ function playCollectCoinSound() {
 function playPoisonBottleSound() {
     if (musicIsOn) {
         throwPoisonBottleSound.play();
+    }
+}
+
+function playJumpSound() {
+    if (musicIsOn) {
+        jumpSound.play();
     }
 }
 

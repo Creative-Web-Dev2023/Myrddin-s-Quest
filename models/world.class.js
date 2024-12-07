@@ -69,6 +69,7 @@ class World {
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
     this.setWorld();
     this.startGameLoop();
+    this.camera_x = -this.character.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
   }
 
   setWorld() {
@@ -124,10 +125,11 @@ class World {
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
-    this.checkLevelCompletion(); // Überprüfe, ob das Level abgeschlossen ist
     this.updateComets(); // Füge diese Zeile hinzu
     if (this.character.isDead()) {
-      this.showYouLostAnimation(); // Zeige die "You Lost" Animation
+      setTimeout(() => {
+        this.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
+      }, 200); // Verkürze die Zeit auf 500ms
     }
   }
 
@@ -206,44 +208,65 @@ class World {
   }
 
   draw() {
+    this.clearCanvas();
+    this.drawBackground();
+    this.drawStatusBars();
+    this.drawGameObjects();
+    this.drawEnemies();
+    this.drawCharacter();
+    this.drawLostScreen();
+  }
+
+  clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // Verschiebe die Kamera, um den Hintergrund anzupassen
+  }
+
+  drawBackground() {
     this.ctx.translate(this.camera_x, 0);
-    this.addObjectsToMap(this.backgroundObjects); // Hintergrund zeichnen
+    this.addObjectsToMap(this.backgroundObjects);
     this.addObjectsToMap(this.level.clouds);
-    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
-    this.addToMap(this.coinStatusBar);// Zeichne fixierte Objekte (Statusleisten)
+    this.ctx.translate(-this.camera_x, 0);
+  }
+
+  drawStatusBars() {
+    this.addToMap(this.coinStatusBar);
     if (this.currentLevelIndex === 1) {
-      this.addToMap(this.poisonStatusBar); // Nur in Level 2 zeichnen
+      this.addToMap(this.poisonStatusBar);
     }
     this.addToMap(this.statusBar);
-    this.statusBar.draw(this.ctx); // Statusleisten separat zeichnen (falls erforderlich)
+    this.statusBar.draw(this.ctx);
     this.coinStatusBar.draw(this.ctx);
     if (this.currentLevelIndex === 1 && this.level.endboss) {
       this.endbossHealthBar.x = this.level.endboss.x;
-      this.endbossHealthBar.y = this.level.endboss.y - 50; // Positioniere die Statusleiste über dem Endboss
-      this.addToMap(this.endbossHealthBar); // Zeichne die Statusleiste des Endbosses
+      this.endbossHealthBar.y = this.level.endboss.y - 50;
+      this.addToMap(this.endbossHealthBar);
       this.endbossHealthBar.draw(this.ctx);
     }
-    this.addToMap(this.character.healthBar); // Zeichne die Statusleiste des Charakters
-    this.addToMap(this.poisonStatusBar); // Zeichne die PoisonStatusBar
-    this.poisonStatusBar.draw(this.ctx); // Zeichne die Statusleiste für Gift
-    this.ctx.translate(this.camera_x, 0);  // Zeichne Kamera-gebundene Objekte (Charakter, Gegner, Münzen)
+    this.addToMap(this.character.healthBar);
+    if (this.poisonStatusBar) {
+      this.addToMap(this.poisonStatusBar);
+      this.poisonStatusBar.draw(this.ctx);
+    }
+  }
+
+  drawGameObjects() {
+    this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.enemies);
-    this.addToMap(this.character);
-  
-    this.coinsArray.forEach((coin) => { // Münzen zeichnen und Kollisionsbox anzeigen
-        if (coin.isActive) {
-          coin.draw(this.ctx, this.camera_x); // Münze zeichnen
-        }
+    this.coinsArray.forEach((coin) => {
+      if (coin.isActive) {
+        coin.draw(this.ctx, this.camera_x);
+      }
     });
-    this.poisonsArray.forEach((poison) => { // Giftobjekte zeichnen
-      poison.draw(this.ctx, this.camera_x); // Giftobjekt zeichnen
+    this.poisonsArray.forEach((poison) => {
+      poison.draw(this.ctx, this.camera_x);
     });
-    this.throwableObjects.forEach((bottle) => { // Throwable objects zeichnen
-      bottle.draw(this.ctx, this.camera_x); // Throwable object zeichnen
+    this.throwableObjects.forEach((bottle) => {
+      bottle.draw(this.ctx, this.camera_x);
     });
-    this.ctx.translate(-this.camera_x, 0);// Kamera zurücksetzen
+    this.ctx.translate(-this.camera_x, 0);
+  }
+
+  drawEnemies() {
     this.enemies.forEach(enemy => {
       enemy.draw(this.ctx);
       if (enemy instanceof Knight) {
@@ -252,28 +275,19 @@ class World {
         });
       }
     });
+  }
+
+  drawCharacter() {
+    this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen
+    this.addToMap(this.character);
     this.characters.forEach(character => character.draw(this.ctx));
+    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
+  }
+
+  drawLostScreen() {
     if (this.character.isDead()) {
-      this.drawYouLostImage(); // Zeichne das "You Lost" Bild
+      this.showYouLostScreen();
     }
-  }
-
-  drawYouLostImage() {
-    const img = this.imageCache[this.IMAGES_YOU_LOST[0]]; // Nimm das "You Lost" Bild
-    const x = 0; // Setze die x-Position auf 0
-    const y = 0; // Setze die y-Position auf 0
-    const width = this.canvas.width; // Setze die Breite auf die Breite des Canvas
-    const height = this.canvas.height; // Setze die Höhe auf die Höhe des Canvas
-    this.ctx.drawImage(img, x, y, width, height); // Zeichne das Bild auf das Canvas
-    this.drawQuitButton(); // Zeichne den Quit-Button
-  }
-
-  drawQuitButton() {
-    const img = this.imageCache[this.quitButtonImage];
-    const aspectRatio = img.width / img.height;
-    const buttonHeight = 40;
-    const buttonWidth = buttonHeight * aspectRatio;
-    this.ctx.drawImage(img, this.quitButton.x, this.quitButton.y, buttonWidth, buttonHeight);
   }
 
   handleMouseClick(event) {
@@ -287,14 +301,10 @@ class World {
       y >= this.quitButton.y &&
       y <= this.quitButton.y + this.quitButton.height
     ) {
-      this.quitGame();
     }
   }
 
-  quitGame() {
-    // Logik zum Beenden des Spiels oder zum Zurückkehren zum Hauptmenü
-    console.log("Quit Game");
-  }
+ 
 
   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {
@@ -336,21 +346,7 @@ class World {
     this.ctx.restore(); // stellt den gespeicherten Zustand wieder her
   }
 
-  checkLevelCompletion() {
-    if (this.level.enemies.length === 0 && this.character.poisonCollected >= 4) {
-      this.advanceToNextLevel();
-    }
-  }
-
-  advanceToNextLevel() {
-    if (this.currentLevelIndex < this.levels.length - 1) {
-      this.currentLevelIndex++;
-      this.level = this.levels[this.currentLevelIndex];
-      this.enemies = this.level.enemies || []; // Sicherstellen, dass es ein Array ist
-      this.character.resetForNewLevel(); // Setze den Charakter für das neue Level zurück
-      this.setWorld();
-    }
-  }
+ 
 
   checkThrowableObject() {
     if (this.keyboard.D && this.character.poisonCollected > 0) {
@@ -372,24 +368,28 @@ class World {
       }
     });
   }
-
-  showYouLostAnimation() {
-    this.currentImage = 0; // Reset animation frame
-    this.playAnimation(this.IMAGES_YOU_LOST);
-    setTimeout(() => {
-      // Optional: Füge hier Logik hinzu, um das Spiel neu zu starten oder zum Hauptmenü zurückzukehren
-    }, 3000); // Zeige die "You Lost" Animation für 3 Sekunden
-  }
-
+ 
   playAnimation(images) {
     if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
       let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
       let path = images[i]; // Bildpfad aus dem Array
       this.img = this.imageCache[path]; // Bild aus dem Cache setzen
       this.currentImage++;
-      if (this.currentImage >= images.length) { // 
+      if (this.currentImage >= images.length) { 
         this.currentImage = 0; // Setze auf den ersten Frame zurück
       }
     }
   }
+
+  showYouLostScreen() {
+    const gameOverContainer = document.getElementById('game-over-container');
+    gameOverContainer.style.display = 'flex'; // Ändere auf 'flex', um den Container anzuzeigen
+    document.getElementById('quitButton').style.display = 'block';
+    document.getElementById('tryAgain').style.display = 'block';
+  }
+
+  tryAgain() {
+    location.reload(); // Seite neu laden, um das Spiel neu zu starten
+  }
+ 
 }

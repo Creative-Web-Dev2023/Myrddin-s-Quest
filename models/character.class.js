@@ -9,6 +9,7 @@ class Character extends MovableObject {
   invulnerable = false;
   poisonCollected = 0; // Gift gesammelt
   poisonStatusBar; // Füge die PoisonStatusBar hinzu
+  deadAnimationPlayed = false; // Füge eine neue Eigenschaft hinzu, um zu verfolgen, ob die Dead-Animation abgespielt wurde
 
   offset = {
     top: 50, // Reduziert das Rechteck von oben
@@ -100,11 +101,7 @@ class Character extends MovableObject {
     "img/wizard/fire/fire9.png",
     "img/wizard/fire/fire10.png",
   ];
-
-  
-
   world = {};
-
   constructor(world, coinStatusBar, poisonStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
@@ -127,6 +124,7 @@ class Character extends MovableObject {
     this.healthBar = new Statusbar(); // Füge eine Statusleiste für den Charakter hinzu
     this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
     this.loadImages(this.IMAGES_YOU_LOST);
+    this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
   }
 
   throwObject() {
@@ -142,42 +140,36 @@ class Character extends MovableObject {
   animate() {
     this.animationInterval = setInterval(() => {
       if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
-        if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
-          clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
-          this.showYouLostAnimation(); // Zeige die "You Lost" Animation
-        }
+        this.handleDeadAnimation();
       } else if (this.world.keyboard && this.world.keyboard.THROW) {
-        this.playAnimation(this.IMAGES_FIRE_ATTACK);
-        if (fireAttackSound.paused) {
-          playFireAttackSound(); // Spiele den Angriffssound ab
-        }
+        this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound);
       } else if (this.world.keyboard && this.world.keyboard.ATTACK) {
-        this.playAnimation(this.IMAGES_ATTACK);
-        if (attackSound.paused) {
-          playAttackSound();
-        }
+        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound);
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       } else if (this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
       } else if (this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        this.playAnimation(this.IMAGES_WALKING);
-        if (walkingSound.paused) {
-          playWalkingSound();
-        }
+        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound);
       } else {
         this.playAnimation(this.IMAGES_IDLE);
       }
     }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
   }
 
-  showYouLostAnimation() {
-    this.currentImage = 0; // Reset animation frame
-    this.playAnimation(this.IMAGES_YOU_LOST);
-    setTimeout(() => {
-      // Optional: Füge hier Logik hinzu, um das Spiel neu zu starten oder zum Hauptmenü zurückzukehren
-    }, 2000); // Zeige die "You Lost" Animation für 3 Sekunden
+  playAnimationWithSound(images, sound) {
+    this.playAnimation(images);
+    if (sound.paused) {
+      sound.play();
+    }
+  }
+
+  handleDeadAnimation() {
+    this.playAnimation(this.IMAGES_DEAD);
+    if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
+      clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
+      this.world.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
+    }
   }
 
   update() {
@@ -197,11 +189,15 @@ class Character extends MovableObject {
         this.jump();
       }
       this.world.camera_x = -this.x - 190;
-      this.collectCoins();
-      this.collectPoison(); // Überprüfe Kollision mit Giftflaschen
-      this.checkJumpOnKnight(); // Überprüfe, ob der Charakter auf einen Ritter springt
-      this.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreifen soll
+      this.checkCollisions();
     }
+  }
+
+  checkCollisions() {
+    this.collectCoins();
+    this.collectPoison();
+    this.checkJumpOnKnight();
+    this.checkKnightAttack();
   }
 
   collectPoison() {
@@ -234,6 +230,7 @@ class Character extends MovableObject {
   
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
+    playJumpSound(); // Spiele den Sprung-Sound ab
   }
 
   checkCollision(coin) {
@@ -315,18 +312,19 @@ class Character extends MovableObject {
     let nearestKnight = null;
     let minDistance = Infinity;
   
-    this.world.enemies.forEach((enemy) => {
+    this.world.enemies.forEach((enemy, index) => {
       if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) {
         const distance = Math.abs(this.x - enemy.x);
         if (distance < minDistance) {
           minDistance = distance;
-          nearestKnight = enemy;
+          nearestKnight = { enemy, index };
         }
       }
     });
   
     if (nearestKnight) {
-      nearestKnight.die(); // Set knight to dead state
+      nearestKnight.enemy.die(); // Set knight to dead state
+      this.world.enemies.splice(nearestKnight.index, 1); // Remove knight from enemies array
     }
   }
  
@@ -346,4 +344,16 @@ class Character extends MovableObject {
     });
   }
  
+  reset() {
+    this.x = 130;
+    this.y = 150;
+    this.energy = 100;
+    this.coinsCollected = 0;
+    this.poisonCollected = 0;
+    this.coinStatusBar.setPercentage(0);
+    this.poisonStatusBar.setPercentage(0);
+    this.healthBar.setPercentage(this.energy);
+    this.playAnimation(this.IMAGES_IDLE);
+    this.animate();
+  }
 }
