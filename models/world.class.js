@@ -9,15 +9,15 @@ class World {
   cloudSpawnInterval = 3000; // Intervall (3 Sekunden)
   coinsArray = [];
   poisonsArray = [];
-  coinStatusBar; // Hier als Klassenattribut definiert
+  // coinStatusBar; // Hier als Klassenattribut definiert
   statusBar; // Add statusBar as a class attribute
   characters = [];
   enemies = [];
-  endbossHealthBar; // Füge eine Statusleiste für den Endboss hinzu
+  // endbossHealthBar; // Füge eine Statusleiste für den Endboss hinzu
   throwableObjects = []; // Füge ein werfbares Objekt hinzu
   currentLevelIndex = 0; // Aktuelles Level
   levels = [level1, level2]; // Liste der Levels
-  poisonStatusBar; // Füge die PoisonStatusBar hinzu
+  // poisonStatusBar; // Füge die PoisonStatusBar hinzu
   imageCache = {}; // Initialisiere den imageCache
   IMAGES_YOU_LOST = [
     "img/game_ui/game_over.png",
@@ -55,17 +55,16 @@ class World {
     this.level = this.levels[this.currentLevelIndex]; // Initialisiere das erste Level
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
     if (this.currentLevelIndex === 1) {
-      this.poisonStatusBar = new PoisonStatusbar(); // Nur in Level 2 erstellen
+      this.poisonStatusBar = new PoisonStatusBar(); // Nur in Level 2 erstellen
     }
-    this.statusBar = new Statusbar(); // Instanz hier erstellen
-    this.poisonStatusBar = new PoisonStatusbar(); // Instanz hier erstellen
+    this.statusBar = new StatusBar(this.character); // Instanz hier erstellen
+    this.endbossHealthBar = new EndbossStatusbar(this.level.endboss); // Stelle sicher, dass der Name korrekt istanz hier erstellen
     this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = this.initializeCoins();
     this.poisonsArray = this.level.poisonObjects; // Initialisiere Giftobjekte
     this.backgroundObjects = this.level.backgroundObjects || []; // Sicherstellen, dass es ein Array ist
     this.enemies = this.level.enemies || []; // Initialisiere die Feinde aus dem Level
-    this.endbossHealthBar = new Statusbar(); // Instanz hier erstellen
     this.loadImages(this.IMAGES_YOU_LOST); // Lade das "You Lost" Bild
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
     this.door = new Door(4500, 70); // Initialisiere die Tür

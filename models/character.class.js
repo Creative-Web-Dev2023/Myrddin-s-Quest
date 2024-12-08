@@ -122,8 +122,9 @@ class Character extends MovableObject {
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusbar(); // Statusleiste für Gift
     this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
-    this.healthBar = new Statusbar(); // Füge eine Statusleiste für den Charakter hinzu
+    this.healthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
     this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
+    this.statusBar = new StatusBar();
     this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
   }
