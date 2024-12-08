@@ -37,42 +37,5 @@ class DrawableObject {
   }
 }
 
-class CollectableObject extends DrawableObject {
-  constructor(x, y, width, height, imagePath) {
-    super();
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.loadImage(imagePath);
-  }
 
-  draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  }
-}
 
-// Entfernen Sie die doppelten Klassendeklarationen
-// class Coin extends CollectableObject {
-//   static coinImage = "img/game_items/coin.png";
-
-//   constructor(x, y) {
-//     super(x, y, 50, 50, Coin.coinImage);
-//   }
-// }
-
-// class Key extends CollectableObject {
-//   static keyImage = "img/game_items/key.png";
-
-//   constructor(x, y) {
-//     super(x, y, 50, 50, Key.keyImage);
-//   }
-// }
-
-// class Poison extends CollectableObject {
-//   static poisonImage = "img/game_items/poison.png";
-
-//   constructor(x, y) {
-//     super(x, y, 50, 50, Poison.poisonImage);
-//   }
-// }

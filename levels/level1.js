@@ -1,3 +1,4 @@
+// Stelle sicher, dass Coin und CollectableObjects definiert sind
 const level1 = new Level(
   [
     new Knight(0, 900, 100),
@@ -8,7 +9,8 @@ const level1 = new Level(
     new Knight(12000, 3900, 100),
     new Door(4500, 70), // Passen Sie die Position der Tür an
     new Endboss(20000, 150), // Fügen Sie den Endboss hinzu
-    new Key(4200, 150), // Setzen Sie die y-Position des Schlüssels weiter nach unten
+    new CollectableObjects(4200, 150, "KEY"), // Setzen Sie die y-Position des Schlüssels weiter nach unten
+    new CollectableObjects(4200, 150, "COIN"), // Setzen Sie die y-Position des Schlüssels weiter nach unten
   ],
   [new Cloud(), new Cloud(), new Cloud()],
   [
@@ -92,4 +94,27 @@ const level1 = new Level(
     new BackgroundObject("img/skull/scull 000.png", 6000, 50, 10, 30), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 8),
   ],
+  [
+    new CollectableObjects(200, 300, "POISON"),
+    new CollectableObjects(400, 300, "POISON"),
+    new CollectableObjects(600, 300, "POISON"),
+    new CollectableObjects(200, 300, "COIN"),
+    new CollectableObjects(400, 300, "COIN"),
+    new CollectableObjects(600, 300, "COIN"),
+  ],
+  [
+    new CollectableObjects(800, 300, "KEY"),
+    new CollectableObjects(1000, 300, "KEY"),
+    new CollectableObjects(800, 300, "COIN"),
+    new CollectableObjects(1000, 300, "COIN"),
+  ],
+  [
+    new CollectableObjects(200, 300, "POISON"),
+    new CollectableObjects(400, 300, "POISON"),
+    new CollectableObjects(600, 300, "POISON"),
+  ],
+  [
+    new CollectableObjects(800, 300, "KEY"),
+    new CollectableObjects(1000, 300, "KEY"),
+  ]
 );

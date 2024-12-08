@@ -9,15 +9,13 @@ class World {
   cloudSpawnInterval = 3000; // Intervall (3 Sekunden)
   coinsArray = [];
   poisonsArray = [];
-  // coinStatusBar; // Hier als Klassenattribut definiert
   statusBar; // Add statusBar as a class attribute
   characters = [];
   enemies = [];
-  // endbossHealthBar; // Füge eine Statusleiste für den Endboss hinzu
   throwableObjects = []; // Füge ein werfbares Objekt hinzu
   currentLevelIndex = 0; // Aktuelles Level
-  levels = [level1, level2]; // Liste der Levels
-  // poisonStatusBar; // Füge die PoisonStatusBar hinzu
+  // Stelle sicher, dass level1 definiert ist
+  levels = [level1]; // Liste der Levels
   imageCache = {}; // Initialisiere den imageCache
   IMAGES_YOU_LOST = [
     "img/game_ui/game_over.png",
@@ -28,6 +26,8 @@ class World {
   tryAgainButtonImage = "img/game_ui/try_again.png"; // Pfad zum Try Again-Button-Bild
   door; // Füge eine Tür als Klassenattribut hinzu
   levelCompleted = false; // Füge eine Variable hinzu, um den Abschluss des Levels zu verfolgen
+  collectables = []; // Füge ein Array für Sammelobjekte hinzu
+  keys = []; // Füge ein Array für Schlüssel hinzu
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -72,6 +72,7 @@ class World {
     this.setWorld();
     this.startGameLoop();
     this.camera_x = -this.character.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
+    this.initializeCollectables(); // Initialisiere die Sammelobjekte
   }
 
   setWorld() {
@@ -136,6 +137,7 @@ class World {
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
     this.checkKnightsDefeated(); // Überprüfe, ob alle Ritter besiegt sind
     this.checkCharacterNearDoor(); // Überprüfe, ob der Charakter sich der Tür nähert
+    this.checkCollisionsWithCollectables(); // Überprüfe Kollisionen mit Sammelobjekten
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound(); // Spielt das Laufgeräusch nur ab, wenn die Musik eingeschaltet ist
     }
@@ -171,16 +173,15 @@ class World {
   }
 
   updateCoins() {
-    this.coinsArray.forEach((coin, index) => {
-      if (coin.isActive && this.character.checkCollision(coin)) {
-        coin.deactivate(); // Münze inaktiv setzen
-        this.coinsArray.splice(index, 1); // Münze aus dem Array entfernen
-        this.character.coinsCollected++; // Münzenzähler erhöhen
-        this.coinStatusBar.setPercentage(this.character.coinsCollected); // Statusleiste aktualisieren
-        playCollectCoinSound(); // Sound abspielen
-        if (coin instanceof Key) {
-          this.openDoor(); // Tür öffnen, wenn der Schlüssel eingesammelt wird
-        }
+    this.coinsArray.forEach((coin) => {
+      if (coin.isActive) {
+        // Logik für die Münze
+      }
+    });
+
+    this.keys.forEach((key) => {
+      if (key.isActive) {
+        // Logik für den Schlüssel
       }
     });
   }
@@ -253,6 +254,7 @@ class World {
     this.drawCharacter();
     this.drawLostScreen();
     this.drawDoor(); // Zeichne die Tür
+    this.drawCollectables(); // Zeichne die Sammelobjekte
   }
 
   clearCanvas() {
@@ -462,5 +464,55 @@ class World {
 
   openDoor() {
     this.door.openDoor(); // Tür öffnen
+  }
+
+  initializeCollectables() {
+    // Münzen
+    this.collectables.push(new CollectableObjects(100, 200, "COIN"));
+    this.collectables.push(new CollectableObjects(200, 250, "COIN"));
+    this.collectables.push(new CollectableObjects(300, 300, "COIN"));
+    // Schlüssel
+    this.collectables.push(new CollectableObjects(400, 100, "KEY"));
+    this.collectables.push(new CollectableObjects(500, 150, "KEY"));
+    // Giftflaschen
+    this.collectables.push(new CollectableObjects(600, 200, "POISON"));
+    this.collectables.push(new CollectableObjects(700, 250, "POISON"));
+  }
+
+  drawCollectables() {
+    this.collectables.forEach((collectable) => collectable.draw(this.ctx));
+  }
+
+  checkCollisionsWithCollectables() {
+    this.collectables.forEach((collectable) => {
+      if (this.character.isColliding(collectable) && collectable.isActive) {
+        collectable.deactivate(); // Deaktiviere das Sammelobjekt
+        this.handleCollectable(collectable); // Reagiere basierend auf dem Typ
+      }
+    });
+  }
+
+  handleCollectable(collectable) {
+    switch (collectable.type) {
+      case "COIN":
+        this.character.coinsCollected++;
+        this.coinStatusBar.setPercentage(this.character.coinsCollected);
+        break;
+      case "KEY":
+        this.character.keysCollected++;
+        this.openDoor();
+        break;
+      case "POISON":
+        this.character.energy -= 10; // Gift reduziert Energie
+        this.statusBar.setPercentage(this.character.energy);
+        break;
+      default:
+        console.warn("Unbekannter Collectable-Typ:", collectable.type);
+    }
+  }
+
+  createKeys() {
+    const key = new Key(150, 200); // Beispielposition
+    this.keys.push(key);
   }
 }
