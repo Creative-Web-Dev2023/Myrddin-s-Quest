@@ -28,4 +28,8 @@ class Key extends DrawableObject {
       ctx.stroke();
     }
   }
+
+  deactivate() {
+    this.isActive = false; // Mache den Schlüssel inaktiv, nachdem er eingesammelt wurde
+  }
 }

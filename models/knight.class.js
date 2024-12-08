@@ -17,7 +17,6 @@ class Knight extends MovableObject {
     right: 180 // Verkleinere die rechten Offset-Werte
   };
 
-  // Animationen
   IMAGES_WALKING = [
     'img/Boss2/walk/walk 0.png',
     'img/Boss2/walk/walk 1.png',
@@ -27,16 +26,6 @@ class Knight extends MovableObject {
     'img/Boss2/walk/walk 5.png',
   ];
 
-  IMAGES_ATTACKING = [
-    'img/Boss2/attack/attack 0.png',
-    'img/Boss2/attack/attack 1.png',
-    'img/Boss2/attack/attack 2.png',
-    'img/Boss2/attack/attack 3.png',
-    'img/Boss2/attack/attack 4.png',
-    'img/Boss2/attack/attack 5.png',
-    'img/Boss2/attack/attack 6.png',
-  ];
-  
   IMAGES_DEAD = [
     'img/Boss2/death/death 0.png',
     'img/Boss2/death/death 1.png',
@@ -45,10 +34,16 @@ class Knight extends MovableObject {
     'img/Boss2/death/death 4.png',
     'img/Boss2/death/death 5.png',
   ];
-
   IMAGES_HURT = [
     'img/Boss2/hurt/hurt 0.png',
     'img/Boss2/hurt/hurt 1.png',
+  ];
+  IMAGES_FIREBALL = [
+    'img/Boss2/magic-fire/magic_fire 0.png',
+    'img/Boss2/magic-fire/magic_fire 1.png',
+    'img/Boss2/magic-fire/magic_fire 2.png',
+    'img/Boss2/magic-fire/magic_fire 3.png',
+    'img/Boss2/magic-fire/magic_fire 4.png',
   ];
 
   constructor(delay = 0, startX = 800, moveRange = 100) {
@@ -58,17 +53,15 @@ class Knight extends MovableObject {
     this.moveRange = moveRange;
     this.loadImage('img/Boss2/walk/walk 0.png');
     this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_FIREBALL);
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
-
     setTimeout(() => {
       this.isMoving = true;
       this.animate();
     }, delay);
   }
-
   loadImages(images) {
     images.forEach((path) => {
       const img = new Image();
@@ -76,11 +69,9 @@ class Knight extends MovableObject {
       this.imageCache[path] = img;
     });
   }
-
   setWorld(world) {
     this.world = world;
   }
-
   animate() {
     this.movementInterval = setInterval(() => {
       this.handleMovement();
@@ -90,7 +81,6 @@ class Knight extends MovableObject {
       this.handleAnimation();
     }, 1000 / 6);
   }
-
   handleMovement() {
     if (!this.dead && this.isMoving) {
       this.moveLeft(); // Immer nach links laufen
@@ -100,7 +90,6 @@ class Knight extends MovableObject {
       }
     }
   }
-
   handleAnimation() {
     if (!this.dead) {
       if (this.isMoving) {
@@ -118,7 +107,6 @@ class Knight extends MovableObject {
       this.currentImage = 0; // Animation zurücksetzen
     }
   }
-
   getCollisionBox() {
     return {
       x: this.x + this.offset.left,

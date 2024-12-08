@@ -32,23 +32,14 @@
     <script src="levels/level2.js"></script>
     <script src="js/game.js"></script>
     <title>Myrddin's Quest</title>
-    <script>
-      
-        function quitGame() {
-            location.reload(); // Seite neu laden, um das Spiel neu zu starten
-        }
-
-        function tryAgain() {
-            location.reload(); // Seite neu laden, um das Spiel neu zu starten
-        }
-    </script>
+  
 </head>
 
-<body onload="init()">
+<body>
     <h2>Myrddin's Quest</h2>
     <canvas id="canvas" width="720" height="480"></canvas>
     <!-- Das Sound-Icon versteckt sich zu Beginn -->
-    <img class="audio-icon" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
+    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
         alt="Sound Control">
 
     <div class="overlay">
@@ -67,7 +58,7 @@
         </svg>
 
         <div class="button-container"> <!-- Neuer Container für die Buttons -->
-            <a id="startButton" class="start-button"><span>Start Game</span></a>
+            <a id="startButton" class="start-button" onclick="startGame()"><span>Start Game</span></a>
             <!-- Start Game Button -->
             <div id="description-container" class="how-to-play-button" onclick="handleDescription()">
                 <span>How to Play</span>
@@ -133,6 +124,7 @@
             </button>
         </div>
     </div>
+    <div id="level-completed-container" class="hidden">Level 1 geschafft</div>
 </body>
 
 </html>

@@ -172,7 +172,6 @@ class Character extends MovableObject {
       this.world.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
     }
   }
-
   update() {
     if (!this.isDead()) {
       walkingSound.pause();
@@ -193,7 +192,6 @@ class Character extends MovableObject {
       this.checkCollisions();
     }
   }
-
   checkCollisions() {
     this.collectCoins();
     this.collectPoison();
@@ -202,7 +200,6 @@ class Character extends MovableObject {
     this.checkKnightAttack();
     this.checkEnterDoor(); // Überprüfe, ob der Charakter die Tür betritt
   }
-
   collectPoison() {
     if (this.world.poisonsArray) {
       this.world.poisonsArray.forEach((poison, index) => {
@@ -215,7 +212,6 @@ class Character extends MovableObject {
       });
     }
   }
-
   collectCoins() {
     if (this.world.coinsArray) {
       this.world.coinsArray.forEach((coin, index) => {
@@ -231,7 +227,6 @@ class Character extends MovableObject {
       });
     }
   }
-  
   collectKey() {
     if (this.world.keysArray) {
       this.world.keysArray.forEach((key, index) => {

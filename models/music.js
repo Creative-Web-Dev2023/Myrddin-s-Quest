@@ -20,16 +20,20 @@ function musicSwitcher() {
 }
 
 function playMusic() {
-    backgroundMusic.play();
-    backgroundMusic.loop = true;  // Musik in Endlosschleife
-    musicIsOn = true;
+    if (!musicIsOn) {
+        backgroundMusic.play();
+        backgroundMusic.loop = true;  // Musik in Endlosschleife
+        musicIsOn = true;
+    }
 }
 
 function stopMusic() {
-    backgroundMusic.pause();
-    backgroundMusic.currentTime = 0;  // Musik von Anfang abspielen, wenn sie wieder gestartet wird
-    musicIsOn = false;
-    pauseAllSounds(); // Pausiere alle Sounds
+    if (musicIsOn) {
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;  // Musik von Anfang abspielen, wenn sie wieder gestartet wird
+        musicIsOn = false;
+        pauseAllSounds(); // Pausiere alle Sounds
+    }
 }
 
 function pauseAllSounds() {
@@ -40,37 +44,37 @@ function pauseAllSounds() {
 }
 
 function playWalkingSound() {
-    if (musicIsOn) {
+    if (musicIsOn && walkingSound.paused) {
         walkingSound.play();
     }
 }
 
 function playAttackSound() {
-    if (musicIsOn) {
+    if (musicIsOn && attackSound.paused) {
         attackSound.play();
     }
 }
 
 function playFireAttackSound() {
-    if (musicIsOn) {
+    if (musicIsOn && fireAttackSound.paused) {
         fireAttackSound.play();
     }
 }
 
 function playCollectCoinSound() {
-    if (musicIsOn) {
+    if (musicIsOn && collectCoinSound.paused) {
         collectCoinSound.play();
     }
 }
 
 function playPoisonBottleSound() {
-    if (musicIsOn) {
+    if (musicIsOn && throwPoisonBottleSound.paused) {
         throwPoisonBottleSound.play();
     }
 }
 
 function playJumpSound() {
-    if (musicIsOn) {
+    if (musicIsOn && jumpSound.paused) {
         jumpSound.play();
     }
 }

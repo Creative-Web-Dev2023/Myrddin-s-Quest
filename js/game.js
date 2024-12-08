@@ -12,9 +12,8 @@ function startGame() {
 }
 
 function init() {
-    canvas = document.getElementById("canvas");
+    canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);
-    gameLoop();
 }
 
 function gameLoop() {
@@ -42,6 +41,14 @@ function goBack() {
   description.classList.remove("show");
   impressum.classList.add("hidden");
   impressum.classList.remove("show");
+}
+
+function quitGame() {
+    location.reload(); // Seite neu laden, um das Spiel neu zu starten
+}
+
+function tryAgain() {
+    location.reload(); // Seite neu laden, um das Spiel neu zu starten
 }
 
 // Event Listener für Tastendrücke

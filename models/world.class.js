@@ -27,7 +27,7 @@ class World {
   tryAgainButton;
   tryAgainButtonImage = "img/game_ui/try_again.png"; // Pfad zum Try Again-Button-Bild
   door; // Füge eine Tür als Klassenattribut hinzu
-  // Füge die Türbilder hinzu
+  levelCompleted = false; // Füge eine Variable hinzu, um den Abschluss des Levels zu verfolgen
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -68,7 +68,8 @@ class World {
     this.endbossHealthBar = new Statusbar(); // Instanz hier erstellen
     this.loadImages(this.IMAGES_YOU_LOST); // Lade das "You Lost" Bild
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
-    this.door = new Door(1000, 150); // Initialisiere die Tür
+    this.door = new Door(4500, 70); // Initialisiere die Tür
+    this.door.isOpen = false; // Tür ist zu Beginn geschlossen
     this.setWorld();
     this.startGameLoop();
     this.camera_x = -this.character.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
@@ -76,6 +77,11 @@ class World {
 
   setWorld() {
     this.character.world = this;                                                                                                                                                                                                                                                                      
+    this.enemies.forEach(enemy => {
+      if (enemy instanceof Knight) {
+        enemy.world = this; // Setze die world-Eigenschaft für den Ritter
+      }
+    });
   }
 
   loadImages(images) {
@@ -119,6 +125,8 @@ class World {
   }
 
   update() {
+    if (this.levelCompleted) return; // Stoppe das Update, wenn das Level abgeschlossen ist
+
     this.checkCollisionsWithEnemy();
     this.character.update();
     this.updateCoins();
@@ -128,6 +136,10 @@ class World {
     this.updateEndbossHealth();
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
     this.checkKnightsDefeated(); // Überprüfe, ob alle Ritter besiegt sind
+    this.checkCharacterNearDoor(); // Überprüfe, ob der Charakter sich der Tür nähert
+    if (this.character.isMoving() && musicIsOn) {
+      playWalkingSound(); // Spielt das Laufgeräusch nur ab, wenn die Musik eingeschaltet ist
+    }
     if (this.character.isDead()) {
       setTimeout(() => {
         this.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
@@ -140,6 +152,14 @@ class World {
       if (this.character.isColliding(enemy)) {
         this.character.hit(enemy);
         this.statusBar.setPercentage(this.character.energy);
+        if (enemy instanceof Knight) {
+          enemy.energy -= 20; // Reduziere die Energie des Ritters
+          if (enemy.isDead()) {
+            enemy.playAnimation(enemy.IMAGES_DEAD);
+          } else if (enemy.isHurt()) {
+            enemy.playAnimation(enemy.IMAGES_HURT);
+          }
+        }
       }
     });
     this.character.checkCollisionWithPoison();
@@ -159,9 +179,13 @@ class World {
         this.character.coinsCollected++; // Münzenzähler erhöhen
         this.coinStatusBar.setPercentage(this.character.coinsCollected); // Statusleiste aktualisieren
         playCollectCoinSound(); // Sound abspielen
+        if (coin instanceof Key) {
+          this.openDoor(); // Tür öffnen, wenn der Schlüssel eingesammelt wird
+        }
       }
     });
   }
+
   playCollectCoinSound() {
     if (window.isAudioOn) {
       const audio = new Audio('audio/collect_coins.mp3'); // Aktualisieren Sie den Pfad zur Sounddatei
@@ -397,15 +421,47 @@ class World {
         !(enemy instanceof Knight) || enemy.isDead
     );
 
-    if (allKnightsDefeated && !this.door.isActive) {
-        this.door.show(); // Zeige die Tür
+    if (allKnightsDefeated && !this.door.isOpen) {
+        this.openDoor(); // Tür öffnen
     }
-}
 
-drawDoor() {
-  if (this.door) {
-    this.door.draw(this.ctx); // Zeichnet die Tür auf das Canvas
-    this.door.drawCollisionBox(this.ctx); // Optional: Kollisionsbox anzeigen
+    if (allKnightsDefeated && this.character.hasKey) {
+      this.completeLevel(); // Level abschließen, wenn alle Ritter besiegt und der Schlüssel eingesammelt wurden
+    }
   }
-}
+
+  completeLevel() {
+    this.levelCompleted = true; // Setze die Variable auf true, um das Update zu stoppen
+    setTimeout(() => {
+      this.showLevelCompletedText(); // Zeige den Text nach einer kurzen Verzögerung
+    }, 500); // Verzögerung von 500ms
+  }
+
+  showLevelCompletedText() {
+    const levelCompletedContainer = document.getElementById('level-completed-container');
+    levelCompletedContainer.classList.remove('hidden');
+    levelCompletedContainer.classList.add('show');
+    this.stopGame(); // Stoppe das Spiel
+  }
+  stopGame() {
+    // Hier kannst du die Logik hinzufügen, um das Spiel zu stoppen
+    clearInterval(this.gameLoopInterval); // Stoppe die Spielschleife
+    // Weitere Logik zum Stoppen des Spiels
+  }
+  drawDoor() {
+    if (this.door) {
+      this.door.draw(this.ctx); // Zeichnet die Tür auf das Canvas
+      this.door.drawCollisionBox(this.ctx); // Optional: Kollisionsbox anzeigen
+    }
+  }
+
+  checkCharacterNearDoor() {
+    if (this.door && !this.door.isOpen && this.character.isColliding(this.door)) {
+      this.openDoor(); // Tür öffnen, wenn der Charakter sich nähert
+    }
+  }
+
+  openDoor() {
+    this.door.openDoor(); // Tür öffnen
+  }
 }
