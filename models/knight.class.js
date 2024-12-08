@@ -1,6 +1,6 @@
 class Knight extends MovableObject {
   height = 270;
-  width = 500;
+  width = 400;
   y = 200; // Erhöhe die Y-Position, damit der Ritter höher positioniert wird
   delay = 3000;
   direction = 'left';

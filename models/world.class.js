@@ -26,6 +26,8 @@ class World {
   quitButtonImage = "img/game_ui/quit.png"; // Pfad zum Quit-Button-Bild
   tryAgainButton;
   tryAgainButtonImage = "img/game_ui/try_again.png"; // Pfad zum Try Again-Button-Bild
+  door; // Füge eine Tür als Klassenattribut hinzu
+  // Füge die Türbilder hinzu
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -66,6 +68,7 @@ class World {
     this.endbossHealthBar = new Statusbar(); // Instanz hier erstellen
     this.loadImages(this.IMAGES_YOU_LOST); // Lade das "You Lost" Bild
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
+    this.door = new Door(1000, 150); // Initialisiere die Tür
     this.setWorld();
     this.startGameLoop();
     this.camera_x = -this.character.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
@@ -124,6 +127,7 @@ class World {
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
+    this.checkKnightsDefeated(); // Überprüfe, ob alle Ritter besiegt sind
     if (this.character.isDead()) {
       setTimeout(() => {
         this.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
@@ -154,8 +158,15 @@ class World {
         this.coinsArray.splice(index, 1); // Münze aus dem Array entfernen
         this.character.coinsCollected++; // Münzenzähler erhöhen
         this.coinStatusBar.setPercentage(this.character.coinsCollected); // Statusleiste aktualisieren
+        playCollectCoinSound(); // Sound abspielen
       }
     });
+  }
+  playCollectCoinSound() {
+    if (window.isAudioOn) {
+      const audio = new Audio('audio/collect_coins.mp3'); // Aktualisieren Sie den Pfad zur Sounddatei
+      audio.play();
+    }
   }
 
   updatePoison() {
@@ -218,6 +229,7 @@ class World {
     this.drawEnemies();
     this.drawCharacter();
     this.drawLostScreen();
+    this.drawDoor(); // Zeichne die Tür
   }
 
   clearCanvas() {
@@ -278,6 +290,9 @@ class World {
         });
       }
     });
+    if (this.level.endboss) {
+      this.level.endboss.draw(this.ctx);
+    }
   }
 
   drawCharacter() {
@@ -347,15 +362,12 @@ class World {
     this.ctx.restore(); // stellt den gespeicherten Zustand wieder her
   }
 
- 
-
   checkThrowableObject() {
     if (this.keyboard.D && this.character.poisonCollected > 0) {
       this.character.throwObject();
       playPoisonBottleSound(); // Sound abspielen, wenn die Flasche geworfen wird
     }
   }
-
 
   playAnimation(images) {
     if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
@@ -380,4 +392,20 @@ class World {
     location.reload(); // Seite neu laden, um das Spiel neu zu starten
   }
  
+  checkKnightsDefeated() {
+    const allKnightsDefeated = this.enemies.every(enemy => 
+        !(enemy instanceof Knight) || enemy.isDead
+    );
+
+    if (allKnightsDefeated && !this.door.isActive) {
+        this.door.show(); // Zeige die Tür
+    }
+}
+
+drawDoor() {
+  if (this.door) {
+    this.door.draw(this.ctx); // Zeichnet die Tür auf das Canvas
+    this.door.drawCollisionBox(this.ctx); // Optional: Kollisionsbox anzeigen
+  }
+}
 }

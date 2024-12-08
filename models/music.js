@@ -74,4 +74,3 @@ function playJumpSound() {
         jumpSound.play();
     }
 }
-

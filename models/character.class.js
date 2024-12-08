@@ -10,6 +10,7 @@ class Character extends MovableObject {
   poisonCollected = 0; // Gift gesammelt
   poisonStatusBar; // Füge die PoisonStatusBar hinzu
   deadAnimationPlayed = false; // Füge eine neue Eigenschaft hinzu, um zu verfolgen, ob die Dead-Animation abgespielt wurde
+  hasKey = false; // Neue Eigenschaft, um zu verfolgen, ob der Charakter einen Schlüssel hat
 
   offset = {
     top: 50, // Reduziert das Rechteck von oben
@@ -196,14 +197,16 @@ class Character extends MovableObject {
   checkCollisions() {
     this.collectCoins();
     this.collectPoison();
+    this.collectKey(); // Überprüfe, ob der Charakter einen Schlüssel einsammelt
     this.checkJumpOnKnight();
     this.checkKnightAttack();
+    this.checkEnterDoor(); // Überprüfe, ob der Charakter die Tür betritt
   }
 
   collectPoison() {
     if (this.world.poisonsArray) {
       this.world.poisonsArray.forEach((poison, index) => {
-        if (poison.isActive && this.checkCollision(poison)) {
+        if (this.isColliding(poison)) {
           poison.deactivate();
           this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
           this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
@@ -215,19 +218,31 @@ class Character extends MovableObject {
 
   collectCoins() {
     if (this.world.coinsArray) {
-      this.world.coinsArray.forEach((coin) => {
-        if (coin.isActive && this.checkCollision(coin)) {
+      this.world.coinsArray.forEach((coin, index) => {
+        if (this.isColliding(coin)) {
           coin.deactivate();
           this.coinsCollected++; // Erhöhe die gesammelten Münzen
           this.coinStatusBar.setPercentage(this.coinsCollected); // Statusleiste aktualisieren
           if (collectCoinSound.paused) {
             playCollectCoinSound(); // Spiele den Münzensammelsound ab
           }
+          this.world.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
         }
       });
     }
   }
   
+  collectKey() {
+    if (this.world.keysArray) {
+      this.world.keysArray.forEach((key, index) => {
+        if (this.isColliding(key)) {
+          this.hasKey = true; // Setze hasKey auf true, wenn der Charakter einen Schlüssel einsammelt
+          this.world.keysArray.splice(index, 1); // Entferne den Schlüssel aus dem Array
+        }
+      });
+    }
+  }
+
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
     playJumpSound(); // Spiele den Sprung-Sound ab
@@ -355,5 +370,16 @@ class Character extends MovableObject {
     this.healthBar.setPercentage(this.energy);
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
+  }
+
+  checkEnterDoor() {
+    if (this.world.door.isVisible && this.isColliding(this.world.door) && this.hasKey) {
+      this.enterDoor();
+    }
+  }
+
+  enterDoor() {
+    // Logik zum Betreten der Tür (z.B. Level beenden oder Endboss bekämpfen)
+    console.log("Character entered the door!");
   }
 }

@@ -13,25 +13,27 @@
     <script src="models/health-status-bar.js"></script>
     <script src="models/poison-status-bar.js"></script>
     <script src="models/throwable-object.class.js"></script>
+    <script src="models/door.class.js"></script> <!-- Stellen Sie sicher, dass dieses Skript vor world.class.js geladen wird -->
     <script src="models/character.class.js"></script>
     <script src="models/endboss-statusbar.class.js"></script>
     <script src="models/knight.class.js"></script>
     <script src="models/clouds.class.js"></script>
-    <script src="models/world.class.js"></script>
+    <script src="models/world.class.js"></script> <!-- world.class.js sollte nach door.class.js geladen werden -->
     <script src="models/background-object.class.js"></script>
-    <script src="models/collectable-object.class.js"></script>
+    <script src="models/key.class.js"></script>
     <script src="models/poison.class.js"></script>
     <script src="models/coin.class.js"></script>
     <script src="models/level.class.js"></script>
     <script src="models/endboss.class.js"></script>
     <script src="models/keyboard.class.js"></script>
-    <script src="models/music.js"></script>
+    <script src="models/music.js"></script> <!-- Fügen Sie das Skript für music.js hinzu -->
     <script src="models/snake.class.js"></script>
     <script src="levels/level1.js"></script>
     <script src="levels/level2.js"></script>
     <script src="js/game.js"></script>
     <title>Myrddin's Quest</title>
     <script>
+      
         function quitGame() {
             location.reload(); // Seite neu laden, um das Spiel neu zu starten
         }
@@ -46,7 +48,7 @@
     <h2>Myrddin's Quest</h2>
     <canvas id="canvas" width="720" height="480"></canvas>
     <!-- Das Sound-Icon versteckt sich zu Beginn -->
-    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
+    <img class="audio-icon" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
         alt="Sound Control">
 
     <div class="overlay">

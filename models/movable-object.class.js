@@ -23,13 +23,15 @@ class MovableObject extends DrawableObject {
       }
     }, 1000 / 25);
   }
+
   isAboveGround(){
     if(this instanceof ThrowableObject){ 
       return true;
     }else{
-    return this.y < 150;
+      return this.y < 150;
+    }
   }
-  }
+
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof PoisonObject) {
       this.drawRectangle = true;
@@ -45,15 +47,17 @@ class MovableObject extends DrawableObject {
       ctx.stroke();
     }
   }
-  // character.isColliding(knight)
+
   isColliding(mo) {
-    if (!mo) return false; // Überprüfen, ob das Objekt existiert
-    const thisBox = this.getCollisionBox();
-    const moBox = mo.getCollisionBox();
-    return thisBox.x + thisBox.width > moBox.x && // Rechteck Kollision mit Offset
-           thisBox.x < moBox.x + moBox.width &&  
-           thisBox.y + thisBox.height > moBox.y &&
-           thisBox.y < moBox.y + moBox.height;
+    if (!(mo instanceof MovableObject)) return false; // Überprüfen, ob mo eine Instanz von MovableObject ist
+    const box1 = this.getCollisionBox();
+    const box2 = mo.getCollisionBox();
+    return (
+      box1.x < box2.x + box2.width &&
+      box1.x + box1.width > box2.x &&
+      box1.y < box2.y + box2.height &&
+      box1.y + box1.height > box2.y
+    );
   }
 
   getCollisionBox() {
@@ -63,14 +67,16 @@ class MovableObject extends DrawableObject {
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom,
     };
+    
     return box;
   }
-  
+
   isHurt(){
    let timepassed = new Date().getTime() - this.lastHit;
    timepassed = timepassed / 1000;
    return timepassed < 5;
   }
+
   isDead(){
     return this.energy == 0;
   }
@@ -81,7 +87,7 @@ class MovableObject extends DrawableObject {
       let path = images[i]; // Bildpfad aus dem Array
       this.img = this.imageCache[path]; // Bild aus dem Cache setzen
       this.currentImage++;
-      if (this.currentImage >= images.length) { // 
+      if (this.currentImage >= images.length) { 
         this.currentImage = 0; // Setze auf den ersten Frame zurück
       }
     }
@@ -93,12 +99,14 @@ class MovableObject extends DrawableObject {
       this.walking_sound.play();
     }
   }
+
   moveLeft() {
     this.x -= this.speed;
     if (this.walking_sound && this.walking_sound.paused) {
       this.walking_sound.play();
     }
   }
+
   jump() {
     this.speedY = 30;
   }
