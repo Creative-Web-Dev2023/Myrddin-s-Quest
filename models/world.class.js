@@ -54,11 +54,9 @@ class World {
     this.keyboard.D = false; // Initialisiere die D-Taste
     this.level = this.levels[this.currentLevelIndex]; // Initialisiere das erste Level
     this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
-    if (this.currentLevelIndex === 1) {
-      this.poisonStatusBar = new PoisonStatusBar(); // Nur in Level 2 erstellen
-    }
+    this.poisonStatusBar = new PoisonStatusBar(); // Stelle sicher, dass die Statusleiste für Gift initialisiert wird
     this.statusBar = new StatusBar(this.character); // Instanz hier erstellen
-    this.endbossHealthBar = new EndbossStatusbar(this.level.endboss); // Stelle sicher, dass der Name korrekt istanz hier erstellen
+    this.endbossHealthBar = new EndbossStatusbar(this.level.endboss); // Stelle sicher, dass der Name korrekt ist
     this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = this.initializeCoins();
@@ -72,7 +70,7 @@ class World {
     this.setWorld();
     this.startGameLoop();
     this.camera_x = -this.character.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
-    this.initializeCollectables(); // Initialisiere die Sammelobjekte
+
   }
 
   setWorld() {
@@ -199,7 +197,9 @@ class World {
         poison.deactivate(); // Gift inaktiv setzen
         this.poisonsArray.splice(index, 1); // Gift aus dem Array entfernen
         this.character.poisonCollected++; // Giftzähler erhöhen
-        this.poisonStatusBar.setPercentage(this.character.poisonCollected * 20); // Statusbar aktualisieren
+        if (this.poisonStatusBar) {
+          this.poisonStatusBar.setPercentage(this.character.poisonCollected * 20); // Statusbar aktualisieren
+        }
       }
     });
   }
@@ -466,21 +466,12 @@ class World {
     this.door.openDoor(); // Tür öffnen
   }
 
-  initializeCollectables() {
-    // Münzen
-    this.collectables.push(new CollectableObjects(100, 200, "COIN"));
-    this.collectables.push(new CollectableObjects(200, 250, "COIN"));
-    this.collectables.push(new CollectableObjects(300, 300, "COIN"));
-    // Schlüssel
-    this.collectables.push(new CollectableObjects(400, 100, "KEY"));
-    this.collectables.push(new CollectableObjects(500, 150, "KEY"));
-    // Giftflaschen
-    this.collectables.push(new CollectableObjects(600, 200, "POISON"));
-    this.collectables.push(new CollectableObjects(700, 250, "POISON"));
-  }
+
 
   drawCollectables() {
+    this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen
     this.collectables.forEach((collectable) => collectable.draw(this.ctx));
+    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
   }
 
   checkCollisionsWithCollectables() {
@@ -511,8 +502,5 @@ class World {
     }
   }
 
-  createKeys() {
-    const key = new Key(150, 200); // Beispielposition
-    this.keys.push(key);
-  }
+ 
 }

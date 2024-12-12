@@ -89,14 +89,14 @@ class CoinStatusBar extends DrawableObject {
   }
 }
 
-class PoisonStatusbar extends DrawableObject {
+class PoisonStatusBar extends DrawableObject {
   IMAGES = [
-    "img/game_ui/statusbars/statusbar-poison/0.png", // 0 Bild
-    "img/game_ui/statusbars/statusbar-poison/20.png", // 20 Bild
-    "img/game_ui/statusbars/statusbar-poison/40.png", // 40 Bild
-    "img/game_ui/statusbars/statusbar-poison/60.png", // 60 Bild
-    "img/game_ui/statusbars/statusbar-poison/80.png", // 80 Bild
-    "img/game_ui/statusbars/statusbar-poison/100.png", // 100 Bild
+    "img/game_ui/statusbars/statusbar-poison/0.png",
+    "img/game_ui/statusbars/statusbar-poison/20.png",
+    "img/game_ui/statusbars/statusbar-poison/40.png",
+    "img/game_ui/statusbars/statusbar-poison/60.png",
+    "img/game_ui/statusbars/statusbar-poison/80.png",
+    "img/game_ui/statusbars/statusbar-poison/100.png",
   ];
 
   percentage = 0; // Start with an empty status bar
@@ -131,6 +131,7 @@ class PoisonStatusbar extends DrawableObject {
     this.setPercentage(this.percentage);
   }
 }
+
 class EndbossStatusbar extends DrawableObject {
   IMAGES = [
     "img/game_ui/statusbars/statusbar-health/0.png",

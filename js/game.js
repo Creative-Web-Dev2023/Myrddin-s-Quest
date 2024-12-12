@@ -13,14 +13,14 @@ function startGame() {
 
 function init() {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);
+    world = new World(canvas, keyboard); // Stelle sicher, dass World definiert ist
+    gameLoop();
 }
 
 function gameLoop() {
     world.update(); // Kollisionsprüfungen und andere Updates
     world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
     requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
-
 }
 
 function handleDescription() {
@@ -71,7 +71,6 @@ window.addEventListener("keydown", (e) => {
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = true; // Angriffstaste
-   
   }
   if (e.code === "KeyT") {
     keyboard.THROW = true; // Feueranimationstaste
