@@ -255,21 +255,16 @@ h3{
 }
 .overlay {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 850px;
-  height: 531px;
-  background-image: url("img/game_ui/login&pass/loghin_pass_fullwindow.png"),
-    /* Vordergrund-Bild */ url("img/game_backgrounds/wood.png"); /* Hintergrund-Bild */
-  background-size: contain, cover; /* Erster Wert für das Vordergrund-Bild, zweiter für das Hintergrund-Bild */
-  background-position: center, center;
-  background-repeat: no-repeat, no-repeat;
-  z-index: 2; /* Overlay im Vordergrund */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Dunkler Hintergrund */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
 
 .overlay-text {
@@ -285,24 +280,18 @@ h3{
 }
 
 .overlay-character {
-  position: absolute;
-  bottom: 133px;
-  left: -146px;
-  width: 649px;
+  width: 150px;
   height: auto;
+  margin-bottom: 20px;
 }
 .how-to-play-img {
-  position: absolute;
-  bottom: 141px;
-  left: 589px;
-  width: 154px;
+  width: 80%;
+  max-width: 600px;
   height: auto;
+  margin-bottom: 20px;
 }
 svg {
-  position: absolute;
-  bottom: 290px;
-  left: 0;
-  z-index: 3;
+  margin: 20px 0;
 }
 .how-to-play-button {
   position: absolute;
@@ -459,6 +448,11 @@ svg {
   z-index: 1000;
   width: 720px; /* gleiche Breite wie der Canvas */
   height: 480px; /* gleiche Höhe wie der Canvas */
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 20;
 }
 
 .game-button-container {
@@ -493,5 +487,105 @@ svg {
   background: url("img/game_ui/game_over.png") no-repeat center center;
   background-size: cover;
   z-index: 999; /* Niedrigerer Z-Index als die Buttons */
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  background-color: #000; /* Hintergrundfarbe des Canvas */
+}
+
+/* Stile für die Buttons im Overlay */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.start-button,
+.how-to-play-button,
+.impressum-button {
+  background-color: #ffcc00;
+  color: #000;
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.start-button:hover,
+.how-to-play-button:hover,
+.impressum-button:hover {
+  background-color: #ff9900;
+}
+
+/* Stile für die Beschreibung */
+.description {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 600px;
+  text-align: left;
+}
+
+.description.hidden {
+  display: none;
+}
+
+.description.show {
+  display: block;
+}
+
+/* Stile für das Impressum */
+.impressum {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 600px;
+  text-align: left;
+}
+
+.impressum.hidden {
+  display: none;
+}
+
+.impressum.show {
+  display: block;
+}
+
+/* Stile für die Back-Links */
+.back-link,
+.back-link2 {
+  color: #ffcc00;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 20px;
+}
+
+/* Stile für das Level Completed Container */
+#level-completed-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: #fff;
+  font-size: 24px;
+  z-index: 20;
+}
+
+.hidden {
+  display: none;
 }
 

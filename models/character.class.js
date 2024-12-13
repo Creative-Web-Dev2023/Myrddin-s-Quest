@@ -11,6 +11,7 @@ class Character extends MovableObject {
   poisonStatusBar; // Füge die PoisonStatusBar hinzu
   deadAnimationPlayed = false; // Füge eine neue Eigenschaft hinzu, um zu verfolgen, ob die Dead-Animation abgespielt wurde
   hasKey = false; // Neue Eigenschaft, um zu verfolgen, ob der Charakter einen Schlüssel hat
+  isVisible = true; // Standardmäßig sichtbar
 
   offset = {
     top: 50, // Reduziert das Rechteck von oben
@@ -170,7 +171,9 @@ class Character extends MovableObject {
     this.playAnimation(this.IMAGES_DEAD);
     if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
       clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
-      this.world.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
+      if (this.world.endGame) {
+        this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
+      }
     }
   }
   update() {
@@ -194,12 +197,17 @@ class Character extends MovableObject {
     }
   }
   checkCollisions() {
-    this.collectCoins();
+    this.world.coinsArray.forEach((coin, index) => {
+      if (this.isColliding(coin)) {
+        this.collectCoins(); // Münzen sammeln
+        this.world.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
+      }
+    });
     this.collectPoison();
     this.collectKey(); // Überprüfe, ob der Charakter einen Schlüssel einsammelt
     this.checkJumpOnKnight();
     this.checkKnightAttack();
-    this.checkEnterDoor(); // Überprüfe, ob der Charakter die Tür betritt
+    Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
   }
   collectPoison() {
     if (this.world.poisonsArray) {
@@ -214,20 +222,12 @@ class Character extends MovableObject {
     }
   }
   collectCoins() {
-    if (this.world.coinsArray) {
-      this.world.coinsArray.forEach((coin, index) => {
-        if (this.isColliding(coin)) {
-          coin.deactivate();
-          this.coinsCollected++; // Erhöhe die gesammelten Münzen
-          this.coinStatusBar.setPercentage(this.coinsCollected); // Statusleiste aktualisieren
-          if (collectCoinSound.paused) {
-            playCollectCoinSound(); // Spiele den Münzensammelsound ab
-          }
-          this.world.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
-        }
-      });
-    }
+    this.coinsCollected++; // Erhöhe die gesammelten Münzen
+    this.coinStatusBar.setPercentage(this.coinsCollected); // Aktualisiere die Statusleiste
+    playCollectCoinSound(); // Spiele den Münz-Sound ab
   }
+
+      
   collectKey() {
     if (this.world.keysArray) {
       this.world.keysArray.forEach((key, index) => {
@@ -342,14 +342,23 @@ class Character extends MovableObject {
   checkKnightAttack() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Knight) {
-        const distance = Math.abs(this.x - enemy.x);
-        if (distance <= 50 && !this.isAboveGround()) { // Überprüfen, ob der Charakter sehr nahe ist und nicht in der Luft
-          enemy.playAnimation(enemy.IMAGES_ATTACK); // Spiele die Angriffsanimation des Ritters
+        const distance = Math.abs(this.x - enemy.x); // Berechne die Distanz
+        
+        // Überprüfen, ob der Charakter nah genug ist und nicht in der Luft
+        if (distance <= 150 && !this.isAboveGround()) { // Reduziere den Abstand auf 150
+          enemy.isAttacking = true; // Setze den Angriffsstatus des Ritters auf true
+          enemy.playAnimation(enemy.IMAGES_ATTACKING); // Ritter spielt Angriffsanimation
+          
           setTimeout(() => {
-            if (!this.isAboveGround() && distance <= 50) { // Überprüfe erneut, ob der Charakter nicht in der Luft ist und sehr nahe ist
-              this.hit(enemy); // Der Ritter greift den Charakter an
+            const updatedDistance = Math.abs(this.x - enemy.x); // Aktualisiere die Distanz
+            
+            // Angriff nur, wenn der Charakter immer noch nah genug ist und am Boden
+            if (!this.isAboveGround() && updatedDistance <= 150) { // Reduziere den Abstand auf 150
+              this.hit(enemy); // Ritter greift an
             }
-          }, 500); // Warte 0,5 Sekunden, bevor der Angriff ausgeführt wird
+          }, 300); // Verzögerung des Angriffs um 300 ms
+        } else {
+          enemy.isAttacking = false; // Setze den Angriffsstatus des Ritters zurück
         }
       }
     });
@@ -368,14 +377,23 @@ class Character extends MovableObject {
     this.animate();
   }
 
-  checkEnterDoor() {
-    if (this.world.door.isVisible && this.isColliding(this.world.door) && this.hasKey) {
-      this.enterDoor();
+  draw(ctx) {
+    if (this.isVisible) {
+      super.draw(ctx);
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      this.coinStatusBar.draw(ctx);
+      this.poisonStatusBar.draw(ctx);
+      this.healthBar.draw(ctx);
     }
   }
 
-  enterDoor() {
-    // Logik zum Betreten der Tür (z.B. Level beenden oder Endboss bekämpfen)
-    console.log("Character entered the door!");
+  getHitbox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
+    };
   }
 }
+

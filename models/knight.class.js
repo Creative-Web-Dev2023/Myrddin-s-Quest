@@ -25,7 +25,15 @@ class Knight extends MovableObject {
     'img/Boss2/walk/walk 4.png',
     'img/Boss2/walk/walk 5.png',
   ];
-
+  IMAGES_ATTACKING = [
+    'img/Boss2/attack/attack 0.png',
+    'img/Boss2/attack/attack 1.png',
+    'img/Boss2/attack/attack 2.png',
+    'img/Boss2/attack/attack 3.png',
+    'img/Boss2/attack/attack 4.png',
+    'img/Boss2/attack/attack 5.png',
+    'img/Boss2/attack/attack 6.png',
+  ];
   IMAGES_DEAD = [
     'img/Boss2/death/death 0.png',
     'img/Boss2/death/death 1.png',
@@ -53,6 +61,7 @@ class Knight extends MovableObject {
     this.moveRange = moveRange;
     this.loadImage('img/Boss2/walk/walk 0.png');
     this.loadImages(this.IMAGES_WALKING);
+    this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_FIREBALL);
@@ -61,6 +70,7 @@ class Knight extends MovableObject {
       this.isMoving = true;
       this.animate();
     }, delay);
+    this.setupKeyListener();
   }
   loadImages(images) {
     images.forEach((path) => {
@@ -80,6 +90,12 @@ class Knight extends MovableObject {
     this.animationInterval = setInterval(() => {
       this.handleAnimation();
     }, 1000 / 6);
+
+    this.attackAnimationInterval = setInterval(() => {
+      if (this.isAttacking) {
+        this.playAnimation(this.IMAGES_ATTACKING);
+      }
+    }, 1000 / 3); // Verlangsamen Sie die Angriffsanimation
   }
   handleMovement() {
     if (!this.dead && this.isMoving) {
@@ -92,7 +108,9 @@ class Knight extends MovableObject {
   }
   handleAnimation() {
     if (!this.dead) {
-      if (this.isMoving) {
+      if (this.isAttacking) {
+        this.playAnimation(this.IMAGES_ATTACKING); // Die Angriffsanimation wird jetzt direkt hier behandelt
+      } else if (this.isMoving) {
         this.playAnimation(this.IMAGES_WALKING);
       }
     } else if (this.currentImage < this.IMAGES_DEAD.length) {
@@ -136,6 +154,22 @@ class Knight extends MovableObject {
       if (index > -1) {
         this.world.enemies.splice(index, 1);
       }
+    }
+  }
+
+  setupKeyListener() {
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'a') {
+        this.takeDamage();
+      }
+    });
+  }
+
+  takeDamage() {
+    if (!this.dead) {
+      this.isAttacking = false;
+      this.playAnimationOnce(this.IMAGES_HURT);
+      // Hier können Sie auch den Schaden an der Gesundheit des Ritters anpassen
     }
   }
 }
