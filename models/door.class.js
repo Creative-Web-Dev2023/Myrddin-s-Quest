@@ -77,8 +77,7 @@ class Door extends DrawableObject {
       characterHitbox.x + characterHitbox.width > doorHitbox.x &&
       characterHitbox.y < doorHitbox.y + doorHitbox.height &&
       characterHitbox.y + characterHitbox.height > doorHitbox.y;
-  
-    console.log("Collision detected with door:", isColliding);
+
     return isColliding;
   }
   

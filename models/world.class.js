@@ -118,8 +118,7 @@ class World {
     this.updatePoison();
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
-    this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
-    this.checkKnightsDefeated(); // Überprüfe, ob alle Ritter besiegt sind
+    this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll // Überprüfe, ob alle Ritter besiegt sind
     this.checkCollisionsWithCollectables(); // Überprüfe Kollisionen mit Sammelobjekten
     this.character.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreift
     Door.checkCharacterNearDoor(this); // Überprüfe, ob der Charakter die Tür betritt
@@ -130,6 +129,13 @@ class World {
       setTimeout(() => {
         this.endGame.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
       }, 200); // Verkürze die Zeit auf 500ms
+    }
+
+    // Überprüfe dann die Kollision mit der Tür
+    if (this.character.checkCollisionWithDoor(this.door)) {
+      console.log("Kollision mit Tür erkannt!");
+      this.character.enterDoor(); // Charakter für kurze Zeit unsichtbar machen
+      this.door.enterDoor(this.character); // Beispiel: Tür öffnen
     }
   }
 
@@ -159,7 +165,7 @@ class World {
         }
       }
     });
-    this.character.checkCollisionWithPoison();
+    // this.character.checkCollisionWithPoison();
   }
 
   checkCollisionsWithEndboss() {
@@ -401,27 +407,6 @@ class World {
     }
   }
 
-  playAnimation(images) {
-    if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
-      let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
-      let path = images[i]; // Bildpfad aus dem Array
-      this.img = this.imageCache[path]; // Bild aus dem Cache setzen
-      this.currentImage++;
-      if (this.currentImage >= images.length) { 
-        this.currentImage = 0; // Setze auf den ersten Frame zurück
-      }
-    }
-  }
-
-  checkKnightsDefeated() {
-    const allKnightsDefeated = this.enemies.every(enemy => 
-        !(enemy instanceof Knight) || enemy.isDead
-    );
-
-    if (allKnightsDefeated && this.character.hasKey) {
-      this.endGame.completeLevel(); // Level abschließen, wenn alle Ritter besiegt und der Schlüssel eingesammelt wurden
-    }
-  }
 
   drawCollectables() {
     this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen

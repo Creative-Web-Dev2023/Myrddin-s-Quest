@@ -280,17 +280,17 @@ class Character extends MovableObject {
       }
     }
   }
-  checkCollisionWithPoison() {
-    if (this.world.poisonsArray) { // Überprüfe, ob es Giftobjekte gibt
-      this.world.poisonsArray.forEach((poison) => {
-        if (poison.isActive && this.checkCollision(poison)) {
-          poison.deactivate(); // Giftflasche deaktivieren
-          this.poisonCollected += 1; // Sammelzähler für Gift erhöhen
-          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Statusleiste aktualisieren
-        }
-      });
-    }
-  }
+  // checkCollisionWithPoison() {
+  //   if (this.world.poisonsArray) { // Überprüfe, ob es Giftobjekte gibt
+  //     this.world.poisonsArray.forEach((poison) => {
+  //       if (poison.isActive && this.checkCollision(poison)) {
+  //         poison.deactivate(); // Giftflasche deaktivieren
+  //         this.poisonCollected += 1; // Sammelzähler für Gift erhöhen
+  //         this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Statusleiste aktualisieren
+  //       }
+  //     });
+  //   }
+  // }
 
   isAboveGround() {
     return this.y < 150; // Passen Sie dies an die tatsächliche Bodenhöhe an
@@ -351,10 +351,8 @@ class Character extends MovableObject {
           enemy.playAnimation(enemy.IMAGES_ATTACKING); // Ritter spielt Angriffsanimation
 
           setTimeout(() => {
-            const updatedDistance = Math.abs(this.x - enemy.x); // Aktualisiere die Distanz
-
             // Angriff nur, wenn der Charakter immer noch nah genug ist und am Boden
-            if (!this.isAboveGround() && updatedDistance <= 100) {
+            if (!this.isAboveGround() && this.isColliding(enemy)) {
               this.hit(enemy); // Ritter greift an
             }
           }, 500); // Verzögerung des Angriffs um 500 ms
@@ -384,5 +382,16 @@ class Character extends MovableObject {
     this.coinStatusBar.draw(ctx);
     this.poisonStatusBar.draw(ctx);
     this.healthBar.draw(ctx);
+  }
+
+  enterDoor() {
+    this.isVisible = false; // Charakter unsichtbar machen
+    setTimeout(() => {
+      this.isVisible = true; // Charakter nach 2 Sekunden wieder sichtbar machen
+    }, 2000);a
+  }
+
+  checkCollisionWithDoor(door) {
+    return this.isColliding(door);
   }
 }
