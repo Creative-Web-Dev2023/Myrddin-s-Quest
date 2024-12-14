@@ -210,7 +210,6 @@ class Character extends MovableObject {
     this.checkKnightAttack();
    
   }
-
   collectPoison() {
     if (this.world.poisonsArray) {
       this.world.poisonsArray.forEach((poison, index) => {
@@ -229,7 +228,7 @@ class Character extends MovableObject {
     playCollectCoinSound(); // Spiele den Münz-Sound ab
   }
 
-      
+
   collectKey() {
     if (this.world.keysArray) {
       this.world.keysArray.forEach((key, index) => {
@@ -253,7 +252,7 @@ class Character extends MovableObject {
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom
     };
- 
+
     return (
       characterHitbox.x < coin.x + coin.width &&
       characterHitbox.x + characterHitbox.width > coin.x &&
@@ -261,7 +260,7 @@ class Character extends MovableObject {
       characterHitbox.y + characterHitbox.height > coin.y
     );
   }
- 
+
   attackEndboss(endboss) {
     if (this.world.keyboard && this.world.keyboard.THROW) {
       this.playAnimation(this.IMAGES_FIRE_ATTACK);
@@ -324,7 +323,7 @@ class Character extends MovableObject {
   checkJumpOnKnight() {
     let nearestKnight = null;
     let minDistance = Infinity;
-  
+
     this.world.enemies.forEach((enemy, index) => {
       if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) {
         const distance = Math.abs(this.x - enemy.x);
@@ -334,26 +333,26 @@ class Character extends MovableObject {
         }
       }
     });
-  
+
     if (nearestKnight) {
       nearestKnight.enemy.die(); // Set knight to dead state
       this.world.enemies.splice(nearestKnight.index, 1); // Remove knight from enemies array
     }
   }
- 
+
   checkKnightAttack() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Knight) {
         const distance = Math.abs(this.x - enemy.x); // Berechne die Distanz
-        
+
         // Überprüfen, ob der Charakter nah genug ist und nicht in der Luft
         if (distance <= 100 && !this.isAboveGround()) {
           enemy.isAttacking = true; // Setze den Angriffsstatus des Ritters auf true
           enemy.playAnimation(enemy.IMAGES_ATTACKING); // Ritter spielt Angriffsanimation
-          
+
           setTimeout(() => {
             const updatedDistance = Math.abs(this.x - enemy.x); // Aktualisiere die Distanz
-            
+
             // Angriff nur, wenn der Charakter immer noch nah genug ist und am Boden
             if (!this.isAboveGround() && updatedDistance <= 100) {
               this.hit(enemy); // Ritter greift an
@@ -365,7 +364,7 @@ class Character extends MovableObject {
       }
     });
   }
- 
+
   reset() {
     this.x = 130;
     this.y = 150;
@@ -387,4 +386,3 @@ class Character extends MovableObject {
     this.healthBar.draw(ctx);
   }
 }
-

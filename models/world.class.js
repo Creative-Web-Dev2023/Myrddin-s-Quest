@@ -30,7 +30,7 @@ class World {
   coinCollectSound = new Audio('audio/collect_coins.mp3'); // Initialisieren Sie den Audio-Player nur einmal
   endGame; // Add endGame as a class attribute
   door; // Füge die Tür als Attribut hinzu
-  
+
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -455,5 +455,5 @@ class World {
         console.warn("Unbekannter Collectable-Typ:", collectable.type);
     }
   }
- 
+
 }
