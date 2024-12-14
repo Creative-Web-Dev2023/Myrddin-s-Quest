@@ -29,6 +29,7 @@ class World {
   keys = []; // Füge ein Array für Schlüssel hinzu
   coinCollectSound = new Audio('audio/collect_coins.mp3'); // Initialisieren Sie den Audio-Player nur einmal
   endGame; // Add endGame as a class attribute
+  door; // Füge die Tür als Attribut hinzu
   
 
   constructor(canvas, keyboard) {
@@ -71,11 +72,11 @@ class World {
     this.enemies = this.level.enemies || []; // Initialisiere die Feinde aus dem Level
     this.loadImages(this.IMAGES_YOU_LOST); // Lade das "You Lost" Bild
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
+    this.door = new Door(1000, 200); // Initialisiere die Tür mit einer Position
     this.setWorld();
     this.startGameLoop();
     this.camera_x = -this.character.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
     this.endGame = new EndGame(this); // Initialisieren Sie die EndGame-Klasse
-
   }
 
   setWorld() {
@@ -85,6 +86,9 @@ class World {
         enemy.world = this; // Setze die world-Eigenschaft für den Ritter
       }
     });
+    if (this.door) {
+      this.door.world = this; // Setze die world-Eigenschaft für die Tür
+    }
   }
 
   loadImages(images) {
@@ -215,8 +219,6 @@ class World {
     );
 }
 
-
-
   addCharacter(character) {
     this.characters.push(character);
   }
@@ -235,6 +237,9 @@ class World {
     this.drawCoins(); // Zeichne die Münzen
     this.drawPoisons(); // Zeichne die Giftflaschen
     this.drawKeys(); // Zeichne die Schlüssel
+    if (this.door) {
+      this.door.draw(this.ctx); // Zeichne die Tür
+    }
     if (this.character.isDead()) {
       this.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
     }

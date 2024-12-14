@@ -32,7 +32,7 @@ class Door extends DrawableObject {
     setInterval(() => {
       this.img = this.imageCache[this.IMAGE_DOOR[currentImageIndex]];
       currentImageIndex = (currentImageIndex + 1) % this.IMAGE_DOOR.length;
-    }, 1000 / 6); // Animation: 6 Frames pro Sekunde
+    }, 1000 / 4); // Animation: 6 Frames pro Sekunde
   }
 
   draw(ctx) {
@@ -50,69 +50,58 @@ class Door extends DrawableObject {
     this.drawCollisionBox(ctx); // Zeichnet die Kollisionsbox
   }
 
-  drawCollisionBox(ctx) {
-    ctx.beginPath();
-    ctx.lineWidth = "2";
-    ctx.strokeStyle = "red";
-    ctx.rect(this.x, this.y, this.width, this.height); // Kollisionsbox zeichnen
-    ctx.stroke();
-  }
-
-  getHitbox() {
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height
-    };
-  }
-
-  /**
-   * Prüft, ob der Charakter die Tür betritt
-   */
   static checkCharacterNearDoor(world) {
-    if (world.door && world.door.isCollidingWithDoor(world.character)) {
-      world.door.enterDoor(world.character); // Charakter betritt die Tür
+    if (!world.door) {
+      console.log("No door in the world.");
+      return;
+    }
+
+    const character = world.character;
+    const door = world.door;
+    const distance = Math.abs(character.x - door.x);
+
+    if (distance < 100) { // Überprüfe, ob der Charakter in der Nähe der Tür ist
+      console.log("Checking if character is near the door...");
+      if (door.isCollidingWithDoor(character)) {
+        console.log("Character is near the door!");
+        door.enterDoor(character); // Charakter betritt die Tür
+      }
     }
   }
 
-  /**
-   * Prüft, ob der Charakter mit der Tür kollidiert
-   */
   isCollidingWithDoor(character) {
     const doorHitbox = this.getHitbox();
     const characterHitbox = character.getHitbox();
-  
     const isColliding =
       characterHitbox.x < doorHitbox.x + doorHitbox.width &&
       characterHitbox.x + characterHitbox.width > doorHitbox.x &&
       characterHitbox.y < doorHitbox.y + doorHitbox.height &&
       characterHitbox.y + characterHitbox.height > doorHitbox.y;
   
-    console.log("Collision detected:", isColliding);
+    console.log("Collision detected with door:", isColliding);
     return isColliding;
   }
   
-
-  /**
-   * Logik: Charakter tritt in die Tür ein
-   */
   enterDoor(character) {
     console.log("Character entered the door!");
+    this.animateOpening();
 
-    // Charakter kurz unsichtbar machen
     character.isVisible = false;
-
-    // Zeitverzögerung: Charakter erscheint auf der anderen Seite
     setTimeout(() => {
       character.x = this.x + this.width + 50; // Position auf der anderen Seite der Tür
       character.isVisible = true; // Charakter wieder sichtbar machen
     }, 1000); // Warte 1 Sekunde
   }
+  
+  animateOpening() {
+    let doorOpenFrame = 0;
+    const openInterval = setInterval(() => {
+      this.img = this.imageCache[this.IMAGE_DOOR[doorOpenFrame]];
+      doorOpenFrame++;
+      if (doorOpenFrame >= this.IMAGE_DOOR.length) clearInterval(openInterval);
+    }, 100); // Zeigt jede Frame der Tür-Animation
+  }
 
-  /**
-   * Zeichnet die Tür im Spiel
-   */
   static drawDoor(world) {
     if (world.door) {
       world.door.draw(world.ctx); // Zeichnet die Tür

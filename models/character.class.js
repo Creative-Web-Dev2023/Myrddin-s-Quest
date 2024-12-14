@@ -203,12 +203,14 @@ class Character extends MovableObject {
         this.world.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
       }
     });
+    Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
     this.collectPoison();
     this.collectKey(); // Überprüfe, ob der Charakter einen Schlüssel einsammelt
     this.checkJumpOnKnight();
     this.checkKnightAttack();
-    Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
+   
   }
+
   collectPoison() {
     if (this.world.poisonsArray) {
       this.world.poisonsArray.forEach((poison, index) => {
@@ -345,7 +347,7 @@ class Character extends MovableObject {
         const distance = Math.abs(this.x - enemy.x); // Berechne die Distanz
         
         // Überprüfen, ob der Charakter nah genug ist und nicht in der Luft
-        if (distance <= 150 && !this.isAboveGround()) { // Reduziere den Abstand auf 150
+        if (distance <= 100 && !this.isAboveGround()) {
           enemy.isAttacking = true; // Setze den Angriffsstatus des Ritters auf true
           enemy.playAnimation(enemy.IMAGES_ATTACKING); // Ritter spielt Angriffsanimation
           
@@ -353,10 +355,10 @@ class Character extends MovableObject {
             const updatedDistance = Math.abs(this.x - enemy.x); // Aktualisiere die Distanz
             
             // Angriff nur, wenn der Charakter immer noch nah genug ist und am Boden
-            if (!this.isAboveGround() && updatedDistance <= 150) { // Reduziere den Abstand auf 150
+            if (!this.isAboveGround() && updatedDistance <= 100) {
               this.hit(enemy); // Ritter greift an
             }
-          }, 300); // Verzögerung des Angriffs um 300 ms
+          }, 500); // Verzögerung des Angriffs um 500 ms
         } else {
           enemy.isAttacking = false; // Setze den Angriffsstatus des Ritters zurück
         }
@@ -378,22 +380,11 @@ class Character extends MovableObject {
   }
 
   draw(ctx) {
-    if (this.isVisible) {
-      super.draw(ctx);
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      this.coinStatusBar.draw(ctx);
-      this.poisonStatusBar.draw(ctx);
-      this.healthBar.draw(ctx);
-    }
-  }
-
-  getHitbox() {
-    return {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom
-    };
+    if (!this.isVisible) return; // Nicht zeichnen, wenn unsichtbar
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    this.coinStatusBar.draw(ctx);
+    this.poisonStatusBar.draw(ctx);
+    this.healthBar.draw(ctx);
   }
 }
 

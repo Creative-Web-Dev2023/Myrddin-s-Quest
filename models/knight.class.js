@@ -70,7 +70,6 @@ class Knight extends MovableObject {
       this.isMoving = true;
       this.animate();
     }, delay);
-    this.setupKeyListener();
   }
   loadImages(images) {
     images.forEach((path) => {
@@ -154,22 +153,6 @@ class Knight extends MovableObject {
       if (index > -1) {
         this.world.enemies.splice(index, 1);
       }
-    }
-  }
-
-  setupKeyListener() {
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'a') {
-        this.takeDamage();
-      }
-    });
-  }
-
-  takeDamage() {
-    if (!this.dead) {
-      this.isAttacking = false;
-      this.playAnimationOnce(this.IMAGES_HURT);
-      // Hier können Sie auch den Schaden an der Gesundheit des Ritters anpassen
     }
   }
 }
