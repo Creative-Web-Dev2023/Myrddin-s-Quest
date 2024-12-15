@@ -133,9 +133,9 @@ class World {
 
     // Überprüfe dann die Kollision mit der Tür
     if (this.character.checkCollisionWithDoor(this.door)) {
-      console.log("Kollision mit Tür erkannt!");
       this.character.enterDoor(); // Charakter für kurze Zeit unsichtbar machen
       this.door.enterDoor(this.character); // Beispiel: Tür öffnen
+      this.changeBackgroundToDark(); // Hintergrund dunkel machen
     }
   }
 
@@ -282,7 +282,9 @@ class World {
 
   drawBackground() {
     this.ctx.translate(this.camera_x, 0);
-    this.addObjectsToMap(this.backgroundObjects);
+    this.backgroundObjects.forEach((obj) => {
+      this.ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
+    });
     this.addObjectsToMap(this.level.clouds);
     this.ctx.translate(-this.camera_x, 0);
   }
@@ -441,4 +443,15 @@ class World {
     }
   }
 
+
+changeBackgroundToDark() {
+  // Durchlaufe alle Hintergrundobjekte und ändere das Bild
+  this.backgroundObjects.forEach((obj) => {
+    // Wenn das Hintergrundobjekt ein Hintergrundbild ist, ändere es
+    if (obj.img.src !== 'img/game_backgrounds/endboss_background.png') {
+      obj.img.src = 'img/game_backgrounds/endboss_background.png'; // Dunkles Hintergrundbild
+    }
+  });
 }
+}
+  

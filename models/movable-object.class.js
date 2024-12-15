@@ -67,7 +67,6 @@ class MovableObject extends DrawableObject {
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom,
     };
-    
     return box;
   }
 

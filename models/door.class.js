@@ -52,7 +52,6 @@ class Door extends DrawableObject {
 
   static checkCharacterNearDoor(world) {
     if (!world.door) {
-      console.log("No door in the world.");
       return;
     }
 
@@ -61,9 +60,7 @@ class Door extends DrawableObject {
     const distance = Math.abs(character.x - door.x);
 
     if (distance < 100) { // Überprüfe, ob der Charakter in der Nähe der Tür ist
-      console.log("Checking if character is near the door...");
       if (door.isCollidingWithDoor(character)) {
-        console.log("Character is near the door!");
         door.enterDoor(character); // Charakter betritt die Tür
       }
     }
@@ -82,7 +79,6 @@ class Door extends DrawableObject {
   }
   
   enterDoor(character) {
-    console.log("Character entered the door!");
     this.animateOpening();
 
     character.isVisible = false;
