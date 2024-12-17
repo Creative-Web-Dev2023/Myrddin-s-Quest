@@ -11,7 +11,7 @@ class Door extends DrawableObject {
     super();
     this.imageCache = {};
     this.loadImages(this.IMAGE_DOOR);
-    this.x = x;
+    this.x = 4500;
     this.y = y;
     this.width = 300; // Breite der Tür
     this.height = 460; // Höhe der Tür
@@ -80,7 +80,6 @@ class Door extends DrawableObject {
   
   enterDoor(character) {
     this.animateOpening();
-
     character.isVisible = false;
     setTimeout(() => {
       character.x = this.x + this.width + 50; // Position auf der anderen Seite der Tür

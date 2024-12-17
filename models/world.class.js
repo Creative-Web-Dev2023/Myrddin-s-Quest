@@ -135,7 +135,7 @@ class World {
     if (this.character.checkCollisionWithDoor(this.door)) {
       this.character.enterDoor(); // Charakter für kurze Zeit unsichtbar machen
       this.door.enterDoor(this.character); // Beispiel: Tür öffnen
-      this.changeBackgroundToDark(); // Hintergrund dunkel machen
+     
     }
   }
 
@@ -442,16 +442,7 @@ class World {
         console.warn("Unbekannter Collectable-Typ:", collectable.type);
     }
   }
+}
 
 
-changeBackgroundToDark() {
-  // Durchlaufe alle Hintergrundobjekte und ändere das Bild
-  this.backgroundObjects.forEach((obj) => {
-    // Wenn das Hintergrundobjekt ein Hintergrundbild ist, ändere es
-    if (obj.img.src !== 'img/game_backgrounds/endboss_background.png') {
-      obj.img.src = 'img/game_backgrounds/endboss_background.png'; // Dunkles Hintergrundbild
-    }
-  });
-}
-}
   

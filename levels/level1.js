@@ -91,5 +91,11 @@ const level1 = new Level(
     new BackgroundObject("img/game_items/candle.png", 5800, 50, 10, 30),
     new BackgroundObject("img/skull/scull 000.png", 6000, 50, 10, 30), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 8),
+    // Füge dunklere Hintergrundbilder hinzu
+    new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 9),
+    new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 10),
+    new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 11),
   ],
 );
+
+ 
