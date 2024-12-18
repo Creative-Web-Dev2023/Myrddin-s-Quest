@@ -232,6 +232,14 @@ class World {
   addEnemy(enemy) {
     this.enemies.push(enemy);
   }
+ 
+  
+  addProjectile(projectile) {
+    if (!this.projectiles) {
+      this.projectiles = [];
+    }
+    this.projectiles.push(projectile);
+  }
 
   draw() {
     this.clearCanvas();
@@ -445,4 +453,3 @@ class World {
 }
 
 
-  

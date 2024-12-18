@@ -9,6 +9,8 @@ class Knight extends MovableObject {
   isMoving = false;
   isAttacking = false;
   dead = false; // Zustand für tot
+  health = 100; // Lebenspunkte des Knights
+  projectiles = [];
 
   offset = {
     top: 70, // Verkleinere die oberen Offset-Werte
@@ -18,53 +20,46 @@ class Knight extends MovableObject {
   };
 
   IMAGES_WALKING = [
-    'img/Boss2/walk/walk 0.png',
-    'img/Boss2/walk/walk 1.png',
-    'img/Boss2/walk/walk 2.png',
-    'img/Boss2/walk/walk 3.png',
-    'img/Boss2/walk/walk 4.png',
-    'img/Boss2/walk/walk 5.png',
+    'img/knight/walk/walk 0.png',
+    'img/knight/walk/walk 1.png',
+    'img/knight/walk/walk 2.png',
+    'img/knight/walk/walk 3.png',
+    'img/knight/walk/walk 4.png',
+    'img/knight/walk/walk 5.png',
   ];
   IMAGES_ATTACKING = [
-    'img/Boss2/attack/attack 0.png',
-    'img/Boss2/attack/attack 1.png',
-    'img/Boss2/attack/attack 2.png',
-    'img/Boss2/attack/attack 3.png',
-    'img/Boss2/attack/attack 4.png',
-    'img/Boss2/attack/attack 5.png',
-    'img/Boss2/attack/attack 6.png',
+    'img/knight/attack/attack 0.png',
+    'img/knight/attack/attack 1.png',
+    'img/knight/attack/attack 2.png',
+    'img/knight/attack/attack 3.png',
+    'img/knight/attack/attack 4.png',
+    'img/knight/attack/attack 5.png',
+    'img/knight/attack/attack 6.png',
   ];
   IMAGES_DEAD = [
-    'img/Boss2/death/death 0.png',
-    'img/Boss2/death/death 1.png',
-    'img/Boss2/death/death 2.png',
-    'img/Boss2/death/death 3.png',
-    'img/Boss2/death/death 4.png',
-    'img/Boss2/death/death 5.png',
+    'img/knight/death/death 0.png',
+    'img/knight/death/death 1.png',
+    'img/knight/death/death 2.png',
+    'img/knight/death/death 3.png',
+    'img/knight/death/death 4.png',
+    'img/knight/death/death 5.png',
   ];
   IMAGES_HURT = [
-    'img/Boss2/hurt/hurt 0.png',
-    'img/Boss2/hurt/hurt 1.png',
+    'img/knight/hurt/hurt 0.png',
+    'img/knight/hurt/hurt 1.png',
   ];
-  IMAGES_FIREBALL = [
-    'img/Boss2/magic-fire/magic_fire 0.png',
-    'img/Boss2/magic-fire/magic_fire 1.png',
-    'img/Boss2/magic-fire/magic_fire 2.png',
-    'img/Boss2/magic-fire/magic_fire 3.png',
-    'img/Boss2/magic-fire/magic_fire 4.png',
-  ];
-
+ 
   constructor(delay = 0, startX = 800, moveRange = 100) {
     super();
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
-    this.loadImage('img/Boss2/walk/walk 0.png');
+    this.loadImage('img/knight/walk/walk 0.png');
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_FIREBALL);
+    
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
     setTimeout(() => {
       this.isMoving = true;
@@ -94,7 +89,15 @@ class Knight extends MovableObject {
       if (this.isAttacking) {
         this.playAnimation(this.IMAGES_ATTACKING);
       }
-    }, 1000 / 3); // Verlangsamen Sie die Angriffsanimation
+    }, 1000 / 7); // Verlangsamen Sie die Angriffsanimation
+
+    this.fireballInterval = setInterval(() => {
+      this.checkForFireball();
+    }, 1000 / 2); // Überprüfe alle 0.5 Sekunden
+
+    this.projectileInterval = setInterval(() => {
+      this.updateProjectiles();
+    }, 1000 / 30); // Aktualisiere die Projektile alle 0.03 Sekunden
   }
   handleMovement() {
     if (!this.dead && this.isMoving) {
@@ -106,16 +109,18 @@ class Knight extends MovableObject {
     }
   }
   handleAnimation() {
-    if (!this.dead) {
-      if (this.isAttacking) {
-        this.playAnimation(this.IMAGES_ATTACKING); // Die Angriffsanimation wird jetzt direkt hier behandelt
-      } else if (this.isMoving) {
-        this.playAnimation(this.IMAGES_WALKING);
-      }
-    } else if (this.currentImage < this.IMAGES_DEAD.length) {
+    if (this.dead) {
+      // Spiele die Todesanimation
       this.playAnimationOnce(this.IMAGES_DEAD);
+    } else if (this.isAttacking) {
+      // Spiele die Angriffsanimation
+      this.playAnimation(this.IMAGES_ATTACKING);
+    } else if (this.isMoving) {
+      // Spiele die Laufanimation
+      this.playAnimation(this.IMAGES_WALKING);
     }
   }
+  
   playAnimationOnce(images) {
     if (this.currentImage < images.length) {
       this.img = this.imageCache[images[this.currentImage]];
@@ -133,6 +138,15 @@ class Knight extends MovableObject {
     };
   }
 
+  takeDamage(damage) {
+    this.health -= damage;
+    if (this.health <= 0) {
+      this.die();
+    } else {
+      this.playAnimationOnce(this.IMAGES_HURT); // Spiele die Hurt-Animation
+    }
+  }
+
   die() {
     this.dead = true;
     this.isMoving = false; // Stoppe Bewegungen
@@ -143,7 +157,7 @@ class Knight extends MovableObject {
       this.playAnimationOnce(this.IMAGES_DEAD); // Spiele die Dead-Animation nach der Hurt-Animation
       setTimeout(() => {
         this.disappear();
-      }, 2000); // Bleibe 2 Sekunden auf dem Boden, bevor du verschwindest
+      }, 3000); // Bleibe 3 Sekunden auf dem Boden, bevor du verschwindest
     }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
   }
 
@@ -154,5 +168,90 @@ class Knight extends MovableObject {
         this.world.enemies.splice(index, 1);
       }
     }
+  }
+
+  checkForFireball() {
+    if (this.world && this.world.character) {
+      const distance = Math.abs(this.x - this.world.character.x);
+      if (distance < 400 && !this.isAttacking) { // Wenn der Charakter in Reichweite ist
+        this.shootFireball();
+      }
+    }
+  }
+  
+
+  shootFireball() {
+    console.log('fireball geschossen');
+    this.isAttacking = true; // Setzt den Zustand auf "greift an"
+    const fireballX = this.otherDirection ? this.x - 20 : this.x + this.width - 20; // Position anpassen
+    const fireballY = this.y + this.height / 2; // Position anpassen
+    const fireball = new Comet(fireballX, fireballY, this.otherDirection); // Projektil erstellen
+    console.log('Position des Fireballs:', fireball.x, fireball.y);
+    if (this.world) {
+      this.world.addProjectile(fireball); // Projektil zur Welt hinzufügen
+    }
+    setTimeout(() => {
+      this.isAttacking = false; // Zustand zurücksetzen
+    }, 500); // Nach 0,5 Sekunden wieder bereit
+  }
+  
+  
+
+  updateProjectiles() {
+    this.projectiles.forEach((projectile, index) => {
+      projectile.moveLeft();
+      if (projectile.isOutOfScreen()) {
+        this.projectiles.splice(index, 1); // Projektil entfernen, wenn es aus dem Bildschirm ist
+      }
+    });
+  }
+  
+}
+
+class Comet extends MovableObject {
+  constructor(x, y, otherDirection) {
+    super();
+    this.x = x;
+    this.y = y; // Position anpassen, damit der Comet aus der Hand startet
+    this.width = 40;
+    this.height = 20;
+    this.otherDirection = otherDirection;
+    this.loadImages([
+      'img/knight/comet/comet_0.png',
+      'img/knight/comet/comet_1.png',
+      'img/knight/comet/comet_2.png',
+      'img/knight/comet/comet_3.png',
+      'img/knight/comet/comet_4.png',
+      'img/knight/comet/comet_5.png',
+      'img/knight/comet/comet_6.png',
+      'img/knight/comet/comet_7.png',
+      'img/knight/comet/comet_8.png',
+      'img/knight/comet/comet_9.png',
+      'img/knight/comet/comet_10.png',
+      'img/knight/comet/comet_11.png',
+      'img/knight/comet/comet_12.png',
+      'img/knight/comet/comet_13.png',
+    ]);
+    this.speed = 10; // Geschwindigkeit des Comets
+    this.currentImage = 0;
+    this.animate();
+  }
+
+  animate() {
+    setInterval(() => {
+      this.playAnimation(this.images);
+    }, 1000 / 10); // Animation mit 10 FPS
+  }
+
+  moveLeft() {
+    if (this.otherDirection) {
+      this.x -= this.speed; // Nach links bewegen
+    } else {
+      this.x += this.speed; // Nach rechts bewegen
+    }
+  }
+
+  isOutOfScreen() {
+    return this.x < 0 || this.x > this.world.canvasWidth; // Bildschirmgrenzen überprüfen
   }
 }
