@@ -61,44 +61,17 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_HURT);
     
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
+    this.otherDirection = true; // Ensure the knight faces left by default
     setTimeout(() => {
       this.isMoving = true;
       this.animate();
     }, delay);
   }
-  loadImages(images) {
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  }
+  
   setWorld(world) {
     this.world = world;
   }
-  animate() {
-    this.movementInterval = setInterval(() => {
-      this.handleMovement();
-    }, 1000 / 30);
-
-    this.animationInterval = setInterval(() => {
-      this.handleAnimation();
-    }, 1000 / 6);
-
-    this.attackAnimationInterval = setInterval(() => {
-      if (this.isAttacking) {
-        this.playAnimation(this.IMAGES_ATTACKING);
-      }
-    }, 1000 / 7); // Verlangsamen Sie die Angriffsanimation
-
-    this.fireballInterval = setInterval(() => {
-      this.checkForFireball();
-    }, 1000 / 2); // Überprüfe alle 0.5 Sekunden
-
-    this.projectileInterval = setInterval(() => {
-      this.updateProjectiles();
-    }, 1000 / 30); // Aktualisiere die Projektile alle 0.03 Sekunden
-  }
+  
   handleMovement() {
     if (!this.dead && this.isMoving) {
       this.moveLeft(); // Immer nach links laufen
@@ -117,6 +90,9 @@ class Knight extends MovableObject {
       this.playAnimation(this.IMAGES_ATTACKING);
     } else if (this.isMoving) {
       // Spiele die Laufanimation
+      this.playAnimation(this.IMAGES_WALKING);
+    } else {
+      // Spiele die Idle-Animation, wenn keine andere Animation aktiv ist
       this.playAnimation(this.IMAGES_WALKING);
     }
   }
@@ -173,7 +149,7 @@ class Knight extends MovableObject {
   checkForFireball() {
     if (this.world && this.world.character) {
       const distance = Math.abs(this.x - this.world.character.x);
-      if (distance < 400 && !this.isAttacking) { // Wenn der Charakter in Reichweite ist
+      if (distance < 300 && !this.isAttacking) { // Wenn der Charakter in Reichweite ist
         this.shootFireball();
       }
     }
@@ -181,7 +157,6 @@ class Knight extends MovableObject {
   
 
   shootFireball() {
-    console.log('fireball geschossen');
     this.isAttacking = true; // Setzt den Zustand auf "greift an"
     const fireballX = this.otherDirection ? this.x - 20 : this.x + this.width - 20; // Position anpassen
     const fireballY = this.y + this.height / 2; // Position anpassen
@@ -195,17 +170,6 @@ class Knight extends MovableObject {
     }, 500); // Nach 0,5 Sekunden wieder bereit
   }
   
-  
-
-  updateProjectiles() {
-    this.projectiles.forEach((projectile, index) => {
-      projectile.moveLeft();
-      if (projectile.isOutOfScreen()) {
-        this.projectiles.splice(index, 1); // Projektil entfernen, wenn es aus dem Bildschirm ist
-      }
-    });
-  }
-  
 }
 
 class Comet extends MovableObject {
@@ -217,20 +181,23 @@ class Comet extends MovableObject {
     this.height = 20;
     this.otherDirection = otherDirection;
     this.loadImages([
-      'img/knight/comet/comet_0.png',
-      'img/knight/comet/comet_1.png',
-      'img/knight/comet/comet_2.png',
-      'img/knight/comet/comet_3.png',
-      'img/knight/comet/comet_4.png',
-      'img/knight/comet/comet_5.png',
-      'img/knight/comet/comet_6.png',
-      'img/knight/comet/comet_7.png',
-      'img/knight/comet/comet_8.png',
-      'img/knight/comet/comet_9.png',
-      'img/knight/comet/comet_10.png',
-      'img/knight/comet/comet_11.png',
-      'img/knight/comet/comet_12.png',
-      'img/knight/comet/comet_13.png',
+      'img/knight/tesla_ball/tesla_ball1.png',
+      'img/knight/tesla_ball/tesla_ball2.png',
+      'img/knight/tesla_ball/tesla_ball3.png',
+      'img/knight/tesla_ball/tesla_ball4.png',
+      'img/knight/tesla_ball/tesla_ball5.png',
+      'img/knight/tesla_ball/tesla_ball6.png',
+      'img/knight/tesla_ball/tesla_ball7.png',
+      'img/knight/tesla_ball/tesla_ball8.png',
+      'img/knight/tesla_ball/tesla_ball9.png',
+      'img/knight/tesla_ball/tesla_ball10.png',
+      'img/knight/tesla_ball/tesla_ball11.png',
+      'img/knight/tesla_ball/tesla_ball12.png',
+      'img/knight/tesla_ball/tesla_ball13.png',
+      'img/knight/tesla_ball/tesla_ball14.png',
+      'img/knight/tesla_ball/tesla_ball15.png',
+      'img/knight/tesla_ball/tesla_ball16.png',
+      'img/knight/tesla_ball/tesla_ball17.png',
     ]);
     this.speed = 10; // Geschwindigkeit des Comets
     this.currentImage = 0;
@@ -252,6 +219,6 @@ class Comet extends MovableObject {
   }
 
   isOutOfScreen() {
-    return this.x < 0 || this.x > this.world.canvasWidth; // Bildschirmgrenzen überprüfen
+    return this.x < 0 || this.x > this.world.canvas.width; // Bildschirmgrenzen überprüfen
   }
 }

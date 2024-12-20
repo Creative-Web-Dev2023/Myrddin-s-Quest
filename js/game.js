@@ -5,32 +5,37 @@ let candleImage = new Image(); // Erstelle das Bild-Objekt
 let IntervallIDs = [];
 
 function startGame() {
-    document.querySelector(".overlay").style.display = "none"; // Blende das Overlay aus
-    document.getElementById("audioSwitcher").classList.remove("hidden");
-    document.getElementById("audioSwitcher").setAttribute("onclick", "musicSwitcher()");
-    init();
+  document.querySelector(".overlay").style.display = "none"; // Blende das Overlay aus
+  document.getElementById("audioSwitcher").classList.remove("hidden");
+  document.getElementById("infoButton").classList.remove("hidden"); // Show the info icon
+  document.getElementById("bigScreen").classList.remove("hidden"); // Show the fullscreen icon
+  document
+    .getElementById("audioSwitcher")
+    .setAttribute("onclick", "musicSwitcher()");
+  init();
 }
 
 function init() {
-    canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard); // Stelle sicher, dass World definiert ist
-    gameLoop();
+  canvas = document.getElementById("canvas");
+  world = new World(canvas, keyboard); // Stelle sicher, dass World definiert ist
+  gameLoop();
 }
 
 function gameLoop() {
-    world.update(); // Kollisionsprüfungen und andere Updates
-    world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
-    requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
+  world.update(); // Kollisionsprüfungen und andere Updates
+  world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
+  requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
 }
 
 function handleDescription() {
   let description = document.getElementById("description");
+  console.log(description); // Gibt das Element aus, um sicherzustellen, dass es existiert
   if (description.classList.contains("hidden")) {
-      description.classList.remove("hidden");
-      description.classList.add("show");
+    description.classList.remove("hidden");
+    description.classList.add("show");
   } else {
-      description.classList.remove("show");
-      description.classList.add("hidden");
+    description.classList.remove("show");
+    description.classList.add("hidden");
   }
 }
 
@@ -44,11 +49,34 @@ function goBack() {
 }
 
 function quitGame() {
-    location.reload(); // Seite neu laden, um das Spiel neu zu starten
+  location.reload(); // Seite neu laden, um das Spiel neu zu starten
 }
 
 function tryAgain() {
-    location.reload(); // Seite neu laden, um das Spiel neu zu starten
+  location.reload(); // Seite neu laden, um das Spiel neu zu starten
+}
+
+function toggleInfoBox() {
+
+  let description = document.getElementById("description");
+  if (description.classList.contains("hidden")) {
+    description.classList.remove("hidden");
+    description.classList.add("show");
+  } else {
+    description.classList.remove("show");
+    description.classList.add("hidden");
+  }
+}
+
+function toggleFullscreen() {
+  const canvas = document.getElementById("canvas");
+  if (!document.fullscreenElement) {
+    canvas.requestFullscreen().catch(err => {
+      console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
 }
 
 // Event Listener für Tastendrücke
@@ -66,18 +94,18 @@ window.addEventListener("keydown", (e) => {
   if (e.keyCode == 40) {
     keyboard.DOWN = true;
   }
-  if (e.keyCode == 32) {
-    keyboard.SPACE = true;
+  if (e.keyCode == 87) {
+    keyboard.JUMP = true;
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = true; // Angriffstaste
   }
-  if (e.code === "KeyT") {
+  if (e.code === "KeyS") {
     keyboard.THROW = true; // Feueranimationstaste
   }
   if (e.code === "KeyD") {
     keyboard.D = true; // D-Taste
-    world.character.throwObject(); // Call character method
+    world.character.throwObject(); // Call character method  JUMP
   }
 });
 
@@ -95,13 +123,15 @@ window.addEventListener("keyup", (e) => {
   if (e.keyCode == 40) {
     keyboard.DOWN = false;
   }
-  if (e.keyCode == 32) {
-    keyboard.SPACE = false;
+  if (e.keyCode == 87
+    
+  ) {
+    keyboard.JUMP = false;
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = false; // Angriffstaste loslassen
   }
-  if (e.code === "KeyT") {
+  if (e.code === "KeyS") {
     keyboard.THROW = false; // Feueranimationstaste loslassen
   }
   if (e.code === "KeyD") {
@@ -111,17 +141,39 @@ window.addEventListener("keyup", (e) => {
 
 // Füge einen Event Listener für den Start-Button hinzu
 window.addEventListener("DOMContentLoaded", () => {
-    const startButton = document.getElementById("startButton");
-    if (startButton) {
-        startButton.addEventListener("click", startGame);
-    } else {
-        console.error("Element mit ID 'startButton' nicht gefunden.");
-    }
+  const startButton = document.getElementById("startButton");
+  if (startButton) {
+    startButton.addEventListener("click", startGame);
+  } else {
+    console.error("Element mit ID 'startButton' nicht gefunden.");
+  }
 });
 
 function handleImpressum() {
   let impressum = document.getElementById("impressum");
-    impressum.classList.toggle("hidden");
-    impressum.classList.toggle("show");
-  
+  impressum.classList.toggle("hidden");
+  impressum.classList.toggle("show");
 }
+
+// Füge einen Event Listener für den Info-Button hinzu
+window.addEventListener("DOMContentLoaded", () => {
+  const infoButton = document.getElementById("infoButton");
+  if (infoButton) {
+    infoButton.addEventListener("click", toggleInfoBox);
+  } else {
+    console.error("Element mit ID 'infoButton' nicht gefunden.");
+  }
+});
+
+// Füge einen Event Listener für den Fullscreen-Button hinzu
+window.addEventListener("DOMContentLoaded", () => {
+  const bigScreenButton = document.getElementById("bigScreen");
+  if (bigScreenButton) {
+    bigScreenButton.addEventListener("click", () => {
+      toggleFullscreen();
+    });
+  } else {
+    console.error("Element mit ID 'bigScreen' nicht gefunden.");
+  }
+});
+

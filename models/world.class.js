@@ -1,4 +1,4 @@
-class World {
+class World extends MovableObject {
   character;
   level;
   canvas;
@@ -18,7 +18,7 @@ class World {
   levels = [level1]; // Liste der Levels
   imageCache = {}; // Initialisiere den imageCache
   IMAGES_YOU_LOST = [
-    "img/game_ui/game_over.png",
+    "img/game_ui/login&pass/game_over.png",
   ];
   quitButton;
   quitButtonImage = "img/game_ui/quit.png"; // Pfad zum Quit-Button-Bild
@@ -33,6 +33,7 @@ class World {
 
 
   constructor(canvas, keyboard) {
+    super(); // Aufruf des Konstruktors der Basisklasse
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
@@ -91,14 +92,6 @@ class World {
     }
   }
 
-  loadImages(images) {
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  }
-
   startGameLoop() {
     this.canvas.addEventListener("click", this.handleMouseClick.bind(this)); // Event-Listener hinzufügen
     const gameLoop = () => {
@@ -118,10 +111,12 @@ class World {
     this.updatePoison();
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
-    this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll // Überprüfe, ob alle Ritter besiegt sind
+    this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll
     this.checkCollisionsWithCollectables(); // Überprüfe Kollisionen mit Sammelobjekten
     this.character.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreift
     Door.checkCharacterNearDoor(this); // Überprüfe, ob der Charakter die Tür betritt
+    this.updateProjectiles(); // Update projectiles
+    this.checkKnightFireballAttacks(); // Check for fireball attacks from knights
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound(); // Spielt das Laufgeräusch nur ab, wenn die Musik eingeschaltet ist
     }
@@ -140,8 +135,8 @@ class World {
   }
 
   randomizeCloudPositions() {
-    const totalLength = 2600; // Gesamtlänge des Levels
-    const cloudCount = this.level.clouds.length;
+    const totalLength = 5200; // Gesamtlänge des Levels verdoppeln
+    const cloudCount = this.level.clouds.length * 2; // Verdopple die Anzahl der Wolken
     const spacing = totalLength / cloudCount; // Abstand zwischen den Wolken
 
     this.level.clouds.forEach((cloud, index) => {
@@ -176,23 +171,23 @@ class World {
 
   updateCoins() {
     this.coinsArray.forEach((coin, index) => {
-        if (coin.isActive && this.checkCollision(this.character, coin)) {
-            coin.deactivate(); // Deaktiviert die Münze (macht sie unsichtbar)
-            this.character.collectCoins(); // Fügt dem Charakter eine Methode hinzu, um Münzen zu zählen
-            this.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
-        }
+      if (coin.isActive && CollisionUtils.checkCollision(this.character, coin)) {
+        coin.deactivate(); // Deaktiviert die Münze (macht sie unsichtbar)
+        this.character.collectCoins(); // Fügt dem Charakter eine Methode hinzu, um Münzen zu zählen
+        this.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
+      }
     });
 
     this.keys.forEach((key) => {
-        if (key.isActive) {
-            // Logik für den Schlüssel
-        }
+      if (key.isActive) {
+        // Logik für den Schlüssel
+      }
     });
-}
+  }
 
   updatePoison() {
     this.poisonsArray.forEach((poison, index) => {
-      if (poison.isActive && this.character.checkCollision(poison)) {
+      if (poison.isActive && CollisionUtils.checkCollision(this.character, poison)) {
         poison.deactivate(); // Gift inaktiv setzen
         this.poisonsArray.splice(index, 1); // Gift aus dem Array entfernen
         this.character.poisonCollected++; // Giftzähler erhöhen
@@ -213,18 +208,6 @@ class World {
     this.level.enemies = this.level.enemies.filter(enemy => !(enemy instanceof Snake));
   }
 
-  checkCollision(character, object) {
-    const charBox = character.getHitbox();
-    const objBox = object.getHitbox();
-
-    return (
-        charBox.x < objBox.x + objBox.width &&
-        charBox.x + charBox.width > objBox.x &&
-        charBox.y < objBox.y + objBox.height &&
-        charBox.y + charBox.height > objBox.y
-    );
-}
-
   addCharacter(character) {
     this.characters.push(character);
   }
@@ -233,7 +216,6 @@ class World {
     this.enemies.push(enemy);
   }
  
-  
   addProjectile(projectile) {
     if (!this.projectiles) {
       this.projectiles = [];
@@ -448,6 +430,25 @@ class World {
         break;
       default:
         console.warn("Unbekannter Collectable-Typ:", collectable.type);
+    }
+  }
+
+  checkKnightFireballAttacks() {
+    this.enemies.forEach((enemy) => {
+      if (enemy instanceof Knight) {
+        enemy.checkForFireball();
+      }
+    });
+  }
+
+  updateProjectiles() {
+    if (this.projectiles) {
+      this.projectiles.forEach((projectile, index) => {
+        projectile.moveLeft();
+        if (projectile.isOutOfScreen()) {
+          this.projectiles.splice(index, 1); // Projektil entfernen, wenn es aus dem Bildschirm ist
+        }
+      });
     }
   }
 }

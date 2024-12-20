@@ -90,7 +90,7 @@ class CollectableObjects extends DrawableObject {
         playCollectCoinSound(); // Rufen Sie die Methode aus music.js auf
     }
 
-    getHitbox() {
+    getCollisionBox() {
         return {
             x: this.x,
             y: this.y,

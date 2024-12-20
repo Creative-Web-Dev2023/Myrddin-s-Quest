@@ -3,10 +3,8 @@ class Keyboard {
   RIGHT = false;
   UP = false;
   DOWN = false;
-  SPACE = false;
+  JUMP = false;
   ATTACK = false;
   THROW_FIRE = false; // Initialisiere die THROW-Taste
   D = false; // Initialisiere die D-Taste
-
- 
 }

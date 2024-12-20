@@ -26,7 +26,8 @@
     <script src="models/keyboard.class.js"></script>
     <script src="models/music.js"></script> <!-- Fügen Sie das Skript für music.js hinzu -->
     <script src="models/snake.class.js"></script>
-    <script src="js/game.js"></script>
+    <script src="js/game.js" ></script>
+    <script src="utils/collision-utils.js"></script>
     <title>Myrddin's Quest</title>
   
 </head>
@@ -34,9 +35,12 @@
 <body>
     <h2>Myrddin's Quest</h2>
     <canvas id="canvas" width="720" height="480"></canvas>
+    <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png" onclick="toggleFullscreen()" alt="Fullscreen">
     <!-- Das Sound-Icon versteckt sich zu Beginn -->
-    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/soundoff.png" onclick="musicSwitcher()"
+    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()"
         alt="Sound Control">
+    <!-- Info-Button neben dem Sound-Icon -->
+    <img class="info-icon hidden" id="infoButton" src="img/app_icons/info_orange.png" onclick="toggleInfoBox()" alt="Info">
 
     <div class="overlay">
         <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> <!-- Bild des Charakters -->
@@ -73,12 +77,20 @@
                             <td class="action">Move left</td>
                         </tr>
                         <tr>
-                            <td class="key">Space</td>
+                            <td class="key">W</td>
                             <td class="action">Jump</td>
                         </tr>
                         <tr>
                             <td class="key">A</td>
                             <td class="action">Attack</td>
+                        </tr>
+                        <tr>
+                            <td class="key">S</td>
+                            <td class="action">Fire</td>
+                        </tr>
+                        <tr>
+                            <td class="key">D</td>
+                            <td class="action">Throw Bottle</td>
                         </tr>
                     </tbody>
                 </table>
@@ -122,5 +134,7 @@
     </div>
     <div id="level-completed-container" class="hidden">Level 1 geschafft</div>
 </body>
+
+
 
 </html>

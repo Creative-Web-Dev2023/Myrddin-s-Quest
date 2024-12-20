@@ -92,6 +92,19 @@ class MovableObject extends DrawableObject {
     }
   }
   
+  loadImages(images) {
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      console.error('Invalid images array:', images);
+      return;
+    }
+    this.imageCache = this.imageCache || {};
+    images.forEach((path) => {
+      const img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
+  }
+
   moveRight() {
     this.x += this.speed;
     if (this.walking_sound && this.walking_sound.paused) {
@@ -108,5 +121,42 @@ class MovableObject extends DrawableObject {
 
   jump() {
     this.speedY = 30;
+  }
+
+  animate() {
+    this.animationInterval = setInterval(() => {
+      if (this.isDead()) {
+        this.handleDeadAnimation();
+      } else if (this.world && this.world.keyboard && this.world.keyboard.THROW) {
+        this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound);
+      } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) {
+        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound);
+      } else if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT);
+      } else if (this.isAboveGround()) {
+        this.playAnimation(this.IMAGES_JUMPING);
+      } else if (this.world && this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound);
+      } else {
+        this.playAnimation(this.IMAGES_IDLE);
+      }
+    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+  }
+
+  playAnimationWithSound(images, sound) {
+    this.playAnimation(images);
+    if (sound.paused) {
+      sound.play();
+    }
+  }
+
+  handleDeadAnimation() {
+    this.playAnimation(this.IMAGES_DEAD);
+    if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
+      clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
+      if (this.world.endGame) {
+        this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
+      }
+    }
   }
 }

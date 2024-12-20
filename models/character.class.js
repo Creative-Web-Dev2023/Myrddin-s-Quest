@@ -103,6 +103,9 @@ class Character extends MovableObject {
     "img/wizard/fire/fire9.png",
     "img/wizard/fire/fire10.png",
   ];
+  IMAGES_YOU_LOST = [
+    "img/game_ui/login&pass/game_over.png",
+  ];
   world = {};
   constructor(world, coinStatusBar, poisonStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
@@ -118,7 +121,7 @@ class Character extends MovableObject {
     this.applyGravity();
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
-    this.animate();
+    this.animate(); // Aufruf der geerbten Methode animate
     this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusbar(); // Statusleiste für Gift
@@ -140,42 +143,6 @@ class Character extends MovableObject {
     }
   }
 
-  animate() {
-    this.animationInterval = setInterval(() => {
-      if (this.isDead()) {
-        this.handleDeadAnimation();
-      } else if (this.world.keyboard && this.world.keyboard.THROW) {
-        this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound);
-      } else if (this.world.keyboard && this.world.keyboard.ATTACK) {
-        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound);
-      } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
-      } else if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMPING);
-      } else if (this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound);
-      } else {
-        this.playAnimation(this.IMAGES_IDLE);
-      }
-    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
-  }
-
-  playAnimationWithSound(images, sound) {
-    this.playAnimation(images);
-    if (sound.paused) {
-      sound.play();
-    }
-  }
-
-  handleDeadAnimation() {
-    this.playAnimation(this.IMAGES_DEAD);
-    if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
-      clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
-      if (this.world.endGame) {
-        this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
-      }
-    }
-  }
   update() {
     if (!this.isDead()) {
       walkingSound.pause();
@@ -189,7 +156,7 @@ class Character extends MovableObject {
         this.otherDirection = true;
         playWalkingSound();
       }
-      if (this.world.keyboard && this.world.keyboard.SPACE && !this.isAboveGround()) {
+      if (this.world.keyboard && this.world.keyboard.JUMP && !this.isAboveGround()) {
         this.jump();
       }
       this.world.camera_x = -this.x - 190;
@@ -197,68 +164,44 @@ class Character extends MovableObject {
     }
   }
   checkCollisions() {
-    this.world.coinsArray.forEach((coin, index) => {
-      if (this.isColliding(coin)) {
-        this.collectCoins(); // Münzen sammeln
-        this.world.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
-      }
-    });
+    this.checkCollisionWithObjects(this.world.coinsArray, this.collectCoins.bind(this));
+    this.checkCollisionWithObjects(this.world.poisonsArray, this.collectPoison.bind(this));
+    this.checkCollisionWithObjects(this.world.keysArray, this.collectKey.bind(this));
     Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
-    this.collectPoison();
-    this.collectKey(); // Überprüfe, ob der Charakter einen Schlüssel einsammelt
     this.checkJumpOnKnight();
     this.checkKnightAttack();
-   
   }
-  collectPoison() {
-    if (this.world.poisonsArray) {
-      this.world.poisonsArray.forEach((poison, index) => {
-        if (this.isColliding(poison)) {
-          poison.deactivate();
-          this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
-          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
-          this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
-        }
-      });
-    }
+
+  checkCollisionWithObjects(objectsArray, callback) {
+    objectsArray.forEach((object, index) => {
+      if (CollisionUtils.checkCollision(this, object)) {
+        callback(object, index);
+      }
+    });
   }
-  collectCoins() {
+
+  collectPoison(poison, index) {
+    poison.deactivate();
+    this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
+    this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
+    this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
+  }
+
+  collectCoins(coin, index) {
     this.coinsCollected++; // Erhöhe die gesammelten Münzen
     this.coinStatusBar.setPercentage(this.coinsCollected); // Aktualisiere die Statusleiste
     playCollectCoinSound(); // Spiele den Münz-Sound ab
+    this.world.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
   }
 
-
-  collectKey() {
-    if (this.world.keysArray) {
-      this.world.keysArray.forEach((key, index) => {
-        if (this.isColliding(key)) {
-          this.hasKey = true; // Setze hasKey auf true, wenn der Charakter einen Schlüssel einsammelt
-          this.world.keysArray.splice(index, 1); // Entferne den Schlüssel aus dem Array
-        }
-      });
-    }
+  collectKey(key, index) {
+    this.hasKey = true; // Setze hasKey auf true, wenn der Charakter einen Schlüssel einsammelt
+    this.world.keysArray.splice(index, 1); // Entferne den Schlüssel aus dem Array
   }
 
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
     playJumpSound(); // Spiele den Sprung-Sound ab
-  }
-
-  checkCollision(coin) {
-    const characterHitbox = {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom
-    };
-
-    return (
-      characterHitbox.x < coin.x + coin.width &&
-      characterHitbox.x + characterHitbox.width > coin.x &&
-      characterHitbox.y < coin.y + coin.height &&
-      characterHitbox.y + characterHitbox.height > coin.y
-    );
   }
 
   attackEndboss(endboss) {
@@ -280,17 +223,17 @@ class Character extends MovableObject {
       }
     }
   }
-  // checkCollisionWithPoison() {
-  //   if (this.world.poisonsArray) { // Überprüfe, ob es Giftobjekte gibt
-  //     this.world.poisonsArray.forEach((poison) => {
-  //       if (poison.isActive && this.checkCollision(poison)) {
-  //         poison.deactivate(); // Giftflasche deaktivieren
-  //         this.poisonCollected += 1; // Sammelzähler für Gift erhöhen
-  //         this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Statusleiste aktualisieren
-  //       }
-  //     });
-  //   }
-  // }
+  checkCollisionWithPoison() {
+    if (this.world.poisonsArray) { // Überprüfe, ob es Giftobjekte gibt
+      this.world.poisonsArray.forEach((poison) => {
+        if (poison.isActive && CollisionUtils.checkCollision(this, poison)) {
+          poison.deactivate(); // Giftflasche deaktivieren
+          this.poisonCollected += 1; // Sammelzähler für Gift erhöhen
+          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Statusleiste aktualisieren
+        }
+      });
+    }
+  }
 
   isAboveGround() {
     return this.y < 150; // Passen Sie dies an die tatsächliche Bodenhöhe an
@@ -393,5 +336,14 @@ class Character extends MovableObject {
 
   checkCollisionWithDoor(door) {
     return this.isColliding(door);
+  }
+
+  getCollisionBox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom,
+    };
   }
 }
