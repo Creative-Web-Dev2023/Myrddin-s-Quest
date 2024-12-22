@@ -115,16 +115,18 @@ class World extends MovableObject {
     this.checkCollisionsWithCollectables(); // Überprüfe Kollisionen mit Sammelobjekten
     this.character.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreift
     Door.checkCharacterNearDoor(this); // Überprüfe, ob der Charakter die Tür betritt
-    this.updateProjectiles(); // Update projectiles
-    this.checkKnightFireballAttacks(); // Check for fireball attacks from knights
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound(); // Spielt das Laufgeräusch nur ab, wenn die Musik eingeschaltet ist
     }
     if (this.character.isDead()) {
-      setTimeout(() => {
-        this.endGame.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
-      }, 200); // Verkürze die Zeit auf 500ms
-    }
+      if (!this.gameOverTriggered) {
+          this.gameOverTriggered = true; // Sicherstellen, dass der Bildschirm nur einmal angezeigt wird
+          setTimeout(() => {
+              this.endGame.showYouLostScreen(); // Endbildschirm erst nach einer Verzögerung zeigen
+          }, 2000); // 2000 ms Verzögerung (2 Sekunden)
+      }
+  }
+  
 
     // Überprüfe dann die Kollision mit der Tür
     if (this.character.checkCollisionWithDoor(this.door)) {
@@ -216,12 +218,6 @@ class World extends MovableObject {
     this.enemies.push(enemy);
   }
  
-  addProjectile(projectile) {
-    if (!this.projectiles) {
-      this.projectiles = [];
-    }
-    this.projectiles.push(projectile);
-  }
 
   draw() {
     this.clearCanvas();
@@ -433,24 +429,10 @@ class World extends MovableObject {
     }
   }
 
-  checkKnightFireballAttacks() {
-    this.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight) {
-        enemy.checkForFireball();
-      }
-    });
-  }
+ 
+  
 
-  updateProjectiles() {
-    if (this.projectiles) {
-      this.projectiles.forEach((projectile, index) => {
-        projectile.moveLeft();
-        if (projectile.isOutOfScreen()) {
-          this.projectiles.splice(index, 1); // Projektil entfernen, wenn es aus dem Bildschirm ist
-        }
-      });
-    }
-  }
+ 
 }
 
 

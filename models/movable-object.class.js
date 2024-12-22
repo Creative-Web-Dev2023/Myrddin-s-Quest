@@ -82,15 +82,13 @@ class MovableObject extends DrawableObject {
 
   playAnimation(images) {
     if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
-      let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
+      let i = this.currentImage % images.length; // Berechnung des aktuellen Index
       let path = images[i]; // Bildpfad aus dem Array
       this.img = this.imageCache[path]; // Bild aus dem Cache setzen
-      this.currentImage++;
-      if (this.currentImage >= images.length) { 
-        this.currentImage = 0; // Setze auf den ersten Frame zurück
-      }
+      this.currentImage++; // Erhöhe den Frame-Index für die nächste Iteration
     }
   }
+  
   
   loadImages(images) {
     if (!images || !Array.isArray(images) || images.length === 0) {
@@ -152,11 +150,14 @@ class MovableObject extends DrawableObject {
 
   handleDeadAnimation() {
     this.playAnimation(this.IMAGES_DEAD);
+
     if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
-      clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
-      if (this.world.endGame) {
-        this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
-      }
+        clearInterval(this.animationInterval); // Animation stoppen, nachdem alle Frames abgespielt wurden
+        setTimeout(() => {
+            if (this.world.endGame) {
+                this.world.endGame.showYouLostScreen(); // Endbildschirm mit Verzögerung anzeigen
+            }
+        }, 1000); // 1000 ms (1 Sekunde) warten, bevor der Endbildschirm erscheint
     }
-  }
+}
 }

@@ -144,25 +144,35 @@ class Character extends MovableObject {
   }
 
   update() {
-    if (!this.isDead()) {
-      walkingSound.pause();
-      if (this.world.keyboard && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { 
-        this.moveRight();
-        this.otherDirection = false;
-        playWalkingSound();
-      }
-      if (this.world.keyboard && this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        playWalkingSound();
-      }
-      if (this.world.keyboard && this.world.keyboard.JUMP && !this.isAboveGround()) {
-        this.jump();
-      }
-      this.world.camera_x = -this.x - 190;
-      this.checkCollisions();
+    if (this.isDead() && !this.deadAnimationPlayed) {
+        this.deadAnimationPlayed = true;
+        this.playAnimation(this.IMAGES_DEAD);
+        setTimeout(() => {
+            this.isVisible = false; // Charakter verschwindet nach der Animation
+            if (this.world.endGame) {
+                this.world.endGame.showYouLostScreen(); // Endbildschirm mit Verzögerung anzeigen
+            }
+        }, 1000); // 1000 ms (1 Sekunde) warten, bevor der Endbildschirm erscheint
+    } else if (!this.isDead()) {
+        walkingSound.pause();
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.otherDirection = false;
+            playWalkingSound();
+        }
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+            playWalkingSound();
+        }
+        if (this.world.keyboard.JUMP && !this.isAboveGround()) {
+            this.jump();
+        }
+        this.world.camera_x = -this.x - 190;
+        this.checkCollisions();
     }
-  }
+}
+
   checkCollisions() {
     this.checkCollisionWithObjects(this.world.coinsArray, this.collectCoins.bind(this));
     this.checkCollisionWithObjects(this.world.poisonsArray, this.collectPoison.bind(this));
@@ -264,23 +274,16 @@ class Character extends MovableObject {
   }
 
   checkJumpOnKnight() {
-    let nearestKnight = null;
-    let minDistance = Infinity;
-
     this.world.enemies.forEach((enemy, index) => {
       if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) {
-        const distance = Math.abs(this.x - enemy.x);
-        if (distance < minDistance) {
-          minDistance = distance;
-          nearestKnight = { enemy, index };
-        }
+        enemy.die(); // Set knight to dead state
+        setTimeout(() => {
+          if (this.world.enemies[index] === enemy) {
+            this.world.enemies.splice(index, 1); // Remove knight from enemies array after animation
+          }
+        }, 3000); // Wait for the dead animation to complete before removing
       }
     });
-
-    if (nearestKnight) {
-      nearestKnight.enemy.die(); // Set knight to dead state
-      this.world.enemies.splice(nearestKnight.index, 1); // Remove knight from enemies array
-    }
   }
 
   checkKnightAttack() {

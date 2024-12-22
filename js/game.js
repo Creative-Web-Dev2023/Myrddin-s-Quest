@@ -28,15 +28,7 @@ function gameLoop() {
 }
 
 function handleDescription() {
-  let description = document.getElementById("description");
-  console.log(description); // Gibt das Element aus, um sicherzustellen, dass es existiert
-  if (description.classList.contains("hidden")) {
-    description.classList.remove("hidden");
-    description.classList.add("show");
-  } else {
-    description.classList.remove("show");
-    description.classList.add("hidden");
-  }
+  toggleInfoBox(); // Use the same function for both buttons
 }
 
 function goBack() {
@@ -57,14 +49,15 @@ function tryAgain() {
 }
 
 function toggleInfoBox() {
-
   let description = document.getElementById("description");
-  if (description.classList.contains("hidden")) {
-    description.classList.remove("hidden");
-    description.classList.add("show");
+  if (description) {
+    description.classList.toggle("hidden"); // Blendets die Box ein/aus
+    description.classList.toggle("show");   // Für zusätzliche Anzeige (falls gewünscht)
+    if (!description.classList.contains("hidden")) {
+      description.scrollIntoView({ behavior: "smooth" }); // Scrollt zu Beschreibung, wenn sichtbar
+    }
   } else {
-    description.classList.remove("show");
-    description.classList.add("hidden");
+    console.error("Element mit ID 'description' nicht gefunden.");
   }
 }
 
@@ -77,6 +70,10 @@ function toggleFullscreen() {
   } else {
     document.exitFullscreen();
   }
+  // Ensure icons are visible when toggling fullscreen
+  document.getElementById("audioSwitcher").classList.remove("hidden");
+  document.getElementById("infoButton").classList.remove("hidden");
+  document.getElementById("bigScreen").classList.remove("hidden");
 }
 
 // Event Listener für Tastendrücke
@@ -139,34 +136,24 @@ window.addEventListener("keyup", (e) => {
   }
 });
 
-// Füge einen Event Listener für den Start-Button hinzu
 window.addEventListener("DOMContentLoaded", () => {
+  // Start Button
   const startButton = document.getElementById("startButton");
   if (startButton) {
     startButton.addEventListener("click", startGame);
   } else {
     console.error("Element mit ID 'startButton' nicht gefunden.");
   }
-});
 
-function handleImpressum() {
-  let impressum = document.getElementById("impressum");
-  impressum.classList.toggle("hidden");
-  impressum.classList.toggle("show");
-}
-
-// Füge einen Event Listener für den Info-Button hinzu
-window.addEventListener("DOMContentLoaded", () => {
+  // Info Button
   const infoButton = document.getElementById("infoButton");
   if (infoButton) {
-    infoButton.addEventListener("click", toggleInfoBox);
+    infoButton.addEventListener("click", toggleInfoBox); // Diese Funktion wird sowohl für "How to Play" als auch für die Schaltfläche "Info" verwendet
   } else {
     console.error("Element mit ID 'infoButton' nicht gefunden.");
   }
-});
 
-// Füge einen Event Listener für den Fullscreen-Button hinzu
-window.addEventListener("DOMContentLoaded", () => {
+  // Fullscreen Button
   const bigScreenButton = document.getElementById("bigScreen");
   if (bigScreenButton) {
     bigScreenButton.addEventListener("click", () => {
@@ -176,4 +163,12 @@ window.addEventListener("DOMContentLoaded", () => {
     console.error("Element mit ID 'bigScreen' nicht gefunden.");
   }
 });
+
+function handleImpressum() {
+  let impressum = document.getElementById("impressum");
+  impressum.classList.toggle("hidden");
+  impressum.classList.toggle("show");
+}
+
+
 

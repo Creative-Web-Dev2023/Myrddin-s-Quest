@@ -10,7 +10,7 @@ class Knight extends MovableObject {
   isAttacking = false;
   dead = false; // Zustand für tot
   health = 100; // Lebenspunkte des Knights
-  projectiles = [];
+ 
 
   offset = {
     top: 70, // Verkleinere die oberen Offset-Werte
@@ -84,27 +84,17 @@ class Knight extends MovableObject {
   handleAnimation() {
     if (this.dead) {
       // Spiele die Todesanimation
-      this.playAnimationOnce(this.IMAGES_DEAD);
+      this.playAnimation(this.IMAGES_DEAD);
     } else if (this.isAttacking) {
       // Spiele die Angriffsanimation
       this.playAnimation(this.IMAGES_ATTACKING);
     } else if (this.isMoving) {
       // Spiele die Laufanimation
       this.playAnimation(this.IMAGES_WALKING);
-    } else {
-      // Spiele die Idle-Animation, wenn keine andere Animation aktiv ist
-      this.playAnimation(this.IMAGES_WALKING);
     }
   }
   
-  playAnimationOnce(images) {
-    if (this.currentImage < images.length) {
-      this.img = this.imageCache[images[this.currentImage]];
-      this.currentImage++;
-    } else {
-      this.currentImage = 0; // Animation zurücksetzen
-    }
-  }
+
   getCollisionBox() {
     return {
       x: this.x + this.offset.left,
@@ -128,13 +118,10 @@ class Knight extends MovableObject {
     this.isMoving = false; // Stoppe Bewegungen
     this.speed = 0; // Keine Geschwindigkeit mehr
     this.currentImage = 0; // Reset animation frame
-    this.playAnimationOnce(this.IMAGES_HURT); // Spiele die Hurt-Animation
+    this.playAnimation(this.IMAGES_DEAD); // Spiele die Dead-Animation
     setTimeout(() => {
-      this.playAnimationOnce(this.IMAGES_DEAD); // Spiele die Dead-Animation nach der Hurt-Animation
-      setTimeout(() => {
-        this.disappear();
-      }, 3000); // Bleibe 3 Sekunden auf dem Boden, bevor du verschwindest
-    }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
+      this.disappear();
+    }, 3000); // Bleibe 3 Sekunden auf dem Boden, bevor du verschwindest
   }
 
   disappear() {
@@ -146,60 +133,60 @@ class Knight extends MovableObject {
     }
   }
 
-  checkForFireball() {
+  checkForTeslaBall() {
     if (this.world && this.world.character) {
       const distance = Math.abs(this.x - this.world.character.x);
       if (distance < 300 && !this.isAttacking) { // Wenn der Charakter in Reichweite ist
-        this.shootFireball();
+        this.shootTeslaBall();
       }
     }
   }
-  
 
-  shootFireball() {
+  shootTeslaBall() {
     this.isAttacking = true; // Setzt den Zustand auf "greift an"
-    const fireballX = this.otherDirection ? this.x - 20 : this.x + this.width - 20; // Position anpassen
-    const fireballY = this.y + this.height / 2; // Position anpassen
-    const fireball = new Comet(fireballX, fireballY, this.otherDirection); // Projektil erstellen
-    console.log('Position des Fireballs:', fireball.x, fireball.y);
+    const teslaBallX = this.otherDirection ? this.x - 20 : this.x + this.width - 20; // Position anpassen
+    const teslaBallY = this.y + this.height / 2 - 10; // Position anpassen, damit der TeslaBall aus der Hand startet
+    const teslaBall = new TeslaBall(teslaBallX, teslaBallY, this.otherDirection, this.world); // Projektil erstellen
+    console.log('Position des TeslaBalls:', teslaBall.x, teslaBall.y);
     if (this.world) {
-      this.world.addProjectile(fireball); // Projektil zur Welt hinzufügen
+      this.world.addTeslaBall(teslaBall); // Projektil zur Welt hinzufügen
     }
     setTimeout(() => {
       this.isAttacking = false; // Zustand zurücksetzen
     }, 500); // Nach 0,5 Sekunden wieder bereit
   }
-  
+
 }
 
-class Comet extends MovableObject {
-  constructor(x, y, otherDirection) {
+class TeslaBall extends MovableObject {
+  constructor(x, y, otherDirection, world) {
     super();
     this.x = x;
-    this.y = y; // Position anpassen, damit der Comet aus der Hand startet
+    this.y = y; // Position anpassen, damit der TeslaBall aus der Hand startet
     this.width = 40;
     this.height = 20;
     this.otherDirection = otherDirection;
+    this.world = world; // Store the world reference
     this.loadImages([
-      'img/knight/tesla_ball/tesla_ball1.png',
-      'img/knight/tesla_ball/tesla_ball2.png',
-      'img/knight/tesla_ball/tesla_ball3.png',
-      'img/knight/tesla_ball/tesla_ball4.png',
-      'img/knight/tesla_ball/tesla_ball5.png',
-      'img/knight/tesla_ball/tesla_ball6.png',
-      'img/knight/tesla_ball/tesla_ball7.png',
-      'img/knight/tesla_ball/tesla_ball8.png',
-      'img/knight/tesla_ball/tesla_ball9.png',
-      'img/knight/tesla_ball/tesla_ball10.png',
-      'img/knight/tesla_ball/tesla_ball11.png',
-      'img/knight/tesla_ball/tesla_ball12.png',
-      'img/knight/tesla_ball/tesla_ball13.png',
-      'img/knight/tesla_ball/tesla_ball14.png',
-      'img/knight/tesla_ball/tesla_ball15.png',
-      'img/knight/tesla_ball/tesla_ball16.png',
-      'img/knight/tesla_ball/tesla_ball17.png',
+      'img/obstacles/tesla_ball/tesla_ball1.png',
+      'img/obstacles/tesla_ball/tesla_ball2.png',
+      'img/obstacles/tesla_ball/tesla_ball3.png',
+      'img/obstacles/tesla_ball/tesla_ball4.png',
+      'img/obstacles/tesla_ball/tesla_ball5.png',
+      'img/obstacles/tesla_ball/tesla_ball6.png',
+      'img/obstacles/tesla_ball/tesla_ball7.png',
+      'img/obstacles/tesla_ball/tesla_ball8.png',
+      'img/obstacles/tesla_ball/tesla_ball9.png',
+      'img/obstacles/tesla_ball/tesla_ball10.png',
+      'img/obstacles/tesla_ball/tesla_ball11.png',
+      'img/obstacles/tesla_ball/tesla_ball12.png',
+      'img/obstacles/tesla_ball/tesla_ball13.png',
+      'img/obstacles/tesla_ball/tesla_ball14.png',
+      'img/obstacles/tesla_ball/tesla_ball15.png',
+      'img/obstacles/tesla_ball/tesla_ball16.png',
+      'img/obstacles/tesla_ball/tesla_ball17.png',
     ]);
-    this.speed = 10; // Geschwindigkeit des Comets
+    this.speed = 10; // Geschwindigkeit des TeslaBalls
     this.currentImage = 0;
     this.animate();
   }
@@ -218,7 +205,13 @@ class Comet extends MovableObject {
     }
   }
 
+  draw(ctx) {
+    this.moveLeft(); // Ensure the TeslaBall moves
+    super.draw(ctx); // Call the draw method from DrawableObject
+  }
+
   isOutOfScreen() {
     return this.x < 0 || this.x > this.world.canvas.width; // Bildschirmgrenzen überprüfen
   }
 }
+
