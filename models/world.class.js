@@ -395,7 +395,6 @@ class World extends MovableObject {
     }
   }
 
-
   drawCollectables() {
     this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen
     this.collectables.forEach((collectable) => collectable.draw(this.ctx));
@@ -403,36 +402,19 @@ class World extends MovableObject {
   }
 
   checkCollisionsWithCollectables() {
-    this.collectables.forEach((collectable) => {
-      if (this.character.isColliding(collectable) && collectable.isActive) {
-        collectable.deactivate(); // Deaktiviere das Sammelobjekt
-        this.handleCollectable(collectable); // Reagiere basierend auf dem Typ
-      }
-    });
+    CollisionUtils.checkCollisionsWithCollectables(this.character, this.collectables, this.handleCollectable.bind(this));
   }
 
   handleCollectable(collectable) {
-    switch (collectable.type) {
-      case "COIN":
-        this.character.coinsCollected++;
-        this.coinStatusBar.setPercentage(this.character.coinsCollected);
-        break;
-      case "KEY":
-        this.character.keysCollected++;
-        break;
-      case "POISON":
-        this.character.energy -= 10; // Gift reduziert Energie
-        this.statusBar.setPercentage(this.character.energy);
-        break;
-      default:
-        console.warn("Unbekannter Collectable-Typ:", collectable.type);
+    // Reagiere basierend auf dem Typ des Sammelobjekts
+    if (collectable.type === 'coin') {
+      this.character.collectCoins(collectable);
+    } else if (collectable.type === 'poison') {
+      this.character.collectPoison(collectable);
+    } else if (collectable.type === 'key') {
+      this.character.collectKey(collectable);
     }
   }
-
- 
-  
-
- 
 }
 
 

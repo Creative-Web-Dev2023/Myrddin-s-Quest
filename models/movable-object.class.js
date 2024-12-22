@@ -118,13 +118,15 @@ class MovableObject extends DrawableObject {
   }
 
   jump() {
-    this.speedY = 30;
+    this.speedY = 33; // Die Geschwindigkeit des Sprungs
+    playJumpSound(); // Spiele den Sprung-Sound ab
   }
+
 
   animate() {
     this.animationInterval = setInterval(() => {
       if (this.isDead()) {
-        this.handleDeadAnimation();
+        this.playAnimation(this.IMAGES_DEAD);
       } else if (this.world && this.world.keyboard && this.world.keyboard.THROW) {
         this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound);
       } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) {
@@ -147,17 +149,4 @@ class MovableObject extends DrawableObject {
       sound.play();
     }
   }
-
-  handleDeadAnimation() {
-    this.playAnimation(this.IMAGES_DEAD);
-
-    if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
-        clearInterval(this.animationInterval); // Animation stoppen, nachdem alle Frames abgespielt wurden
-        setTimeout(() => {
-            if (this.world.endGame) {
-                this.world.endGame.showYouLostScreen(); // Endbildschirm mit Verzögerung anzeigen
-            }
-        }, 1000); // 1000 ms (1 Sekunde) warten, bevor der Endbildschirm erscheint
-    }
-}
 }

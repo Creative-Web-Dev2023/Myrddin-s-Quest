@@ -78,7 +78,6 @@ class Character extends MovableObject {
     "img/wizard/die/die_008.png",
     "img/wizard/die/die_009.png",
   ];
-
   IMAGES_HURT = [
     "img/wizard/hurt/hurt_000.png",
     "img/wizard/hurt/hurt_001.png",
@@ -103,9 +102,6 @@ class Character extends MovableObject {
     "img/wizard/fire/fire9.png",
     "img/wizard/fire/fire10.png",
   ];
-  IMAGES_YOU_LOST = [
-    "img/game_ui/login&pass/game_over.png",
-  ];
   world = {};
   constructor(world, coinStatusBar, poisonStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
@@ -122,14 +118,12 @@ class Character extends MovableObject {
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
     this.animate(); // Aufruf der geerbten Methode animate
-    this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
+    this.coinStatusBar = coinStatusBar; // Statusleiste für Münzen
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
-    this.poisonStatusBar = poisonStatusBar || new PoisonStatusbar(); // Statusleiste für Gift
+    this.poisonStatusBar = poisonStatusBar; // Statusleiste für Gift
     this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
     this.healthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
     this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
-    this.statusBar = new StatusBar();
-    this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
   }
 
@@ -145,49 +139,41 @@ class Character extends MovableObject {
 
   update() {
     if (this.isDead() && !this.deadAnimationPlayed) {
-        this.deadAnimationPlayed = true;
-        this.playAnimation(this.IMAGES_DEAD);
-        setTimeout(() => {
-            this.isVisible = false; // Charakter verschwindet nach der Animation
-            if (this.world.endGame) {
-                this.world.endGame.showYouLostScreen(); // Endbildschirm mit Verzögerung anzeigen
-            }
-        }, 1000); // 1000 ms (1 Sekunde) warten, bevor der Endbildschirm erscheint
+      this.deadAnimationPlayed = true;
+      this.playAnimation(this.IMAGES_DEAD);
+      setTimeout(() => {
+        this.isVisible = false; // Charakter verschwindet nach der Animation
+        if (this.world.endGame) {
+          this.world.endGame.showYouLostScreen(); // Endbildschirm mit Verzögerung anzeigen
+        }
+      }, 3000); // 3000 ms (3 Sekunden) warten, bevor der Endbildschirm erscheint
     } else if (!this.isDead()) {
-        walkingSound.pause();
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-            this.moveRight();
-            this.otherDirection = false;
-            playWalkingSound();
-        }
-        if (this.world.keyboard.LEFT && this.x > 0) {
-            this.moveLeft();
-            this.otherDirection = true;
-            playWalkingSound();
-        }
-        if (this.world.keyboard.JUMP && !this.isAboveGround()) {
-            this.jump();
-        }
-        this.world.camera_x = -this.x - 190;
-        this.checkCollisions();
+      walkingSound.pause();
+      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+        this.moveRight();
+        this.otherDirection = false;
+        playWalkingSound();
+      }
+      if (this.world.keyboard.LEFT && this.x > 0) {
+        this.moveLeft();
+        this.otherDirection = true;
+        playWalkingSound();
+      }
+      if (this.world.keyboard.JUMP && !this.isAboveGround()) {
+        this.jump();
+      }
+      this.world.camera_x = -this.x - 190;
+      this.checkCollisions();
     }
-}
+  }
 
   checkCollisions() {
-    this.checkCollisionWithObjects(this.world.coinsArray, this.collectCoins.bind(this));
-    this.checkCollisionWithObjects(this.world.poisonsArray, this.collectPoison.bind(this));
-    this.checkCollisionWithObjects(this.world.keysArray, this.collectKey.bind(this));
+    CollisionUtils.checkCollisionWithObjects(this, this.world.coinsArray, this.collectCoins.bind(this));
+    CollisionUtils.checkCollisionWithObjects(this, this.world.poisonsArray, this.collectPoison.bind(this));
+    CollisionUtils.checkCollisionWithObjects(this, this.world.keysArray, this.collectKey.bind(this));
     Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
     this.checkJumpOnKnight();
     this.checkKnightAttack();
-  }
-
-  checkCollisionWithObjects(objectsArray, callback) {
-    objectsArray.forEach((object, index) => {
-      if (CollisionUtils.checkCollision(this, object)) {
-        callback(object, index);
-      }
-    });
   }
 
   collectPoison(poison, index) {
@@ -209,11 +195,7 @@ class Character extends MovableObject {
     this.world.keysArray.splice(index, 1); // Entferne den Schlüssel aus dem Array
   }
 
-  jump() {
-    this.speedY = 33; // Die Geschwindigkeit des Sprungs
-    playJumpSound(); // Spiele den Sprung-Sound ab
-  }
-
+ 
   attackEndboss(endboss) {
     if (this.world.keyboard && this.world.keyboard.THROW) {
       this.playAnimation(this.IMAGES_FIRE_ATTACK);
@@ -266,16 +248,10 @@ class Character extends MovableObject {
       }, 1000);
     }
   }
-  isHurt() {
-    return this.energy < 100 && this.energy > 0; // wenn seine < 100 und > 0 ist, dann ist er verletzt
-  }
-  isDead() {
-    return this.energy == 0;// wenn seine Energie 0 ist, dann ist er tot
-  }
 
   checkJumpOnKnight() {
     this.world.enemies.forEach((enemy, index) => {
-      if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) {
+      if (enemy instanceof Knight && CollisionUtils.isColliding(this, enemy) && this.speedY < 0) {
         enemy.die(); // Set knight to dead state
         setTimeout(() => {
           if (this.world.enemies[index] === enemy) {
@@ -298,7 +274,7 @@ class Character extends MovableObject {
 
           setTimeout(() => {
             // Angriff nur, wenn der Charakter immer noch nah genug ist und am Boden
-            if (!this.isAboveGround() && this.isColliding(enemy)) {
+            if (!this.isAboveGround() && CollisionUtils.isColliding(this, enemy)) {
               this.hit(enemy); // Ritter greift an
             }
           }, 500); // Verzögerung des Angriffs um 500 ms

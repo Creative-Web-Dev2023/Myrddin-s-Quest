@@ -1,4 +1,8 @@
 class EndGame {
+  IMAGES_YOU_LOST = [
+    "img/game_ui/login&pass/game_over.png",
+  ];
+
   constructor(world) {
     this.world = world;
   }

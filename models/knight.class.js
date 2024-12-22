@@ -66,6 +66,7 @@ class Knight extends MovableObject {
       this.isMoving = true;
       this.animate();
     }, delay);
+    this.playAnimation(this.IMAGES_WALKING); // Start with walking animation
   }
   
   setWorld(world) {

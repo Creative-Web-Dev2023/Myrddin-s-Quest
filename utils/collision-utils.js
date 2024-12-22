@@ -14,4 +14,25 @@ class CollisionUtils {
       box1.y + box1.height > box2.y
     );
   }
+
+  static isColliding(obj1, obj2) {
+    return this.checkCollision(obj1, obj2);
+  }
+
+  static checkCollisionWithObjects(obj, objectsArray, callback) {
+    objectsArray.forEach((object, index) => {
+      if (this.checkCollision(obj, object)) {
+        callback(object, index);
+      }
+    });
+  }
+
+  static checkCollisionsWithCollectables(character, collectables, handleCollectable) {
+    collectables.forEach((collectable) => {
+      if (this.checkCollision(character, collectable) && collectable.isActive) {
+        collectable.deactivate(); // Deaktiviere das Sammelobjekt
+        handleCollectable(collectable); // Reagiere basierend auf dem Typ
+      }
+    });
+  }
 }
