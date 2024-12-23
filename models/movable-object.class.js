@@ -80,15 +80,18 @@ class MovableObject extends DrawableObject {
     return this.energy == 0;
   }
 
-  playAnimation(images) {
+  playAnimation(images, delay = 100) {
     if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
-      let i = this.currentImage % images.length; // Berechnung des aktuellen Index
+      let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
       let path = images[i]; // Bildpfad aus dem Array
       this.img = this.imageCache[path]; // Bild aus dem Cache setzen
-      this.currentImage++; // Erhöhe den Frame-Index für die nächste Iteration
+      this.currentImage++;
+      if (this.currentImage >= images.length) { 
+        this.currentImage = 0; // Setze auf den ersten Frame zurück
+      }
     }
+    setTimeout(() => {}, delay); // Verzögerung zwischen den Frames
   }
-  
   
   loadImages(images) {
     if (!images || !Array.isArray(images) || images.length === 0) {
@@ -118,15 +121,13 @@ class MovableObject extends DrawableObject {
   }
 
   jump() {
-    this.speedY = 33; // Die Geschwindigkeit des Sprungs
-    playJumpSound(); // Spiele den Sprung-Sound ab
+    this.speedY = 30;
   }
-
 
   animate() {
     this.animationInterval = setInterval(() => {
       if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
+        this.handleDeadAnimation();
       } else if (this.world && this.world.keyboard && this.world.keyboard.THROW) {
         this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound);
       } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) {
@@ -145,8 +146,24 @@ class MovableObject extends DrawableObject {
 
   playAnimationWithSound(images, sound) {
     this.playAnimation(images);
-    if (sound.paused) {
-      sound.play();
+    if (musicIsOn) { // Nur abspielen, wenn Musik eingeschaltet ist
+        if (sound.paused) {
+            sound.play();
+        }
+    } else {
+        sound.pause(); // Pausieren, wenn Musik aus ist
+        sound.currentTime = 0; // Zurücksetzen auf Anfang
+    }
+}
+
+
+  handleDeadAnimation() {
+    this.playAnimation(this.IMAGES_DEAD);
+    if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
+      clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
+      if (this.world.endGame) {
+        this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
+      }
     }
   }
 }

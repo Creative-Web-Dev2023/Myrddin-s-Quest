@@ -38,13 +38,7 @@ class DrawableObject {
     ctx.stroke();
   }
   draw(ctx) {
-    if (this.img && this.img.complete) { // Ensure the image is loaded
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    } else if (this.img) {
-      this.img.onload = () => {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      };
-    }
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }
 
   drawFrame(ctx) {
@@ -57,4 +51,3 @@ class DrawableObject {
     }
   }
 }
-

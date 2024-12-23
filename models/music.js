@@ -30,11 +30,14 @@ function playMusic() {
 function stopMusic() {
     if (musicIsOn) {
         backgroundMusic.pause();
-        backgroundMusic.currentTime = 0;  // Musik von Anfang abspielen, wenn sie wieder gestartet wird
+        backgroundMusic.currentTime = 0; // Musik von Anfang abspielen, wenn sie wieder gestartet wird
         musicIsOn = false;
         pauseAllSounds(); // Pausiere alle Sounds
+        walkingSound.pause(); // Speziell Walking Sound pausieren
+        walkingSound.currentTime = 0; // Zurücksetzen auf Anfang
     }
 }
+
 
 function pauseAllSounds() {
     allSounds.forEach(sound => {
@@ -46,8 +49,12 @@ function pauseAllSounds() {
 function playWalkingSound() {
     if (musicIsOn && walkingSound.paused) {
         walkingSound.play();
+    } else if (!musicIsOn) {
+        walkingSound.pause(); // Falls der Schalter off ist, Walking Sound pausieren
+        walkingSound.currentTime = 0; // Zurücksetzen auf Anfang
     }
 }
+
 
 function playAttackSound() {
     if (musicIsOn && attackSound.paused) {

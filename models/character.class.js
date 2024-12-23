@@ -78,6 +78,7 @@ class Character extends MovableObject {
     "img/wizard/die/die_008.png",
     "img/wizard/die/die_009.png",
   ];
+
   IMAGES_HURT = [
     "img/wizard/hurt/hurt_000.png",
     "img/wizard/hurt/hurt_001.png",
@@ -102,6 +103,9 @@ class Character extends MovableObject {
     "img/wizard/fire/fire9.png",
     "img/wizard/fire/fire10.png",
   ];
+  IMAGES_YOU_LOST = [
+    "img/game_ui/login&pass/game_over.png",
+  ];
   world = {};
   constructor(world, coinStatusBar, poisonStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
@@ -118,12 +122,14 @@ class Character extends MovableObject {
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
     this.animate(); // Aufruf der geerbten Methode animate
-    this.coinStatusBar = coinStatusBar; // Statusleiste für Münzen
+    this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
-    this.poisonStatusBar = poisonStatusBar; // Statusleiste für Gift
+    this.poisonStatusBar = poisonStatusBar || new PoisonStatusbar(); // Statusleiste für Gift
     this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
     this.healthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
     this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
+    this.statusBar = new StatusBar();
+    this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
   }
 
@@ -138,23 +144,14 @@ class Character extends MovableObject {
   }
 
   update() {
-    if (this.isDead() && !this.deadAnimationPlayed) {
-      this.deadAnimationPlayed = true;
-      this.playAnimation(this.IMAGES_DEAD);
-      setTimeout(() => {
-        this.isVisible = false; // Charakter verschwindet nach der Animation
-        if (this.world.endGame) {
-          this.world.endGame.showYouLostScreen(); // Endbildschirm mit Verzögerung anzeigen
-        }
-      }, 3000); // 3000 ms (3 Sekunden) warten, bevor der Endbildschirm erscheint
-    } else if (!this.isDead()) {
+    if (!this.isDead()) {
       walkingSound.pause();
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { 
         this.moveRight();
         this.otherDirection = false;
         playWalkingSound();
       }
-      if (this.world.keyboard.LEFT && this.x > 0) {
+      if ( this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
         playWalkingSound();
@@ -166,22 +163,33 @@ class Character extends MovableObject {
       this.checkCollisions();
     }
   }
-
   checkCollisions() {
-    CollisionUtils.checkCollisionWithObjects(this, this.world.coinsArray, this.collectCoins.bind(this));
-    CollisionUtils.checkCollisionWithObjects(this, this.world.poisonsArray, this.collectPoison.bind(this));
-    CollisionUtils.checkCollisionWithObjects(this, this.world.keysArray, this.collectKey.bind(this));
+    this.checkCollisionWithObjects(this.world.coinsArray, this.collectCoins.bind(this));
+    this.checkCollisionWithObjects(this.world.poisonsArray, this.collectPoison.bind(this)); // Überprüfe Kollisionen mit Giftflaschen
+    this.checkCollisionWithObjects(this.world.keysArray, this.collectKey.bind(this));
     Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
     this.checkJumpOnKnight();
     this.checkKnightAttack();
   }
 
-  collectPoison(poison, index) {
-    poison.deactivate();
-    this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
-    this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
-    this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
+  checkCollisionWithObjects(objectsArray, callback) {
+    objectsArray.forEach((object, index) => {
+      if (this.isColliding(object)) {
+        callback(object, index);
+      }
+    });
   }
+
+  collectPoison(poison, index) {
+    if (poison && poison.isActive) {
+      poison.deactivate();
+      this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
+      this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
+      console.log(`Poison collected: ${this.poisonCollected}`); // Debug-Ausgabe
+    }
+  }
+
 
   collectCoins(coin, index) {
     this.coinsCollected++; // Erhöhe die gesammelten Münzen
@@ -195,7 +203,11 @@ class Character extends MovableObject {
     this.world.keysArray.splice(index, 1); // Entferne den Schlüssel aus dem Array
   }
 
- 
+  jump() {
+    this.speedY = 33; // Die Geschwindigkeit des Sprungs
+    playJumpSound(); // Spiele den Sprung-Sound ab
+  }
+
   attackEndboss(endboss) {
     if (this.world.keyboard && this.world.keyboard.THROW) {
       this.playAnimation(this.IMAGES_FIRE_ATTACK);
@@ -215,17 +227,7 @@ class Character extends MovableObject {
       }
     }
   }
-  checkCollisionWithPoison() {
-    if (this.world.poisonsArray) { // Überprüfe, ob es Giftobjekte gibt
-      this.world.poisonsArray.forEach((poison) => {
-        if (poison.isActive && CollisionUtils.checkCollision(this, poison)) {
-          poison.deactivate(); // Giftflasche deaktivieren
-          this.poisonCollected += 1; // Sammelzähler für Gift erhöhen
-          this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Statusleiste aktualisieren
-        }
-      });
-    }
-  }
+
 
   isAboveGround() {
     return this.y < 150; // Passen Sie dies an die tatsächliche Bodenhöhe an
@@ -248,19 +250,39 @@ class Character extends MovableObject {
       }, 1000);
     }
   }
+  isHurt() {
+    return this.energy < 100 && this.energy > 0; // wenn seine < 100 und > 0 ist, dann ist er verletzt
+  }
+  isDead() {
+    return this.energy == 0;// wenn seine Energie 0 ist, dann ist er tot
+  }
 
   checkJumpOnKnight() {
+    let nearestKnight = null;
+    let minDistance = Infinity;
+
     this.world.enemies.forEach((enemy, index) => {
-      if (enemy instanceof Knight && CollisionUtils.isColliding(this, enemy) && this.speedY < 0) {
-        enemy.die(); // Set knight to dead state
-        setTimeout(() => {
-          if (this.world.enemies[index] === enemy) {
-            this.world.enemies.splice(index, 1); // Remove knight from enemies array after animation
-          }
-        }, 3000); // Wait for the dead animation to complete before removing
+      if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) {
+        const distance = Math.abs(this.x - enemy.x);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearestKnight = { enemy, index };
+        }
       }
     });
+
+    if (nearestKnight) {
+      nearestKnight.enemy.playAnimation(nearestKnight.enemy.IMAGES_HURT); // Spiele die Hurt-Animation
+      setTimeout(() => {
+        nearestKnight.enemy.playAnimation(nearestKnight.enemy.IMAGES_DEAD); // Spiele die Dead-Animation
+        setTimeout(() => {
+          nearestKnight.enemy.die(); // Set knight to dead state
+          this.world.enemies.splice(nearestKnight.index, 1); // Remove knight from enemies array
+        }, 3000); // Warte 3 Sekunden, bevor der Ritter verschwindet
+      }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
+    }
   }
+  
 
   checkKnightAttack() {
     this.world.enemies.forEach((enemy) => {
@@ -274,10 +296,10 @@ class Character extends MovableObject {
 
           setTimeout(() => {
             // Angriff nur, wenn der Charakter immer noch nah genug ist und am Boden
-            if (!this.isAboveGround() && CollisionUtils.isColliding(this, enemy)) {
+            if (!this.isAboveGround() && this.isColliding(enemy)) {
               this.hit(enemy); // Ritter greift an
             }
-          }, 500); // Verzögerung des Angriffs um 500 ms
+          }, 1000); // Verzögerung des Angriffs um 500 ms
         } else {
           enemy.isAttacking = false; // Setze den Angriffsstatus des Ritters zurück
         }

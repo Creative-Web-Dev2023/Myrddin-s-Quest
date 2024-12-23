@@ -84,6 +84,7 @@ class Door extends DrawableObject {
     setTimeout(() => {
       character.x = this.x + this.width + 50; // Position auf der anderen Seite der Tür
       character.isVisible = true; // Charakter wieder sichtbar machen
+      this.checkLevelCompletion(); // Überprüfe, ob der Level abgeschlossen ist
     }, 1000); // Warte 1 Sekunde
   }
   
@@ -94,6 +95,13 @@ class Door extends DrawableObject {
       doorOpenFrame++;
       if (doorOpenFrame >= this.IMAGE_DOOR.length) clearInterval(openInterval);
     }, 100); // Zeigt jede Frame der Tür-Animation
+  }
+
+  checkLevelCompletion() {
+    const overlay = document.getElementById('level-completed-overlay');
+    if (overlay) {
+      overlay.classList.add('show');
+    }
   }
 
   static drawDoor(world) {
