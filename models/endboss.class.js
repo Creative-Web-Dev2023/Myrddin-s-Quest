@@ -2,7 +2,7 @@ class Endboss extends MovableObject {
     height = 600;  // Höhe des Endbosses
     width = 450;   // Breite des Endbosses
     y = -100;      // y-Position
-    x = 5500;      // x-Position
+    x = 5000;      // x-Position
     energy = 100;  // Setze die Energie des Endbosses auf 100
    
     offset = {

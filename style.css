@@ -593,7 +593,7 @@ svg {
 #key-info {
     font-family: Arial, sans-serif;
     font-size: 16px;
-    color: white;
+    color: rgb(225, 217, 209);
     background-color: rgba(0, 0, 0, 0.5);
     padding: 10px;
     border-radius: 10px;

@@ -6,16 +6,23 @@ let collectCoinSound = new Audio("audio/collect_coins.mp3");
 let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
-let allSounds = [backgroundMusic, walkingSound, attackSound, fireAttackSound, collectCoinSound, throwPoisonBottleSound, jumpSound];
+let level1Sound = new Audio('audio/background music .mp3'); // Hintergrundsound für Level 1
+let level2Sound = new Audio('audio/level2_sound.mp3'); // Hintergrundsound für Level 2
+let allSounds = [backgroundMusic, walkingSound, attackSound, fireAttackSound, collectCoinSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
 
 function musicSwitcher() {
     const audioIcon = document.getElementById('audioSwitcher'); // Icon für Sound an/aus
+    musicIsOn = !musicIsOn;
     if (musicIsOn) {
-        stopMusic();
-        audioIcon.src = 'img/app_icons/soundoff.png'; // Icon für Sound aus
-    } else {
-        playMusic();
+        if (world.level === level2) {
+            playLevel2Sound();
+        } else {
+            playLevel1Sound();
+        }
         audioIcon.src = 'img/app_icons/soundon.png'; // Icon für Sound an
+    } else {
+        stopAllSounds();
+        audioIcon.src = 'img/app_icons/soundoff.png'; // Icon für Sound aus
     }
 }
 
@@ -38,6 +45,13 @@ function stopMusic() {
     }
 }
 
+function stopAllSounds() {
+    level1Sound.pause();
+    level1Sound.currentTime = 0;
+    level2Sound.pause();
+    level2Sound.currentTime = 0;
+    pauseAllSounds();
+}
 
 function pauseAllSounds() {
     allSounds.forEach(sound => {
@@ -55,6 +69,19 @@ function playWalkingSound() {
     }
 }
 
+function playLevel1Sound() {
+    if (musicIsOn) {
+        level1Sound.play();
+        level1Sound.loop = true; // Wiederhole den Sound
+    }
+}
+
+function playLevel2Sound() {
+    if (musicIsOn) {
+        level2Sound.play();
+        level2Sound.loop = true; // Wiederhole den Sound
+    }
+}
 
 function playAttackSound() {
     if (musicIsOn && attackSound.paused) {

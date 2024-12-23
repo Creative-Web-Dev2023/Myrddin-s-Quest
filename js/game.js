@@ -22,12 +22,16 @@ function startGame() {
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas, keyboard); // Stelle sicher, dass World definiert ist
+  playLevel1Sound(); // Spiele den Hintergrundsound für Level 1
   gameLoop();
 }
 
 function gameLoop() {
   world.update(); // Kollisionsprüfungen und andere Updates
   world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
+  if (world.level === level2) {
+    console.log(`Character Position in Level 2: x=${world.character.x}, y=${world.character.y}`);
+  }
   requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
 }
 
@@ -72,10 +76,28 @@ function continueToNextLevel() {
 function loadLevel2() {
   if (typeof level2 !== 'undefined') {
     world.level = level2;
+    world.character.reset(2); // Setze den Charakter für Level 2 zurück
     world.character.x = 0; // Setze den Charakter an den Startpunkt von Level 2
-    // Weitere Initialisierungen für Level 2
+    world.backgroundObjects = level2.backgroundObjects; // Setze den neuen Hintergrund
+    world.enemies = level2.enemies; // Setze die neuen Gegner (Schlangen und Endboss)
+    if (level2.endboss) {
+      world.level.endboss = level2.endboss; // Füge den Endboss nur in Level 2 hinzu
+    }
+    stopAllSounds(); // Stoppe alle laufenden Sounds
+    playLevel2Sound(); // Spiele den Hintergrundsound für Level 2
   } else {
     console.error('Level 2 is not defined.');
+  }
+  if (this.door) {
+    this.door = new Door(5500, 150); // Neue Tür für Level 2
+    this.door.world = this; // Welt der Tür zuweisen
+  }
+}
+
+function playLevel2Sound() {
+  if (musicIsOn) {
+    level2Sound.play();
+    level2Sound.loop = true; // Wiederhole den Sound
   }
 }
 
@@ -165,8 +187,6 @@ function handleImpressum() {
   impressum.classList.toggle("hidden");
   impressum.classList.toggle("show");
 }
-
-
 
 // Füge einen Event Listener für den Fullscreen-Button hinzu
 window.addEventListener("DOMContentLoaded", () => {

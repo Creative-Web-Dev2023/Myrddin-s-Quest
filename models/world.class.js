@@ -121,21 +121,14 @@ class World {
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll // Überprüfe, ob alle Ritter besiegt sind
     this.checkCollisionsWithCollectables(); // Überprüfe Kollisionen mit Sammelobjekten
     this.character.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreift
-    Door.checkCharacterNearDoor(this); // Überprüfe, ob der Charakter die Tür betritt
+    this.checkDoorCollision(); // Überprüfe Kollisionen mit der Tür
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound(); // Spielt das Laufgeräusch nur ab, wenn die Musik eingeschaltet ist
     }
-    if (this.character.isDead()) {
+    if (this.character.isDead() && !this.levelCompleted) {
       setTimeout(() => {
         this.endGame.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
       }, 200); // Verkürze die Zeit auf 500ms
-    }
-
-    // Überprüfe dann die Kollision mit der Tür
-    if (this.character.checkCollisionWithDoor(this.door)) {
-      this.character.enterDoor(); // Charakter für kurze Zeit unsichtbar machen
-      this.door.enterDoor(this.character); // Beispiel: Tür öffnen
-     
     }
   }
 
@@ -149,6 +142,7 @@ class World {
       cloud.y = Math.random() * 50; // Zufällige y-Position, nicht zu weit unten
     });
   }
+  
 
   checkCollisionsWithEnemy() {
     this.level.enemies.forEach((enemy) => {
@@ -175,20 +169,16 @@ class World {
   }
 
   updateCoins() {
-    this.coinsArray.forEach((coin, index) => {
+    if (this.level !== level2) { // Keine Münzen in Level 2
+      this.coinsArray.forEach((coin, index) => {
         if (coin.isActive && this.checkCollision(this.character, coin)) {
-            coin.deactivate(); // Deaktiviert die Münze (macht sie unsichtbar)
-            this.character.collectCoins(); // Fügt dem Charakter eine Methode hinzu, um Münzen zu zählen
-            this.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
+          coin.deactivate(); // Deaktiviert die Münze (macht sie unsichtbar)
+          this.character.collectCoins(); // Fügt dem Charakter eine Methode hinzu, um Münzen zu zählen
+          this.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
         }
-    });
-
-    this.keys.forEach((key) => {
-        if (key.isActive) {
-            // Logik für den Schlüssel
-        }
-    });
-}
+      });
+    }
+  }
 
   updatePoison() {
     this.poisonsArray.forEach((poison, index) => {
@@ -276,13 +266,13 @@ class World {
   }
 
   drawBackground() {
-    this.ctx.translate(this.camera_x, 0);
-    this.backgroundObjects.forEach((obj) => {
-      this.ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
+    this.ctx.translate(this.camera_x, 0); // Kamera versetzen
+    this.level.backgroundObjects.forEach((obj) => {
+        obj.draw(this.ctx);
     });
-    this.addObjectsToMap(this.level.clouds);
-    this.ctx.translate(-this.camera_x, 0);
-  }
+    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
+}
+
 
   drawStatusBars() {
     this.addToMap(this.coinStatusBar);
@@ -326,7 +316,7 @@ class World {
         });
       }
     });
-    if (this.level.endboss) {
+    if (this.level === level2 && this.level.endboss) { // Endboss nur in Level 2 zeichnen
       this.level.endboss.draw(this.ctx);
     }
   }
@@ -430,6 +420,17 @@ class World {
         break;
       default:
         console.warn("Unbekannter Collectable-Typ:", collectable.type);
+    }
+  }
+
+  checkDoorCollision() {
+    const door = this.door; // Tür aus dem aktuellen Level
+    if (this.character.checkCollisionWithDoor(door)) {
+      this.character.enterDoor(); // Animation beim Betreten der Tür
+      setTimeout(() => {
+        this.levelCompleted = true; // Markiere das Level als abgeschlossen
+        continueToNextLevel(); // Wechsel zu Level 2
+      }, 2000); // Kurze Verzögerung vor dem Levelwechsel
     }
   }
 }

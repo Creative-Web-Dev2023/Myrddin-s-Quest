@@ -48,7 +48,6 @@ class Snake extends MovableObject {
     this.loadImages(this.IMAGES_IDLE); // Lade Idle-Bilder
     this.loadImages(this.IMAGES_ATTACKING); // Lade Angriffs-Bilder
     this.speed = 0.02 + Math.random() * 0.05; // Geschwindigkeit reduziert
-
     this.animate();
   }
 
@@ -100,4 +99,7 @@ class Snake extends MovableObject {
     }, 1500); // 1,5 Sekunden Abklingzeit
   }
 }
+
+// Stelle sicher, dass die Klasse global verfügbar ist
+window.Snake = Snake;
 

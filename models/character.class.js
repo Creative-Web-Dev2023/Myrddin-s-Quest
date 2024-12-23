@@ -144,6 +144,7 @@ class Character extends MovableObject {
   }
 
   update() {
+    if (!this.isVisible) return; // Wenn der Charakter unsichtbar ist, keine Updates ausführen
     if (!this.isDead()) {
       walkingSound.pause();
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { 
@@ -210,20 +211,25 @@ class Character extends MovableObject {
 
   attackEndboss(endboss) {
     if (this.world.keyboard && this.world.keyboard.THROW) {
-      this.playAnimation(this.IMAGES_FIRE_ATTACK);
-      if (fireAttackSound.paused) {
+      if (!this.isAttacking) { // Überprüfe, ob der Charakter bereits angreift
+        this.isAttacking = true;
+        this.playAnimation(this.IMAGES_FIRE_ATTACK);
         playFireAttackSound(); // Spiele den Angriffssound ab
-      }
-      endboss.energy -= 20; // Verringere die Energie des Endbosses
-      if (endboss.energy <= 0) {
-        endboss.energy = 0;
-        endboss.isDead = true;
-        endboss.playAnimation(endboss.IMAGES_DEAD);
+
         setTimeout(() => {
-          this.world.level.endboss = null; // Entferne den Endboss aus der Welt
-        }, 2000);
-      } else {
-        endboss.playAnimation(endboss.IMAGES_HURT);
+          endboss.energy -= 20; // Verringere die Energie des Endbosses
+          if (endboss.energy <= 0) {
+            endboss.energy = 0;
+            endboss.isDead = true;
+            endboss.playAnimation(endboss.IMAGES_DEAD);
+            setTimeout(() => {
+              this.world.level.endboss = null; // Entferne den Endboss
+            }, 2000);
+          } else {
+            endboss.playAnimation(endboss.IMAGES_HURT);
+          }
+          this.isAttacking = false; // Angriff abgeschlossen
+        }, 500); // Verzögerung der Schadensberechnung
       }
     }
   }
@@ -271,13 +277,13 @@ class Character extends MovableObject {
       }
     });
 
-    if (nearestKnight) {
+    if (nearestKnight && !nearestKnight.enemy.isDead) {
+      nearestKnight.enemy.isDead = true; // Markiere den Ritter als tot
       nearestKnight.enemy.playAnimation(nearestKnight.enemy.IMAGES_HURT); // Spiele die Hurt-Animation
       setTimeout(() => {
         nearestKnight.enemy.playAnimation(nearestKnight.enemy.IMAGES_DEAD); // Spiele die Dead-Animation
         setTimeout(() => {
-          nearestKnight.enemy.die(); // Set knight to dead state
-          this.world.enemies.splice(nearestKnight.index, 1); // Remove knight from enemies array
+          this.world.enemies.splice(nearestKnight.index, 1); // Entferne den Ritter
         }, 3000); // Warte 3 Sekunden, bevor der Ritter verschwindet
       }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
     }
@@ -307,11 +313,14 @@ class Character extends MovableObject {
     });
   }
 
-  reset() {
+  reset(level) {
     this.x = 130;
     this.y = 150;
-    this.energy = 100;
-    this.coinsCollected = 0;
+    this.isVisible = true;
+    if (level === 2) {
+      this.energy = 100; // Optionale Anpassung für Level 2
+    }
+    this.coinsCollected = 0; // Zurücksetzen oder fortführen, je nach Spielmechanik
     this.poisonCollected = 0;
     this.coinStatusBar.setPercentage(0);
     this.poisonStatusBar.setPercentage(0);
