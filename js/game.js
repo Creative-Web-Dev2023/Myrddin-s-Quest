@@ -13,9 +13,7 @@ function startGame() {
 
   });
 
-  document
-    .getElementById("audioSwitcher")
-    .setAttribute("onclick", "musicSwitcher()");
+  document .getElementById("audioSwitcher").setAttribute("onclick", "musicSwitcher()");
   init();
 }
 
@@ -66,10 +64,8 @@ function tryAgain() {
 
 function continueToNextLevel() {
   const overlay = document.getElementById('level-completed-overlay');
-  if (overlay) {
-    overlay.classList.remove('show');
+  if (overlay) { overlay.classList.remove('show');
   }
-  // Logik zum Laden des nächsten Levels hinzufügen
   loadLevel2();
 }
 

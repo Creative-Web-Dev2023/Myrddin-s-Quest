@@ -226,7 +226,7 @@ h2{
 
 .description {
   position: absolute;
-  top: 110px;
+  top: 78px;
   left: 10px;
   right: 10px;
   bottom: 10px;
@@ -288,7 +288,7 @@ h3{
 }
 .back-link {
   cursor: pointer;
-  color: blue;
+  color: rgba(11, 11, 179, 0.813);
   text-decoration: underline;
   margin-top: 20px;
   font-size: 24px;
@@ -507,7 +507,7 @@ svg {
 
 #game-over-container {
   position: absolute;
-  top: 50%;
+  top: 44%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;

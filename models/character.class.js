@@ -7,6 +7,7 @@ class Character extends MovableObject {
   coins = 0;
   coinStatusBar;
   invulnerable = false;
+
   poisonCollected = 0; // Gift gesammelt
   poisonStatusBar; // Füge die PoisonStatusBar hinzu
   deadAnimationPlayed = false; // Füge eine neue Eigenschaft hinzu, um zu verfolgen, ob die Dead-Animation abgespielt wurde
@@ -124,8 +125,8 @@ class Character extends MovableObject {
     this.animate(); // Aufruf der geerbten Methode animate
     this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
     this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
-    this.poisonStatusBar = poisonStatusBar || new PoisonStatusbar(); // Statusleiste für Gift
-    this.poisonStatusBar.setPercentage(0); // Initialize poison status bar to 0%
+    this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar(); 
+    this.poisonStatusBar.setPercentage(0); 
     this.healthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
     this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
     this.statusBar = new StatusBar();
@@ -165,9 +166,9 @@ class Character extends MovableObject {
     }
   }
   checkCollisions() {
-    this.checkCollisionWithObjects(this.world.coinsArray, this.collectCoins.bind(this));
-    this.checkCollisionWithObjects(this.world.poisonsArray, this.collectPoison.bind(this)); // Überprüfe Kollisionen mit Giftflaschen
-    this.checkCollisionWithObjects(this.world.keysArray, this.collectKey.bind(this));
+    CollisionUtils.checkCollisionWithObjects(this, this.world.coinsArray, this.collectCoins.bind(this));
+    CollisionUtils.checkCollisionWithObjects(this, this.world.poisonsArray, this.collectPoison.bind(this));
+    CollisionUtils.checkCollisionWithObjects(this, this.world.keysArray, this.collectKey.bind(this));
     Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
     this.checkJumpOnKnight();
     this.checkKnightAttack();
@@ -183,7 +184,7 @@ class Character extends MovableObject {
 
   collectPoison(poison, index) {
     if (poison && poison.isActive) {
-      poison.deactivate();
+      poison.deactivate(); // Deaktivieren der Giftflasche
       this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
       this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
       this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
@@ -349,11 +350,13 @@ class Character extends MovableObject {
   }
 
   getCollisionBox() {
-    return {
+    const box = {
       x: this.x + this.offset.left,
       y: this.y + this.offset.top,
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom,
     };
+    console.log('Character Collision Box:', box);
+    return box;
   }
 }

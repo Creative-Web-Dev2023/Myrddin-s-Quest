@@ -14,12 +14,9 @@ class World {
   enemies = [];
   throwableObjects = []; // Füge ein werfbares Objekt hinzu
   currentLevelIndex = 0; // Aktuelles Level
-  // Stelle sicher, dass level1 definiert ist
   levels = [level1]; // Liste der Levels
   imageCache = {}; // Initialisiere den imageCache
-  IMAGES_YOU_LOST = [
-    "img/game_ui/login&pass/game_over.png",
-  ];
+  IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
   quitButtonImage = "img/game_ui/quit.png"; // Pfad zum Quit-Button-Bild
   tryAgainButton;
@@ -27,10 +24,9 @@ class World {
   levelCompleted = false; // Füge eine Variable hinzu, um den Abschluss des Levels zu verfolgen
   collectables = []; // Füge ein Array für Sammelobjekte hinzu
   keys = []; // Füge ein Array für Schlüssel hinzu
-  coinCollectSound = new Audio('audio/collect_coins.mp3'); // Initialisieren Sie den Audio-Player nur einmal
+  coinCollectSound = new Audio("audio/collect_coins.mp3"); // Initialisieren Sie den Audio-Player nur einmal
   endGame; // Add endGame as a class attribute
   door; // Füge die Tür als Attribut hinzu
-
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -45,13 +41,13 @@ class World {
       x: canvasCenterX - buttonWidth - buttonSpacing / 2,
       y: this.canvas.height - buttonHeight - 20,
       width: buttonWidth,
-      height: buttonHeight
+      height: buttonHeight,
     };
     this.tryAgainButton = {
       x: canvasCenterX + buttonSpacing / 2,
       y: this.quitButton.y,
       width: buttonWidth,
-      height: buttonHeight
+      height: buttonHeight,
     };
     this.keyboard.T = false; // Initialisiere die T-Taste
     this.keyboard.D = false; // Initialisiere die D-Taste
@@ -61,9 +57,14 @@ class World {
     this.poisonStatusBar = new PoisonStatusBar(); // Stelle sicher, dass die Statusleiste für Gift initialisiert wird
     this.statusBar = new StatusBar(this.character); // Instanz hier erstellen
     if (this.level.endboss) {
-      this.endbossHealthBar = new EndbossStatusBar(this.level.endboss.x, this.level.endboss.y - 50); // Stelle sicher, dass der Name korrekt ist
+      this.endbossHealthBar = new EndbossStatusBar(
+        this.level.endboss.x,
+        this.level.endboss.y - 50
+      ); // Stelle sicher, dass der Name korrekt ist
     }
-    this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
+    this.character = new Character(this, this.coinStatusBar,this.poisonStatusBar
+
+    ); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = CollectableObjects.initializeCoins(); // Verwenden Sie die neue Methode aus collectable-objects.js
     this.poisonsArray = CollectableObjects.initializePoisons(); // Initialisiere Giftobjekte
@@ -80,8 +81,8 @@ class World {
   }
 
   setWorld() {
-    this.character.world = this;                                                                                                                                                                                                                                                                      
-    this.enemies.forEach(enemy => {
+    this.character.world = this;
+    this.enemies.forEach((enemy) => {
       if (enemy instanceof Knight) {
         enemy.world = this; // Setze die world-Eigenschaft für den Ritter
       }
@@ -142,7 +143,6 @@ class World {
       cloud.y = Math.random() * 50; // Zufällige y-Position, nicht zu weit unten
     });
   }
-  
 
   checkCollisionsWithEnemy() {
     this.level.enemies.forEach((enemy) => {
@@ -159,7 +159,6 @@ class World {
         }
       }
     });
-    // this.character.checkCollisionWithPoison();
   }
 
   checkCollisionsWithEndboss() {
@@ -169,7 +168,7 @@ class World {
   }
 
   updateCoins() {
-    if (this.level !== level2) { // Keine Münzen in Level 2
+    if (this.level !== level2) {
       this.coinsArray.forEach((coin, index) => {
         if (coin.isActive && this.checkCollision(this.character, coin)) {
           coin.deactivate(); // Deaktiviert die Münze (macht sie unsichtbar)
@@ -195,7 +194,7 @@ class World {
   }
 
   killSnakes() {
-    this.level.enemies = this.level.enemies.filter(enemy => !(enemy instanceof Snake));
+    this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Snake));
   }
 
   checkCollision(character, object) {
@@ -203,17 +202,15 @@ class World {
     const objBox = object.getHitbox();
 
     return (
-        charBox.x < objBox.x + objBox.width &&
-        charBox.x + charBox.width > objBox.x &&
-        charBox.y < objBox.y + objBox.height &&
-        charBox.y + charBox.height > objBox.y
+      charBox.x < objBox.x + objBox.width &&
+      charBox.x + charBox.width > objBox.x &&
+      charBox.y < objBox.y + objBox.height &&
+      charBox.y + charBox.height > objBox.y
     );
-}
-
+  }
   addCharacter(character) {
     this.characters.push(character);
   }
-
   addEnemy(enemy) {
     this.enemies.push(enemy);
   }
@@ -268,11 +265,10 @@ class World {
   drawBackground() {
     this.ctx.translate(this.camera_x, 0); // Kamera versetzen
     this.level.backgroundObjects.forEach((obj) => {
-        obj.draw(this.ctx);
+      obj.draw(this.ctx);
     });
     this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
-}
-
+  }
 
   drawStatusBars() {
     this.addToMap(this.coinStatusBar);
@@ -308,15 +304,17 @@ class World {
   }
 
   drawEnemies() {
-    this.enemies.forEach(enemy => {
+    this.enemies.forEach((enemy) => {
       enemy.draw(this.ctx);
-      if (enemy instanceof Knight && enemy.comets) { // Überprüfe, ob enemy.comets existiert
-        enemy.comets.forEach(comet => {
+      if (enemy instanceof Knight && enemy.comets) {
+        // Überprüfe, ob enemy.comets existiert
+        enemy.comets.forEach((comet) => {
           comet.draw(this.ctx);
         });
       }
     });
-    if (this.level === level2 && this.level.endboss) { // Endboss nur in Level 2 zeichnen
+    if (this.level === level2 && this.level.endboss) {
+      // Endboss nur in Level 2 zeichnen
       this.level.endboss.draw(this.ctx);
     }
   }
@@ -324,7 +322,7 @@ class World {
   drawCharacter() {
     this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen
     this.addToMap(this.character);
-    this.characters.forEach(character => character.draw(this.ctx));
+    this.characters.forEach((character) => character.draw(this.ctx));
     this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
   }
 
@@ -344,16 +342,19 @@ class World {
 
   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {
-        objects.forEach(object => {
-            this.addToMap(object);
-        });
+      objects.forEach((object) => {
+        this.addToMap(object);
+      });
     } else {
-        console.error('Objects is not an array or is undefined');
+      console.error("Objects is not an array or is undefined");
     }
 
     // Wenn der Hintergrund links aus dem Sichtfeld verschwindet, wiederhole ihn
-    if (this.backgroundObjects.length > 0 && this.camera_x >= this.backgroundObjects[0].width) {
-        this.camera_x = 0; // Setze die Kamera zurück, wenn der Hintergrund den Bildschirm verlassen hat
+    if (
+      this.backgroundObjects.length > 0 &&
+      this.camera_x >= this.backgroundObjects[0].width
+    ) {
+      this.camera_x = 0; // Setze die Kamera zurück, wenn der Hintergrund den Bildschirm verlassen hat
     }
   }
 
@@ -389,7 +390,6 @@ class World {
     }
   }
 
-
   drawCollectables() {
     this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen
     this.collectables.forEach((collectable) => collectable.draw(this.ctx));
@@ -397,32 +397,20 @@ class World {
   }
 
   checkCollisionsWithCollectables() {
-    this.collectables.forEach((collectable) => {
-      if (this.character.isColliding(collectable) && collectable.isActive) {
-        collectable.deactivate(); // Deaktiviere das Sammelobjekt
-        this.handleCollectable(collectable); // Reagiere basierend auf dem Typ
+    CollisionUtils.checkCollisionsWithCollectables(this.character, this.collectables, this.handleCollectable.bind(this));
+  }
+
+    handleCollectable(collectable) {
+      // Reagiere basierend auf dem Typ des Sammelobjekts
+      if (collectable.type === 'coin') {
+        this.character.collectCoins(collectable);
+      } else if (collectable.type === 'poison') {
+        this.character.collectPoison(collectable);
+      } else if (collectable.type === 'key') {
+        this.character.collectKey(collectable);
       }
-    });
-  }
-
-  handleCollectable(collectable) {
-    switch (collectable.type) {
-      case "COIN":
-        this.character.coinsCollected++;
-        this.coinStatusBar.setPercentage(this.character.coinsCollected);
-        break;
-      case "KEY":
-        this.character.keysCollected++;
-        break;
-      case "POISON":
-        this.character.energy -= 10; // Gift reduziert Energie
-        this.statusBar.setPercentage(this.character.energy);
-        break;
-      default:
-        console.warn("Unbekannter Collectable-Typ:", collectable.type);
     }
-  }
-
+  
   checkDoorCollision() {
     const door = this.door; // Tür aus dem aktuellen Level
     if (this.character.checkCollisionWithDoor(door)) {
@@ -434,5 +422,3 @@ class World {
     }
   }
 }
-
-

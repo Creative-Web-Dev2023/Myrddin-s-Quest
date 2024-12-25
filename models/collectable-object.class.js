@@ -57,6 +57,7 @@ class CollectableObjects extends DrawableObject {
         this.width = width; // Breite des Objekts
         this.height = height; // Höhe des Objekts
         this.img = this.imageCache[this.images[this.currentImageIndex]]; // Setze das erste Bild
+        this.isActive = true; // Stellen Sie sicher, dass das Objekt als aktiv markiert ist
         this.animate(); // Startet die Animation
     }
 
@@ -91,12 +92,14 @@ class CollectableObjects extends DrawableObject {
     }
 
     getCollisionBox() {
-        return {
+        const box = {
             x: this.x,
             y: this.y,
             width: this.width,
             height: this.height,
         };
+        console.log('Poison Collision Box:', box);
+        return box;
     }
 
     static initializeCoins() {
@@ -162,7 +165,6 @@ class PoisonObject extends CollectableObjects {
         super(x, y, 'POISON'); // Rufe den Konstruktor der Basisklasse auf und setze den Typ auf 'POISON'
     }
 
-    // Hier kannst du spezifische Methoden für das Giftobjekt hinzufügen
 }
 
 class Key extends CollectableObjects {

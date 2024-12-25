@@ -22,7 +22,7 @@ class Level {
       }
     }
   
-    draw(ctx, camera_x=0) {
+    draw(ctx) {
       this.backgroundObjects.forEach((bg) => bg.draw(ctx)); // Zeichne die Hintergrundobjekte
       this.clouds.forEach((cloud) => cloud.draw(ctx)); // Zeichne die Wolken
       this.enemies.forEach((enemy) => enemy.draw(ctx)); // Zeichne die Feinde
