@@ -98,7 +98,6 @@ class CollectableObjects extends DrawableObject {
             width: this.width,
             height: this.height,
         };
-        console.log('Poison Collision Box:', box);
         return box;
     }
 

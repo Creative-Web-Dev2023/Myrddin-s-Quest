@@ -62,9 +62,7 @@ class World {
         this.level.endboss.y - 50
       ); // Stelle sicher, dass der Name korrekt ist
     }
-    this.character = new Character(this, this.coinStatusBar,this.poisonStatusBar
-
-    ); // Initialize character with parameters
+    this.character = new Character(this, this.coinStatusBar,this.poisonStatusBar ); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
     this.coinsArray = CollectableObjects.initializeCoins(); // Verwenden Sie die neue Methode aus collectable-objects.js
     this.poisonsArray = CollectableObjects.initializePoisons(); // Initialisiere Giftobjekte
@@ -112,7 +110,6 @@ class World {
 
   update() {
     if (this.levelCompleted) return; // Stoppe das Update, wenn das Level abgeschlossen ist
-
     this.checkCollisionsWithEnemy();
     this.character.update();
     this.updateCoins();
@@ -176,6 +173,10 @@ class World {
           this.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
         }
       });
+      this.keys.forEach((key) => {
+        if (key.isActive) {
+        }
+    });
     }
   }
 
@@ -262,14 +263,14 @@ class World {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+ 
   drawBackground() {
-    this.ctx.translate(this.camera_x, 0); // Kamera versetzen
-    this.level.backgroundObjects.forEach((obj) => {
-      obj.draw(this.ctx);
-    });
-    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
+    this.ctx.translate(this.camera_x, 0);
+    this.addObjectsToMap(this.backgroundObjects);
+    this.addObjectsToMap(this.level.clouds);
+    this.ctx.translate(-this.camera_x, 0);
   }
-
+  
   drawStatusBars() {
     this.addToMap(this.coinStatusBar);
     this.addToMap(this.poisonStatusBar); // Stelle sicher, dass die PoisonStatusBar gezeichnet wird

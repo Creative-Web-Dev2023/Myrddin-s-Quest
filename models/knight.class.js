@@ -118,6 +118,7 @@ class Knight extends MovableObject {
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom
     };
+    console.log(this.getCollisionBox());
   }
 
  

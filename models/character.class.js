@@ -188,7 +188,6 @@ class Character extends MovableObject {
       this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
       this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
       this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
-      console.log(`Poison collected: ${this.poisonCollected}`); // Debug-Ausgabe
     }
   }
 
@@ -349,14 +348,14 @@ class Character extends MovableObject {
     return this.isColliding(door);
   }
 
-  getCollisionBox() {
+  getCollisionBox() { //Character collision box
     const box = {
       x: this.x + this.offset.left,
       y: this.y + this.offset.top,
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom,
     };
-    console.log('Character Collision Box:', box);
+    console.log('Character collision box:', box); // Debug-Ausgabe der Kollisionsbox
     return box;
   }
 }

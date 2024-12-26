@@ -28,7 +28,6 @@ function gameLoop() {
   world.update(); // Kollisionsprüfungen und andere Updates
   world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
   if (world.level === level2) {
-    console.log(`Character Position in Level 2: x=${world.character.x}, y=${world.character.y}`);
   }
   requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
 }

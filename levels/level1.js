@@ -7,10 +7,12 @@ const level1 = new Level(
     new Knight(10000, 3300, 100),
     new Knight(12000, 3900, 100),
     new Door(4500, 80), // Ändern Sie die Position der Tür
-  
-    new Key(4200, 150), // Setzen Sie die y-Position des Schlüssels weiter nach unten
   ],
-  [new Cloud(), new Cloud(), new Cloud()],
+  [
+    new Cloud(), new Cloud(), new Cloud(), // Bestehende Wolken
+    new Cloud(), new Cloud(), new Cloud(), // Neue Wolken
+    new Cloud(), new Cloud(), new Cloud(), // Weitere neue Wolken
+  ],
   [
     new BackgroundObject("img/game_backgrounds/4/7.png", -719), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/6.png", -719), // -719 = x, 0 = y
@@ -98,4 +100,4 @@ const level1 = new Level(
   ],
 );
 
- 
+

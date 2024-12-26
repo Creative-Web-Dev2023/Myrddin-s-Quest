@@ -33,11 +33,19 @@ class MovableObject extends DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof PoisonObject) {
+    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof PoisonObject || this instanceof Door) {
       this.drawRectangle = true;
       ctx.beginPath();
       ctx.lineWidth = '5';
-      ctx.strokeStyle = 'blue';
+      if (this instanceof Character) {
+        ctx.strokeStyle = 'blue';  // Farbe für den Charakter
+      } else if (this instanceof Knight) {
+        ctx.strokeStyle = 'red';  // Farbe für den Ritter
+      } else if (this instanceof Door) {
+        ctx.strokeStyle = 'yellow';  // Farbe für die Tür
+      } else {
+        ctx.strokeStyle = 'green';  // Farbe für andere Objekte
+      }
       ctx.rect(  // Rechteck wird um die Offsets kleiner gezeichnet
           this.x + this.offset.left,
           this.y + this.offset.top,
@@ -161,9 +169,11 @@ class MovableObject extends DrawableObject {
     this.playAnimation(this.IMAGES_DEAD);
     if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
       clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
-      if (this.world.endGame) {
-        this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
-      }
+      setTimeout(() => {
+        if (this.world.endGame) {
+          this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
+        }
+      }, 3500); // Verzögerung von 500 ms, bevor das Overlay angezeigt wird
     }
   }
 }

@@ -8,10 +8,12 @@ class EndGame {
   }
 
   showYouLostScreen() {
-    const gameOverContainer = document.getElementById('game-over-container');
-    gameOverContainer.style.display = 'flex';
-    document.getElementById('quitButton').style.display = 'block';
-    document.getElementById('tryAgain').style.display = 'block';
+    setTimeout(() => {
+      const gameOverContainer = document.getElementById('game-over-container');
+      gameOverContainer.style.display = 'flex';
+      document.getElementById('quitButton').style.display = 'block';
+      document.getElementById('tryAgain').style.display = 'block';
+    }, 2500); // Verzögerung von 3500 ms, um sicherzustellen, dass die Dead-Animation abgeschlossen ist
   }
 
   // Zeigt den "Level Completed" Bildschirm an
