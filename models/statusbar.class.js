@@ -175,12 +175,12 @@ class EndbossStatusbar extends DrawableObject {
 
 class KnightStatusBar extends DrawableObject {
   IMAGES = [
-    "img/game_ui/statusbars/statusbar-knight/0.png",
-    "img/game_ui/statusbars/statusbar-health/20.png",
-    "img/game_ui/statusbars/statusbar-health/40.png",
-    "img/game_ui/statusbars/statusbar-health/60.png",
-    "img/game_ui/statusbars/statusbar-health/80.png",
-    "img/game_ui/statusbars/statusbar-health/100.png",
+    "img/game_ui/statusbars/statusbar-knight/blue/0.png",
+    "img/game_ui/statusbars/statusbar-knight/blue/20.png",
+    "img/game_ui/statusbars/statusbar-knight/blue/40.png",
+    "img/game_ui/statusbars/statusbar-knight/blue/60.png",
+    "img/game_ui/statusbars/statusbar-knight/blue/80.png",
+    "img/game_ui/statusbars/statusbar-knight/blue/100.png",
   ];
 
   percentage = 100; // Start with a full status bar
@@ -188,9 +188,9 @@ class KnightStatusBar extends DrawableObject {
   constructor(knight) {
     super();
     this.loadImages(this.IMAGES);
-    this.x = 1;
-    this.y = 10; // Position der Statusbar
-    this.width = 190; // Passe die Breite an
+    this.x = knight.x; // Passe die x-Koordinate an, um sie über dem Ritter zu positionieren
+    this.y = knight.y - 60; // Passe die y-Koordinate an, um sie über dem Ritter zu positionieren
+    this.width = 200; // Passe die Breite an
     this.height = 50; // Passe die Höhe an
   }
 

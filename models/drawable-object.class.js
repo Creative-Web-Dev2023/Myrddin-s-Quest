@@ -30,7 +30,7 @@ class DrawableObject {
       height: this.height
     };
   }
-  drawCollisionBox(ctx) {
+  drawCollisionBox(ctx) { //Door
     ctx.beginPath();
     ctx.lineWidth = "2";
     ctx.strokeStyle = "red";

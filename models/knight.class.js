@@ -9,7 +9,7 @@ class Knight extends MovableObject {
   isMoving = false;
   isAttacking = false;
   dead = false; // Zustand für tot
-  projectiles = [];
+ 
   healthBar; // Statusleiste für das Leben des Ritters
 
   offset = {
@@ -139,6 +139,17 @@ class Knight extends MovableObject {
     }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
   }
 
+  hit(damage) {
+    this.energy -= damage;
+    if (this.energy < 0) {
+      this.energy = 0;
+    }
+    this.updateHealthBar(); // Aktualisiere die Statusleiste
+    if (this.energy == 0) {
+      this.die();
+    }
+  }
+
   draw(ctx) {
     super.draw(ctx); // Zeichne den Ritter
     this.updateHealthBarPosition(); // Aktualisiere die Position der Statusleiste
@@ -152,7 +163,7 @@ class Knight extends MovableObject {
   }
 
   updateHealthBarPosition() {
-    this.healthBar.x = this.x + (this.width - this.healthBar.width) / 2; // Zentriere die Statusleiste horizontal über dem Ritter
+    this.healthBar.x = this.x + (this.width - this.healthBar.width); // Zentriere die Statusleiste horizontal über dem Ritter
     this.healthBar.y = this.y - 20; // Positioniere die Statusleiste über dem Ritter
   }
 }

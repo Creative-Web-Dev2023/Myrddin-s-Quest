@@ -38,12 +38,16 @@ class MovableObject extends DrawableObject {
       ctx.beginPath();
       ctx.lineWidth = '5';
       if (this instanceof Character) {
+        //funktioniert 
         ctx.strokeStyle = 'blue';  // Farbe für den Charakter
       } else if (this instanceof Knight) {
+        //funtioniert 
         ctx.strokeStyle = 'red';  // Farbe für den Ritter
       } else if (this instanceof Door) {
+        //funktioniert nicht drawable object.class.js
         ctx.strokeStyle = 'yellow';  // Farbe für die Tür
       } else {
+        //Snake und Endboss
         ctx.strokeStyle = 'green';  // Farbe für andere Objekte
       }
       ctx.rect(  // Rechteck wird um die Offsets kleiner gezeichnet

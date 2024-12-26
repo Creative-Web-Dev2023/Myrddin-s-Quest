@@ -146,7 +146,7 @@ class CollectableObjects extends DrawableObject {
 
         keyPositions.forEach(pos => {
             keys.push(new CollectableObjects(pos.x, pos.y, "KEY"));
-            console.log('Key position:', pos); // Debug-Ausgabe der Position des Schlüssels
+            // console.log('Key position:', pos); // Debug-Ausgabe der Position des Schlüssels
         });
 
         return keys;

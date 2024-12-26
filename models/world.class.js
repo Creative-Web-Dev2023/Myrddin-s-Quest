@@ -4,29 +4,29 @@ class World {
   canvas;
   ctx;
   keyboard;
-  camera_x = 0; // die Kamera wird um 100 nach links verschoben
-  lastCloudSpawn = 0; // Zeitpunkt, an dem die letzte Wolke erzeugt wurde
-  cloudSpawnInterval = 3000; // Intervall (3 Sekunden)
+  camera_x = 0; // The camera is shifted 100 to the left
+  lastCloudSpawn = 0; // Time when the last cloud was created
+  cloudSpawnInterval = 3000; // Interval (3 seconds)
   coinsArray = [];
   poisonsArray = [];
   statusBar; // Add statusBar as a class attribute
   characters = [];
   enemies = [];
-  throwableObjects = []; // Füge ein werfbares Objekt hinzu
-  currentLevelIndex = 0; // Aktuelles Level
-  levels = [level1]; // Liste der Levels
-  imageCache = {}; // Initialisiere den imageCache
+  throwableObjects = []; // Add a throwable object
+  currentLevelIndex = 0; // Current level
+  levels = [level1]; // List of levels
+  imageCache = {}; // Initialize the imageCache
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
-  quitButtonImage = "img/game_ui/quit.png"; // Pfad zum Quit-Button-Bild
+  quitButtonImage = "img/game_ui/quit.png"; // Path to the quit button image
   tryAgainButton;
-  tryAgainButtonImage = "img/game_ui/try_again.png"; // Pfad zum Try Again-Button-Bild
-  levelCompleted = false; // Füge eine Variable hinzu, um den Abschluss des Levels zu verfolgen
-  collectables = []; // Füge ein Array für Sammelobjekte hinzu
-  keys = []; // Füge ein Array für Schlüssel hinzu
-  coinCollectSound = new Audio("audio/collect_coins.mp3"); // Initialisieren Sie den Audio-Player nur einmal
+  tryAgainButtonImage = "img/game_ui/try_again.png"; // Path to the try again button image
+  levelCompleted = false; // Add a variable to track level completion
+  collectables = []; // Add an array for collectables
+  keys = []; // Add an array for keys
+  coinCollectSound = new Audio("audio/collect_coins.mp3"); // Initialize the audio player only once
   endGame; // Add endGame as a class attribute
-  door; // Füge die Tür als Attribut hinzu
+  door; // Add the door as an attribute
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -49,97 +49,97 @@ class World {
       width: buttonWidth,
       height: buttonHeight,
     };
-    this.keyboard.T = false; // Initialisiere die T-Taste
-    this.keyboard.D = false; // Initialisiere die D-Taste
-    this.level = this.levels[this.currentLevelIndex]; // Initialisiere das erste Level
-    this.randomizeCloudPositions(); // Zufällige Positionen für Wolken setzen
-    this.coinStatusBar = new CoinStatusBar(); // Instanz hier erstellen
-    this.poisonStatusBar = new PoisonStatusBar(); // Stelle sicher, dass die Statusleiste für Gift initialisiert wird
-    this.statusBar = new StatusBar(this.character); // Instanz hier erstellen
+    this.keyboard.T = false; // Initialize the T key
+    this.keyboard.D = false; // Initialize the D key
+    this.level = this.levels[this.currentLevelIndex]; // Initialize the first level
+    this.randomizeCloudPositions(); // Set random positions for clouds
+    this.coinStatusBar = new CoinStatusBar(); // Create instance here
+    this.poisonStatusBar = new PoisonStatusBar(); // Ensure the poison status bar is initialized
+    this.statusBar = new StatusBar(this.character); // Create instance here
     if (this.level.endboss) {
       this.endbossHealthBar = new EndbossStatusBar(
         this.level.endboss.x,
         this.level.endboss.y - 50
-      ); // Stelle sicher, dass der Name korrekt ist
+      ); // Ensure the name is correct
     }
-    this.character = new Character(this, this.coinStatusBar,this.poisonStatusBar ); // Initialize character with parameters
-    this.character.world.keyboard = this.keyboard; // Keyboard an den Character weiterleiten
-    this.coinsArray = CollectableObjects.initializeCoins(); // Verwenden Sie die neue Methode aus collectable-objects.js
-    this.poisonsArray = CollectableObjects.initializePoisons(); // Initialisiere Giftobjekte
-    this.keysArray = CollectableObjects.initializeKeys(); // Initialisiere Schlüssel
-    this.backgroundObjects = this.level.backgroundObjects || []; // Sicherstellen, dass es ein Array ist
-    this.enemies = this.level.enemies || []; // Initialisiere die Feinde aus dem Level
-    this.loadImages(this.IMAGES_YOU_LOST); // Lade das "You Lost" Bild
-    this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Lade die Button-Bilder
-    this.door = new Door(1000, 200); // Initialisiere die Tür mit einer Position
-    this.setWorld();
-    this.startGameLoop();
-    this.camera_x = -this.character.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
-    this.endGame = new EndGame(this); // Initialisieren Sie die EndGame-Klasse
+    this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
+    this.character.world.keyboard = this.keyboard; // Forward keyboard to character
+    this.coinsArray = CollectableObjects.initializeCoins(); // Use the new method from collectable-objects.js
+    this.poisonsArray = CollectableObjects.initializePoisons(); // Initialize poison objects
+    this.keysArray = CollectableObjects.initializeKeys(); // Initialize keys
+    this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
+    this.enemies = this.level.enemies || []; // Initialize enemies from the level
+    this.loadImages(this.IMAGES_YOU_LOST); // Load the "You Lost" image
+    this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Load the button images
+    this.door = new Door(1000, 200); // Initialize the door with a position
+    this.setWorld(); // Set the world for the character and enemies
+    this.startGameLoop(); // Start the game loop
+    this.camera_x = -this.character.x - 190; // Set the camera to the character's starting position
+    this.endGame = new EndGame(this); // Initialize the EndGame class
   }
 
   setWorld() {
-    this.character.world = this;
-    this.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight) {
-        enemy.world = this; // Setze die world-Eigenschaft für den Ritter
+    this.character.world = this; // Set the world property for the character
+    this.enemies.forEach((enemy) => { // Iterate over the enemies
+      if (enemy instanceof Knight) { // 
+        enemy.world = this; // Set the world property for the knight
       }
     });
     if (this.door) {
-      this.door.world = this; // Setze die world-Eigenschaft für die Tür
+      this.door.world = this; // Set the world property for the door
     }
   }
 
-  loadImages(images) {
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
+  loadImages(images) { // Load images into the image cache
+    images.forEach((path) => { // Iterate over the image paths
+      const img = new Image(); // Create a new image object 
+      img.src = path; // Set the source of the image
+      this.imageCache[path] = img; // Store the image in the cache
     });
   }
 
   startGameLoop() {
-    this.canvas.addEventListener("click", this.handleMouseClick.bind(this)); // Event-Listener hinzufügen
-    const gameLoop = () => {
-      this.update();
-      this.draw();
-      requestAnimationFrame(gameLoop);
+    this.canvas.addEventListener("click", this.handleMouseClick.bind(this)); // Add event listener
+    const gameLoop = () => { // Define the game loop
+      this.update(); // Update the game state
+      this.draw(); // Draw the game state
+      requestAnimationFrame(gameLoop);// Call the game loop again
     };
     gameLoop();
   }
 
   update() {
-    if (this.levelCompleted) return; // Stoppe das Update, wenn das Level abgeschlossen ist
+    if (this.levelCompleted) return; // Stop the update if the level is completed
     this.checkCollisionsWithEnemy();
     this.character.update();
     this.updateCoins();
     this.updatePoison();
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
-    this.updateKnightHealthBars(); 
-    this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll // Überprüfe, ob alle Ritter besiegt sind
-    this.checkCollisionsWithCollectables(); 
-    this.character.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreift
+    this.updateKnightHealthBars();
+    this.checkThrowableObject(); // Check if a bottle should be thrown
+    this.checkCollisionsWithCollectables();
+    this.character.checkKnightAttack(); // Check if the knight attacks the character
     
-    this.checkDoorCollision(); // Überprüfe Kollisionen mit der Tür
+    this.checkDoorCollision(); // Check collisions with the door
     if (this.character.isMoving() && musicIsOn) {
-      playWalkingSound(); // Spielt das Laufgeräusch nur ab, wenn die Musik eingeschaltet ist
+      playWalkingSound(); // Play walking sound only if music is on
     }
     if (this.character.isDead() && !this.levelCompleted) {
       setTimeout(() => {
-        this.endGame.showYouLostScreen(); // Zeige den "You Lost" Bildschirm
-      }, 200); // Verkürze die Zeit auf 500ms
+        this.endGame.showYouLostScreen(); // Show the "You Lost" screen
+      }, 200); // Shorten the time to 500ms
     }
   }
 
   randomizeCloudPositions() {
-    const totalLength = 2600; // Gesamtlänge des Levels
+    const totalLength = 2600; // Total length of the level
     const cloudCount = this.level.clouds.length;
-    const spacing = totalLength / cloudCount; // Abstand zwischen den Wolken
+    const spacing = totalLength / cloudCount; // Spacing between clouds
 
     this.level.clouds.forEach((cloud, index) => {
-      cloud.x = index * spacing + Math.random() * spacing; // Gleichmäßig verteilen und zufällig innerhalb des Abstands
-      cloud.y = Math.random() * 50; // Zufällige y-Position, nicht zu weit unten
+      cloud.x = index * spacing + Math.random() * spacing; // Distribute evenly and randomly within the spacing
+      cloud.y = Math.random() * 50; // Random y-position, not too low
     });
   }
 
@@ -149,8 +149,8 @@ class World {
         this.character.hit(enemy);
         this.statusBar.setPercentage(this.character.energy);
         if (enemy instanceof Knight) {
-          enemy.energy -= 20; // Reduziere die Energie des Ritters
-          if (enemy.isDead()) {
+          enemy.energy -= 20; // Reduce the knight's energy
+          if (enemy.isDead()) { // Check if the knight is dead
             enemy.playAnimation(enemy.IMAGES_DEAD);
           } else if (enemy.isHurt()) {
             enemy.playAnimation(enemy.IMAGES_HURT);
@@ -170,9 +170,9 @@ class World {
     if (this.level !== level2) {
       this.coinsArray.forEach((coin, index) => {
         if (coin.isActive && this.checkCollision(this.character, coin)) {
-          coin.deactivate(); // Deaktiviert die Münze (macht sie unsichtbar)
-          this.character.collectCoins(); // Fügt dem Charakter eine Methode hinzu, um Münzen zu zählen
-          this.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
+          coin.deactivate(); // Deactivate the coin (make it invisible)
+          this.character.collectCoins(); // Add a method to the character to count coins
+          this.coinsArray.splice(index, 1); // Remove the coin from the array
         }
       });
       this.keys.forEach((key) => {
@@ -185,7 +185,7 @@ class World {
   updatePoison() {
     this.poisonsArray.forEach((poison, index) => {
       if (poison.isActive && this.character.isColliding(poison)) {
-        this.character.collectPoison(poison, index); // Korrekt aufrufen
+        this.character.collectPoison(poison, index); // Call correctly
       }
     });
   }
@@ -235,17 +235,17 @@ class World {
     this.drawGameObjects();
     this.drawEnemies();
     this.drawCharacter();
-    this.drawCoins(); // Zeichne die Münzen
-    this.drawPoisons(); // Zeichne die Giftflaschen
-    this.drawKeys(); // Zeichne die Schlüssel
-    this.drawKnightHealthBars(); // Zeichne die Statusleisten der Ritter
+    this.drawCoins(); // Draw the coins
+    this.drawPoisons(); // Draw the poison bottles
+    this.drawKeys(); // Draw the keys
+    this.drawKnightHealthBars(); // Draw the knight health bars
     if (this.door) {
-      this.door.draw(this.ctx); // Zeichne die Tür
+      this.door.draw(this.ctx); // Draw the door
     }
     if (this.character.isDead()) {
-      this.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
+      this.endGame.showYouLostScreen(); // Use the method from the EndGame class
     }
-    this.drawCollectables(); // Zeichne die Sammelobjekte
+    this.drawCollectables(); // Draw the collectables
   }
 
   drawCoins() {
@@ -293,11 +293,11 @@ class World {
 
   drawStatusBars() {
     this.addToMap(this.coinStatusBar);
-    this.addToMap(this.poisonStatusBar); // Stelle sicher, dass die PoisonStatusBar gezeichnet wird
+    this.addToMap(this.poisonStatusBar); // Ensure the PoisonStatusBar is drawn
     this.addToMap(this.statusBar);
     this.statusBar.draw(this.ctx);
     this.coinStatusBar.draw(this.ctx);
-    this.poisonStatusBar.draw(this.ctx); // Zeichne die PoisonStatusBar
+    this.poisonStatusBar.draw(this.ctx); // Draw the PoisonStatusBar
     if (this.currentLevelIndex === 1 && this.level.endboss) {
       this.endbossHealthBar.x = this.level.endboss.x;
       this.endbossHealthBar.y = this.level.endboss.y - 50;
@@ -328,23 +328,23 @@ class World {
     this.enemies.forEach((enemy) => {
       enemy.draw(this.ctx);
       if (enemy instanceof Knight && enemy.comets) {
-        // Überprüfe, ob enemy.comets existiert
+        // Check if enemy.comets exists
         enemy.comets.forEach((comet) => {
           comet.draw(this.ctx);
         });
       }
     });
     if (this.level === level2 && this.level.endboss) {
-      // Endboss nur in Level 2 zeichnen
+      // Draw endboss only in level 2
       this.level.endboss.draw(this.ctx);
     }
   }
 
   drawCharacter() {
-    this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen
+    this.ctx.translate(this.camera_x, 0); // Draw camera-bound objects
     this.addToMap(this.character);
     this.characters.forEach((character) => character.draw(this.ctx));
-    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
+    this.ctx.translate(-this.camera_x, 0); // Reset camera
   }
 
   handleMouseClick(event) {
@@ -370,51 +370,51 @@ class World {
       console.error("Objects is not an array or is undefined");
     }
 
-    // Wenn der Hintergrund links aus dem Sichtfeld verschwindet, wiederhole ihn
+    // Repeat the background if it disappears to the left of the viewport
     if (
       this.backgroundObjects.length > 0 &&
       this.camera_x >= this.backgroundObjects[0].width
     ) {
-      this.camera_x = 0; // Setze die Kamera zurück, wenn der Hintergrund den Bildschirm verlassen hat
+      this.camera_x = 0; // Reset the camera if the background has left the screen
     }
   }
 
   addToMap(mo) {
     if (mo && mo.otherDirection) {
-      this.flipImage(mo); // Bild spiegeln, falls nötig
+      this.flipImage(mo); // Flip the image if necessary
     }
     if (mo) {
-      mo.draw(this.ctx); // Bild zeichnen
-      mo.drawFrame(this.ctx); // Bild aktualisieren
+      mo.draw(this.ctx); // Draw the image
+      mo.drawFrame(this.ctx); // Update the image
     }
     if (mo && mo.otherDirection) {
-      this.flipImageBack(mo); // Bild zurückdrehen
+      this.flipImageBack(mo); // Flip the image back
     }
   }
 
   flipImage(mo) {
-    this.ctx.save(); // speichert den aktuellen Zustand des Canvas
-    this.ctx.translate(mo.width, 0); // verschiebt das Bild um die Breite des Bildes
-    this.ctx.scale(-1, 1); // spiegelt das Bild
-    mo.x = mo.x * -1; // dreht das Bild um 180 Grad
+    this.ctx.save(); // Save the current state of the canvas
+    this.ctx.translate(mo.width, 0); // Move the image by the width of the image
+    this.ctx.scale(-1, 1); // Flip the image
+    mo.x = mo.x * -1; // Rotate the image 180 degrees
   }
 
   flipImageBack(mo) {
-    mo.x = mo.x * -1; // dreht das Bild um 180 Grad zurück
-    this.ctx.restore(); // stellt den gespeicherten Zustand wieder her
+    mo.x = mo.x * -1; // Rotate the image 180 degrees back
+    this.ctx.restore(); // Restore the saved state
   }
 
   checkThrowableObject() {
     if (this.keyboard.D && this.character.poisonCollected > 0) {
       this.character.throwObject();
-      playPoisonBottleSound(); // Sound abspielen, wenn die Flasche geworfen wird
+      playPoisonBottleSound(); // Play sound when the bottle is thrown
     }
   }
 
   drawCollectables() {
-    this.ctx.translate(this.camera_x, 0); // Kamera-gebundene Objekte zeichnen
+    this.ctx.translate(this.camera_x, 0); // Draw camera-bound objects
     this.collectables.forEach((collectable) => collectable.draw(this.ctx));
-    this.ctx.translate(-this.camera_x, 0); // Kamera zurücksetzen
+    this.ctx.translate(-this.camera_x, 0); // Reset camera
   }
 
   checkCollisionsWithCollectables() {
@@ -422,7 +422,7 @@ class World {
   }
 
     handleCollectable(collectable) {
-      // Reagiere basierend auf dem Typ des Sammelobjekts
+      // React based on the type of collectable
       if (collectable.type === 'coin') {
         this.character.collectCoins(collectable);
       } else if (collectable.type === 'poison') {
@@ -433,13 +433,13 @@ class World {
     }
   
   checkDoorCollision() {
-    const door = this.door; // Tür aus dem aktuellen Level
+    const door = this.door; // Door from the current level
     if (this.character.checkCollisionWithDoor(door)) {
-      this.character.enterDoor(); // Animation beim Betreten der Tür
+      this.character.enterDoor(); // Animation when entering the door
       setTimeout(() => {
-        this.levelCompleted = true; // Markiere das Level als abgeschlossen
-        continueToNextLevel(); // Wechsel zu Level 2
-      }, 2000); // Kurze Verzögerung vor dem Levelwechsel
+        this.levelCompleted = true; // Mark the level as completed
+        continueToNextLevel(); // Switch to level 2
+      }, 2000); // Short delay before switching levels
     }
   }
 }

@@ -234,6 +234,20 @@ class Character extends MovableObject {
     }
   }
 
+  attackKnight(knight) {
+    if (this.world.keyboard && this.world.keyboard.ATTACK) {
+      if (!this.isAttacking) { // Überprüfe, ob der Charakter bereits angreift
+        this.isAttacking = true;
+        this.playAnimation(this.IMAGES_ATTACK);
+        playAttackSound(); // Spiele den Angriffssound ab
+
+        setTimeout(() => {
+          knight.hit(2); // Reduzieren Sie den Schaden, den der Ritter erleidet
+          this.isAttacking = false; // Angriff abgeschlossen
+        }, 1000); // Erhöhen Sie die Verzögerung der Schadensberechnung
+      }
+    }
+  }
 
   isAboveGround() {
     return this.y < 150; // Passen Sie dies an die tatsächliche Bodenhöhe an
@@ -293,9 +307,8 @@ class Character extends MovableObject {
   checkKnightAttack() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Knight) {
-        const distance = Math.abs(this.x - enemy.x); // Berechne die Distanz
-
-        // Überprüfen, ob der Charakter nah genug ist und nicht in der Luft
+        const distance = Math.abs(this.x - enemy.x); // calculate distance between character and knight
+        // if the distance is less than 100 and the character is not above the ground
         if (distance <= 100 && !this.isAboveGround()) {
           enemy.isAttacking = true; // Setze den Angriffsstatus des Ritters auf true
           enemy.playAnimation(enemy.IMAGES_ATTACKING); // Ritter spielt Angriffsanimation
