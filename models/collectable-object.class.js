@@ -141,12 +141,12 @@ class CollectableObjects extends DrawableObject {
     static initializeKeys() {
         const keys = [];
         const keyPositions = [
-            { x: 4200, y: 150 }, // Position des ersten Schlüssels
-            // Fügen Sie hier weitere Schlüsselpositionen hinzu, falls erforderlich
+            { x: 4200, y: 250 }, // Position des Schlüssels
         ];
 
         keyPositions.forEach(pos => {
             keys.push(new CollectableObjects(pos.x, pos.y, "KEY"));
+            console.log('Key position:', pos); // Debug-Ausgabe der Position des Schlüssels
         });
 
         return keys;

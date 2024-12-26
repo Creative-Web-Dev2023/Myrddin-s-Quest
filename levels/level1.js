@@ -9,9 +9,9 @@ const level1 = new Level(
     new Door(4500, 80), // Ändern Sie die Position der Tür
   ],
   [
-    new Cloud(), new Cloud(), new Cloud(), // Bestehende Wolken
-    new Cloud(), new Cloud(), new Cloud(), // Neue Wolken
-    new Cloud(), new Cloud(), new Cloud(), // Weitere neue Wolken
+    new Cloud(0, 50), // Fügen Sie x und y Positionen für die Wolken hinzu
+    new Cloud(500, 100),
+    new Cloud(1000, 150),
   ],
   [
     new BackgroundObject("img/game_backgrounds/4/7.png", -719), //0 = x, 80 = y
@@ -98,6 +98,9 @@ const level1 = new Level(
     new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 10),
     new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 11),
   ],
+  [
+    new Key(4200, 250), // Fügen Sie den Schlüssel hinzu
+  ]
 );
 
 

@@ -10,6 +10,7 @@ class Knight extends MovableObject {
   isAttacking = false;
   dead = false; // Zustand für tot
   projectiles = [];
+  healthBar; // Statusleiste für das Leben des Ritters
 
   offset = {
     top: 70, // Verkleinere die oberen Offset-Werte
@@ -47,8 +48,7 @@ class Knight extends MovableObject {
     'img/knight/death/death 4.png',
     'img/knight/death/death 5.png',
   ];
- 
- 
+
   constructor(delay = 0, startX = 800, moveRange = 100) {
     super();
     this.x = startX;
@@ -59,7 +59,9 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-   
+    this.healthBar = new StatusBar(); // Initialisiere die Statusleiste
+    this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
+    this.updateHealthBarPosition(); // Initialisiere die Position der Statusleiste
     
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
     setTimeout(() => {
@@ -67,6 +69,7 @@ class Knight extends MovableObject {
       this.animate();
     }, delay);
   }
+
   loadImages(images) {
     images.forEach((path) => {
       const img = new Image();
@@ -74,9 +77,11 @@ class Knight extends MovableObject {
       this.imageCache[path] = img;
     });
   }
+
   setWorld(world) {
     this.world = world;
   }
+
   animate() {
     this.movementInterval = setInterval(() => {
       this.handleMovement();
@@ -92,6 +97,7 @@ class Knight extends MovableObject {
       }
     }, 1000 / 7); // Verlangsamen Sie die Angriffsanimation
   }
+
   handleMovement() {
     if (!this.dead && this.isMoving) {
       this.moveLeft(); // Immer nach links laufen
@@ -99,8 +105,10 @@ class Knight extends MovableObject {
       if (this.x <= this.startX - this.moveRange) {
         this.x = this.startX; // Zurück zur Startposition, wenn das Ende des Bewegungsbereichs erreicht ist
       }
+      this.updateHealthBarPosition(); // Aktualisiere die Position der Statusleiste
     }
   }
+
   handleAnimation() {
     if (this.dead) {
       this.playAnimation(this.IMAGES_DEAD, 200); // Verlangsamen Sie die Dead-Animation
@@ -118,10 +126,7 @@ class Knight extends MovableObject {
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom
     };
-    console.log(this.getCollisionBox());
   }
-
- 
 
   die() {
     this.dead = true;
@@ -134,5 +139,20 @@ class Knight extends MovableObject {
     }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
   }
 
+  draw(ctx) {
+    super.draw(ctx); // Zeichne den Ritter
+    this.updateHealthBarPosition(); // Aktualisiere die Position der Statusleiste
+    this.healthBar.draw(ctx); // Zeichne die Statusleiste
+  }
 
+  updateHealthBar() {
+    if (this.healthBar) {
+      this.healthBar.setPercentage(this.energy); // Aktualisiere die Statusleiste basierend auf der Energie
+    }
+  }
+
+  updateHealthBarPosition() {
+    this.healthBar.x = this.x + (this.width - this.healthBar.width) / 2; // Zentriere die Statusleiste horizontal über dem Ritter
+    this.healthBar.y = this.y - 20; // Positioniere die Statusleiste über dem Ritter
+  }
 }

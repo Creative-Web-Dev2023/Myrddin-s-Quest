@@ -116,9 +116,11 @@ class World {
     this.updatePoison();
     this.checkCollisionsWithEndboss();
     this.updateEndbossHealth();
+    this.updateKnightHealthBars(); 
     this.checkThrowableObject(); // Überprüfen, ob eine Flasche geworfen werden soll // Überprüfe, ob alle Ritter besiegt sind
-    this.checkCollisionsWithCollectables(); // Überprüfe Kollisionen mit Sammelobjekten
+    this.checkCollisionsWithCollectables(); 
     this.character.checkKnightAttack(); // Überprüfe, ob der Ritter den Charakter angreift
+    
     this.checkDoorCollision(); // Überprüfe Kollisionen mit der Tür
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound(); // Spielt das Laufgeräusch nur ab, wenn die Musik eingeschaltet ist
@@ -157,7 +159,7 @@ class World {
       }
     });
   }
-
+  
   checkCollisionsWithEndboss() {
     if (this.level.endboss && this.character.isColliding(this.level.endboss)) {
       this.character.attackEndboss(this.level.endboss);
@@ -194,6 +196,16 @@ class World {
     }
   }
 
+ 
+  updateKnightHealthBars() {
+    this.level.enemies.forEach(enemy => {
+      if (enemy instanceof Knight && typeof enemy.updateHealthBar === 'function') {
+        enemy.updateHealthBar();
+      }
+    });
+  }
+
+
   killSnakes() {
     this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Snake));
   }
@@ -226,6 +238,7 @@ class World {
     this.drawCoins(); // Zeichne die Münzen
     this.drawPoisons(); // Zeichne die Giftflaschen
     this.drawKeys(); // Zeichne die Schlüssel
+    this.drawKnightHealthBars(); // Zeichne die Statusleisten der Ritter
     if (this.door) {
       this.door.draw(this.ctx); // Zeichne die Tür
     }
@@ -258,7 +271,14 @@ class World {
       }
     });
   }
-
+  
+  drawKnightHealthBars() {
+    this.level.enemies.forEach(enemy => {
+      if (enemy instanceof Knight && enemy.healthBar) {
+        enemy.healthBar.draw(this.ctx);
+      }
+    });
+  }
   clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
@@ -270,7 +290,7 @@ class World {
     this.addObjectsToMap(this.level.clouds);
     this.ctx.translate(-this.camera_x, 0);
   }
-  
+
   drawStatusBars() {
     this.addToMap(this.coinStatusBar);
     this.addToMap(this.poisonStatusBar); // Stelle sicher, dass die PoisonStatusBar gezeichnet wird
