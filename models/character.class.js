@@ -195,6 +195,7 @@ class Character extends MovableObject {
   jump() {
     this.speedY = 33; // Die Geschwindigkeit des Sprungs
     playJumpSound(); // Spiele den Sprung-Sound ab
+    
   }
 
   attackEndboss(endboss) {
@@ -296,7 +297,7 @@ class Character extends MovableObject {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Knight) {
         const distance = Math.abs(this.x - enemy.x); // Calculate distance between character and knight
-        if (distance <= 100 && !this.isAboveGround()) {
+        if (distance <= 100 && !this.isAboveGround() && !enemy.isHurt()) {
           enemy.isAttacking = true; // Set knight's attacking status to true
           enemy.playAnimation(enemy.IMAGES_ATTACKING); // Knight plays attacking animation
           setTimeout(() => {
@@ -353,5 +354,26 @@ class Character extends MovableObject {
     };
     // console.log('Character collision box:', box); // Debug-Ausgabe der Kollisionsbox
     return box;
+  }
+
+  checkCollisionsWithEnemy(enemies) {
+    enemies.forEach((enemy) => {
+      if (this.isColliding(enemy)) {
+        if (this.isAboveGround() && this.speedY > 0) {
+          this.jump(); // Charakter springt erneut
+          if (enemy.isDead()) { // Check if the knight is dead
+            enemy.playAnimation(enemy.IMAGES_DEAD);
+          } else {
+            enemy.playAnimation(enemy.IMAGES_HURT);
+            setTimeout(() => {
+              enemy.playAnimation(enemy.IMAGES_DEAD);
+            }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
+          }
+        } else {
+          this.hit(enemy);
+          this.world.characterStatusBar.setPercentage(this.energy); // Update characterStatusBar
+        }
+      }
+    });
   }
 }

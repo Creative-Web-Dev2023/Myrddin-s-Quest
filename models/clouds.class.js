@@ -25,3 +25,19 @@ class Cloud extends MovableObject {
         }, 1000 / 60); // 60 FPS für flüssige Bewegung
     }
 }
+
+class Clouds {
+  constructor(clouds) {
+    this.clouds = clouds;
+  }
+
+  randomizePositions(totalLength = 2600) {
+    const cloudCount = this.clouds.length;
+    const spacing = totalLength / cloudCount; // Spacing between clouds
+
+    this.clouds.forEach((cloud, index) => {
+      cloud.x = index * spacing + Math.random() * spacing; // Distribute evenly and randomly within the spacing
+      cloud.y = Math.random() * 50; // Random y-position, not too low
+    });
+  }
+}

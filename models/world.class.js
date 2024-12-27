@@ -9,7 +9,6 @@ class World {
   cloudSpawnInterval = 3000; // Interval (3 seconds)
   poisonsArray = [];
   characterStatusBar; // StatusBar für den Charakter
-  knightStatusBars = []; // StatusBars für die Ritter
   characters = [];
   enemies = [];
   throwableObjects = []; // Add a throwable object
@@ -51,7 +50,8 @@ class World {
     this.keyboard.T = false; // Initialize the T key
     this.keyboard.D = false; // Initialize the D key
     this.level = this.levels[this.currentLevelIndex]; // Initialize the first level
-    this.randomizeCloudPositions(); // Set random positions for clouds
+    this.clouds = new Clouds(this.level.clouds); // Initialisieren Sie die Clouds-Klasse
+    this.clouds.randomizePositions(); // Setzen Sie die zufälligen Positionen für die Wolken
     this.poisonStatusBar = new PoisonStatusBar(); // Ensure the poison status bar is initialized
     this.characterStatusBar = new StatusBar(this.character); // Initialisiere characterStatusBar
     if (this.level.endboss) {
@@ -78,6 +78,9 @@ class World {
   setWorld() {
     this.character.world = this; // Set the world property for the character
     this.enemies.forEach((enemy) => { // Iterate over the enemies
+      if (enemy instanceof Knight) {
+        enemy.world = this; // Set the world property for the knight
+      }
     });
     if (this.door) {
       this.door.world = this; // Set the world property for the door
@@ -104,7 +107,7 @@ class World {
 
   update() {
     if (this.levelCompleted) return; // Stop the update if the level is completed
-    this.checkCollisionsWithEnemy();
+    this.character.checkCollisionsWithEnemy(this.level.enemies); // Verwenden Sie die neue Methode des Charakters
     this.character.update();
     this.updatePoison();
     this.checkCollisionsWithEndboss();
@@ -123,35 +126,6 @@ class World {
     }
   }
 
-  randomizeCloudPositions() {
-    const totalLength = 2600; // Total length of the level
-    const cloudCount = this.level.clouds.length;
-    const spacing = totalLength / cloudCount; // Spacing between clouds
-
-    this.level.clouds.forEach((cloud, index) => {
-      cloud.x = index * spacing + Math.random() * spacing; // Distribute evenly and randomly within the spacing
-      cloud.y = Math.random() * 50; // Random y-position, not too low
-    });
-  }
-
-  checkCollisionsWithEnemy() {
-    this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
-        this.character.hit(enemy);
-        this.characterStatusBar.setPercentage(this.character.energy); // Update characterStatusBar
-        if (enemy instanceof Knight) {
-          enemy.energy -= 20; // Reduce the knight's energy
-          enemy.knightStatusBar.setPercentage(enemy.energy); // Update knightStatusBar
-          if (enemy.isDead()) { // Check if the knight is dead
-            enemy.playAnimation(enemy.IMAGES_DEAD);
-          } else if (enemy.isHurt()) {
-            enemy.playAnimation(enemy.IMAGES_HURT);
-          }
-        }
-      }
-    });
-  }
-  
   checkCollisionsWithEndboss() {
     if (this.level.endboss && this.character.isColliding(this.level.endboss)) {
       this.character.attackEndboss(this.level.endboss);
@@ -206,7 +180,6 @@ class World {
     this.drawCharacter();
     this.drawPoisons(); // Draw the poison bottles
     this.drawKeys(); // Draw the keys
-    this.drawKnightHealthBars(); // Draw the knight health bars
     if (this.door) {
       this.door.draw(this.ctx); // Draw the door
     }
@@ -231,14 +204,7 @@ class World {
       }
     });
   }
-  
-  drawKnightHealthBars() {
-    this.level.enemies.forEach(enemy => {
-      if (enemy instanceof Knight && enemy.knightStatusBar) {
-        enemy.knightStatusBar.draw(this.ctx); // Draw knightStatusBar
-      }
-    });
-  }
+
   clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
