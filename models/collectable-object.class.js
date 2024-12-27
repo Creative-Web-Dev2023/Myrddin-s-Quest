@@ -1,25 +1,9 @@
 class CollectableObjects extends DrawableObject {
     isActive = true; // Gibt an, ob das Objekt aktiv ist
     currentImageIndex = 0; // Aktueller Frame der Animation
-    collectSound = new Audio('audio/collect_coins.mp3'); // Initialisieren Sie den Audio-Player nur einmal
 
     static TYPES = {
-        COIN: {
-            images: [
-                "img/game_items/coin1.png",
-                "img/game_items/coin2.png",
-                "img/game_items/coin3.png",
-                "img/game_items/coin4.png",
-                "img/game_items/coin5.png",
-                "img/game_items/coin6.png",
-                "img/game_items/coin7.png",
-                "img/game_items/coin8.png",
-                "img/game_items/coin9.png",
-                "img/game_items/coin10.png",
-            ],
-            width: 30,
-            height: 30,
-        },
+   
         KEY: {
             images: ["img/game_items/key.png"],   
             width: 60,
@@ -59,6 +43,7 @@ class CollectableObjects extends DrawableObject {
         this.img = this.imageCache[this.images[this.currentImageIndex]]; // Setze das erste Bild
         this.isActive = true; // Stellen Sie sicher, dass das Objekt als aktiv markiert ist
         this.animate(); // Startet die Animation
+        
     }
 
     loadImages(images) {
@@ -83,12 +68,12 @@ class CollectableObjects extends DrawableObject {
     draw(ctx) {
         if (this.isActive) {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+            }
         }
-    }
+    
 
     deactivate() {
-        this.isActive = false; // Setzt das Objekt inaktiv, z. B. nach dem Sammeln
-        playCollectCoinSound(); // Rufen Sie die Methode aus music.js auf
+        this.isActive = false; // Setzt das Objekt inaktiv, z. B. nach dem Sammel
     }
 
     getCollisionBox() {
@@ -99,28 +84,6 @@ class CollectableObjects extends DrawableObject {
             height: this.height,
         };
         return box;
-    }
-
-    static initializeCoins() {
-        const coins = [];
-        const coinSpacing = 200; // Erhöhen Sie den Abstand zwischen den Münzen
-        const startX1 = 950; // Startposition der ersten Münzengruppe
-        const startY1 = 300; // Y-Position der ersten Münzengruppe
-        const startX2 = 3000; // Startposition der zweiten Münzengruppe (weiter entfernt)
-        const startY2 = 300; // Y-Position der zweiten Münzengruppe
-        const arcHeight = 100; // Höhe des Bogens
-
-        for (let i = 0; i < 10; i++) { // Anzahl der Münzen pro Gruppe
-            const x1 = startX1 + i * coinSpacing;
-            const y1 = startY1 - Math.sin((i / 9) * Math.PI) * arcHeight; // Berechne die Y-Position für den Bogen
-            coins.push(new Coin(x1, y1));
-
-            const x2 = startX2 + i * coinSpacing;
-            const y2 = startY2 - Math.sin((i / 9) * Math.PI) * arcHeight; // Berechne die Y-Position für den Bogen
-            coins.push(new CollectableObjects(x1, y1, "COIN"));
-        }
-
-        return coins;
     }
 
     static initializePoisons() {

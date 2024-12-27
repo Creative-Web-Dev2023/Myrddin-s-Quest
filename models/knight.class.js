@@ -59,9 +59,9 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-    this.healthBar = new StatusBar(); // Initialisiere die Statusleiste
-    this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
-    this.updateHealthBarPosition(); // Initialisiere die Position der Statusleiste
+    this.knightStatusBar = new KnightStatusBar(this); // Initialisiere die Statusleiste
+    this.knightStatusBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
+    this.updateKnightStatusbarPosition(); // Initialisiere die Position der Statusleiste
     
     this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
     setTimeout(() => {
@@ -105,7 +105,7 @@ class Knight extends MovableObject {
       if (this.x <= this.startX - this.moveRange) {
         this.x = this.startX; // Zurück zur Startposition, wenn das Ende des Bewegungsbereichs erreicht ist
       }
-      this.updateHealthBarPosition(); // Aktualisiere die Position der Statusleiste
+      this.updateKnightStatusbarPosition(); // Aktualisiere die Position der Statusleiste
     }
   }
 
@@ -144,7 +144,7 @@ class Knight extends MovableObject {
     if (this.energy < 0) {
       this.energy = 0;
     }
-    this.updateHealthBar(); // Aktualisiere die Statusleiste
+    this.updateKnightStatusbarPosition(); // Aktualisiere die Statusleiste
     if (this.energy == 0) {
       this.die();
     }
@@ -152,18 +152,25 @@ class Knight extends MovableObject {
 
   draw(ctx) {
     super.draw(ctx); // Zeichne den Ritter
-    this.updateHealthBarPosition(); // Aktualisiere die Position der Statusleiste
-    this.healthBar.draw(ctx); // Zeichne die Statusleiste
+    this.updateKnightStatusbarPosition(); // Aktualisiere die Position der Statusleiste
+    this.knightStatusBar.draw(ctx); // Zeichne die Statusleiste
   }
 
   updateHealthBar() {
-    if (this.healthBar) {
-      this.healthBar.setPercentage(this.energy); // Aktualisiere die Statusleiste basierend auf der Energie
+    if (this.knightStatusBar) {
+      this.knightStatusBar.setPercentage(this.energy); // Aktualisiere die Statusleiste basierend auf der Energie
     }
   }
 
   updateHealthBarPosition() {
-    this.healthBar.x = this.x + (this.width - this.healthBar.width); // Zentriere die Statusleiste horizontal über dem Ritter
-    this.healthBar.y = this.y - 20; // Positioniere die Statusleiste über dem Ritter
+    this.knightStatusBar.x = this.x + (this.width - this.knightStatusBar.width); // Zentriere die Statusleiste horizontal über dem Ritter
+    this.knightStatusBar.y = this.y - 20; // Positioniere die Statusleiste über dem Ritter
+  }
+
+  updateKnightStatusbarPosition() {
+    if (this.knightStatusBar) {
+      this.knightStatusBar.x = this.x;
+      this.knightStatusBar.y = this.y - 60;
+    }
   }
 }

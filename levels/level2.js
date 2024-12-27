@@ -36,5 +36,3 @@ const level2 = new Level(
   ]
 );
 
-// Stelle sicher, dass das Level global verfügbar ist
-window.level2 = level2;

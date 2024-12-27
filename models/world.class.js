@@ -7,9 +7,9 @@ class World {
   camera_x = 0; // The camera is shifted 100 to the left
   lastCloudSpawn = 0; // Time when the last cloud was created
   cloudSpawnInterval = 3000; // Interval (3 seconds)
-  coinsArray = [];
   poisonsArray = [];
-  statusBar; // Add statusBar as a class attribute
+  characterStatusBar; // StatusBar für den Charakter
+  knightStatusBars = []; // StatusBars für die Ritter
   characters = [];
   enemies = [];
   throwableObjects = []; // Add a throwable object
@@ -24,7 +24,6 @@ class World {
   levelCompleted = false; // Add a variable to track level completion
   collectables = []; // Add an array for collectables
   keys = []; // Add an array for keys
-  coinCollectSound = new Audio("audio/collect_coins.mp3"); // Initialize the audio player only once
   endGame; // Add endGame as a class attribute
   door; // Add the door as an attribute
 
@@ -53,18 +52,16 @@ class World {
     this.keyboard.D = false; // Initialize the D key
     this.level = this.levels[this.currentLevelIndex]; // Initialize the first level
     this.randomizeCloudPositions(); // Set random positions for clouds
-    this.coinStatusBar = new CoinStatusBar(); // Create instance here
     this.poisonStatusBar = new PoisonStatusBar(); // Ensure the poison status bar is initialized
-    this.statusBar = new StatusBar(this.character); // Create instance here
+    this.characterStatusBar = new StatusBar(this.character); // Initialisiere characterStatusBar
     if (this.level.endboss) {
       this.endbossHealthBar = new EndbossStatusBar(
         this.level.endboss.x,
         this.level.endboss.y - 50
       ); // Ensure the name is correct
     }
-    this.character = new Character(this, this.coinStatusBar, this.poisonStatusBar); // Initialize character with parameters
+    this.character = new Character(this, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Forward keyboard to character
-    this.coinsArray = CollectableObjects.initializeCoins(); // Use the new method from collectable-objects.js
     this.poisonsArray = CollectableObjects.initializePoisons(); // Initialize poison objects
     this.keysArray = CollectableObjects.initializeKeys(); // Initialize keys
     this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
@@ -81,9 +78,6 @@ class World {
   setWorld() {
     this.character.world = this; // Set the world property for the character
     this.enemies.forEach((enemy) => { // Iterate over the enemies
-      if (enemy instanceof Knight) { // 
-        enemy.world = this; // Set the world property for the knight
-      }
     });
     if (this.door) {
       this.door.world = this; // Set the world property for the door
@@ -112,15 +106,12 @@ class World {
     if (this.levelCompleted) return; // Stop the update if the level is completed
     this.checkCollisionsWithEnemy();
     this.character.update();
-    this.updateCoins();
     this.updatePoison();
     this.checkCollisionsWithEndboss();
-    this.updateEndbossHealth();
     this.updateKnightHealthBars();
     this.checkThrowableObject(); // Check if a bottle should be thrown
     this.checkCollisionsWithCollectables();
     this.character.checkKnightAttack(); // Check if the knight attacks the character
-    
     this.checkDoorCollision(); // Check collisions with the door
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound(); // Play walking sound only if music is on
@@ -147,9 +138,10 @@ class World {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
         this.character.hit(enemy);
-        this.statusBar.setPercentage(this.character.energy);
+        this.characterStatusBar.setPercentage(this.character.energy); // Update characterStatusBar
         if (enemy instanceof Knight) {
           enemy.energy -= 20; // Reduce the knight's energy
+          enemy.knightStatusBar.setPercentage(enemy.energy); // Update knightStatusBar
           if (enemy.isDead()) { // Check if the knight is dead
             enemy.playAnimation(enemy.IMAGES_DEAD);
           } else if (enemy.isHurt()) {
@@ -166,22 +158,6 @@ class World {
     }
   }
 
-  updateCoins() {
-    if (this.level !== level2) {
-      this.coinsArray.forEach((coin, index) => {
-        if (coin.isActive && this.checkCollision(this.character, coin)) {
-          coin.deactivate(); // Deactivate the coin (make it invisible)
-          this.character.collectCoins(); // Add a method to the character to count coins
-          this.coinsArray.splice(index, 1); // Remove the coin from the array
-        }
-      });
-      this.keys.forEach((key) => {
-        if (key.isActive) {
-        }
-    });
-    }
-  }
-
   updatePoison() {
     this.poisonsArray.forEach((poison, index) => {
       if (poison.isActive && this.character.isColliding(poison)) {
@@ -190,13 +166,6 @@ class World {
     });
   }
 
-  updateEndbossHealth() {
-    if (this.level.endboss) {
-      this.endbossHealthBar.setPercentage(this.level.endboss.energy);
-    }
-  }
-
- 
   updateKnightHealthBars() {
     this.level.enemies.forEach(enemy => {
       if (enemy instanceof Knight && typeof enemy.updateHealthBar === 'function') {
@@ -235,7 +204,6 @@ class World {
     this.drawGameObjects();
     this.drawEnemies();
     this.drawCharacter();
-    this.drawCoins(); // Draw the coins
     this.drawPoisons(); // Draw the poison bottles
     this.drawKeys(); // Draw the keys
     this.drawKnightHealthBars(); // Draw the knight health bars
@@ -246,14 +214,6 @@ class World {
       this.endGame.showYouLostScreen(); // Use the method from the EndGame class
     }
     this.drawCollectables(); // Draw the collectables
-  }
-
-  drawCoins() {
-    this.coinsArray.forEach((coin) => {
-      if (coin.isActive) {
-        coin.draw(this.ctx);
-      }
-    });
   }
 
   drawPoisons() {
@@ -274,8 +234,8 @@ class World {
   
   drawKnightHealthBars() {
     this.level.enemies.forEach(enemy => {
-      if (enemy instanceof Knight && enemy.healthBar) {
-        enemy.healthBar.draw(this.ctx);
+      if (enemy instanceof Knight && enemy.knightStatusBar) {
+        enemy.knightStatusBar.draw(this.ctx); // Draw knightStatusBar
       }
     });
   }
@@ -292,11 +252,9 @@ class World {
   }
 
   drawStatusBars() {
-    this.addToMap(this.coinStatusBar);
     this.addToMap(this.poisonStatusBar); // Ensure the PoisonStatusBar is drawn
-    this.addToMap(this.statusBar);
-    this.statusBar.draw(this.ctx);
-    this.coinStatusBar.draw(this.ctx);
+    this.addToMap(this.characterStatusBar); // Draw characterStatusBar
+    this.characterStatusBar.draw(this.ctx);
     this.poisonStatusBar.draw(this.ctx); // Draw the PoisonStatusBar
     if (this.currentLevelIndex === 1 && this.level.endboss) {
       this.endbossHealthBar.x = this.level.endboss.x;
@@ -310,11 +268,6 @@ class World {
   drawGameObjects() {
     this.ctx.translate(this.camera_x, 0);
     this.addObjectsToMap(this.enemies);
-    this.coinsArray.forEach((coin) => {
-      if (coin.isActive) {
-        coin.draw(this.ctx, this.camera_x);
-      }
-    });
     this.poisonsArray.forEach((poison) => {
       poison.draw(this.ctx, this.camera_x);
     });
@@ -422,10 +375,7 @@ class World {
   }
 
     handleCollectable(collectable) {
-      // React based on the type of collectable
-      if (collectable.type === 'coin') {
-        this.character.collectCoins(collectable);
-      } else if (collectable.type === 'poison') {
+     if (collectable.type === 'poison') {
         this.character.collectPoison(collectable);
       } else if (collectable.type === 'key') {
         this.character.collectKey(collectable);

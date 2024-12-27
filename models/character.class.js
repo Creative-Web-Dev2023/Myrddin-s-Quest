@@ -4,10 +4,7 @@ class Character extends MovableObject {
   x = 130;
   y = 150; // Stellen Sie sicher, dass dies eine angemessene Höhe ist
   speed = 5;
-  coins = 0;
-  coinStatusBar;
   invulnerable = false;
-
   poisonCollected = 0; // Gift gesammelt
   poisonStatusBar; // Füge die PoisonStatusBar hinzu
   deadAnimationPlayed = false; // Füge eine neue Eigenschaft hinzu, um zu verfolgen, ob die Dead-Animation abgespielt wurde
@@ -108,7 +105,7 @@ class Character extends MovableObject {
     "img/game_ui/login&pass/game_over.png",
   ];
   world = {};
-  constructor(world, coinStatusBar, poisonStatusBar) {
+  constructor(world,poisonStatusBar) {
     super().loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_WALKING);
@@ -118,17 +115,14 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_FIRE_ATTACK);
     this.world = world || {}; // Ensure world is initialized
-    this.coinsCollected = 0; // Münzen gesammelt
     this.applyGravity();
     this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
     this.playAnimation(this.IMAGES_IDLE);
     this.animate(); // Aufruf der geerbten Methode animate
-    this.coinStatusBar = coinStatusBar || new CoinStatusBar(); // Statusleiste für Münzen
-    this.coinStatusBar.setPercentage(0); // Initialize coin status bar to 0%
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar(); 
     this.poisonStatusBar.setPercentage(0); 
-    this.healthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
-    this.healthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
+    this.CharacterHealthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
+    this.CharacterHealthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
     this.statusBar = new StatusBar();
     this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
@@ -166,7 +160,6 @@ class Character extends MovableObject {
     }
   }
   checkCollisions() {
-    CollisionUtils.checkCollisionWithObjects(this, this.world.coinsArray, this.collectCoins.bind(this));
     CollisionUtils.checkCollisionWithObjects(this, this.world.poisonsArray, this.collectPoison.bind(this));
     CollisionUtils.checkCollisionWithObjects(this, this.world.keysArray, this.collectKey.bind(this));
     Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
@@ -192,12 +185,7 @@ class Character extends MovableObject {
   }
 
 
-  collectCoins(coin, index) {
-    this.coinsCollected++; // Erhöhe die gesammelten Münzen
-    this.coinStatusBar.setPercentage(this.coinsCollected); // Aktualisiere die Statusleiste
-    playCollectCoinSound(); // Spiele den Münz-Sound ab
-    this.world.coinsArray.splice(index, 1); // Entferne die Münze aus dem Array
-  }
+  
 
   collectKey(key, index) {
     this.hasKey = true; // Setze hasKey auf true, wenn der Charakter einen Schlüssel einsammelt
@@ -263,7 +251,7 @@ class Character extends MovableObject {
       if (this.energy <= 0) {
         this.energy = 0; // Energie kann nicht unter 0 fallen
       }
-      this.healthBar.setPercentage(this.energy); // Aktualisiere die Statusleiste des Charakters
+      this.CharacterHealthBar.setPercentage(this.energy); // Aktualisiere die Statusleiste des Charakters
       this.invulnerable = true; // Setze den Charakter für eine kurze Zeit unverwundbar
       setTimeout(() => {
         this.invulnerable = false; // Nach 1 Sekunde wieder verwundbar machen
@@ -307,20 +295,18 @@ class Character extends MovableObject {
   checkKnightAttack() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Knight) {
-        const distance = Math.abs(this.x - enemy.x); // calculate distance between character and knight
-        // if the distance is less than 100 and the character is not above the ground
+        const distance = Math.abs(this.x - enemy.x); // Calculate distance between character and knight
         if (distance <= 100 && !this.isAboveGround()) {
-          enemy.isAttacking = true; // Setze den Angriffsstatus des Ritters auf true
-          enemy.playAnimation(enemy.IMAGES_ATTACKING); // Ritter spielt Angriffsanimation
-
+          enemy.isAttacking = true; // Set knight's attacking status to true
+          enemy.playAnimation(enemy.IMAGES_ATTACKING); // Knight plays attacking animation
           setTimeout(() => {
-            // Angriff nur, wenn der Charakter immer noch nah genug ist und am Boden
+            // Attack only if the character is still close enough and on the ground
             if (!this.isAboveGround() && this.isColliding(enemy)) {
-              this.hit(enemy); // Ritter greift an
+              this.hit(enemy); // Knight attacks
             }
-          }, 1000); // Verzögerung des Angriffs um 500 ms
+          }, 1000); // Delay the attack by 1000 ms
         } else {
-          enemy.isAttacking = false; // Setze den Angriffsstatus des Ritters zurück
+          enemy.isAttacking = false; // Reset knight's attacking status
         }
       }
     });
@@ -333,11 +319,9 @@ class Character extends MovableObject {
     if (level === 2) {
       this.energy = 100; // Optionale Anpassung für Level 2
     }
-    this.coinsCollected = 0; // Zurücksetzen oder fortführen, je nach Spielmechanik
     this.poisonCollected = 0;
-    this.coinStatusBar.setPercentage(0);
     this.poisonStatusBar.setPercentage(0);
-    this.healthBar.setPercentage(this.energy);
+    this.CharacterHealthBar.setPercentage(this.energy);
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
   }
@@ -345,9 +329,8 @@ class Character extends MovableObject {
   draw(ctx) {
     if (!this.isVisible) return; // Nicht zeichnen, wenn unsichtbar
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    this.coinStatusBar.draw(ctx);
     this.poisonStatusBar.draw(ctx);
-    this.healthBar.draw(ctx);
+    this.CharacterHealthBar.draw(ctx);
   }
 
   enterDoor() {

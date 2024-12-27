@@ -2,13 +2,12 @@ let backgroundMusic = new Audio('audio/woodsounds.mp3');
 let walkingSound = new Audio("audio/walking.mp3");
 let attackSound = new Audio("audio/wizard_attack.mp3");
 let fireAttackSound = new Audio("audio/fire_attack.mp3");
-let collectCoinSound = new Audio("audio/collect_coins.mp3");
 let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
 let level1Sound = new Audio('audio/background music .mp3'); // Hintergrundsound für Level 1
 let level2Sound = new Audio('audio/level2_sound.mp3'); // Hintergrundsound für Level 2
-let allSounds = [backgroundMusic, walkingSound, attackSound, fireAttackSound, collectCoinSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
+let allSounds = [backgroundMusic, walkingSound, attackSound, fireAttackSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
 
 function musicSwitcher() {
     const audioIcon = document.getElementById('audioSwitcher'); // Icon für Sound an/aus
@@ -92,12 +91,6 @@ function playAttackSound() {
 function playFireAttackSound() {
     if (musicIsOn && fireAttackSound.paused) {
         fireAttackSound.play();
-    }
-}
-
-function playCollectCoinSound() {
-    if (musicIsOn && collectCoinSound.paused) {
-        collectCoinSound.play();
     }
 }
 
