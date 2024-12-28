@@ -1,40 +1,40 @@
-let canvas;
+let canvas; // Define the canvas
 let keyboard = new Keyboard();
-let world;
-let candleImage = new Image(); // Erstelle das Bild-Objekt
+let world; // Define the world object
+let candleImage = new Image(); // Create the image object
 let IntervallIDs = [];
 
-function startGame() {
-  document.querySelector(".overlay").style.display = "none"; // Blende das Overlay aus
-  document.getElementById("audioSwitcher").classList.remove("hidden");
+function startGame() { // Start game function
+  document.querySelector(".overlay").style.display = "none"; // Hide the overlay
+  document.getElementById("audioSwitcher").classList.remove("hidden"); // Show the audio switcher
   document.getElementById("bigScreen").classList.remove("hidden"); // Show the fullscreen icon
   document.getElementById('key-info').classList.add('show');
   document.addEventListener('DOMContentLoaded', (event) => {
 
   });
 
-  document .getElementById("audioSwitcher").setAttribute("onclick", "musicSwitcher()");
-  init();
+  document.getElementById("audioSwitcher").setAttribute("onclick", "musicSwitcher()");
+  init(); // Initialize the game
 }
 
-function init() {
-  canvas = document.getElementById("canvas");
-  world = new World(canvas, keyboard); // Stelle sicher, dass World definiert ist
-  playLevel1Sound(); // Spiele den Hintergrundsound für Level 1
+function init() { // Initialize the game
+  canvas = document.getElementById("canvas"); // Get the canvas element
+  world = new World(canvas, keyboard); // Ensure that World is defined
+  playLevel1Sound(); // Play the background sound for level 1
   gameLoop();
 }
 
-function gameLoop() {
-  world.update(); // Kollisionsprüfungen und andere Updates
-  world.draw(); // Zeichne alle Objekte, einschließlich Charakter und Münzen
-  if (world.level === level2) {
+function gameLoop() { // Game loop function
+  world.update(); // Collision checks and other updates
+  world.draw(); // Draw all objects, including character and coins
+  if (world.level === level2) { 
   }
-  requestAnimationFrame(gameLoop); // Fordere den nächsten Frame an
+  requestAnimationFrame(gameLoop); // Request the next frame
 }
 
-function handleDescription() {
+function handleDescription() { // Handle the description
   let description = document.getElementById("description");
-  console.log(description); // Gibt das Element aus, um sicherzustellen, dass es existiert
+  console.log(description); // Log the element to ensure it exists
   if (description.classList.contains("hidden")) {
     description.classList.remove("hidden");
     description.classList.add("show");
@@ -47,59 +47,59 @@ function handleDescription() {
 function goBack() {
   let description = document.getElementById("description");
   let impressum = document.getElementById("impressum");
-  description.classList.add("hidden"); // Beschreibung und Impressum ausblenden und das Overlay zeigen
+  description.classList.add("hidden"); // Hide description and impressum and show the overlay
   description.classList.remove("show");
-  impressum.classList.add("hidden");
-  impressum.classList.remove("show");
+  impressum.classList.add("hidden"); // Hide impressum
+  impressum.classList.remove("show"); // Hide impressum
 }
 
-function quitGame() {
-  location.reload(); // Seite neu laden, um das Spiel neu zu starten
+function quitGame() { // Quit game function
+  location.reload(); // Reload the page to restart the game
 }
 
-function tryAgain() {
-  location.reload(); // Seite neu laden, um das Spiel neu zu starten
+function tryAgain() { // Try again function
+  location.reload(); // Reload the page to restart the game
 }
 
-function continueToNextLevel() {
-  const overlay = document.getElementById('level-completed-overlay');
+function continueToNextLevel() {   // Continue to the next level
+  const overlay = document.getElementById('level-completed-overlay'); // Get the overlay
   if (overlay) { overlay.classList.remove('show');
   }
-  loadLevel2();
+  loadLevel2(); // Load level 2
 }
 
-function loadLevel2() {
+function loadLevel2() { // Load level 2
   if (typeof level2 !== 'undefined') {
-    world.level = level2;
-    world.character.reset(2); // Setze den Charakter für Level 2 zurück
-    world.character.x = 0; // Setze den Charakter an den Startpunkt von Level 2
-    world.backgroundObjects = level2.backgroundObjects; // Setze den neuen Hintergrund
-    world.enemies = level2.enemies; // Setze die neuen Gegner (Schlangen und Endboss)
-    if (level2.endboss) {
-      world.level.endboss = level2.endboss; // Füge den Endboss nur in Level 2 hinzu
+    world.level = level2; // Set the current level to level 2
+    world.character.reset(2); // Reset the character for level 2
+    world.character.x = 0; // Set the character to the starting point of level 2
+    world.backgroundObjects = level2.backgroundObjects; // Set the new background
+    world.enemies = level2.enemies; // Set the new enemies (snakes and end boss)
+    if (level2.endboss) { // Check if the end boss is defined
+      world.level.endboss = level2.endboss; // Add the end boss only in level 2
     }
-    stopAllSounds(); // Stoppe alle laufenden Sounds
-    playLevel2Sound(); // Spiele den Hintergrundsound für Level 2
+    stopAllSounds(); // Stop all running sounds
+    playLevel2Sound(); // Play the background sound for level 2
   } else {
     console.error('Level 2 is not defined.');
   }
-  if (this.door) {
-    this.door = new Door(5500, 150); // Neue Tür für Level 2
-    this.door.world = this; // Welt der Tür zuweisen
+  if (this.door) { // Check if the door exists
+    this.door = new Door(5500, 150); // New door for level 2
+    this.door.world = this; // Assign the world to the door
   }
 }
 
-function playLevel2Sound() {
-  if (musicIsOn) {
-    level2Sound.play();
-    level2Sound.loop = true; // Wiederhole den Sound
+function playLevel2Sound() { // Play the background sound for level 2
+  if (musicIsOn) {     // Check if music is on
+    level2Sound.play(); // Play the sound
+    level2Sound.loop = true; // Loop the sound
   }
 }
 
-function toggleFullscreen() {
+function toggleFullscreen() { // Toggle fullscreen mode
   const canvas = document.getElementById("canvas");
-  if (!document.fullscreenElement) {
-    canvas.requestFullscreen().catch(err => {
+  if (!document.fullscreenElement) { // If the document is not in full-screen mode
+    canvas.requestFullscreen().catch(err => { // Request full-screen mode and catch errors
       console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
     });
   } else {
@@ -107,7 +107,7 @@ function toggleFullscreen() {
   }
 }
 
-// Event Listener für Tastendrücke
+// Event listener for key presses
 
 window.addEventListener("keydown", (e) => {
   if (e.keyCode == 39) {
@@ -126,18 +126,18 @@ window.addEventListener("keydown", (e) => {
     keyboard.JUMP = true;
   }
   if (e.code === "KeyA") {
-    keyboard.ATTACK = true; // Angriffstaste
+    keyboard.ATTACK = true; // Attack key
   }
   if (e.code === "KeyS") {
-    keyboard.THROW = true; // Feueranimationstaste
+    keyboard.THROW = true; // Fire animation key
   }
   if (e.code === "KeyD") {
-    keyboard.D = true; // D-Taste
-    world.character.throwObject(); // Call character method  JUMP
+    keyboard.D = true; // D key
+    world.character.throwObject(); // Call character method JUMP
   }
 });
 
-// Event Listener für das Loslassen der Tasten
+// Event listener for key releases
 window.addEventListener("keyup", (e) => {
   if (e.keyCode == 39) {
     keyboard.RIGHT = false;
@@ -151,29 +151,27 @@ window.addEventListener("keyup", (e) => {
   if (e.keyCode == 40) {
     keyboard.DOWN = false;
   }
-  if (e.keyCode == 87
-    
-  ) {
-    keyboard.JUMP = false;
+  if (e.keyCode == 87) {
+    keyboard.JUMP = false; // Release jump key
   }
   if (e.code === "KeyA") {
-    keyboard.ATTACK = false; // Angriffstaste loslassen
+    keyboard.ATTACK = false; // Release attack key
   }
   if (e.code === "KeyS") {
-    keyboard.THROW = false; // Feueranimationstaste loslassen
+    keyboard.THROW = false; // Release fire animation key
   }
   if (e.code === "KeyD") {
-    keyboard.D = false; // D-Taste loslassen
+    keyboard.D = false; // Release D key
   }
 });
 
-// Füge einen Event Listener für den Start-Button hinzu
+// Add an event listener for the start button
 window.addEventListener("DOMContentLoaded", () => {
   const startButton = document.getElementById("startButton");
   if (startButton) {
     startButton.addEventListener("click", startGame);
   } else {
-    console.error("Element mit ID 'startButton' nicht gefunden.");
+    console.error("Element with ID 'startButton' not found.");
   }
 });
 
@@ -183,7 +181,7 @@ function handleImpressum() {
   impressum.classList.toggle("show");
 }
 
-// Füge einen Event Listener für den Fullscreen-Button hinzu
+// Add an event listener for the fullscreen button
 window.addEventListener("DOMContentLoaded", () => {
   const bigScreenButton = document.getElementById("bigScreen");
   if (bigScreenButton) {
@@ -191,6 +189,6 @@ window.addEventListener("DOMContentLoaded", () => {
       toggleFullscreen();
     });
   } else {
-    console.error("Element mit ID 'bigScreen' nicht gefunden.");
+    console.error("Element with ID 'bigScreen' not found.");
   }
 });

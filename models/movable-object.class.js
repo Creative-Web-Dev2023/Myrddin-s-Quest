@@ -1,183 +1,178 @@
 class MovableObject extends DrawableObject {
-  drawRectangle = true; // Standardmäßig kein Rechteck
-  speed = 0.15;
-  otherDirection = false;
-  speedY = 0;
-  acceleration = 2.5;
-  energy = 100;
-  lastHit = 0;
-  currentImage = 0;
+  drawRectangle = true; // Default is no rectangle
+  speed = 0.15; // Default speed 
+  otherDirection = false; // Default is no other direction
+  speedY = 0; // Vertical speed
+  acceleration = 2.5; // Acceleration for gravity
+  energy = 100; // Energy for the object
+  lastHit = 0; // Time of last hit
+  currentImage = 0; // Current image index
 
   offset = {
-      top: 0,     // Wie viel kleiner das Rechteck von oben sein soll
-      bottom: 0,  // Wie viel kleiner das Rechteck von unten sein soll
-      left:0,    // Wie viel kleiner das Rechteck von links sein soll
-      right: 0    // Wie viel kleiner das Rechteck von rechts sein soll
+      top: 0,     // How much smaller the rectangle should be from the top
+      bottom: 0,  // How much smaller the rectangle should be from the bottom
+      left: 0,    // How much smaller the rectangle should be from the left
+      right: 0    // How much smaller the rectangle should be from the right
   };
 
-  applyGravity() {
+  applyGravity() { // Apply gravity effect to the object
     this.gravityInterval = setInterval(() => {
-      if ( this.isAboveGround() || this.speedY > 0) {
-        this.y -= this.speedY;
-        this.speedY -= this.acceleration;
+      if (this.isAboveGround() || this.speedY > 0) {
+        this.y -= this.speedY; // Move object down
+        this.speedY -= this.acceleration; // Decrease speedY by acceleration
       }
-    }, 1000 / 25);
+    }, 1000 / 25); // Interval for gravity effect
   }
 
-  isAboveGround(){
-    if(this instanceof ThrowableObject){ 
-      return true;
-    }else{
-      return this.y < 150;
+  isAboveGround() { // Check if object is above ground 
+    if (this instanceof ThrowableObject) { // Check if object is ThrowableObject
+      return true; // Always above ground for ThrowableObject
+    } else {
+      return this.y < 150; // Check if y position is above 150
     }
   }
 
   drawFrame(ctx) {
     if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof PoisonObject || this instanceof Door) {
-      this.drawRectangle = true;
-      ctx.beginPath();
-      ctx.lineWidth = '5';
-      if (this instanceof Character) {
-        //funktioniert 
-        ctx.strokeStyle = 'blue';  // Farbe für den Charakter
-      } else if (this instanceof Knight) {
-        //funtioniert 
-        ctx.strokeStyle = 'red';  // Farbe für den Ritter
-      } else if (this instanceof Door) {
-        //funktioniert nicht drawable object.class.js
-        ctx.strokeStyle = 'yellow';  // Farbe für die Tür
-      } else {
-        //Snake und Endboss
-        ctx.strokeStyle = 'green';  // Farbe für andere Objekte
+      this.drawRectangle = true; // Enable rectangle drawing
+      ctx.beginPath(); // Begin path for rectangle drawing 
+      ctx.lineWidth = '5'; // Line width for rectangle drawing
+      if (this instanceof Character) { // Check if object is Character
+        ctx.strokeStyle = 'blue'; // Color for Character
+      } else if (this instanceof Knight) { // Check if object is Knight
+        ctx.strokeStyle = 'red'; // Color for Knight
+      } else if (this instanceof Door) { // Check if object is Door
+        ctx.strokeStyle = 'yellow'; // Color for Door
+      } else { // For all other objects 
+        ctx.strokeStyle = 'green'; // Color for other objects
       }
-      ctx.rect(  // Rechteck wird um die Offsets kleiner gezeichnet
-          this.x + this.offset.left,
-          this.y + this.offset.top,
-          this.width - this.offset.left - this.offset.right, // breite-Offest links und rechts
-          this.height - this.offset.top - this.offset.bottom // höhe-Offset oben und unten
+      ctx.rect( // Draw rectangle around the object for collision detection
+          this.x + this.offset.left, // X and Y position plus offset values from all sides of the rectangle
+          this.y + this.offset.top, // X and Y position plus offset values from all sides of the rectangle
+          this.width - this.offset.left - this.offset.right, // Width minus left and right offset
+          this.height - this.offset.top - this.offset.bottom // Height minus top and bottom offset
       );
-      ctx.stroke();
+      ctx.stroke(); // Draw the rectangle
     }
   }
 
-  isColliding(mo) {
-    if (!(mo instanceof MovableObject)) return false; // Überprüfen, ob mo eine Instanz von MovableObject ist
-    const box1 = this.getCollisionBox();
-    const box2 = mo.getCollisionBox();
+  isColliding(mo) { // Check if object is colliding with another object
+    if (!(mo instanceof MovableObject)) return false; // Check if mo is an instance of MovableObject
+    const box1 = this.getCollisionBox(); // Get collision box for this object
+    const box2 = mo.getCollisionBox(); // Get collision box for mo object
     return (
-      box1.x < box2.x + box2.width &&
-      box1.x + box1.width > box2.x &&
-      box1.y < box2.y + box2.height &&
+      box1.x < box2.x + box2.width && // Check for collision on all sides of the rectangle
+      box1.x + box1.width > box2.x && // Check for collision on all sides of the rectangle
+      box1.y < box2.y + box2.height && // Check for collision on all sides of the rectangle
       box1.y + box1.height > box2.y
-    );
+    ); // Check for collision
   }
 
   getCollisionBox() {
     const box = {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom,
+      x: this.x + this.offset.left, // X and Y position plus offset values from all sides of the rectangle
+      y: this.y + this.offset.top, // X and Y position plus offset values from all sides of the rectangle
+      width: this.width - this.offset.left - this.offset.right, // Width and height minus offset values from all sides of the rectangle
+      height: this.height - this.offset.top - this.offset.bottom, // Width and height minus offset values from all sides of the rectangle 
     };
-    return box;
+    return box; // Return collision box
   }
 
-  isHurt(){
-   let timepassed = new Date().getTime() - this.lastHit;
-   timepassed = timepassed / 1000;
-   return timepassed < 5;
+  isHurt() { // Check if object is hurt
+    let timepassed = new Date().getTime() - this.lastHit; // Calculate time passed since last hit in milliseconds
+    timepassed = timepassed / 1000; // Convert to seconds  
+    return timepassed < 5; // Check if hurt within last 5 seconds
   }
 
-  isDead(){
-    return this.energy == 0;
+  isDead() { // Check if object is dead
+    return this.energy == 0; // Check if energy is zero
   }
 
-  playAnimation(images, delay = 100) {
-    if (images && images.length > 0) { // Überprüfen, ob das Array definiert und nicht leer ist
-      let i = this.currentImage % images.length; // Auf das übergebene Array zugreifen
-      let path = images[i]; // Bildpfad aus dem Array
-      this.img = this.imageCache[path]; // Bild aus dem Cache setzen
-      this.currentImage++;
-      if (this.currentImage >= images.length) { 
-        this.currentImage = 0; // Setze auf den ersten Frame zurück
+  playAnimation(images, delay = 100) { // Play animation frames for the object
+    if (images && images.length > 0) { // Check for valid images array
+      let i = this.currentImage % images.length; // Get the current frame index from the images array
+      let path = images[i]; // Get the current frame path
+      this.img = this.imageCache[path]; // Set the image to the current frame  
+      this.currentImage++; // Increase current image index
+      if (this.currentImage >= images.length) { // Check if last frame is reached
+        this.currentImage = 0; // Reset to first frame
       }
     }
-    setTimeout(() => {}, delay); // Verzögerung zwischen den Frames
+    setTimeout(() => {}, delay); // Delay between frames
   }
-  
-  loadImages(images) {
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      console.error('Invalid images array:', images);
+
+  loadImages(images) { // Load images for the object
+    if (!images || !Array.isArray(images) || images.length === 0) { // Check for valid images array
+      console.error('Invalid images array:', images); // Log error for invalid images array
       return;
     }
-    this.imageCache = this.imageCache || {};
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
+    this.imageCache = this.imageCache || {}; // Initialize image cache
+    images.forEach((path) => { // Load the images
+      const img = new Image(); // Create a new image
+      img.src = path; // Set the image source
+      this.imageCache[path] = img; // Cache the image
     });
   }
 
-  moveRight() {
-    this.x += this.speed;
-    if (this.walking_sound && this.walking_sound.paused) {
-      this.walking_sound.play();
+  moveRight() { // Move right function for the object
+    this.x += this.speed; // Move right by speed
+    if (this.walking_sound && this.walking_sound.paused) { // Check if walking sound is paused
+      this.walking_sound.play(); // Play walking sound if paused
     }
   }
 
-  moveLeft() {
-    this.x -= this.speed;
-    if (this.walking_sound && this.walking_sound.paused) {
-      this.walking_sound.play();
+  moveLeft() { // Move left function for the object
+    this.x -= this.speed; // Move left by speed
+    if (this.walking_sound && this.walking_sound.paused) { // Check if walking sound is paused
+      this.walking_sound.play(); // Play walking sound if paused
     }
   }
 
-  jump() {
-    this.speedY = 30;
+  jump() { // Jump function for the object 
+    this.speedY = 30; // Set vertical speed for jump
   }
 
-  animate() {
+  animate() { // Animate the object
     this.animationInterval = setInterval(() => {
-      if (this.isDead()) {
-        this.handleDeadAnimation();
-      } else if (this.world && this.world.keyboard && this.world.keyboard.THROW) {
-        this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound);
-      } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) {
-        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound);
-      } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
-      } else if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMPING);
+      if (this.isDead()) { // Check if object is dead 
+        this.handleDeadAnimation(); // Handle dead animation for the object  
+      } else if (this.world && this.world.keyboard && this.world.keyboard.THROW) { // Check if object is throwing
+        this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound); // Play fire attack animation frames with sound
+      } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) { // Check if object is attacking
+        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound); // Play attack animation frames with sound
+      } else if (this.isHurt()) { // Check if object is hurt within last 5 seconds 
+        this.playAnimation(this.IMAGES_HURT); // Play hurt animation frames for the object
+      } else if (this.isAboveGround()) { // Check if object is above ground
+        this.playAnimation(this.IMAGES_JUMPING); // Play jumping animation frames for the object
       } else if (this.world && this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound);
+        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound); // Play walking animation frames with sound
       } else {
-        this.playAnimation(this.IMAGES_IDLE);
+        this.playAnimation(this.IMAGES_IDLE); // Play idle animation frames for the object
       }
-    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+    }, 100); // 100 ms between frames for smooth animation
   }
 
-  playAnimationWithSound(images, sound) {
-    this.playAnimation(images);
-    if (musicIsOn) { // Nur abspielen, wenn Musik eingeschaltet ist
-        if (sound.paused) {
-            sound.play();
-        }
+  playAnimationWithSound(images, sound) { // Play animation frames with sound
+    this.playAnimation(images); // Play animation frames for the object
+    if (musicIsOn) {
+      if (sound.paused) { // Check if sound is paused
+        sound.play(); // Play sound if paused
+      }
     } else {
-        sound.pause(); // Pausieren, wenn Musik aus ist
-        sound.currentTime = 0; // Zurücksetzen auf Anfang
+      sound.pause(); // Pause sound if music is off
+      sound.currentTime = 0; // Reset to start
     }
-}
-
+  }
 
   handleDeadAnimation() {
-    this.playAnimation(this.IMAGES_DEAD);
-    if (this.currentImage >= this.IMAGES_DEAD.length - 1) {
-      clearInterval(this.animationInterval); // Stop animation only after the death animation is complete
+    this.playAnimation(this.IMAGES_DEAD); // Play dead animation frames for the object  
+    if (this.currentImage >= this.IMAGES_DEAD.length - 1) { // Check if last frame is reached
+      clearInterval(this.animationInterval); // Stop animation after death animation completes
       setTimeout(() => {
-        if (this.world.endGame) {
-          this.world.endGame.showYouLostScreen(); // Verwenden Sie die Methode aus der EndGame-Klasse
+        if (this.world.endGame) { // If endGame is available
+          this.world.endGame.showYouLostScreen(); // Show "You Lost" screen
         }
-      }, 3500); // Verzögerung von 500 ms, bevor das Overlay angezeigt wird
+      }, 3500); // Delay before showing overlay
     }
   }
 }

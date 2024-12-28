@@ -2,8 +2,9 @@ class Endboss extends MovableObject {
     height = 600;  // Höhe des Endbosses
     width = 450;   // Breite des Endbosses
     y = -100;      // y-Position
-    x = 5000;      // x-Position
+    x = 3500;      // x-Position des Endbosses geändert
     energy = 100;  // Setze die Energie des Endbosses auf 100
+    statusBar; // Statusleiste für den Endboss
    
     offset = {
         top: 180,    // Reduziert das Rechteck von oben
@@ -57,7 +58,29 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
+        this.statusBar = new EndbossStatusbar(); // Initialisiere die Statusleiste
+        this.statusBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
         this.animate();
+    }
+
+    getCollisionBox() {
+        return super.getCollisionBox('endboss');
+    }
+
+    draw(ctx) {
+        super.draw(ctx);
+        this.statusBar.x = this.x + this.width / 2 - 95; // Korrigieren Sie die Position der Statusleiste
+        this.statusBar.y = this.y - 50; // Korrigieren Sie die Position der Statusleiste
+        this.statusBar.draw(ctx); // Zeichne die Statusleiste über dem Kopf des Endbosses
+        this.drawFrame(ctx); // Zeichne die Kollisionsbox
+    }
+
+    drawFrame(ctx) {
+        ctx.beginPath();
+        ctx.lineWidth = '2';
+        ctx.strokeStyle = 'violet'; // Ändern Sie die Farbe der Kollisionsbox
+        ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.left - this.offset.right, this.height - this.offset.top - this.offset.bottom);
+        ctx.stroke();
     }
 
     animate() {

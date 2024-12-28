@@ -1,22 +1,22 @@
 class Knight extends MovableObject {
-  height = 270;
-  width = 400;
-  y = 200; // Erhöhe die Y-Position, damit der Ritter höher positioniert wird
-  delay = 3000;
-  direction = 'left';
-  moveRange = 100; // Bewegungsbereich
-  startX = 800; // Startposition
-  isMoving = false;
-  isAttacking = false;
-  dead = false; // Zustand für tot
- 
-  healthBar; // Statusleiste für das Leben des Ritters
+  height = 270; // Increase the height of the knight
+  width = 400; // Increase the width of the knight
+  y = 200; // Increase the Y position to position the knight higher
+  delay = 3000; // Delay before the knight starts moving
+  direction = 'left'; // Initial direction
+  moveRange = 100; // Movement range
+  startX = 800; // Starting position
+  isMoving = false; // State for moving the knight left and right
+  isAttacking = false; // State for attacking the knight
+  dead = false; // State for dead
+  
+  healthBar; // Status bar for the knight's health
 
   offset = {
-    top: 70, // Verkleinere die oberen Offset-Werte
-    bottom: 30, // Verlängere die unteren Offset-Werte
-    left: 20, // Verkleinere die linken Offset-Werte
-    right: 180 // Verkleinere die rechten Offset-Werte
+    top: 70, // Reduce the top offset values
+    bottom: 30, // Extend the bottom offset values
+    left: 20, // Reduce the left offset values
+    right: 180 // Reduce the right offset values
   };
 
   IMAGES_WALKING = [
@@ -49,104 +49,103 @@ class Knight extends MovableObject {
     'img/knight/death/death 5.png',
   ];
 
-  constructor(delay = 0, startX = 800, moveRange = 100) {
-    super();
-    this.x = startX;
-    this.startX = startX;
-    this.moveRange = moveRange;
+  constructor(delay = 0, startX = 800, moveRange = 100) { // Add the delay, startX, and moveRange parameters
+    super(); // Call the parent constructor function with the super keyword
+    this.x = startX;  // Set the X position
+    this.startX = startX; // Set the starting  X position
+    this.moveRange = moveRange; // Set the movement range for the knight
     this.loadImage('img/knight/walk/walk 0.png');
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
     
-    this.speed = 0.01 + Math.random() * 0.05; // Geschwindigkeit reduziert
-    setTimeout(() => {
-      this.isMoving = true;
-      this.animate();
-    }, delay);
+    this.speed = 0.01 + Math.random() * 0.05; // Reduced speed for the knight
+    setTimeout(() => { // Delay the start of the knight's movement
+      this.isMoving = true; // Start the knight's movement
+      this.animate(); // Start the knight's animation
+    }, delay);   // Delay the start of the knight's movement
   }
 
-  loadImages(images) {
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
+  loadImages(images) { // Load the images for the knight
+    images.forEach((path) => {  // Load the images
+      const img = new Image();  // Create a new image
+      img.src = path; // Set the image source
+      this.imageCache[path] = img; // Add the image to the cache
     });
   }
 
-  setWorld(world) {
-    this.world = world;
+  setWorld(world) { // Set the world for the knight
+    this.world = world; // Set the world
   }
 
   animate() {
     this.movementInterval = setInterval(() => {
-      this.handleMovement();
+      this.handleMovement(); // Handle the knight's movement
     }, 1000 / 30);
 
     this.animationInterval = setInterval(() => {
-      this.handleAnimation();
-    }, 1000 / 6);
+      this.handleAnimation(); // Handle the knight's animation
+    }, 1000 / 10); // Increase the animation speed
 
-    this.attackAnimationInterval = setInterval(() => {
-      if (this.isAttacking) {
+    this.attackAnimationInterval = setInterval(() => { // Attack animation
+      if (this.isAttacking) { // If the knight is attacking
         this.playAnimation(this.IMAGES_ATTACKING);
       }
-    }, 1000 / 7); // Verlangsamen Sie die Angriffsanimation
+    }, 1000 / 10); // Increase the attack animation speed
   }
 
-  handleMovement() {
-    if (!this.dead && this.isMoving) {
-      this.moveLeft(); // Immer nach links laufen
-      this.otherDirection = true; // Bild spiegeln
+  handleMovement() { // Handle the knight's movement
+    if (!this.dead && this.isMoving) { // If the knight is not dead and is moving
+      this.moveLeft(); // Always move left
+      this.otherDirection = true; // Mirror the image
       if (this.x <= this.startX - this.moveRange) {
-        this.x = this.startX; // Zurück zur Startposition, wenn das Ende des Bewegungsbereichs erreicht ist
+        this.x = this.startX; // Return to the starting position when the end of the movement range is reached
       }
     }
   }
 
-  handleAnimation() {
+  handleAnimation() { // Handle the knight's animation
     if (this.dead) {
-      this.playAnimation(this.IMAGES_DEAD, 200); // Verlangsamen Sie die Dead-Animation
-    } else if (this.isAttacking) {
-      this.playAnimation(this.IMAGES_ATTACKING, 100); // Verlangsamen Sie die Angriffsanimation
-    } else if (this.isMoving) {
-      this.playAnimation(this.IMAGES_WALKING, 100); // Verlangsamen Sie die Laufanimation
+      this.playAnimation(this.IMAGES_DEAD, 100); // Increase the dead animation speed
+    } else if (this.isAttacking) { // If the knight is attacking
+      this.playAnimation(this.IMAGES_ATTACKING, 100); // Increase the attack animation speed
+    } else if (this.isMoving) { // If the knight is moving
+      this.playAnimation(this.IMAGES_WALKING, 100); // Increase the walking animation speed
     }
   }
 
   getCollisionBox() {
-    return {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom
-    };
+    return super.getCollisionBox('knight'); // Get the collision box for the knight
   }
 
   die() {
-    this.dead = true;
-    this.isMoving = false; // Stoppe Bewegungen
-    this.speed = 0; // Keine Geschwindigkeit mehr
+    this.dead = true; // Set the dead state to true
+    this.isMoving = false; // Stop movements
+    this.speed = 0; // No more speed
     this.currentImage = 0; // Reset animation frame
-    this.playAnimation(this.IMAGES_HURT, 200); // Spiele die Hurt-Animation langsamer
+    this.playAnimation(this.IMAGES_HURT, 100); // Increase the hurt animation speed
     setTimeout(() => {
-      this.playAnimation(this.IMAGES_DEAD, 200); // Spiele die Dead-Animation langsamer
-    }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
+      this.playAnimation(this.IMAGES_DEAD, 100); // Increase the dead animation speed
+    }, 1000); // Wait 1 second before playing the dead animation
   }
 
-  hit(damage) {
-    this.energy -= damage;
-    if (this.energy < 0) {
-      this.energy = 0;
+  hit(damage) {   // Reduce the knight's energy when hit
+    this.energy -= damage; // Reduce the energy
+    if (this.energy < 0) { // If the energy is less than 0
+      this.energy = 0; // Set the energy to 0
     }
-    if (this.energy == 0) {
-      this.die();
+    if (this.energy == 0) { // If the energy is 0
+      this.die(); // Call the die function
     }
   }
 
   draw(ctx) {
-    super.draw(ctx); // Zeichne den Ritter
+    super.draw(ctx); // Draw the knight
+  }
+
+  drawCollisionBox(ctx) {  // Draw the collision box for the knight
+    super.drawCollisionBox(ctx, 'blue');
   }
 
 }

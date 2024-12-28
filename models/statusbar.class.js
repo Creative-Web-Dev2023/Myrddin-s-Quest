@@ -1,35 +1,35 @@
 class StatusBar extends DrawableObject {
   HEALTH = [
-    "img/game_ui/statusbars/statusbar-health/0.png", // 0 Bild
+    "img/game_ui/statusbars/statusbar-health/0.png", // 0 image
     "img/game_ui/statusbars/statusbar-health/20.png",
     "img/game_ui/statusbars/statusbar-health/40.png",
     "img/game_ui/statusbars/statusbar-health/60.png",
     "img/game_ui/statusbars/statusbar-health/80.png",
-    "img/game_ui/statusbars/statusbar-health/100.png", // 6 Bild
+    "img/game_ui/statusbars/statusbar-health/100.png", // 6 image
   ];
 
   percentage = 100;
 
   constructor() {
     super();
-    this.loadImages(this.HEALTH);
-    this.x = 2;
-    this.y = 10; // Position der Statusbar
-    this.width = 190; // Passe die Breite an
-    this.height = 50; // Passe die Höhe an
-    this.setPercentage(100); // Setzt die Statusbar zu Beginn auf 100%
+    this.loadImages(this.HEALTH); // Load the images
+    this.x = 2; // Position of the status bar
+    this.y = 10; // Position of the status bar
+    this.width = 190; // Adjust the width
+    this.height = 50; // Adjust the height
+    this.setPercentage(100); // Set the status bar to 100% at the beginning
   }
 
-  setPercentage(percentage) {
-    this.percentage = percentage; // Setzt den Prozentwert
-    let path = this.HEALTH[this.resolveImageIndex()]; // Bild-Pfad anhand des Prozentwerts setzen
-    this.img = this.imageCache[path]; // Bild setzen
+  setPercentage(percentage) { // Set the percentage value
+    this.percentage = percentage; // Set the percentage value
+    let path = this.HEALTH[this.resolveImageIndex()]; // Set image path based on the percentage value
+    this.img = this.imageCache[path]; // Set the image
   }
 
-  resolveImageIndex() {
-    if (this.percentage >= 100) {
-      return 5;
-    } else if (this.percentage >= 80) {
+  resolveImageIndex() { // Resolve the image index based on the percentage value
+    if (this.percentage >= 100) { // Check if the percentage is greater than or equal to 100
+      return 5; // Return 5
+    } else if (this.percentage >= 80) { // Check if the percentage is greater than or equal to 80
       return 4;
     } else if (this.percentage >= 60) {
       return 3;
@@ -42,6 +42,7 @@ class StatusBar extends DrawableObject {
     }
   }
 }
+
 class PoisonStatusBar extends DrawableObject {
   IMAGES = [
     "img/game_ui/statusbars/statusbar-poison/0.png",
@@ -56,17 +57,17 @@ class PoisonStatusBar extends DrawableObject {
 
   constructor() {
     super();
-    this.loadImages(this.IMAGES);
-    this.x = 2;
-    this.y = 50; // Reduziere den Zwischenraum zwischen den Statusleisten weiter
-    this.width = 190; // Passe die Breite an
-    this.height = 50; // Passe die Höhe an
+    this.loadImages(this.IMAGES); // Load the images
+    this.x = 2; // Position of the status bar
+    this.y = 50; // Reduce the space between the status bars further
+    this.width = 190; // Adjust the width
+    this.height = 50; // Adjust the height
     this.setPercentage(0); // Initialize with 0%
   }
 
-  setPercentage(percentage) {
+  setPercentage(percentage) { // Set the percentage value
     this.percentage = percentage;
-    let path = this.IMAGES[this.calculateImageIndex()];
+    let path = this.IMAGES[this.calculateImageIndex()]; // Set image path based on the percentage value
     this.img = this.imageCache[path];
   }
 
@@ -79,31 +80,31 @@ class PoisonStatusBar extends DrawableObject {
     return 0;
   }
 
-  increasePercentage(amount) {
-    this.percentage = Math.min(100, this.percentage + amount);
-    this.setPercentage(this.percentage);
+  increasePercentage(amount) { // Increase the percentage value
+    this.percentage = Math.min(100, this.percentage + amount); // Increase the percentage value
+    this.setPercentage(this.percentage); // Set the percentage value
   }
 }
 
 class EndbossStatusbar extends DrawableObject {
   IMAGES = [
     "img/game_ui/statusbars/statusbar-knight/0.png",
-    "img/game_ui/statusbars/statusbar-health/20.png",
-    "img/game_ui/statusbars/statusbar-health/40.png",
-    "img/game_ui/statusbars/statusbar-health/60.png",
-    "img/game_ui/statusbars/statusbar-health/80.png",
-    "img/game_ui/statusbars/statusbar-health/100.png",
+    "img/game_ui/statusbars/statusbar-knight/20.png",
+    "img/game_ui/statusbars/statusbar-knight/40.png",
+    "img/game_ui/statusbars/statusbar-knight/60.png",
+    "img/game_ui/statusbars/statusbar-knight/80.png",
+    "img/game_ui/statusbars/statusbar-knight/100.png",
   ];
 
   percentage = 100; // Start with a full status bar
 
-  constructor(endboss) {
+  constructor() {
     super();
     this.loadImages(this.IMAGES);
-    this.x = 2;
-    this.y = 10; // Position der Statusbar
-    this.width = 190; // Passe die Breite an
-    this.height = 50; // Passe die Höhe an
+    this.x = 0;
+    this.y = 0; // Position of the status bar
+    this.width = 190; // Adjust the width
+    this.height = 50; // Adjust the height
   }
 
   setPercentage(percentage) {

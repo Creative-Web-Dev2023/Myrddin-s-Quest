@@ -98,6 +98,14 @@ class Snake extends MovableObject {
       this.attackCooldown = false;
     }, 1500); // 1,5 Sekunden Abklingzeit
   }
+
+  getCollisionBox() {
+    return super.getCollisionBox('snake');
+  }
+
+  drawCollisionBox(ctx) {
+    super.drawCollisionBox(ctx, 'green');
+  }
 }
 
 // Stelle sicher, dass die Klasse global verfügbar ist

@@ -1,21 +1,21 @@
 class Character extends MovableObject {
-  height = 290;
-  width = 520;
-  x = 130;
-  y = 150; // Stellen Sie sicher, dass dies eine angemessene Höhe ist
-  speed = 5;
-  invulnerable = false;
-  poisonCollected = 0; // Gift gesammelt
-  poisonStatusBar; // Füge die PoisonStatusBar hinzu
-  deadAnimationPlayed = false; // Füge eine neue Eigenschaft hinzu, um zu verfolgen, ob die Dead-Animation abgespielt wurde
-  hasKey = false; // Neue Eigenschaft, um zu verfolgen, ob der Charakter einen Schlüssel hat
-  isVisible = true; // Standardmäßig sichtbar
+  height = 290; // Set the character's height
+  width = 520; // Set the character's width
+  x = 130; // Set the character's initial x position
+  y = 150; // Set the character's initial y position
+  speed = 5; // Set the character's speed
+  invulnerable = false; // Set the character's invulnerability status
+  poisonCollected = 0; // Initialize the collected poison count
+  poisonStatusBar; // Add the PoisonStatusBar
+  deadAnimationPlayed = false; // Track if the dead animation has been played
+  hasKey = false; // Track if the character has a key
+  isVisible = true; // Set the character to be visible by default
 
   offset = {
-    top: 50, // Reduziert das Rechteck von oben
-    bottom: 10, // Reduziert das Rechteck von unten
-    left: 200, // Reduziert das Rechteck von links
-    right: 200, // Reduziert das Rechteck von rechts
+    top: 50, // Reduce the rectangle from the top
+    bottom: 10, // Reduce the rectangle from the bottom
+    left: 200, // Reduce the rectangle from the left
+    right: 200, // Reduce the rectangle from the right
   };
 
   IMAGES_IDLE = [
@@ -116,7 +116,7 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_FIRE_ATTACK);
     this.world = world || {}; // Ensure world is initialized
     this.applyGravity();
-    this.energy = 100; // Setzt die Energie zu Beginn des Spiels auf 100
+    this.energy = 100; // Energie des Charakters
     this.playAnimation(this.IMAGES_IDLE);
     this.animate(); // Aufruf der geerbten Methode animate
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar(); 
@@ -139,163 +139,124 @@ class Character extends MovableObject {
   }
 
   update() {
-    if (!this.isVisible) return; // Wenn der Charakter unsichtbar ist, keine Updates ausführen
-    if (!this.isDead()) {
-      walkingSound.pause();
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { 
-        this.moveRight();
-        this.otherDirection = false;
-        playWalkingSound();
+    if (!this.isVisible) return; // If the character is not visible, exit the function
+    if (!this.isDead()) { // If the character is not dead
+      walkingSound.pause(); // Pause the walking sound
+      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // If the right arrow key is pressed and the character is within the level boundaries
+      this.moveRight(); // Move the character to the right
+      this.otherDirection = false; // Set the direction to right
+      playWalkingSound(); // Play the walking sound
       }
-      if ( this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        playWalkingSound();
+      if (this.world.keyboard.LEFT && this.x > 0) { // If the left arrow key is pressed and the character is within the level boundaries
+      this.moveLeft(); // Move the character to the left
+      this.otherDirection = true; // Set the direction to left
+      playWalkingSound(); // Play the walking sound
       }
-      if (this.world.keyboard.JUMP && !this.isAboveGround()) {
-        this.jump();
+      if (this.world.keyboard.JUMP && !this.isAboveGround()) { // If the jump key is pressed and the character is on the ground
+      this.jump(); // Make the character jump
       }
-      this.world.camera_x = -this.x - 190;
-      this.checkCollisions();
+      this.world.camera_x = -this.x - 190; // Update the camera position based on the character's position
+      this.checkCollisions(); // Check for collisions
     }
   }
   checkCollisions() {
-    CollisionUtils.checkCollisionWithObjects(this, this.world.poisonsArray, this.collectPoison.bind(this));
-    CollisionUtils.checkCollisionWithObjects(this, this.world.keysArray, this.collectKey.bind(this));
-    Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
-    this.checkJumpOnKnight();
-    this.checkKnightAttack();
+    CollisionUtils.checkCollisionWithObjects(this, this.world.poisonsArray, this.collectPoison.bind(this)); // Check collision with poison objects
+    CollisionUtils.checkCollisionWithObjects(this, this.world.keysArray, this.collectKey.bind(this)); // Check collision with key objects
+    Door.checkCharacterNearDoor(this.world); // Check if the character is near the door
+    this.checkJumpOnKnight(); // Check if the character jumps on a knight
+    this.checkKnightAttack(); // Check if the knight attacks the character
   }
 
   checkCollisionWithObjects(objectsArray, callback) {
     objectsArray.forEach((object, index) => {
-      if (this.isColliding(object)) {
-        callback(object, index);
+      if (this.isColliding(object)) { // If the character is colliding with the object
+        callback(object, index); // Execute the callback function
       }
     });
   }
 
   collectPoison(poison, index) {
-    if (poison && poison.isActive) {
-      poison.deactivate(); // Deaktivieren der Giftflasche
-      this.poisonCollected += 1; // Erhöhe die gesammelten Giftflaschen
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update die Statusleiste
-      this.world.poisonsArray.splice(index, 1); // Entferne das Giftobjekt aus dem Array
+    if (poison && poison.isActive) { // If the poison object is active
+      poison.deactivate(); // Deactivate the poison object
+      this.poisonCollected += 1; // Increase the collected poison count
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
+      this.world.poisonsArray.splice(index, 1); // Remove the poison object from the array
     }
   }
 
-
-  
-
   collectKey(key, index) {
-    this.hasKey = true; // Setze hasKey auf true, wenn der Charakter einen Schlüssel einsammelt
-    this.world.keysArray.splice(index, 1); // Entferne den Schlüssel aus dem Array
+    this.hasKey = true; // Set hasKey to true when the character collects a key
+    this.world.keysArray.splice(index, 1); // Remove the key from the array
   }
 
   jump() {
-    this.speedY = 33; // Die Geschwindigkeit des Sprungs
-    playJumpSound(); // Spiele den Sprung-Sound ab
-    
+    this.speedY = 33; // Set the jump speed
+    playJumpSound(); // Play the jump sound
   }
 
   attackEndboss(endboss) {
-    if (this.world.keyboard && this.world.keyboard.THROW) {
-      if (!this.isAttacking) { // Überprüfe, ob der Charakter bereits angreift
-        this.isAttacking = true;
-        this.playAnimation(this.IMAGES_FIRE_ATTACK);
-        playFireAttackSound(); // Spiele den Angriffssound ab
+    if (this.world.keyboard && this.world.keyboard.THROW) { // If the throw key is pressed
+      if (!this.isAttacking) { // If the character is not already attacking
+        this.isAttacking = true; // Set isAttacking to true
+        this.playAnimation(this.IMAGES_FIRE_ATTACK); // Play the fire attack animation
+        playFireAttackSound(); // Play the fire attack sound
 
         setTimeout(() => {
-          endboss.energy -= 20; // Verringere die Energie des Endbosses
-          if (endboss.energy <= 0) {
-            endboss.energy = 0;
-            endboss.isDead = true;
-            endboss.playAnimation(endboss.IMAGES_DEAD);
+          endboss.energy -= 20; // Decrease the endboss's energy
+          if (endboss.energy <= 0) { // If the endboss's energy is less than or equal to 0
+            endboss.energy = 0; // Set the endboss's energy to 0
+            endboss.isDead = true; // Set the endboss's isDead to true
+            endboss.playAnimation(endboss.IMAGES_DEAD); // Play the endboss's dead animation
             setTimeout(() => {
-              this.world.level.endboss = null; // Entferne den Endboss
-            }, 2000);
+              this.world.level.endboss = null; // Remove the endboss from the level
+            }, 2000); // Delay the removal by 2000 ms (2 seconds)
           } else {
-            endboss.playAnimation(endboss.IMAGES_HURT);
+            endboss.playAnimation(endboss.IMAGES_HURT); // Play the endboss's hurt animation
           }
-          this.isAttacking = false; // Angriff abgeschlossen
-        }, 500); // Verzögerung der Schadensberechnung
+          this.isAttacking = false; // Set isAttacking to false
+        }, 500); // Delay the attack by 500 ms (0.5 seconds)
       }
     }
   }
 
-  attackKnight(knight) {
-    if (this.world.keyboard && this.world.keyboard.ATTACK) {
-      if (!this.isAttacking) { // Überprüfe, ob der Charakter bereits angreift
-        this.isAttacking = true;
-        this.playAnimation(this.IMAGES_ATTACK);
-        playAttackSound(); // Spiele den Angriffssound ab
-
-        setTimeout(() => {
-          knight.hit(2); // Reduzieren Sie den Schaden, den der Ritter erleidet
-          this.isAttacking = false; // Angriff abgeschlossen
-        }, 1000); // Erhöhen Sie die Verzögerung der Schadensberechnung
-      }
-    }
-  }
 
   isAboveGround() {
-    return this.y < 150; // Passen Sie dies an die tatsächliche Bodenhöhe an
+    return this.y < 150;  // Return true if the character is above the ground
   }
 
   isMoving() {
-    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT; // Prüfen, ob die Pfeiltasten für Bewegung gedrückt sind
-  }
-  hit(enemy) {
-    const distance = Math.abs(this.x - enemy.x); // Berechne den Abstand zwischen Charakter und Feind
-    if (!this.invulnerable && distance < 100) { // Wenn der Charakter nicht unverwundbar ist und der Abstand kleiner als 100 ist
-      this.energy -= 5; // Verringere die Energie bei einem Treffer
-      if (this.energy <= 0) {
-        this.energy = 0; // Energie kann nicht unter 0 fallen
-      }
-      this.CharacterHealthBar.setPercentage(this.energy); // Aktualisiere die Statusleiste des Charakters
-      this.invulnerable = true; // Setze den Charakter für eine kurze Zeit unverwundbar
-      setTimeout(() => {
-        this.invulnerable = false; // Nach 1 Sekunde wieder verwundbar machen
-      }, 1000);
-    }
+    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT; //return true if the character is moving right or left
   }
   isHurt() {
-    return this.energy < 100 && this.energy > 0; // wenn seine < 100 und > 0 ist, dann ist er verletzt
-  }
+    return this.energy < 100 && this.energy > 0;  // energy is less than 100 and greater than 0, character is hurt
+     }
   isDead() {
-    return this.energy == 0;// wenn seine Energie 0 ist, dann ist er tot
+    return this.energy == 0;  //when energy is 0, character is dead
   }
 
   checkJumpOnKnight() {
-    let nearestKnight = null;
-    let minDistance = Infinity;
-
-    this.world.enemies.forEach((enemy, index) => {
-      if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) {
-        const distance = Math.abs(this.x - enemy.x);
-        if (distance < minDistance) {
-          minDistance = distance;
-          nearestKnight = { enemy, index };
-        }
+    this.world.enemies.forEach((enemy, index) => { //  for each enemy in the enemies array do the following
+      if (enemy instanceof Knight && this.isColliding(enemy) && this.speedY < 0) { // if the enemy is a knight and the character is colliding with the knight and the character is moving upwards
+        this.handleKnightCollision(enemy, index); // handle the collision with the knight
       }
     });
+  }
 
-    if (nearestKnight && !nearestKnight.enemy.isDead) {
-      nearestKnight.enemy.isDead = true; // Markiere den Ritter als tot
-      nearestKnight.enemy.playAnimation(nearestKnight.enemy.IMAGES_HURT); // Spiele die Hurt-Animation
-      setTimeout(() => {
-        nearestKnight.enemy.playAnimation(nearestKnight.enemy.IMAGES_DEAD); // Spiele die Dead-Animation
-        setTimeout(() => {
-          this.world.enemies.splice(nearestKnight.index, 1); // Entferne den Ritter
-        }, 3000); // Warte 3 Sekunden, bevor der Ritter verschwindet
-      }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
+  handleKnightCollision(enemy, index) { // handle the collision with the knight
+    if (!enemy.isDead) { // if the knight is not dead
+      enemy.die();  // kill the knight
+      enemy.playAnimation(enemy.IMAGES_HURT); // play the hurt animation
+      setTimeout(() => {// 
+        enemy.playAnimation(enemy.IMAGES_DEAD);// play the dead animation
+        setTimeout(() => { // 
+          this.world.enemies.splice(index, 1);// remove the knight from the enemies array
+        }, 3000); 
+      }, 1000); 
     }
   }
-  
-
   checkKnightAttack() {
-    this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight) {
+    this.world.enemies.forEach((enemy) => { // for each enemy in the enemies array do the following
+      if (enemy instanceof Knight) { // if the enemy is a knight
         const distance = Math.abs(this.x - enemy.x); // Calculate distance between character and knight
         if (distance <= 100 && !this.isAboveGround() && !enemy.isHurt()) {
           enemy.isAttacking = true; // Set knight's attacking status to true
@@ -313,67 +274,88 @@ class Character extends MovableObject {
     });
   }
 
-  reset(level) {
-    this.x = 130;
-    this.y = 150;
-    this.isVisible = true;
-    if (level === 2) {
+  reset(level) { // Reset the character's position and energy
+    this.x = 130; // Set the character's x position
+    this.y = 150; // Set the character's y position
+    this.isVisible = true; // 
+    if (level === 2) { // If the level is 2
       this.energy = 100; // Optionale Anpassung für Level 2
+      this.world.level.level_end_x = 3500; // Verkürze die Länge des Levels 2
     }
-    this.poisonCollected = 0;
-    this.poisonStatusBar.setPercentage(0);
-    this.CharacterHealthBar.setPercentage(this.energy);
-    this.playAnimation(this.IMAGES_IDLE);
-    this.animate();
+    this.poisonCollected = 0; // Reset the poison collected
+    this.poisonStatusBar.setPercentage(0); // Reset the poison status bar
+    this.CharacterHealthBar.setPercentage(this.energy); // Reset the character's health bar
+    this.playAnimation(this.IMAGES_IDLE); // Play the idle animation
+    this.animate(); // Start the animation
   }
 
-  draw(ctx) {
-    if (!this.isVisible) return; // Nicht zeichnen, wenn unsichtbar
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    this.poisonStatusBar.draw(ctx);
-    this.CharacterHealthBar.draw(ctx);
+  draw(ctx) { 
+    if (!this.isVisible) return; //   If the character is not visible, do not draw
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height); // Draw the character
+    this.poisonStatusBar.draw(ctx); // Draw the poison status bar
+    this.CharacterHealthBar.draw(ctx);  // Draw the character's health bar
+    this.drawFrame(ctx); //   Draw the frame
   }
 
-  enterDoor() {
-    this.isVisible = false; // Charakter unsichtbar machen
+  drawFrame(ctx) { // Draw the frame around the character
+    ctx.beginPath(); // Begin the path
+    ctx.lineWidth = '4'; // Set the line width
+    ctx.strokeStyle = 'blue'; // Set the stroke style
+    ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.left - this.offset.right, this.height - this.offset.top - this.offset.bottom);
+    // Draw the rectangle around the character
+    ctx.stroke(); // Stroke the path to draw the rectangle
+  }
+
+  enterDoor() { 
+    this.isVisible = false; // Make the character invisible
     setTimeout(() => {
-      this.isVisible = true; // Charakter nach 2 Sekunden wieder sichtbar machen
-    }, 2000);a
+      this.isVisible = true;  // Make the character visible after 2 seconds
+    }, 2000);
   }
 
-  checkCollisionWithDoor(door) {
-    return this.isColliding(door);
+  checkCollisionWithDoor(door) { // Check if the character is colliding with the door
+    return this.isColliding(door); // Return true if the character is colliding with the door
   }
 
-  getCollisionBox() { //Character collision box
-    const box = {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom,
-    };
-    // console.log('Character collision box:', box); // Debug-Ausgabe der Kollisionsbox
-    return box;
-  }
-
-  checkCollisionsWithEnemy(enemies) {
-    enemies.forEach((enemy) => {
-      if (this.isColliding(enemy)) {
-        if (this.isAboveGround() && this.speedY > 0) {
-          this.jump(); // Charakter springt erneut
-          if (enemy.isDead()) { // Check if the knight is dead
-            enemy.playAnimation(enemy.IMAGES_DEAD);
+  checkCollisionsWithEnemy(enemies) { // Check if the character is colliding with the enemies
+    for (let i = 0; i < enemies.length; i++) { // Loop through the enemies array
+      const enemy = enemies[i]; // Get the enemy at the current index
+      if (this.isColliding(enemy)) { // Check if the character is colliding with the enemy
+        if (this.isAboveGround() && this.speedY > 0) { // If the character is above the ground and moving downwards
+          this.jump();  // Make the character jump
+          if (enemy.isDead()) {   // If the enemy is dead
+            return;   // Return from the function without doing anything
           } else {
-            enemy.playAnimation(enemy.IMAGES_HURT);
+            
+            enemy.playAnimation(enemy.IMAGES_HURT); // Play the hurt animation
             setTimeout(() => {
-              enemy.playAnimation(enemy.IMAGES_DEAD);
-            }, 1000); // Warte 1 Sekunde, bevor die Dead-Animation abgespielt wird
+              enemy.playAnimation(enemy.IMAGES_DEAD); // Play the dead animation
+              setTimeout(() => {
+                this.world.enemies.splice(i, 1); // Remove the enemy from the enemies array after 3 seconds
+              }, 1500); // Delay the removal by 1500 ms (1.5 seconds)
+            }, 1000); // Delay the death animation by 1000 ms (1 second) 
           }
+          break; // Break out of the loop after the collision is handled 
         } else {
-          this.hit(enemy);
+          this.hit(enemy); // Handle the collision by hitting the enemy
           this.world.characterStatusBar.setPercentage(this.energy); // Update characterStatusBar
         }
       }
-    });
+    }
+  }
+
+  hit(enemy) {
+    const distance = Math.abs(this.x - enemy.x);  // Calculate the distance between the character and the enemy
+    if (!this.invulnerable && distance < 100) { // Check if the character is vulnerable and close enough to the enemy
+      this.energy -= 10;  // Reduce the character's energy by 10
+      if (this.energy <= 0) { // Check if the character's energy is less than or equal to 0
+        this.energy = 0;  // Set the character's energy to 0
+      }
+      this.CharacterHealthBar.setPercentage(this.energy);   // Update the character's health bar
+      this.invulnerable = true;   // Set the character to invulnerable
+      setTimeout(() => {
+        this.invulnerable = false;  // Set the character to vulnerable after 1 second
+      }, 1000);
+    }
   }
 }

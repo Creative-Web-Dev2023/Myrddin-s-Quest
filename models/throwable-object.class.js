@@ -1,21 +1,28 @@
 class ThrowableObject extends MovableObject {
   constructor(x, y) {
-    super().loadImage("img/poison/1.png");
-    this.x = x; // Position des Objekts
-    this.y = y; // Position des Objekts
-    this.height = 90;
-    this.width = 40;
-    this.speedY = 30; // Erhöhte Geschwindigkeit, um den Bogen zu vergrößern
-    this.speedX = 15; // Erhöhte Geschwindigkeit, um den Bogen zu vergrößern
+    super().loadImage('img/throwable/bottle.png');
+    this.x = x;
+    this.y = y;
     this.throw();
   }
 
   throw() {
+    this.speedY = 30; // Anfangsgeschwindigkeit nach oben
     this.applyGravity();
+    this.throwInterval = setInterval(() => {
+      this.x += 10; // Bewegung nach rechts
+      if (this.y > 500) { // Wenn die Flasche den Boden erreicht
+        clearInterval(this.throwInterval);
+      }
+    }, 25);
+  }
+
+  applyGravity() {
     setInterval(() => {
-      this.x += this.speedX;
-      this.y -= this.speedY;
-      this.speedY -= 1; // Gravity effect
+      if (this.y < 500) { // Solange die Flasche nicht den Boden erreicht hat
+        this.y -= this.speedY;
+        this.speedY -= 1; // Schwerkraft
+      }
     }, 25);
   }
 }
