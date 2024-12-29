@@ -1,26 +1,28 @@
 const level2 = new Level(
   generateEnemiesLvl2(),
-  generateEnvironmentsLvl2(),
+  generateEnvironmentsLvl1(), // Verwende die gleiche Funktion wie in Level 1
   generateBackgroundsLvl2(),
 );
 
-function generateEnemiesLvl2(params) {
+function generateEnemiesLvl2() {
   return [
+    new Snake(900, 200),
+    new Snake(1400, 200),
     new Snake(2000, 200),
-    new Snake(3000, 200),
-    new Snake(4000, 200),
-    new Snake(5000, 200), // Neue Schlange hinzugefügt
-    new Snake(6000, 200), // Neue Schlange hinzugefügt
+    new Snake(2900, 200), // Neue Schlange hinzugefügt
+    new Snake(4100, 200), // Neue Schlange hinzugefügt
     // Endboss am Schluss
-    new Endboss(15000, 150), // Fügen Sie den Endboss hinzu,
+    new Endboss(15000, 150), // Fügen Sie den Endboss hinzu
   ];
-  }
-  function generateEnvironmentsLvl2(){
-  [new Cloud(), new Cloud(), new Cloud(),
-  ]
-  }
-
-function  generateBackgroundsLvl2(params) {
+}
+function generateEnvironmentsLvl1() {
+  return [
+    new Cloud(0, 50), // Fügen Sie x und y Positionen für die Wolken hinzu
+    new Cloud(500, 100),
+    new Cloud(1000, 150),
+  ];
+}
+function generateBackgroundsLvl2() {
   return [
     new BackgroundObject("img/game_backgrounds/3/2.png", 0), // Korrekte Position
     new BackgroundObject("img/game_backgrounds/3/2.png", 719), // Korrekte Position

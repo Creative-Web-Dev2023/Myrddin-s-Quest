@@ -140,25 +140,50 @@ class Character extends MovableObject {
   }
 
   update() {
-    if (!this.isVisible) return; // If the character is not visible, exit the function
-    if (!this.isDead()) { // If the character is not dead
-      walkingSound.pause(); // Pause the walking sound
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // If the right arrow key is pressed and the character is within the level boundaries
-        this.moveRight(); // Move the character to the right
-        this.otherDirection = false; // Set the direction to right
-        playWalkingSound(); // Play the walking sound
-      }
-      if (this.world.keyboard.LEFT && this.x > 0) { // If the left arrow key is pressed and the character is within the level boundaries
-        this.moveLeft(); // Move the character to the left
-        this.otherDirection = true; // Set the direction to left
-        playWalkingSound(); // Play the walking sound
-      }
-      if (this.world.keyboard.JUMP && !this.isAboveGround()) { // If the jump key is pressed and the character is on the ground
-        this.jump(); // Make the character jump
-      }
-      this.world.camera_x = -this.x - 190; // Update the camera position based on the character's position
+    if (this.isDead() && !this.deadAnimationPlayed) {
+        this.deadAnimationPlayed = true;
+        this.playAnimation(this.IMAGES_DEAD);
+        setTimeout(() => {
+            this.isVisible = false; // Charakter verschwindet nach der Animation
+            if (this.world.endGame) {
+                this.world.endGame.showYouLostScreen(); // Endbildschirm mit Verzögerung anzeigen
+            }
+        }, 1000); // 1000 ms (1 Sekunde) warten, bevor der Endbildschirm erscheint
+    } else if (!this.isDead()) {
+        walkingSound.pause();
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.otherDirection = false;
+            playWalkingSound();
+        }
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+            playWalkingSound();
+        }
+        if (this.world.keyboard.JUMP && !this.isAboveGround()) {
+            this.jump();
+        }
+        this.world.camera_x = -this.x - 190;
+        this.checkCollisions();
     }
-  }
+}
+
+checkCollisions() {
+  Door.checkCharacterNearDoor(this.world); // Überprüfe, ob der Charakter die Tür betritt
+}
+
+checkCollision(character, object) { // Check collision between character and object
+  const charBox = character.getHitbox(); // Get the character's hitbox
+  const objBox = object.getHitbox(); // Get the object's hitbox
+
+  return ( // Check if there is a collision between the character and the object
+    charBox.x < objBox.x + objBox.width && // Check collision on the x-axis
+    charBox.x + charBox.width > objBox.x && // Check collision on the x-axis
+    charBox.y < objBox.y + objBox.height && // Check collision on the y-axis
+    charBox.y + charBox.height > objBox.y // Check collision on the y-axis
+  );
+}
 
   jump() {
     this.speedY = 33; // Set the jump speed
@@ -253,6 +278,14 @@ class Character extends MovableObject {
       this.poisonCollected += 1; // Increase the collected poison count
       this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
       this.world.poisonsArray.splice(index, 1); // Remove the poison object from the array
+    }
+  }
+
+  collectKey(key, index) {
+    if (key && key.isActive) { // If the key object is active
+      key.deactivate(); // Deactivate the key object
+      this.hasKey = true; // Set the character's hasKey property to true
+      this.world.keysArray.splice(index, 1); // Remove the key object from the array
     }
   }
 }

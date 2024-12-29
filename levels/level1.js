@@ -2,7 +2,6 @@ const level1 = new Level(
   generateEnemiesLvl1(),
   generateEnvironmentsLvl1(),
   generateBackgroundsLvl1(),
-  generateObjectsLvl1(),
 );
 
 function generateEnemiesLvl1() {
@@ -13,6 +12,8 @@ function generateEnemiesLvl1() {
     new Knight(8000, 2700, 100, 4),
     new Knight(10000, 3300, 100, 5),
     new Knight(12000, 3900, 100, 6),
+    new Key(4200, 150, 7), // Passen Sie die Y-Position des Schlüssels an, um ihn sichtbar zu machen
+    new Door(4500, 80, 8), // Ändern Sie die Position der Tür
   ];
 }
 
@@ -112,12 +113,7 @@ function generateBackgroundsLvl1() {
   ];
 }
 
-function generateObjectsLvl1() {
-  return [
-    new Key(4200, 150, 7), // Passen Sie die Y-Position des Schlüssels an, um ihn sichtbar zu machen
-    new Door(4500, 80, 8), // Ändern Sie die Position der Tür
-  ];
-}
+
 
 
 

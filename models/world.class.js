@@ -7,7 +7,6 @@ class World {
   camera_x = 0; // The camera is shifted 100 to the left
   lastCloudSpawn = 0; // Time when the last cloud was created
   cloudSpawnInterval = 3000; // Interval (3 seconds)
-  poisonsArray = []; // Array for poison objects
   characterStatusBar; // Status bar for the character
   characters = []; // Array for characters
   enemies = []; // Array for enemies
@@ -62,11 +61,12 @@ class World {
     }
     this.character = new Character(this, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Forward keyboard to character
-    this.poisonsArray = CollectableObjects.initializePoisons(); // Initialize poison objects
-    this.keysArray = CollectableObjects.initializeKeys(); // Initialize keys
+    this.poisonsArray = PoisonObject.initializePoisons(); // Initialize poison objects
+    this.keysArray = Key.initializeKeys(); // Initialize keys
     this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
     this.enemies = this.level.enemies || []; // Initialize enemies from the level
     this.level.objects = this.level.objects || []; // Ensure objects is an array
+    this.level.clouds = this.level.clouds || []; // Ensure clouds is an array
     this.loadImages(this.IMAGES_YOU_LOST); // Load the "You Lost" image
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Load the button images
     this.door = new Door(1000, 200); // Initialize the door with a position
@@ -131,7 +131,7 @@ class World {
       if (this.checkCollision(this.character, enemy)) {
         if (this.character.isAboveGround() && this.character.speedY > 0) {
           this.character.jump();
-          if (enemy.isDead()) {
+          if (enemy.isDead) {
             return;
           } else {
             enemy.playAnimation(enemy.IMAGES_HURT);
@@ -148,6 +148,11 @@ class World {
         } else {
           this.character.hit(enemy);
           this.characterStatusBar.setPercentage(this.character.energy);
+        }
+      } else if (enemy instanceof Snake) {
+        const distance = Math.abs(this.character.x - enemy.x);
+        if (distance <= 100 && !enemy.isDead) {
+          enemy.attack();
         }
       }
     });
@@ -218,47 +223,28 @@ class World {
     this.drawGameObjects(); // Draw the game objects
     this.drawEnemies(); // Draw the enemies
     this.drawCharacter(); // Draw the character
-    this.drawPoisons(); // Draw the poison bottles
-    this.drawKeys(); // Draw the keys
+    if (this.keysArray.length > 0) {
+      this.keysArray[0].draw(this.ctx); // Draw the single key
+    }
+   
     if (this.door) {
       this.door.draw(this.ctx); // Draw the door
     }
     if (this.character.isDead()) {
       this.endGame.showYouLostScreen(); // Show the "You Lost" screen
     }
-    this.drawCollectables(); // Draw the collectables
   }
 
   drawGameObjects() { // Draw the game objects
     this.ctx.translate(this.camera_x, 0); // Translate the canvas
     this.addObjectsToMap(this.enemies); // Add enemies to the map
-    this.poisonsArray.forEach((poison) => { // Iterate over the poison objects
-      poison.draw(this.ctx, this.camera_x); // Draw the poison objects 
-    });
+    this.addObjectsToMap(this.poisonsArray); // Add poison objects to the map
     this.throwableObjects.forEach((bottle) => {
       bottle.draw(this.ctx, this.camera_x); // Draw the throwable objects
     });
-    this.level.objects.forEach(object => {
-      object.draw(this.ctx); // Draw the objects (door and key)
-    });
     this.ctx.translate(-this.camera_x, 0); // Reset the translation
   }
-
-  drawPoisons() { // Draw the poison bottles
-    this.poisonsArray.forEach((poison) => { // Iterate over the poison objects
-      if (poison.isActive) {
-        poison.draw(this.ctx); // Draw the poison
-      }
-    });
-  }
-
-  drawKeys() { // Draw the keys
-    this.keysArray.forEach((key) => { // Iterate over the keys
-      if (key.isActive) { // Check if the key is active
-        key.draw(this.ctx); // Draw the key
-      }
-    });
-  }
+  
 
   clearCanvas() { // Clear the canvas 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
@@ -267,7 +253,9 @@ class World {
   drawBackground() { // Draw the background
     this.ctx.translate(this.camera_x, 0); // Translate the canvas
     this.addObjectsToMap(this.backgroundObjects); // Add background objects to the map
-    this.addObjectsToMap(this.level.clouds); // Add clouds to the map
+    if (Array.isArray(this.level.clouds)) { // Ensure clouds is an array
+      this.addObjectsToMap(this.level.clouds); // Add clouds to the map
+    }
     this.ctx.translate(-this.camera_x, 0); // Reset the translation
   }
 
@@ -365,27 +353,19 @@ class World {
     }
   }
 
-  drawCollectables() { // Draw the collectables
-    this.ctx.translate(this.camera_x, 0); // Translate the canvas
-    this.collectables.forEach((collectable) => collectable.draw(this.ctx)); // Draw the collectables
-    this.ctx.translate(-this.camera_x, 0); // Reset the translation
-  }
-
   checkCollisionsWithCollectables() { // Check collisions with collectables
-    this.collectables.forEach((collectable) => {
-      if (this.checkCollision(this.character, collectable) && collectable.isActive) {
-        collectable.deactivate(); // Deactivate the collectable
-        this.handleCollectable(collectable); // Handle the collectable
+    this.poisonsArray.forEach((poison, index) => {
+      if (this.checkCollision(this.character, poison) && poison.isActive) {
+        poison.deactivate(); // Deactivate the poison
+        this.character.collectPoison(poison, index); // Collect the poison
       }
     });
-  }
-
-  handleCollectable(collectable) { // Handle the collectable
-    if (collectable.type === 'poison') { // Check if the collectable is a poison
-      this.character.collectPoison(collectable); // Collect the poison
-    } else if (collectable.type === 'key') { // Check if the collectable is a key
-      this.character.collectKey(collectable); // Collect the key
-    }
+    this.keysArray.forEach((key, index) => {
+      if (this.checkCollision(this.character, key) && key.isActive) {
+        key.deactivate(); // Deactivate the key
+        this.character.collectKey(key, index); // Collect the key
+      }
+    });
   }
 
   checkDoorCollision() {

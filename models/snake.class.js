@@ -8,6 +8,8 @@ class Snake extends MovableObject {
   startX = 1200; // Startposition geändert, damit die Schlange von rechts kommt
   isIdle = false; // Schlange ist nicht idle
   attackCooldown = false;
+  isDead = false; // Track if the snake is dead
+  isAttacking = false; // Track if the snake is attacking
 
   offset = {
     top: 20,
@@ -37,6 +39,13 @@ class Snake extends MovableObject {
     'img/snake/attack/attack 003.png',
   ];
 
+  IMAGES_DEAD = [
+    'img/snake/die/die 000.png',
+    'img/snake/die/die 001.png',
+    'img/snake/die/die 002.png',
+    'img/snake/die/die 003.png',
+  ];
+
   constructor(startX = 1500, moveRange = 200) { // Startposition geändert
     super();
     this.x = startX;
@@ -47,12 +56,13 @@ class Snake extends MovableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_IDLE); // Lade Idle-Bilder
     this.loadImages(this.IMAGES_ATTACKING); // Lade Angriffs-Bilder
+    this.loadImages(this.IMAGES_DEAD); // Lade Dead-Bilder
     this.speed = 0.02 + Math.random() * 0.05; // Geschwindigkeit reduziert
     this.animate();
   }
 
   animate() {
-    setInterval(() => {
+    this.movementInterval = setInterval(() => {
       if (this.direction === 'left') {
         this.moveLeft();
         if (this.x <= this.startX - this.moveRange) {
@@ -67,11 +77,15 @@ class Snake extends MovableObject {
         }
       }
     }, 1000 / 60);
-
-    setInterval(() => {
-      this.playAnimation(this.IMAGES_WALKING);
-    }, 1000 / 5);
-
+    this.animationInterval = setInterval(() => {
+      if (this.isDead) {
+        this.playAnimation(this.IMAGES_DEAD);
+      } else if (this.isAttacking) {
+        this.playAnimation(this.IMAGES_ATTACKING);
+      } else {
+        this.playAnimation(this.IMAGES_WALKING);
+      }
+    }, 100);
     setInterval(() => {
       this.checkCharacterProximity();
     }, 1000 / 10); // Check proximity every 100ms
@@ -88,17 +102,27 @@ class Snake extends MovableObject {
 
   attackCharacter(character) {
     if (this.attackCooldown) return;
-
-    if (!this.isDead() && !character.isDead()) {
+    if (!this.isDead && !character.isDead()) {
       character.hit(this); // Character takes damage from the snake
     }
-
     this.attackCooldown = true;
+    this.attack();
     setTimeout(() => {
       this.attackCooldown = false;
     }, 1500); // 1,5 Sekunden Abklingzeit
   }
-
+  die() {
+    this.isDead = true;
+    setTimeout(() => {
+      this.isVisible = false; // Make the snake invisible after it dies
+    }, 1000); // Wait 1 second before making the snake invisible
+  }
+  attack() {
+    this.isAttacking = true;
+    setTimeout(() => {
+      this.isAttacking = false;
+    }, 1000); // Attack animation duration
+  }
   getCollisionBox() {
     return super.getCollisionBox('snake');
   }
@@ -108,6 +132,5 @@ class Snake extends MovableObject {
   }
 }
 
-// Stelle sicher, dass die Klasse global verfügbar ist
-window.Snake = Snake;
+
 
