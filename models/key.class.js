@@ -1,4 +1,8 @@
 class Key extends DrawableObject {
+  IMAGES_KEY = [
+    "img/game_items/key.png"
+  ];
+
   constructor(x, y) {
     super();
     this.x = x;
@@ -6,7 +10,7 @@ class Key extends DrawableObject {
     this.width = 60;
     this.height = 60;
     this.isActive = true; // Ensure the key is active
-    this.loadImage("img/game_items/key.png");
+    this.loadImages(this.IMAGES_KEY);
   }
 
   deactivate() {
@@ -21,8 +25,7 @@ class Key extends DrawableObject {
 
   static initializeKeys() {
     return [
-      new Key(300, 400, 50, 50), // x: 300, y: 400
-
+      new Key(300, 400), // x: 300, y: 400
     ];
   }
 }

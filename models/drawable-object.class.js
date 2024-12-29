@@ -22,10 +22,13 @@ class DrawableObject {
   }
 
   playAnimation(images) {
-    let i = this.currentImage % images.length;
-    let path = images[i];
-    this.img = this.imageCache[path];
-    this.currentImage++;
+    if (images && images.length > 0) { // Ensure images is an array and has a length property
+      let i = this.currentImage % images.length;
+      this.img = this.imageCache[images[i]];
+      this.currentImage++;
+    } else {
+      console.error('Images array is not defined or empty');
+    }
   }
 
   draw(ctx) {

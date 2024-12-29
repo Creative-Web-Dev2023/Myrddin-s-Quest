@@ -134,9 +134,13 @@ class World {
           if (enemy.isDead) {
             return;
           } else {
-            enemy.playAnimation(enemy.IMAGES_HURT);
+            if (enemy.IMAGES_HURT) { // Check if the enemy has hurt images
+              enemy.playAnimation(enemy.IMAGES_HURT);
+            }
             setTimeout(() => {
-              enemy.playAnimation(enemy.IMAGES_DEAD);
+              if (enemy.IMAGES_DEAD) { // Check if the enemy has dead images
+                enemy.playAnimation(enemy.IMAGES_DEAD);
+              }
               setTimeout(() => {
                 const index = this.enemies.findIndex(e => e.id === enemy.id);
                 if (index !== -1) {
@@ -353,7 +357,7 @@ class World {
     }
   }
 
-  checkCollisionsWithCollectables() { // Check collisions with collectables
+  checkCollisionsWithCollectables() {
     this.poisonsArray.forEach((poison, index) => {
       if (this.checkCollision(this.character, poison) && poison.isActive) {
         poison.deactivate(); // Deactivate the poison

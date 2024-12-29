@@ -23,11 +23,15 @@ class PoisonObject extends DrawableObject {
   }
 
   static initializePoisons() {
-    return [
-      new PoisonObject(300, 400, 50, 50), // x: 300, y: 400
-      new PoisonObject(500, 200, 50, 50), // x: 500, y: 200
-      new PoisonObject(800, 100, 50, 50), // x: 800, y: 100
+    const poisons = [
+      new PoisonObject(800, 400, 50, 50), // x: 300, y: 400 
+      new PoisonObject(1600, 300, 50, 50), // x: 600, y: 300
+      new PoisonObject(2400, 200, 50, 50), // x: 900, y: 200
+      new PoisonObject(3200, 400, 50, 50), // x: 1200, y: 400
+      new PoisonObject(4000, 300, 50, 50), // x: 1500, y: 300
     ];
+ 
+    return poisons;
   }
 
   deactivate() {
@@ -39,6 +43,15 @@ class PoisonObject extends DrawableObject {
     if (this.isActive && this.img) {
       ctx.drawImage(this.img, this.x + camera_x, this.y, this.width, this.height);
     }
+  }
+
+  getHitbox() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+    };
   }
 
   animate() {
