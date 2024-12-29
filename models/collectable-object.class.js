@@ -43,7 +43,6 @@ class CollectableObjects extends DrawableObject {
         this.img = this.imageCache[this.images[this.currentImageIndex]]; // Setze das erste Bild
         this.isActive = true; // Stellen Sie sicher, dass das Objekt als aktiv markiert ist
         this.animate(); // Startet die Animation
-        
     }
 
     loadImages(images) {
@@ -68,8 +67,8 @@ class CollectableObjects extends DrawableObject {
     draw(ctx) {
         if (this.isActive) {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-            }
         }
+    }
     
 
     deactivate() {
@@ -88,9 +87,9 @@ class CollectableObjects extends DrawableObject {
 
     static initializePoisons() {
         const poisons = [];
-        const poisonSpacing = 300; // Abstand zwischen den Giftflaschen
+        const poisonSpacing = 450; // Abstand zwischen den Giftflaschen
         const startX = 1500; // Startposition der ersten Giftflasche
-        const startY = 300; // Y-Position der Giftflaschen
+        const startY = 350; // Y-Position der Giftflaschen
 
         for (let i = 0; i < 5; i++) { // Anzahl der Giftflaschen auf 5 begrenzen
             const x = startX + i * poisonSpacing;
@@ -104,7 +103,7 @@ class CollectableObjects extends DrawableObject {
     static initializeKeys() {
         const keys = [];
         const keyPositions = [
-            { x: 4200, y: 250 }, // Position des Schlüssels
+            { x: 4200, y: 150 }, // Position des Schlüssels
         ];
 
         keyPositions.forEach(pos => {
@@ -115,13 +114,6 @@ class CollectableObjects extends DrawableObject {
         return keys;
     }
 }
-
-class Coin extends CollectableObjects {
-    constructor(x, y) {
-        super(x, y, 'COIN'); // Rufe den Konstruktor der Basisklasse auf und setze den Typ auf 'COIN'
-    }
-}
-
 class PoisonObject extends CollectableObjects {
     constructor(x, y) {
         super(x, y, 'POISON'); // Rufe den Konstruktor der Basisklasse auf und setze den Typ auf 'POISON'

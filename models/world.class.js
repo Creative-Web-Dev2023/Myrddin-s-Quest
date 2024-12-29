@@ -111,9 +111,7 @@ class World {
     this.character.update(); // Update the character
     this.updatePoison(); // Update poison objects
     this.checkCollisionsWithEndboss(); // Check collisions with the endboss
-    this.updateKnightHealthBars(); // Update knight health bars
     this.checkThrowableObject(); // Check if a bottle should be thrown
-    this.checkCollisionsWithCollectables(); // Check collisions with collectables
     this.character.checkKnightAttack(); // Check if the knight attacks the character
     this.checkDoorCollision(); // Check collisions with the door
     if (this.character.isMoving() && musicIsOn) { // Check if the character is moving and music is on
@@ -329,10 +327,7 @@ class World {
     this.ctx.translate(-this.camera_x, 0); // Reset the translation
   }
 
-  checkCollisionsWithCollectables() { // Check collisions with collectables
-    CollisionUtils.checkCollisionsWithCollectables(this.character, this.collectables, this.handleCollectable.bind(this)); // Check collisions with collectables
-  } // Check collisions with collectables  
-
+ 
   handleCollectable(collectable) { // Handle the collectable
     if (collectable.type === 'poison') { // Check if the collectable is a poison
       this.character.collectPoison(collectable); // Collect the poison

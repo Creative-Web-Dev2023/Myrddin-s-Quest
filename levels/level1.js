@@ -6,6 +6,7 @@ const level1 = new Level(
     new Knight(8000, 2700, 100),
     new Knight(10000, 3300, 100),
     new Knight(12000, 3900, 100),
+    new Key(4200, 150), // Passen Sie die Y-Position des Schlüssels an, um ihn sichtbar zu machen
     new Door(4500, 80), // Ändern Sie die Position der Tür
   ],
   [
@@ -98,9 +99,7 @@ const level1 = new Level(
     new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 10),
     new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 11),
   ],
-  [
-    new Key(4200, 250), // Fügen Sie den Schlüssel hinzu
-  ]
+ 
 );
 
 
