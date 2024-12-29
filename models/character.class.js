@@ -160,8 +160,8 @@ class Character extends MovableObject {
     }
   }
   checkCollisions() {
-    this.checkCollisionWithObjects(this.world.poisonsArray, this.collectPoison.bind(this)); // Check collision with poison objects
-    this.checkCollisionWithObjects(this.world.keysArray, this.collectKey.bind(this)); // Check collision with key objects
+    CollisionUtils.checkCollisionWithObjects(this, this.world.poisonsArray, this.collectPoison.bind(this)); // Check collision with poison objects
+    CollisionUtils.checkCollisionWithObjects(this, this.world.keysArray, this.collectKey.bind(this)); // Check collision with key objects
     Door.checkCharacterNearDoor(this.world); // Check if the character is near the door
     this.checkJumpOnKnight(); // Check if the character jumps on a knight
     this.checkKnightAttack(); // Check if the knight attacks the character
@@ -173,27 +173,6 @@ class Character extends MovableObject {
         callback(object, index); // Execute the callback function
       }
     });
-  }
-
-  isColliding(obj) {
-    const box1 = this.getCollisionBox();
-    const box2 = obj.getCollisionBox();
-
-    return (
-      box1.x < box2.x + box2.width &&
-      box1.x + box1.width > box2.x &&
-      box1.y < box2.y + box2.height &&
-      box1.y + box1.height > box2.y
-    );
-  }
-
-  getCollisionBox() {
-    return {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom,
-    };
   }
 
   collectPoison(poison, index) {
