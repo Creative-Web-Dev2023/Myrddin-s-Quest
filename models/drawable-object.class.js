@@ -1,11 +1,11 @@
 class DrawableObject {
+  x = 0;
+  y = 0;
+  width = 100;
+  height = 100;
   img;
   imageCache = {};
   currentImage = 0;
-  x = 120;
-  y = 280;
-  height = 150;
-  width = 100;
 
   loadImage(path) {
     this.img = new Image();
@@ -13,13 +13,25 @@ class DrawableObject {
   }
 
   loadImages(arr) {
-    if (arr && Array.isArray(arr)) {
-      arr.forEach((path) => {
-        let img = new Image();
-        img.src = path;
-        this.imageCache[path] = img;
-      });
-    } 
+    arr.forEach((path) => {
+      let img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
+  }
+
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
+
+  drawFrame(ctx) {
+    if (this.frame) {
+      ctx.beginPath();
+      ctx.lineWidth = '4';
+      ctx.strokeStyle = 'blue';
+      ctx.rect(this.x, this.y, this.width, this.height);
+      ctx.stroke();
+    }
   }
 
   getHitbox() {
@@ -31,9 +43,8 @@ class DrawableObject {
     };
   }
 
-  getCollisionBox(type) {
+  getCollisionBox() {
     return {
-      type: type,
       x: this.x,
       y: this.y,
       width: this.width,
@@ -47,19 +58,5 @@ class DrawableObject {
     ctx.strokeStyle = color;
     ctx.rect(this.x, this.y, this.width, this.height); // Kollisionsbox zeichnen
     ctx.stroke();
-  }
-
-  draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  }
-
-  drawFrame(ctx) {
-    if (this.drawRectangle) {
-      ctx.beginPath();
-      ctx.lineWidth = '5';
-      ctx.strokeStyle = 'blue';
-      ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.stroke();
-    }
   }
 }

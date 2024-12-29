@@ -1,20 +1,31 @@
 const level1 = new Level(
-  [
-    new Knight(0, 900, 100),
-    new Knight(2000, 1500, 100),
-    new Knight(4000, 2100, 100),
-    new Knight(8000, 2700, 100),
-    new Knight(10000, 3300, 100),
-    new Knight(12000, 3900, 100),
-    new Key(4200, 150), // Passen Sie die Y-Position des Schlüssels an, um ihn sichtbar zu machen
-    new Door(4500, 80), // Ändern Sie die Position der Tür
-  ],
-  [
+  generateEnemiesLvl1(),
+  generateEnvironmentsLvl1(),
+  generateBackgroundsLvl1(),
+  generateObjectsLvl1(),
+);
+
+function generateEnemiesLvl1() {
+  return [
+    new Knight(0, 900, 100, 1),
+    new Knight(2000, 1500, 100, 2),
+    new Knight(4000, 2100, 100, 3),
+    new Knight(8000, 2700, 100, 4),
+    new Knight(10000, 3300, 100, 5),
+    new Knight(12000, 3900, 100, 6),
+  ];
+}
+
+function generateEnvironmentsLvl1() {
+  return [
     new Cloud(0, 50), // Fügen Sie x und y Positionen für die Wolken hinzu
     new Cloud(500, 100),
     new Cloud(1000, 150),
-  ],
-  [
+  ];
+}
+
+function generateBackgroundsLvl1() {
+  return [
     new BackgroundObject("img/game_backgrounds/4/7.png", -719), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/6.png", -719), // -719 = x, 0 = y
     new BackgroundObject("img/game_backgrounds/4/4.png", -719, 0), // 719 = x, 80 = y
@@ -98,8 +109,16 @@ const level1 = new Level(
     new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 9),
     new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 10),
     new BackgroundObject("img/game_backgrounds/endboss_background.png", 719 * 11),
-  ],
- 
-);
+  ];
+}
+
+function generateObjectsLvl1() {
+  return [
+    new Key(4200, 150, 7), // Passen Sie die Y-Position des Schlüssels an, um ihn sichtbar zu machen
+    new Door(4500, 80, 8), // Ändern Sie die Position der Tür
+  ];
+}
+
+
 
 

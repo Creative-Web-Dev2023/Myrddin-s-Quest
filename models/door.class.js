@@ -7,8 +7,9 @@ class Door extends DrawableObject {
     'img/door/door 4.png',
   ];
 
-  constructor(x, y) {
+  constructor(x, y, id) {
     super();
+    this.id = id;
     this.imageCache = {};
     this.loadImages(this.IMAGE_DOOR);
     this.x = 4500;

@@ -75,16 +75,6 @@ class CollectableObjects extends DrawableObject {
         this.isActive = false; // Setzt das Objekt inaktiv, z. B. nach dem Sammel
     }
 
-    getCollisionBox() {
-        const box = {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height,
-        };
-        return box;
-    }
-
     static initializePoisons() {
         const poisons = [];
         const poisonSpacing = 450; // Abstand zwischen den Giftflaschen
@@ -122,8 +112,9 @@ class PoisonObject extends CollectableObjects {
 }
 
 class Key extends CollectableObjects {
-    constructor(x, y) {
+    constructor(x, y, id) {
         super(x, y, 'KEY'); // Rufe den Konstruktor der Basisklasse auf und setze den Typ auf 'KEY'
+        this.id = id; // Setze die ID des Schlüssels
     }
 
     // Hier kannst du spezifische Methoden für den Schlüssel hinzufügen

@@ -49,8 +49,9 @@ class Knight extends MovableObject {
     'img/knight/death/death 5.png',
   ];
 
-  constructor(delay = 0, startX = 800, moveRange = 100) { // Add the delay, startX, and moveRange parameters
+  constructor(delay = 0, startX = 800, moveRange = 100, id) { // Add the delay, startX, and moveRange parameters
     super(); // Call the parent constructor function with the super keyword
+    this.id = id; // Set the id for the knight
     this.x = startX;  // Set the X position
     this.startX = startX; // Set the starting  X position
     this.moveRange = moveRange; // Set the movement range for the knight
@@ -115,19 +116,21 @@ class Knight extends MovableObject {
     }
   }
 
-  getCollisionBox() {
-    return super.getCollisionBox('knight'); // Get the collision box for the knight
+  updateHealthBar() {
+    // Update the knight's health bar
   }
 
   die() {
-    this.dead = true; // Set the dead state to true
-    this.isMoving = false; // Stop movements
-    this.speed = 0; // No more speed
-    this.currentImage = 0; // Reset animation frame
-    this.playAnimation(this.IMAGES_HURT, 100); // Increase the hurt animation speed
-    setTimeout(() => {
-      this.playAnimation(this.IMAGES_DEAD, 100); // Increase the dead animation speed
-    }, 1000); // Wait 1 second before playing the dead animation
+    this.energy = 0;
+    this.isDead = true;
+  }
+
+  isHurt() {
+    return this.energy < 100 && this.energy > 0;
+  }
+
+  isDead() {
+    return this.energy == 0;
   }
 
   hit(damage) {   // Reduce the knight's energy when hit

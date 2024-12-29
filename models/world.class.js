@@ -66,6 +66,7 @@ class World {
     this.keysArray = CollectableObjects.initializeKeys(); // Initialize keys
     this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
     this.enemies = this.level.enemies || []; // Initialize enemies from the level
+    this.level.objects = this.level.objects || []; // Ensure objects is an array
     this.loadImages(this.IMAGES_YOU_LOST); // Load the "You Lost" image
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Load the button images
     this.door = new Door(1000, 200); // Initialize the door with a position
@@ -107,14 +108,13 @@ class World {
 
   update() {
     if (this.levelCompleted) return; // Stop the update if the level is completed
-    this.character.checkCollisionsWithEnemy(this.level.enemies); // Check collisions with enemies
+    this.checkCollisionsWithEnemies(); // Check collisions with enemies
     this.character.update(); // Update the character
     this.updatePoison(); // Update poison objects
     this.checkCollisionsWithEndboss(); // Check collisions with the endboss
-    this.updateKnightHealthBars(); // Update knight health bars
     this.checkThrowableObject(); // Check if a bottle should be thrown
     this.checkCollisionsWithCollectables(); // Check collisions with collectables
-    this.character.checkKnightAttack(); // Check if the knight attacks the character
+    this.checkKnightAttack(); // Check if the knight attacks the character
     this.checkDoorCollision(); // Check collisions with the door
     if (this.character.isMoving() && musicIsOn) { // Check if the character is moving and music is on
       playWalkingSound(); // Play walking sound only if music is on
@@ -126,28 +126,67 @@ class World {
     }
   }
 
+  checkCollisionsWithEnemies() {
+    this.enemies.forEach((enemy) => {
+      if (this.checkCollision(this.character, enemy)) {
+        if (this.character.isAboveGround() && this.character.speedY > 0) {
+          this.character.jump();
+          if (enemy.isDead()) {
+            return;
+          } else {
+            enemy.playAnimation(enemy.IMAGES_HURT);
+            setTimeout(() => {
+              enemy.playAnimation(enemy.IMAGES_DEAD);
+              setTimeout(() => {
+                const index = this.enemies.findIndex(e => e.id === enemy.id);
+                if (index !== -1) {
+                  this.enemies.splice(index, 1);
+                }
+              }, 1500);
+            }, 1000);
+          }
+        } else {
+          this.character.hit(enemy);
+          this.characterStatusBar.setPercentage(this.character.energy);
+        }
+      }
+    });
+  }
+
+  checkKnightAttack() {
+    this.enemies.forEach((enemy) => {
+      if (enemy instanceof Knight) {
+        const distance = Math.abs(this.character.x - enemy.x);
+        if (distance <= 100 && !this.character.isAboveGround() && !enemy.isHurt()) {
+          enemy.isAttacking = true;
+          enemy.playAnimation(enemy.IMAGES_ATTACKING);
+          setTimeout(() => {
+            if (!this.character.isAboveGround() && this.checkCollision(this.character, enemy)) {
+              this.character.hit(enemy);
+            }
+          }, 1000);
+        } else {
+          enemy.isAttacking = false;
+        }
+      }
+    });
+  }
+
   checkCollisionsWithEndboss() { // Check collisions with the endboss
-    if (this.level.endboss && this.character.isColliding(this.level.endboss)) { // Check if the character is colliding with the endboss
+    if (this.level.endboss && this.checkCollision(this.character, this.level.endboss)) { // Check if the character is colliding with the endboss
       this.character.attackEndboss(this.level.endboss); // Attack the endboss
     }
   }
 
   updatePoison() { // Update the poison objects 
     this.poisonsArray.forEach((poison, index) => { // Iterate over the poison objects
-      if (poison.isActive && this.character.isColliding(poison)) { // Check if the poison is active and colliding with the character
+      if (poison.isActive && this.checkCollision(this.character, poison)) { // Check if the poison is active and colliding with the character
         this.character.collectPoison(poison, index); // Collect the poison
       }
     });
   }
 
-  updateKnightHealthBars() { // Update the knight health bars
-    this.level.enemies.forEach(enemy => { // Iterate over the enemies
-      if (enemy instanceof Knight && typeof enemy.updateHealthBar === 'function') { // Check if the enemy is a knight
-        enemy.updateHealthBar(); // Update the knight's health bar
-      }
-    });
-  }
-
+ 
   killSnakes() { // Kill snakes in the level
     this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Snake)); // Remove snakes from enemies
   }
@@ -190,6 +229,21 @@ class World {
     this.drawCollectables(); // Draw the collectables
   }
 
+  drawGameObjects() { // Draw the game objects
+    this.ctx.translate(this.camera_x, 0); // Translate the canvas
+    this.addObjectsToMap(this.enemies); // Add enemies to the map
+    this.poisonsArray.forEach((poison) => { // Iterate over the poison objects
+      poison.draw(this.ctx, this.camera_x); // Draw the poison objects 
+    });
+    this.throwableObjects.forEach((bottle) => {
+      bottle.draw(this.ctx, this.camera_x); // Draw the throwable objects
+    });
+    this.level.objects.forEach(object => {
+      object.draw(this.ctx); // Draw the objects (door and key)
+    });
+    this.ctx.translate(-this.camera_x, 0); // Reset the translation
+  }
+
   drawPoisons() { // Draw the poison bottles
     this.poisonsArray.forEach((poison) => { // Iterate over the poison objects
       if (poison.isActive) {
@@ -229,18 +283,6 @@ class World {
       this.endbossHealthBar.draw(this.ctx); // Draw the endboss health bar
     }
     this.addToMap(this.character.healthBar); // Add the character's health bar to the map
-  }
-
-  drawGameObjects() { // Draw the game objects
-    this.ctx.translate(this.camera_x, 0); // Translate the canvas
-    this.addObjectsToMap(this.enemies); // Add enemies to the map
-    this.poisonsArray.forEach((poison) => { // Iterate over the poison objects
-      poison.draw(this.ctx, this.camera_x); // Draw the poison  objects 
-    });
-    this.throwableObjects.forEach((bottle) => {
-      bottle.draw(this.ctx, this.camera_x); // Draw the throwable objects
-    });
-    this.ctx.translate(-this.camera_x, 0); // Reset the translation
   }
 
   drawEnemies() { // Draw the enemies
@@ -330,8 +372,13 @@ class World {
   }
 
   checkCollisionsWithCollectables() { // Check collisions with collectables
-    CollisionUtils.checkCollisionsWithCollectables(this.character, this.collectables, this.handleCollectable.bind(this)); // Check collisions with collectables
-  } // Check collisions with collectables  
+    this.collectables.forEach((collectable) => {
+      if (this.checkCollision(this.character, collectable) && collectable.isActive) {
+        collectable.deactivate(); // Deactivate the collectable
+        this.handleCollectable(collectable); // Handle the collectable
+      }
+    });
+  }
 
   handleCollectable(collectable) { // Handle the collectable
     if (collectable.type === 'poison') { // Check if the collectable is a poison
