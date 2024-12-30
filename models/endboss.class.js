@@ -80,15 +80,7 @@ class Endboss extends MovableObject {
 
     draw(ctx) {
         super.draw(ctx);
-        this.drawFrame(ctx); // Zeichne die Kollisionsbox
-    }
-
-    drawFrame(ctx) {
-        ctx.beginPath();
-        ctx.lineWidth = '2';
-        ctx.strokeStyle = 'violet'; // Ändern Sie die Farbe der Kollisionsbox
-        ctx.rect(this.x + this.offset.left, this.y + this.offset.top, this.width - this.offset.left - this.offset.right, this.height - this.offset.top - this.offset.bottom);
-        ctx.stroke();
+        this.drawFrame(ctx, 'violet'); // Verwenden Sie die allgemeine drawFrame-Methode
     }
 
     playDeadSound() {

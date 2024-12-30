@@ -199,7 +199,6 @@ class Character extends MovableObject {
         this.collectKey(key, index);
       }
     });
-
     Door.checkCharacterNearDoor(this.world); // Check if the character is near the door
   }
 

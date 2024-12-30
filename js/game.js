@@ -195,7 +195,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function checkOrientation() {
   const rotateDiv = document.getElementById('rotate');
-  if (window.innerWidth < 720 && window.innerHeight > window.innerWidth) {
+  if (window.innerWidth <720 && window.innerHeight > window.innerWidth) {
     rotateDiv.style.display = 'flex';
   } else {
     rotateDiv.style.display = 'none';

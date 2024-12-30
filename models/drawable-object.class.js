@@ -6,6 +6,7 @@ class DrawableObject {
   img;
   imageCache = {};
   currentImage = 0;
+  offset = { top: 0, bottom: 0, left: 0, right: 0 }; // Initialize offset
 
   loadImage(path) {
     this.img = new Image();
@@ -36,11 +37,28 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (this.frame) {
+    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof Door || this instanceof PoisonObject) {
       ctx.beginPath();
       ctx.lineWidth = '4';
-      ctx.strokeStyle = 'blue';
-      ctx.rect(this.x, this.y, this.width, this.height);
+      if (this instanceof Character) {
+        ctx.strokeStyle = 'blue';
+      } else if (this instanceof Knight) {
+        ctx.strokeStyle = 'red';
+      } else if (this instanceof Endboss) {
+        ctx.strokeStyle = 'yellow';
+      } else if (this instanceof Snake) {
+        ctx.strokeStyle = 'beige';
+      } else if (this instanceof Door) {
+        ctx.strokeStyle = 'green';
+      }else if (this instanceof PoisonObject) {
+        ctx.strokeStyle = 'black';
+      }
+      ctx.rect(
+        this.x + this.offset.left,
+        this.y + this.offset.top,
+        this.width - this.offset.left - this.offset.right,
+        this.height - this.offset.top - this.offset.bottom
+      );
       ctx.stroke();
     }
   }
@@ -63,10 +81,22 @@ class DrawableObject {
     };
   }
 
-  drawCollisionBox(ctx, color = 'red') {
+  drawCollisionBox(ctx) {
     ctx.beginPath();
-    ctx.lineWidth = "2";
-    ctx.strokeStyle = color;
+    ctx.lineWidth = '2';
+    if (this instanceof Character) {
+      ctx.strokeStyle = 'blue';
+    } else if (this instanceof Knight) {
+      ctx.strokeStyle = 'red';
+    } else if (this instanceof Endboss) {
+      ctx.strokeStyle = 'yellow';
+    } else if (this instanceof Snake) {
+      ctx.strokeStyle = 'beige';
+    } else if (this instanceof Door) {
+      ctx.strokeStyle = 'green';
+    } else if(this instanceof PoisonObject) {
+      ctx.strokeStyle = 'black';
+    }
     ctx.rect(this.x, this.y, this.width, this.height); // Kollisionsbox zeichnen
     ctx.stroke();
   }

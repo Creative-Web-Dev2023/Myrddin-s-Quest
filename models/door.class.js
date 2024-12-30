@@ -115,9 +115,4 @@ class Door extends DrawableObject {
   getCollisionBox() {
     return super.getCollisionBox('door');
   }
-
-  drawCollisionBox(ctx) {
-    super.drawCollisionBox(ctx, 'orange');
-       ctx.lineWidth = '5';
-  }
 }

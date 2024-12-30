@@ -32,30 +32,6 @@ class MovableObject extends DrawableObject {
     }
   }
 
-  drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof PoisonObject || this instanceof Door) {
-      this.drawRectangle = true; // Enable rectangle drawing
-      ctx.beginPath(); // Begin path for rectangle drawing 
-      ctx.lineWidth = '5'; // Line width for rectangle drawing
-      if (this instanceof Character) { // Check if object is Character
-        ctx.strokeStyle = 'blue'; // Color for Character
-      } else if (this instanceof Knight) { // Check if object is Knight
-        ctx.strokeStyle = 'red'; // Color for Knight
-      } else if (this instanceof Door) { // Check if object is Door
-        ctx.strokeStyle = 'yellow'; // Color for Door
-      } else { // For all other objects 
-        ctx.strokeStyle = 'green'; // Color for other objects
-      }
-      ctx.rect( // Draw rectangle around the object for collision detection
-          this.x + this.offset.left, // X and Y position plus offset values from all sides of the rectangle
-          this.y + this.offset.top, // X and Y position plus offset values from all sides of the rectangle
-          this.width - this.offset.left - this.offset.right, // Width minus left and right offset
-          this.height - this.offset.top - this.offset.bottom // Height minus top and bottom offset
-      );
-      ctx.stroke(); // Draw the rectangle
-    }
-  }
-
   isColliding(mo) { // Check if object is colliding with another object
     if (!(mo instanceof MovableObject)) return false; // Check if mo is an instance of MovableObject
     const box1 = this.getCollisionBox(); // Get collision box for this object

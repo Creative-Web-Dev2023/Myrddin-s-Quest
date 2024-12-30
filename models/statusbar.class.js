@@ -121,8 +121,4 @@ class EndbossStatusbar extends DrawableObject {
     if (this.percentage >= 20) return 1;
     return 0;
   }
-
-  draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  }
 }

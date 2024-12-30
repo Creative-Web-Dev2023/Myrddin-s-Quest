@@ -1,6 +1,6 @@
 body {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Wenn du mehrere Elemente vertikal stapeln möchtest */
   align-items: center;
   justify-content: center;
   background-image: url("img/game_backgrounds/8YGJao.png");
@@ -9,7 +9,9 @@ body {
   height: 100vh;
   margin: 0;
   font-family: "sylfaen";
+  overflow: hidden; /* Optional: Verhindert Scrollen */
 }
+
 
 @font-face {
   font-family: "sylfaen";
@@ -316,23 +318,24 @@ h3 {
   color: rgb(174, 186, 124);
 }
 .overlay {
-  position: absolute;
+  position: fixed; /* Fixiert das Overlay auf die Bildschirmmitte */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 850px;
   height: 531px;
   background-image: url("img/game_ui/login&pass/loghin_pass_fullwindow.png"),
-    /* Vordergrund-Bild */ url("img/game_backgrounds/wood.png"); /* Hintergrund-Bild */
-  background-size: contain, cover; /* Erster Wert für das Vordergrund-Bild, zweiter für das Hintergrund-Bild */
-  background-position: center, center;
-  background-repeat: no-repeat, no-repeat;
-  z-index: 2; /* Overlay im Vordergrund */
-  display: flex;
+    url("img/game_backgrounds/wood.png");
+  background-size: contain, cover;
+  display: flex; /* Flex für Inhalte im Overlay */
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* Zentriert Kinder-Elemente horizontal */
+  justify-content: center; /* Zentriert Kinder-Elemente vertikal */
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
+
 
 .overlay-text {
   font-size: 1.5rem;
@@ -648,8 +651,17 @@ svg {
   display: block;
   margin: 0 auto; /* Bild zentrieren */
 }
+
+@keyframes rotate-animation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
 #rotate {
-  display: none;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
@@ -661,93 +673,29 @@ svg {
   text-align: center;
   font-size: 24px;
   z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  justify-content: center; /* Zentriert horizontal */
+  align-items: center;    /* Zentriert vertikal */
+  flex-direction: column; /* Text und Bild untereinander */
 }
 
-#rotate img {
-  width: 300px; /* Vergrößern Sie die Breite des Bildes */
-  height: auto;
-  margin-bottom: 10px;
-}
-
-@media screen and (max-width: 720px) and (orientation: portrait) {
-  #rotate {
-    display: flex;
-    font-size: 30px;
-  }
-}
-
-@media screen and (min-width: 721px) or (orientation: landscape) {
-  #rotate {
-    display: none;
-  }
+.rotate-icon {
+  width: 100px;
+  height: 100px;
+  animation: rotate-animation 2s linear infinite; /* Rotation */
 }
 
 @media screen and (max-width: 800px) and (orientation: portrait) {
   #rotate {
-    display: flex;
     font-size: 30px;
   }
+  .rotate-message {
+    font-family: Lucida Sans Unicode;
+  }
+ 
 }
 
-@media screen and (min-width: 821px) or (orientation: landscape) {
-  #rotate {
-    display: none;
-  }
-}
-
-@media only screen and (max-width: 720px) {
-  h2 {
-      display: none;
-  }
-
-  canvas {
-      width: 100%;
-  }
-}
-
-@media only screen and (max-height: 405px) {
-  canvas {
-      height: 100vh;
-  }
-
-  h2{
-      display: none;
-  }
-}
-
-
-@media screen and (orientation:portrait) {
-  h2 {
-      display: none;
-  }
-
-
-
-  #rotate {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 30px;
-  }
-
-  html {
-    background: none;
-}
-  img {
-      width: 100vw;
-  }
-}
-
-/* media query for touch device*/
-@media (pointer:coarse) {
-  .mobileButtons {
-      display: flex;
-  }
-  h2{
-    display: none;
-}
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Keine Scrollleisten */
 }
