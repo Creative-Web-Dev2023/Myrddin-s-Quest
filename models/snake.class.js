@@ -2,6 +2,7 @@ class Snake extends MovableObject {
   height = 100;
   width = 150;
   y = 350;
+  health = 100; // Initialisiere die Gesundheit der Schlange
   isMoving = true; // Schlange bewegt sich immer
   direction = 'left';
   moveRange = 200; // Standardbewegungsbereich
@@ -46,8 +47,9 @@ class Snake extends MovableObject {
     'img/snake/die/die 003.png',
   ];
 
-  constructor(startX = 1500, moveRange = 200) { // Startposition geändert
+  constructor(startX = 1500, moveRange = 200, id) { // Fügen Sie die id hinzu
     super();
+    this.id = id; // Initialisieren Sie die id
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
@@ -111,11 +113,17 @@ class Snake extends MovableObject {
       this.attackCooldown = false;
     }, 1500); // 1,5 Sekunden Abklingzeit
   }
-  die() {
+
+  
+  die( enemy, id) {
     this.isDead = true;
     setTimeout(() => {
       this.isVisible = false; // Make the snake invisible after it dies
-    }, 1000); // Wait 1 second before making the snake invisible
+      const snakeIndex = this.world.enemies.findIndex(enemies => enemies.id === enemy.id);
+      if (snakeIndex !== -1) {
+        this.world.enemies.splice(snakeIndex, 1); // Entfernen Sie die Schlange aus dem Array
+      }
+    }, 500); // Wait 0.5 seconds before making the snake invisible
   }
   attack() {
     this.isAttacking = true;
@@ -129,6 +137,31 @@ class Snake extends MovableObject {
 
   drawCollisionBox(ctx) {
     super.drawCollisionBox(ctx, 'green');
+  }
+
+  hitByPoison() {
+    this.health -= 20; // Beispielwert für den Schaden durch Gift
+    if (this.health <= 0) {
+      this.die();
+    }
+  }
+
+  checkCollision(object1, object2) {
+    const box1 = object1.getHitbox();
+    const box2 = object2.getHitbox();
+
+    return (
+        box1.x < box2.x + box2.width &&
+        box1.x + box1.width > box2.x &&
+        box1.y < box2.y + box2.height &&
+        box1.y + box1.height > box2.y
+    );
+  }
+
+  checkCollisionWithThrowableObject(throwableObject) {
+    if (this.checkCollision(this, throwableObject)) {
+      this.hitByPoison();
+    }
   }
 }
 

@@ -81,6 +81,7 @@ class World {
     this.enemies.forEach((enemy) => { // Iterate over the enemies
       if (enemy instanceof Knight) { // Check if the enemy is a knight 
         enemy.world = this; // Set the world property for the knight
+        enemy.otherDirection = true; // Ensure the knight always faces left
       }
     });
     if (this.door) { // Check if the door exists
@@ -126,7 +127,7 @@ class World {
     }
   }
 
-  checkCollisionsWithEnemies() {
+  checkCollisionsWithEnemies( ) {
     this.enemies.forEach((enemy) => {
       if (this.checkCollision(this.character, enemy)) {
         if (this.character.isAboveGround() && this.character.speedY > 0) {
@@ -365,9 +366,10 @@ class World {
       }
     });
     this.keysArray.forEach((key, index) => {
-      if (this.checkCollision(this.character, key) && key.isActive) {
-        key.deactivate(); // Deactivate the key
-        this.character.collectKey(key, index); // Collect the key
+      if (key.isActive && this.checkCollision(this.character, key)) {
+        key.deactivate(); // Deaktiviert den Schlüssel
+        this.keysArray.splice(index, 1); // Entfernt den Schlüssel aus dem Array
+        this.character.collectKey(); // Implementiere diese Methode, falls du zusätzliche Logik für das Aufsammeln hinzufügen willst
       }
     });
   }

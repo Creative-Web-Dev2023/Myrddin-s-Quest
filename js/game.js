@@ -192,3 +192,18 @@ window.addEventListener("DOMContentLoaded", () => {
     console.error("Element with ID 'bigScreen' not found.");
   }
 });
+
+function checkOrientation() {
+  const rotateDiv = document.getElementById('rotate');
+  if (window.innerWidth < 720 && window.innerHeight > window.innerWidth) {
+    rotateDiv.style.display = 'flex';
+  } else {
+    rotateDiv.style.display = 'none';
+  }
+}
+
+window.addEventListener('orientationchange', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+
+// Initial check
+window.addEventListener('load', checkOrientation);

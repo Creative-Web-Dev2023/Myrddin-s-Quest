@@ -62,6 +62,7 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     
     this.speed = 0.01 + Math.random() * 0.05; // Reduced speed for the knight
+    this.otherDirection = true; // Ensure the knight always faces left
     setTimeout(() => { // Delay the start of the knight's movement
       this.isMoving = true; // Start the knight's movement
       this.animate(); // Start the knight's animation

@@ -1,0 +1,12 @@
+
+@media screen and (max-width: 720px) and (orientation: portrait) {
+    #rotate {
+        display: flex;
+    }
+}
+
+@media screen and (min-width: 721px) or (orientation: landscape) {
+    #rotate {
+        display: none;
+    }
+}

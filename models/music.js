@@ -3,6 +3,7 @@ let walkingSound = new Audio("audio/walking.mp3");
 let attackSound = new Audio("audio/wizard_attack.mp3");
 let fireAttackSound = new Audio("audio/fire_attack.mp3");
 let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
+let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
 let level1Sound = new Audio('audio/background music .mp3'); // Hintergrundsound für Level 1
@@ -103,5 +104,10 @@ function playPoisonBottleSound() {
 function playJumpSound() {
     if (musicIsOn && jumpSound.paused) {
         jumpSound.play();
+    }
+}
+function playCollectPoisonBottleSound() {
+    if (musicIsOn && collectPoisonBottleSound.paused) {
+        collectPoisonBottleSound.play();
     }
 }

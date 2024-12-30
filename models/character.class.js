@@ -131,11 +131,38 @@ class Character extends MovableObject {
 
   throwObject() {
     if (this.world && this.world.throwableObjects) {
-      const throwableObject = new ThrowableObject(this.x + this.width / 2, this.y + this.height / 2);
-      this.world.throwableObjects.push(throwableObject);
-      playPoisonBottleSound(); // Spiele den Sound ab, wenn die Flasche geworfen wird
+      const targetSnake = this.world.enemies.find(enemy => enemy instanceof Snake);
+      if (targetSnake) {
+        const throwableObject = new ThrowableObject(this.x + this.width / 2, this.y + this.height / 2, targetSnake.x);
+        this.world.throwableObjects.push(throwableObject);
+        playPoisonBottleSound(); // Spiele den Sound ab, wenn die Flasche geworfen wird
+        const checkCollisionInterval = setInterval(() => {
+          this.world.enemies.forEach(enemy => {
+            if (enemy instanceof Snake && this.checkCollision(throwableObject, enemy)) {
+              enemy.hitByPoison();
+              clearInterval(checkCollisionInterval); // Stop checking after collision
+            }
+          });
+        }, 100); // Überprüfen Sie die Kollision alle 100ms
+      }
     } else {
       console.error('throwableObjects array is not initialized in the world');
+    }
+  }
+
+  checkCollisionWithSnake(throwableObject) {
+    this.world.enemies.forEach(enemy => {
+      if (enemy instanceof Snake && this.checkCollision(throwableObject, enemy)) {
+        enemy.hitByPoison();
+      }
+    });
+  }
+
+  throwPoisonBottle(target) {
+    if (target instanceof Snake) {
+        // Logik zum Werfen der Giftflasche
+        console.log('Giftflasche auf Schlange geworfen!');
+        target.hitByPoison();
     }
   }
 
@@ -174,7 +201,6 @@ class Character extends MovableObject {
     });
 
     Door.checkCharacterNearDoor(this.world); // Check if the character is near the door
- 
   }
 
   checkCollision(character, object) { // Check collision between character and object
@@ -200,6 +226,7 @@ class Character extends MovableObject {
         this.isAttacking = true; // Set isAttacking to true
         this.playAnimation(this.IMAGES_FIRE_ATTACK); // Play the fire attack animation
         playFireAttackSound(); // Play the fire attack sound
+        this.throwPoisonBottle(endboss); // Throw the poison bottle at the endboss
 
         setTimeout(() => {
           endboss.energy -= 20; // Decrease the endboss's energy
@@ -282,6 +309,7 @@ class Character extends MovableObject {
       this.poisonCollected += 1; // Increase the collected poison count
       this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
       this.world.poisonsArray.splice(index, 1); // Remove the poison object from the array
+      playCollectPoisonBottleSound(); // Play the collect poison bottle sound
     }
   }
 

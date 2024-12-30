@@ -6,11 +6,11 @@ const level2 = new Level(
 
 function generateEnemiesLvl2() {
   return [
-    new Snake(900, 200),
-    new Snake(1400, 200),
-    new Snake(2000, 200),
-    new Snake(2900, 200), // Neue Schlange hinzugefügt
-    new Snake(4100, 200), // Neue Schlange hinzugefügt
+    new Snake(900, 200, 1),
+    new Snake(1400, 200, 2),
+    new Snake(2000, 200,3),
+    new Snake(2900, 200,4), // Neue Schlange hinzugefügt
+    new Snake(4100, 200,5), // Neue Schlange hinzugefügt
     // Endboss am Schluss
     new Endboss(15000, 150), // Fügen Sie den Endboss hinzu
   ];

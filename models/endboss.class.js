@@ -3,9 +3,10 @@ class Endboss extends MovableObject {
     width = 450;   // Breite des Endbosses
     y = -100;      // y-Position
     x = 3500;      // x-Position des Endbosses geändert
-    energy = 100;  // Setze die Energie des Endbosses auf 100
-    statusBar; // Statusleiste für den Endboss
-   
+    speed =5;
+    lastHit = 0; // Zeitpunkt des letzten Treffers
+    deadSound = new Audio('audio/troll dead.mp3'); // Neuer Sound für den Tod des Endbosses
+
     offset = {
         top: 180,    // Reduziert das Rechteck von oben
         bottom: 65, // Reduziert das Rechteck von unten
@@ -25,7 +26,18 @@ class Endboss extends MovableObject {
         'img/troll/idle/idle_008.png',
         'img/troll/idle/idle_009.png',
     ];
-
+    IMAGES_ATTACK= [
+        'img/troll/attack/attack_000.png',
+        'img/troll/attack/attack_001.png',
+        'img/troll/attack/attack_002.png',
+        'img/troll/attack/attack_003.png',
+        'img/troll/attack/attack_004.png',
+        'img/troll/attack/attack_005.png',
+        'img/troll/attack/attack_006.png',
+        'img/troll/attack/attack_007.png',
+        'img/troll/attack/attack_008.png',
+        'img/troll/attack/attack_009.png',
+    ];
     IMAGES_HURT = [
         'img/troll/hurt/hurt_000.png',
         'img/troll/hurt/hurt_001.png',
@@ -57,9 +69,8 @@ class Endboss extends MovableObject {
         this.loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_DEAD);
-        this.statusBar = new EndbossStatusbar(); // Initialisiere die Statusleiste
-        this.statusBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
         this.animate();
     }
 
@@ -69,9 +80,6 @@ class Endboss extends MovableObject {
 
     draw(ctx) {
         super.draw(ctx);
-        this.statusBar.x = this.x + this.width / 2 - 95; // Korrigieren Sie die Position der Statusleiste
-        this.statusBar.y = this.y - 50; // Korrigieren Sie die Position der Statusleiste
-        this.statusBar.draw(ctx); // Zeichne die Statusleiste über dem Kopf des Endbosses
         this.drawFrame(ctx); // Zeichne die Kollisionsbox
     }
 
@@ -83,10 +91,40 @@ class Endboss extends MovableObject {
         ctx.stroke();
     }
 
-    animate() {
+    playDeadSound() {
+        this.deadSound.play();
+    }
+    handleEndbossDead(walkInterval, interval) {
+        clearInterval(walkInterval);
+        this.img_counter++;
+        this.playAnimation(this.IMAGES_DEAD);
+        playSoundFX(this.death_sound);
+        if (this.img_counter >= 3) {
+            this.loadImage(this.IMAGES_DEAD[2]);
+            clearInterval(interval);
+        }
+    }
+    animate(character) {
         setInterval(() => {
             this.playAnimation(this.IMAGES_WALKING);
+            if (this.isDead()) {
+                this.playDeadSound();
+            } else if (this.isCharacterNear(character)) { // Übergeben Sie die Charaktervariable
+                this.playAnimation(this.IMAGES_ATTACK);
+            }
         }, 100);
+    }
+
+    isCharacterNear(character) {
+        if (!character) return false; // Check if character is undefined
+        const characterX = character.x;
+        const distance = Math.abs(this.x - characterX);
+        return distance < 200; // Beispielwert für "sehr nahe"
+    }
+
+    isDead() {
+        // Logik, um zu überprüfen, ob der Endboss tot ist
+        return this.health <= 0;
     }
 
 }

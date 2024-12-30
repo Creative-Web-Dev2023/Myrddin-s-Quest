@@ -15,6 +15,7 @@ class Key extends DrawableObject {
 
   deactivate() {
     this.isActive = false;
+    
   }
 
   draw(ctx) {
@@ -25,7 +26,7 @@ class Key extends DrawableObject {
 
   static initializeKeys() {
     return [
-      new Key(300, 400), // x: 300, y: 400
+      new Key(4400, 150), // Ändern Sie die x- und y-Koordinaten, um die Position des Schlüssels zu ändern
     ];
   }
 }
