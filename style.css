@@ -151,9 +151,46 @@ body {
     background-position: 0 0;
   }
 }
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 h2 {
   position: absolute;
-  top: 118px;
+  top: 47px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 3.8rem;
@@ -355,6 +392,7 @@ h3 {
   left: -146px;
   width: 649px;
   height: auto;
+  animation: float 3s ease-in-out infinite; /* Füge die Animation hinzu */
 }
 .how-to-play-img {
   position: absolute;
@@ -362,6 +400,7 @@ h3 {
   left: 589px;
   width: 154px;
   height: auto;
+  animation: pulse 2s infinite; /* Füge die neue Animation hinzu */
 }
 svg {
   position: absolute;
@@ -560,41 +599,18 @@ svg {
   background-size: cover;
   z-index: 999; /* Niedrigerer Z-Index als die Buttons */
   background-color: #232321;
+  animation: colorShift 10s infinite; /* Füge die neue Animation hinzu */
 }
 
-@media (max-width: 768px) {
-  .audio-icon,
-  .info-icon,
-  .big-screen {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 25vh; /* Adjust the top position for smaller screens */
-    right: 5vw; /* Adjust the right position for smaller screens */
+@keyframes colorShift {
+  0% {
+    filter: hue-rotate(0deg);
   }
-
-  .info-icon {
-    right: 10vw; /* Adjust the right position for smaller screens */
+  50% {
+    filter: hue-rotate(180deg);
   }
-
-  .big-screen {
-    right: 15vw; /* Adjust the right position for smaller screens */
-  }
-}
-
-@media (max-width: 480px) {
-  .audio-icon,
-  .info-icon,
-  .big-screen {
-    width: 20px; /* Further adjust the width for very small screens */
-    top: 20vh; /* Further adjust the top position for very small screens */
-    right: 5vw; /* Further adjust the right position for very small screens */
-  }
-
-  .info-icon {
-    right: 10vw; /* Further adjust the right position for very small screens */
-  }
-
-  .big-screen {
-    right: 15vw; /* Further adjust the right position for very small screens */
+  100% {
+    filter: hue-rotate(360deg);
   }
 }
 
@@ -672,7 +688,7 @@ svg {
   padding: 20px;
   text-align: center;
   font-size: 24px;
-  z-index: 1000;
+  z-index: 2000;
   justify-content: center; /* Zentriert horizontal */
   align-items: center;    /* Zentriert vertikal */
   flex-direction: column; /* Text und Bild untereinander */
@@ -684,6 +700,51 @@ svg {
   animation: rotate-animation 2s linear infinite; /* Rotation */
 }
 
+@media (max-width: 768px) {
+  .audio-icon,
+  .info-icon,
+  .big-screen {
+    width: 25px; /* Adjust the width for smaller screens */
+    top: 25vh; /* Adjust the top position for smaller screens */
+    right: 5vw; /* Adjust the right position for smaller screens */
+  }
+
+  .info-icon {
+    right: 10vw; /* Adjust the right position for smaller screens */
+  }
+
+  .big-screen {
+    right: 15vw; /* Adjust the right position for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .audio-icon,
+  .info-icon,
+  .big-screen {
+    width: 20px; /* Further adjust the width for very small screens */
+    top: 20vh; /* Further adjust the top position for very small screens */
+    right: 5vw; /* Further adjust the right position for very small screens */
+  }
+
+  .info-icon {
+    right: 10vw; /* Further adjust the right position for very small screens */
+  }
+
+  .big-screen {
+    right: 15vw; /* Further adjust the right position for very small screens */
+  }
+}
+
+@media screen and (max-width: 870px) and (orientation: portrait) {
+  #rotate {
+    font-size: 30px;
+  }
+  .rotate-message {
+    font-family: Lucida Sans Unicode;
+  }
+}
+
 @media screen and (max-width: 800px) and (orientation: portrait) {
   #rotate {
     font-size: 30px;
@@ -691,7 +752,6 @@ svg {
   .rotate-message {
     font-family: Lucida Sans Unicode;
   }
- 
 }
 
 html, body {

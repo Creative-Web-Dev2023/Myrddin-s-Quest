@@ -86,37 +86,16 @@ class Endboss extends MovableObject {
     playDeadSound() {
         this.deadSound.play();
     }
-    handleEndbossDead(walkInterval, interval) {
-        clearInterval(walkInterval);
-        this.img_counter++;
-        this.playAnimation(this.IMAGES_DEAD);
-        playSoundFX(this.death_sound);
-        if (this.img_counter >= 3) {
-            this.loadImage(this.IMAGES_DEAD[2]);
-            clearInterval(interval);
-        }
-    }
+  
     animate(character) {
         setInterval(() => {
             this.playAnimation(this.IMAGES_WALKING);
             if (this.isDead()) {
                 this.playDeadSound();
-            } else if (this.isCharacterNear(character)) { // Übergeben Sie die Charaktervariable
-                this.playAnimation(this.IMAGES_ATTACK);
             }
         }, 100);
     }
 
-    isCharacterNear(character) {
-        if (!character) return false; // Check if character is undefined
-        const characterX = character.x;
-        const distance = Math.abs(this.x - characterX);
-        return distance < 200; // Beispielwert für "sehr nahe"
-    }
-
-    isDead() {
-        // Logik, um zu überprüfen, ob der Endboss tot ist
-        return this.health <= 0;
-    }
+ 
 
 }

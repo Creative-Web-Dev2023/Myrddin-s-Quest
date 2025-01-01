@@ -27,8 +27,7 @@ function init() { // Initialize the game
 function gameLoop() { // Game loop function
   world.update(); // Collision checks and other updates
   world.draw(); // Draw all objects, including character and coins
-  if (world.level === level2) { 
-  }
+  world.checkThrowableObject(); // Regularly call checkThrowableObject method
   requestAnimationFrame(gameLoop); // Request the next frame
 }
 
@@ -133,7 +132,9 @@ window.addEventListener("keydown", (e) => {
   }
   if (e.code === "KeyD") {
     keyboard.D = true; // D key
-    world.character.throwObject(); // Call character method JUMP
+    if (world && world.character) {
+      world.character.throwObject(); // Call character method throwObject
+    }
   }
 });
 
@@ -195,7 +196,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function checkOrientation() {
   const rotateDiv = document.getElementById('rotate');
-  if (window.innerWidth <720 && window.innerHeight > window.innerWidth) {
+  if (window.innerWidth < 720 && window.innerHeight > window.innerWidth) {
     rotateDiv.style.display = 'flex';
   } else {
     rotateDiv.style.display = 'none';

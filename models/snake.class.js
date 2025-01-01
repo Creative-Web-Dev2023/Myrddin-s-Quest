@@ -135,13 +135,6 @@ class Snake extends MovableObject {
     return super.getCollisionBox('snake');
   }
 
-  hitByPoison() {
-    this.health -= 20; // Beispielwert für den Schaden durch Gift
-    if (this.health <= 0) {
-      this.die();
-    }
-  }
-
   checkCollision(object1, object2) {
     const box1 = object1.getHitbox();
     const box2 = object2.getHitbox();
@@ -154,11 +147,6 @@ class Snake extends MovableObject {
     );
   }
 
-  checkCollisionWithThrowableObject(throwableObject) {
-    if (this.checkCollision(this, throwableObject)) {
-      this.hitByPoison();
-    }
-  }
 
   draw(ctx) {
     super.draw(ctx);

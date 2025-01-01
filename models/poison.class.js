@@ -45,14 +45,6 @@ class PoisonObject extends DrawableObject {
     }
   }
 
-  getHitbox() {
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height,
-    };
-  }
 
   animate() {
     setInterval(() => {

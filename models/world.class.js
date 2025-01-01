@@ -111,11 +111,9 @@ class World {
     if (this.levelCompleted) return; // Stop the update if the level is completed
     this.checkCollisionsWithEnemies(); // Check collisions with enemies
     this.character.update(); // Update the character
-    this.updatePoison(); // Update poison objects
-    this.checkCollisionsWithEndboss(); // Check collisions with the endboss
+    this.updatePoison(); // Update poison object
     this.checkThrowableObject(); // Check if a bottle should be thrown
     this.checkCollisionsWithCollectables(); // Check collisions with collectables
-    this.checkKnightAttack(); // Check if the knight attacks the character
     this.checkDoorCollision(); // Check collisions with the door
     if (this.character.isMoving() && musicIsOn) { // Check if the character is moving and music is on
       playWalkingSound(); // Play walking sound only if music is on
@@ -163,31 +161,6 @@ class World {
     });
   }
 
-  checkKnightAttack() {
-    this.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight) {
-        const distance = Math.abs(this.character.x - enemy.x);
-        if (distance <= 100 && !this.character.isAboveGround() && !enemy.isHurt()) {
-          enemy.isAttacking = true;
-          enemy.playAnimation(enemy.IMAGES_ATTACKING);
-          setTimeout(() => {
-            if (!this.character.isAboveGround() && this.checkCollision(this.character, enemy)) {
-              this.character.hit(enemy);
-            }
-          }, 1000);
-        } else {
-          enemy.isAttacking = false;
-        }
-      }
-    });
-  }
-
-  checkCollisionsWithEndboss() { // Check collisions with the endboss
-    if (this.level.endboss && this.checkCollision(this.character, this.level.endboss)) { // Check if the character is colliding with the endboss
-      this.character.attackEndboss(this.level.endboss); // Attack the endboss
-    }
-  }
-
   updatePoison() { // Update the poison objects 
     this.poisonsArray.forEach((poison, index) => { // Iterate over the poison objects
       if (poison.isActive && this.checkCollision(this.character, poison)) { // Check if the poison is active and colliding with the character
@@ -197,10 +170,6 @@ class World {
   }
 
  
-  killSnakes() { // Kill snakes in the level
-    this.level.enemies = this.level.enemies.filter((enemy) => !(enemy instanceof Snake)); // Remove snakes from enemies
-  }
-
   checkCollision(character, object) { // Check collision between character and object	
     const charBox = character.getHitbox(); // Get the character's hitbox
     const objBox = object.getHitbox(); // Get the object's hitbox

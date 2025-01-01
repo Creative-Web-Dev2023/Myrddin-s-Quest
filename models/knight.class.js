@@ -9,9 +9,7 @@ class Knight extends MovableObject {
   isMoving = false; // State for moving the knight left and right
   isAttacking = false; // State for attacking the knight
   dead = false; // State for dead
-  
-  healthBar; // Status bar for the knight's health
-
+ 
   offset = {
     top: 70, // Reduce the top offset values
     bottom: 30, // Extend the bottom offset values

@@ -130,41 +130,18 @@ class Character extends MovableObject {
   }
 
   throwObject() {
-    if (this.world && this.world.throwableObjects) {
-      const targetSnake = this.world.enemies.find(enemy => enemy instanceof Snake);
-      if (targetSnake) {
-        const throwableObject = new ThrowableObject(this.x + this.width / 2, this.y + this.height / 2, targetSnake.x);
-        this.world.throwableObjects.push(throwableObject);
-        playPoisonBottleSound(); // Spiele den Sound ab, wenn die Flasche geworfen wird
-        const checkCollisionInterval = setInterval(() => {
-          this.world.enemies.forEach(enemy => {
-            if (enemy instanceof Snake && this.checkCollision(throwableObject, enemy)) {
-              enemy.hitByPoison();
-              clearInterval(checkCollisionInterval); // Stop checking after collision
-            }
-          });
-        }, 100); // Überprüfen Sie die Kollision alle 100ms
-      }
-    } else {
-      console.error('throwableObjects array is not initialized in the world');
+    if (this.canThrow()) {
+      let bottle = new ThrowableObject(this.x, this.y);
+      this.world.throwableObjects.push(bottle);
+      this.poisonCollected--; // Decrease the collected poison count
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
     }
   }
 
-  checkCollisionWithSnake(throwableObject) {
-    this.world.enemies.forEach(enemy => {
-      if (enemy instanceof Snake && this.checkCollision(throwableObject, enemy)) {
-        enemy.hitByPoison();
-      }
-    });
+  canThrow() {
+    return this.poisonCollected > 0; // Check if the character has collected poison
   }
 
-  throwPoisonBottle(target) {
-    if (target instanceof Snake) {
-        // Logik zum Werfen der Giftflasche
-        console.log('Giftflasche auf Schlange geworfen!');
-        target.hitByPoison();
-    }
-  }
 
   update() {
     if (!this.isVisible) return; // If the character is not visible, exit the function

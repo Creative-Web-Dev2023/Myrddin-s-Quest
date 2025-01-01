@@ -74,30 +74,16 @@ class DrawableObject {
 
   getCollisionBox() {
     return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height
+      x: this.x + this.offset.left,// X and Y position plus offset values from all sides of the rectangle
+      y: this.y + this.offset.top, // X and Y position plus offset values from all sides of the rectangle
+      width: this.width - this.offset.left - this.offset.right, // Width and height minus offset values from all sides of the rectangle
+      height: this.height - this.offset.top - this.offset.bottom // Width and height minus offset values from all sides of the rectangle
     };
   }
 
   drawCollisionBox(ctx) {
-    ctx.beginPath();
-    ctx.lineWidth = '2';
-    if (this instanceof Character) {
-      ctx.strokeStyle = 'blue';
-    } else if (this instanceof Knight) {
-      ctx.strokeStyle = 'red';
-    } else if (this instanceof Endboss) {
-      ctx.strokeStyle = 'yellow';
-    } else if (this instanceof Snake) {
-      ctx.strokeStyle = 'beige';
-    } else if (this instanceof Door) {
-      ctx.strokeStyle = 'green';
-    } else if(this instanceof PoisonObject) {
-      ctx.strokeStyle = 'black';
-    }
+    ctx.beginPath();// 
     ctx.rect(this.x, this.y, this.width, this.height); // Kollisionsbox zeichnen
-    ctx.stroke();
+    ctx.stroke();// in english stroke means was the outline of the shape
   }
 }
