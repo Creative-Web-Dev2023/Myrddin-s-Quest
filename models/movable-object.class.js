@@ -43,7 +43,7 @@ class MovableObject extends DrawableObject {
       box1.y + box1.height > box2.y    // Unterseite von box1 unter der Oberseite von box2
     );
   }
-  
+ 
   isHurt() { // Check if object is hurt
     let timepassed = new Date().getTime() - this.lastHit; // Calculate time passed since last hit in milliseconds
     timepassed = timepassed / 1000; // Convert to seconds  

@@ -115,6 +115,12 @@ class Knight extends MovableObject {
     }
   }
 
+  playDeathAnimation() {
+    if (this.IMAGES_DEAD) { // Prüfen, ob es eine Todesanimation gibt
+      this.playAnimation(this.IMAGES_DEAD); // Animation abspielen
+    }
+  }
+
   updateHealthBar() {
     // Update the knight's health bar
   }
@@ -139,6 +145,17 @@ class Knight extends MovableObject {
     }
     if (this.energy == 0) { // If the energy is 0
       this.die(); // Call the die function
+      this.playDeathAnimation(); // Play the death animation
+      setTimeout(() => {
+        this.removeKnight(); // Remove the knight from the game
+      }, 1500); // Wartezeit, um die Animation abzuschließen
+    }
+  }
+
+  removeKnight() {
+    const knightIndex = this.world.knights.findIndex(knight => knight.id === this.id);
+    if (knightIndex !== -1) {
+      this.world.knights.splice(knightIndex, 1);
     }
   }
 

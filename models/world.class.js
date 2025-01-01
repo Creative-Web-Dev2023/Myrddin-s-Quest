@@ -110,6 +110,7 @@ class World {
   update() {
     if (this.levelCompleted) return; // Stop the update if the level is completed
     this.checkCollisionsWithEnemies(); // Check collisions with enemies
+    this.checkCollisionWithKnights(); // Check collisions with knights
     this.character.update(); // Update the character
     this.updatePoison(); // Update poison objects
     this.checkThrowableObject(); // Check if a bottle should be thrown
@@ -156,6 +157,30 @@ class World {
         const distance = Math.abs(this.character.x - enemy.x);
         if (distance <= 100 && !enemy.isDead) {
           enemy.attack();
+        }
+      }
+    });
+  }
+
+  checkCollisionWithKnights() {
+    this.enemies.forEach((enemy) => {
+      if (enemy instanceof Knight && this.character.isColliding(enemy)) { // Prüfen, ob der Charakter mit dem Ritter kollidiert
+        const characterBox = this.character.getCollisionBox();
+        const knightBox = enemy.getCollisionBox();
+        if (
+          this.character.speedY > 20 && // Der Charakter bewegt sich nach unten
+          characterBox.y + characterBox.height <= knightBox.y + knightBox.height && // Der untere Rand des Charakters berührt den oberen Bereich des Ritters
+          characterBox.x + characterBox.width > knightBox.x && // Der Charakter ist horizontal innerhalb des Ritters
+          characterBox.x < knightBox.x + knightBox.width // Der Charakter ist horizontal innerhalb des Ritters
+        ) {
+          this.character.jump(); // Der Charakter springt erneut
+          enemy.playDeathAnimation(); // Animation für das Verschwinden des Ritters (optional)
+          setTimeout(() => {
+            const knightIndex = this.enemies.findIndex(knight => knight.id === enemy.id);
+            if (knightIndex !== -1) {
+              this.enemies.splice(knightIndex, 1); // Ritter aus dem Array entfernen
+            }
+          }, 1500); // Wartezeit, um die Animation abzuschließen
         }
       }
     });
