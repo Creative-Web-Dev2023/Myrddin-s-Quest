@@ -32,28 +32,18 @@ class MovableObject extends DrawableObject {
     }
   }
 
-  isColliding(mo) { // Check if object is colliding with another object
-    if (!(mo instanceof MovableObject)) return false; // Check if mo is an instance of MovableObject
-    const box1 = this.getCollisionBox(); // Get collision box for this object
-    const box2 = mo.getCollisionBox(); // Get collision box for mo object
+  isColliding(mo) {
+    if (!(mo instanceof MovableObject)) return false; // Prüfen, ob mo ein MovableObject ist
+    const box1 = this.getCollisionBox(); // Kollisionsbox des aktuellen Objekts
+    const box2 = mo.getCollisionBox();   // Kollisionsbox des anderen Objekts
     return (
-      box1.x < box2.x + box2.width && // Check for collision on all sides of the rectangle
-      box1.x + box1.width > box2.x && // Check for collision on all sides of the rectangle
-      box1.y < box2.y + box2.height && // Check for collision on all sides of the rectangle
-      box1.y + box1.height > box2.y
-    ); // Check for collision
+      box1.x < box2.x + box2.width &&  // Linke Seite von box1 vor der rechten Seite von box2
+      box1.x + box1.width > box2.x &&  // Rechte Seite von box1 hinter der linken Seite von box2
+      box1.y < box2.y + box2.height && // Oberseite von box1 über der Unterseite von box2
+      box1.y + box1.height > box2.y    // Unterseite von box1 unter der Oberseite von box2
+    );
   }
-
-  getCollisionBox() {
-    const box = {
-      x: this.x + this.offset.left, // X and Y position plus offset values from all sides of the rectangle
-      y: this.y + this.offset.top, // X and Y position plus offset values from all sides of the rectangle
-      width: this.width - this.offset.left - this.offset.right, // Width and height minus offset values from all sides of the rectangle
-      height: this.height - this.offset.top - this.offset.bottom, // Width and height minus offset values from all sides of the rectangle 
-    };
-    return box; // Return collision box
-  }
-
+  
   isHurt() { // Check if object is hurt
     let timepassed = new Date().getTime() - this.lastHit; // Calculate time passed since last hit in milliseconds
     timepassed = timepassed / 1000; // Convert to seconds  

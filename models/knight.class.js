@@ -11,10 +11,10 @@ class Knight extends MovableObject {
   dead = false; // State for dead
  
   offset = {
-    top: 70, // Reduce the top offset values
+    top: 80, // Reduce the top offset values
     bottom: 30, // Extend the bottom offset values
-    left: 20, // Reduce the left offset values
-    right: 180 // Reduce the right offset values
+    left: 80, // Reduce the left offset values
+    right: 190 // Reduce the right offset values
   };
 
   IMAGES_WALKING = [

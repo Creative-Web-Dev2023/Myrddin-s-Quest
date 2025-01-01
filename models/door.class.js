@@ -68,13 +68,13 @@ class Door extends DrawableObject {
   }
 
   isCollidingWithDoor(character) {
-    const doorHitbox = this.getHitbox();
-    const characterHitbox = character.getHitbox();
+    const doorCollisionBox = this.getCollisionBox();
+    const characterCollisionBox = character.getCollisionBox();
     const isColliding =
-      characterHitbox.x < doorHitbox.x + doorHitbox.width &&
-      characterHitbox.x + characterHitbox.width > doorHitbox.x &&
-      characterHitbox.y < doorHitbox.y + doorHitbox.height &&
-      characterHitbox.y + characterHitbox.height > doorHitbox.y;
+      characterCollisionBox.x < doorCollisionBox.x + doorCollisionBox.width &&
+      characterCollisionBox.x + characterCollisionBox.width > doorCollisionBox.x &&
+      characterCollisionBox.y < doorCollisionBox.y + doorCollisionBox.height &&
+      characterCollisionBox.y + characterCollisionBox.height > doorCollisionBox.y;
 
     return isColliding;
   }

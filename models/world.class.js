@@ -111,7 +111,7 @@ class World {
     if (this.levelCompleted) return; // Stop the update if the level is completed
     this.checkCollisionsWithEnemies(); // Check collisions with enemies
     this.character.update(); // Update the character
-    this.updatePoison(); // Update poison object
+    this.updatePoison(); // Update poison objects
     this.checkThrowableObject(); // Check if a bottle should be thrown
     this.checkCollisionsWithCollectables(); // Check collisions with collectables
     this.checkDoorCollision(); // Check collisions with the door
@@ -171,8 +171,8 @@ class World {
 
  
   checkCollision(character, object) { // Check collision between character and object	
-    const charBox = character.getHitbox(); // Get the character's hitbox
-    const objBox = object.getHitbox(); // Get the object's hitbox
+    const charBox = character.getCollisionBox(); // Get the character's collision box
+    const objBox = object.getCollisionBox(); // Get the object's collision box
 
     return ( // Check if there is a collision between the character and the object
       charBox.x < objBox.x + objBox.width && // Check collision on the x-axis

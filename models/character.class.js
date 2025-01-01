@@ -14,7 +14,7 @@ class Character extends MovableObject {
   offset = {
     top: 50, // Reduce the rectangle from the top
     bottom: 10, // Reduce the rectangle from the bottom
-    left: 200, // Reduce the rectangle from the left
+    left: 210, // Reduce the rectangle from the left
     right: 200, // Reduce the rectangle from the right
   };
 
@@ -137,7 +137,6 @@ class Character extends MovableObject {
       this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
     }
   }
-
   canThrow() {
     return this.poisonCollected > 0; // Check if the character has collected poison
   }
@@ -180,8 +179,8 @@ class Character extends MovableObject {
   }
 
   checkCollision(character, object) { // Check collision between character and object
-    const charBox = character.getHitbox(); // Get the character's hitbox
-    const objBox = object.getHitbox(); // Get the object's hitbox
+    const charBox = character.getCollisionBox(); // Get the character's collision box
+    const objBox = object.getCollisionBox(); // Get the object's collision box
 
     return ( // Check if there is a collision between the character and the object
       charBox.x < objBox.x + objBox.width && // Check collision on the x-axis
@@ -194,32 +193,6 @@ class Character extends MovableObject {
   jump() {
     this.speedY = 33; // Set the jump speed
     playJumpSound(); // Play the jump sound
-  }
-
-  attackEndboss(endboss) {
-    if (this.world.keyboard && this.world.keyboard.THROW) { // If the throw key is pressed
-      if (!this.isAttacking) { // If the character is not already attacking
-        this.isAttacking = true; // Set isAttacking to true
-        this.playAnimation(this.IMAGES_FIRE_ATTACK); // Play the fire attack animation
-        playFireAttackSound(); // Play the fire attack sound
-        this.throwPoisonBottle(endboss); // Throw the poison bottle at the endboss
-
-        setTimeout(() => {
-          endboss.energy -= 20; // Decrease the endboss's energy
-          if (endboss.energy <= 0) { // If the endboss's energy is less than or equal to 0
-            endboss.energy = 0; // Set the endboss's energy to 0
-            endboss.isDead = true; // Set the endboss's isDead to true
-            endboss.playAnimation(endboss.IMAGES_DEAD); // Play the endboss's dead animation
-            setTimeout(() => {
-              this.world.level.endboss = null; // Remove the endboss from the level
-            }, 2000); // Delay the removal by 2000 ms (2 seconds)
-          } else {
-            endboss.playAnimation(endboss.IMAGES_HURT); // Play the endboss's hurt animation
-          }
-          this.isAttacking = false; // Set isAttacking to false
-        }, 500); // Delay the attack by 500 ms (0.5 seconds)
-      }
-    }
   }
 
   isAboveGround() {
@@ -235,7 +208,7 @@ class Character extends MovableObject {
   }
 
   isDead() {
-    return this.energy == 0;  // When energy is 0, character is dead
+    return this.energy <= 0;  // When energy is 0 or less, character is dead
   }
 
   hit(enemy) {
@@ -295,15 +268,6 @@ class Character extends MovableObject {
       this.hasKey = true; // Set the character's hasKey property to true
       this.world.keysArray.splice(index, 1); // Remove the key object from the array
     }
-  }
-
-  getHitbox() {
-    return {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom,
-    };
   }
 
   draw(ctx) {

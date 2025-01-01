@@ -63,15 +63,6 @@ class DrawableObject {
     }
   }
 
-  getHitbox() {
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height
-    };
-  }
-
   getCollisionBox() {
     return {
       x: this.x + this.offset.left,// X and Y position plus offset values from all sides of the rectangle
