@@ -155,26 +155,32 @@ class Character extends MovableObject {
 
 
   update() {
-    if (!this.isVisible) return; // If the character is not visible, exit the function
-    if (!this.isDead()) { // If the character is not dead
-      walkingSound.pause(); // Pause the walking sound
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // If the right arrow key is pressed and the character is within the level boundaries
-      this.moveRight(); // Move the character to the right
-      this.otherDirection = false; // Set the direction to right
-      playWalkingSound(); // Play the walking sound
+    if (!this.isVisible) return;
+  
+    if (!this.isDead()) { // Funktion mit Klammern
+      walkingSound.pause();
+  
+      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+        this.moveRight();
+        this.otherDirection = false;
+        playWalkingSound();
       }
-      if (this.world.keyboard.LEFT && this.x > 0) { // If the left arrow key is pressed and the character is within the level boundaries
-      this.moveLeft(); // Move the character to the left
-      this.otherDirection = true; // Set the direction to left
-      playWalkingSound(); // Play the walking sound
+  
+      if (this.world.keyboard.LEFT && this.x > 0) {
+        this.moveLeft();
+        this.otherDirection = true;
+        playWalkingSound();
       }
-      if (this.world.keyboard.JUMP && !this.isAboveGround()) { // If the jump key is pressed and the character is on the ground
-      this.jump(); // Make the character jump
+  
+      if (this.world.keyboard.JUMP && !this.isAboveGround()) {
+        this.jump();
       }
-      this.world.camera_x = -this.x - 190; // Update the camera position based on the character's position
-      this.checkCollisions(); // Check for collisions
+  
+      this.world.camera_x = -this.x - 190;
+      this.checkCollisions();
     }
   }
+  
 
   checkCollisions() {
     this.world.poisonsArray.forEach((poison, index) => {
@@ -221,21 +227,28 @@ class Character extends MovableObject {
     return this.energy < 100 && this.energy > 0;  // Energy is less than 100 and greater than 0, character is hurt
   }
 
-  isDead() {
-    return this.energy <= 0;  // When energy is 0 or less, character is dead
-  }
+   isDead() {
+    return this.energy <= 0; // Rückgabe: true, wenn die Energie des Charakters 0 oder weniger ist
+}
 
+  
   hit(enemy) {
     const distance = Math.abs(this.x - enemy.x);  // Calculate the distance between the character and the enemy
     if (!this.invulnerable && distance < 100) { // Check if the character is vulnerable and close enough to the enemy
-      this.energy -= 10;  // Reduce the character's energy by 10
-      if (this.energy <= 0) { // Check if the character's energy is less than or equal to 0
-        this.energy = 0;  // Set the character's energy to 0
+      this.takeDamage(10);  // Use takeDamage method to reduce the character's energy
+    }
+  }
+
+  takeDamage(damage) {
+    if (!this.invulnerable) {
+      this.energy -= damage;
+      if (this.energy <= 0) {
+        this.energy = 0;
       }
-      this.CharacterHealthBar.setPercentage(this.energy);   // Update the character's health bar
-      this.invulnerable = true;   // Set the character to invulnerable
+      this.CharacterHealthBar.setPercentage(this.energy);
+      this.invulnerable = true;
       setTimeout(() => {
-        this.invulnerable = false;  // Set the character to vulnerable after 1 second
+        this.invulnerable = false;
       }, 1000);
     }
   }

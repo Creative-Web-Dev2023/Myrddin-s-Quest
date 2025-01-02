@@ -51,20 +51,20 @@ class MovableObject extends DrawableObject {
   }
 
   isDead() { // Check if object is dead
-    return this.energy == 0; // Check if energy is zero
+    return this.energy <= 0; // Check if energy is zero
   }
 
   playAnimation(images, delay = 100) { // Play animation frames for the object
-    if (images && images.length > 0) { // Check for valid images array
-      let i = this.currentImage % images.length; // Get the current frame index from the images array
-      let path = images[i]; // Get the current frame path
-      this.img = this.imageCache[path]; // Set the image to the current frame  
-      this.currentImage++; // Increase current image index
-      if (this.currentImage >= images.length) { // Check if last frame is reached
-        this.currentImage = 0; // Reset to first frame
+    if (images && images.length > 0) { // Prüfe, ob die Bilder vorhanden sind
+      let i = this.currentImage % images.length; // Bestimme das aktuelle Bild
+      let path = images[i]; // Hole den Pfad des aktuellen Bildes
+      this.img = this.imageCache[path]; // Setze das Bild
+      this.currentImage++; // Erhöhe den aktuellen Bildindex
+      if (this.currentImage >= images.length) { // Wenn alle Bilder durchlaufen sind
+        this.currentImage = 0; // Setze den Index zurück
       }
     }
-    setTimeout(() => {}, delay); // Delay between frames
+    setTimeout(() => {}, delay); // Verzögerung zwischen den Frames
   }
 
   loadImages(images) { // Load images for the object
@@ -134,6 +134,8 @@ class MovableObject extends DrawableObject {
     this.playAnimation(this.IMAGES_DEAD); // Play dead animation frames for the object  
     if (this.currentImage >= this.IMAGES_DEAD.length - 1) { // Check if last frame is reached
       clearInterval(this.animationInterval); // Stop animation after death animation completes
+      clearInterval(this.movementInterval); // Stop movement interval
+      clearInterval(this.attackAnimationInterval); // Stop attack animation interval
       setTimeout(() => {
         if (this.world.endGame) { // If endGame is available
           this.world.endGame.showYouLostScreen(); // Show "You Lost" screen

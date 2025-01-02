@@ -61,6 +61,9 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.01 + Math.random() * 0.05; // Reduced speed for the knight
     this.otherDirection = true; // Ensure the knight always faces left
+    this.attackDamage = 20; // Schaden des Ritters
+    this.attackRange = 50;  // Reichweite des Angriffs
+    this.attackInterval = null;  // Intervall für den Angriff
     setTimeout(() => { // Delay the start of the knight's movement
       this.isMoving = true; // Start the knight's movement
       this.animate(); // Start the knight's animation
@@ -122,7 +125,7 @@ class Knight extends MovableObject {
       this.playAnimation(this.IMAGES_DEAD); // Animation abspielen
       setTimeout(() => {
         // Ritter bleibt kurz liegen, bevor er verschwindet
-        setTimeout(() => {
+        Timeout(() => {
           this.removeKnight(); // Ritter nach einer längeren Verzögerung entfernen
         }, 1000); // Wartezeit, bevor der Ritter verschwindet
       }, 3000); // Wartezeit für die Animation verlängern
@@ -150,6 +153,42 @@ class Knight extends MovableObject {
       this.energy = 0;
       this.playDeathAnimation(); // Todesanimation abspielen
     }
+  }
+ 
+  attack(character) {
+    if (this.isColliding(character)) { // Überprüfen, ob der Ritter mit dem Charakter kollidiert
+      character.takeDamage(this.attackDamage); // Schaden auf den Charakter anwenden
+      this.playAttackAnimation(); // Angriff-Animation abspielen
+    }
+  }
+
+  playAttackAnimation() {
+    this.isAttacking = true; // Setze den Zustand auf "angreifend"
+    this.playAnimation(this.IMAGES_ATTACKING); // Animation für Angriff
+    setTimeout(() => {
+      this.isAttacking = false; // Setze den Zustand nach der Animation zurück
+    }, 500); // Dauer der Angriff-Animation
+  }
+
+  checkForAttack(character) {
+    const knightBox = this.getCollisionBox(); // Kollisionsbox des Ritters
+    const characterBox = character.getCollisionBox(); // Kollisionsbox des Charakters
+
+    const isColliding = (
+      knightBox.x < characterBox.x + characterBox.width &&
+      knightBox.x + knightBox.width > characterBox.x &&
+      knightBox.y < characterBox.y + characterBox.height &&
+      knightBox.y + knightBox.height > characterBox.y
+    );
+
+    if (isColliding) { // Wenn die Kollisionsboxen sich überschneiden
+      this.attack(character); // Angriff ausführen
+    }
+  }
+
+  update(character) {
+    this.checkForAttack(character); // Prüfen, ob der Angriff ausgeführt werden soll
+    // Weitere Logik für Bewegung des Ritters kann hier hinzugefügt werden
   }
 
   removeKnight() {

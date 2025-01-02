@@ -102,7 +102,12 @@ class World {
     const gameLoop = () => { // Define the game loop
       this.update(); // Update the game state
       this.draw(); // Draw the game state
-      requestAnimationFrame(gameLoop);// Call the game loop again
+      this.enemies.forEach((enemy) => {
+        if (enemy instanceof Knight) {
+          enemy.update(this.character); // Überprüfe, ob der Ritter angreifen soll
+        }
+      });
+      requestAnimationFrame(gameLoop); // Call the game loop again
     };
     gameLoop(); // Start the game loop 
   }
@@ -164,23 +169,23 @@ class World {
 
   checkCollisionWithKnights() {
     this.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight && this.character.isColliding(enemy)) { // Prüfen, ob der Charakter mit dem Ritter kollidiert
+      if (enemy instanceof Knight && this.character.isColliding(enemy)) {
         const characterBox = this.character.getCollisionBox();
         const knightBox = enemy.getCollisionBox();
         if (
-          this.character.speedY > 20 && // Der Charakter bewegt sich nach unten
-          characterBox.y + characterBox.height <= knightBox.y + knightBox.height && // Der untere Rand des Charakters berührt den oberen Bereich des Ritters
-          characterBox.x + characterBox.width > knightBox.x && // Der Charakter ist horizontal innerhalb des Ritters
-          characterBox.x < knightBox.x + knightBox.width // Der Charakter ist horizontal innerhalb des Ritters
+          this.character.speedY > 20 &&
+          characterBox.y + characterBox.height <= knightBox.y + knightBox.height &&
+          characterBox.x + characterBox.width > knightBox.x &&
+          characterBox.x < knightBox.x + knightBox.width
         ) {
-          this.character.jump(); // Der Charakter springt erneut
-          enemy.playDeathAnimation(); // Animation für das Verschwinden des Ritters (optional)
+          this.character.jump();
+          enemy.playDeathAnimation();
           setTimeout(() => {
             const knightIndex = this.enemies.findIndex(knight => knight.id === enemy.id);
             if (knightIndex !== -1) {
-              this.enemies.splice(knightIndex, 1); // Ritter aus dem Array entfernen
+              this.enemies.splice(knightIndex, 1);
             }
-          }, 1500); // Wartezeit, um die Animation abzuschließen
+          }, 1500);
         }
       }
     });
