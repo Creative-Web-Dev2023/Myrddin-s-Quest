@@ -50,7 +50,7 @@ class DrawableObject {
         ctx.strokeStyle = 'beige';
       } else if (this instanceof Door) {
         ctx.strokeStyle = 'green';
-      }else if (this instanceof PoisonObject) {
+      } else if (this instanceof PoisonObject) {
         ctx.strokeStyle = 'black';
       }
       ctx.rect(
@@ -70,11 +70,5 @@ class DrawableObject {
       width: this.width - this.offset.left - this.offset.right, // Width and height minus offset values from all sides of the rectangle
       height: this.height - this.offset.top - this.offset.bottom // Width and height minus offset values from all sides of the rectangle
     };
-  }
-
-  drawCollisionBox(ctx) {
-    ctx.beginPath();// 
-    ctx.rect(this.x, this.y, this.width, this.height); // Kollisionsbox zeichnen
-    ctx.stroke();// in english stroke means was the outline of the shape
   }
 }

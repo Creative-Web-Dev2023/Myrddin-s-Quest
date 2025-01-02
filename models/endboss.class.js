@@ -80,7 +80,6 @@ class Endboss extends MovableObject {
 
     draw(ctx) {
         super.draw(ctx);
-        this.drawFrame(ctx, 'violet'); // Verwenden Sie die allgemeine drawFrame-Methode
     }
 
     playDeadSound() {

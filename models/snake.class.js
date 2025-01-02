@@ -132,9 +132,60 @@ class Snake extends MovableObject {
     }, 1000); // Attack animation duration
   }
   getCollisionBox() {
-    return super.getCollisionBox('snake');
+    return {
+      x: this.x + this.offset.left, // Verschiebung der Kollisionsbox
+      y: this.y + this.offset.top, // Höhe anpassen, da die Schlange kriecht
+      width: this.width * 0.8, // Kollisionsbox etwas kleiner machen
+      height: this.height * 0.2 // Nur die untere Hälfte berücksichtigen
+    };
   }
 
+  jump() {
+    this.isVisible = false; // Make the snake invisible
+    setTimeout(() => {
+      this.isVisible = true; // Make the snake visible again after 2 seconds
+    }, 2000);
+  }
+
+  takeDamage(damage) {
+    if (this.energy > 0) { // Check if the snake is alive
+      this.energy -= damage; // Reduce the energy of the snake
+      this.playAnimation(this.IMAGES_HURT);
+
+      if (this.energy <= 0) { // Check if the snake has died
+        this.energy = 0; // Set the energy to 0
+        this.die(); // Schlange stirbt, wenn Energie 0 ist
+      }
+    } else {
+      console.log("Snake is dead.");
+    }
+  }
+
+  die() {
+    if (!this.isDead) {
+      this.isDead = true;
+      this.playAnimation(this.IMAGES_DEAD); // Zeige Sterbeanimation
+      setTimeout(() => {
+        this.removeSnake(); // Entferne die Schlange nach 3 Sekunden
+      }, 3000);
+    }
+  }
+
+  playDeathAnimation() {
+    this.playAnimation(this.IMAGES_DEAD); // Play dead animation frames for the snake
+    setTimeout(() => {
+      this.removeSnake(); // Remove the snake after a delay
+    }, 3000); // Delay before removing the snake
+  }
+
+  removeSnake() {
+    if (this.world && this.world.snakes) { // Check if this.world and this.world.snakes are defined
+      const snakeIndex = this.world.snakes.findIndex(snake => snake.id === this.id);  // Find the snake by id
+      if (snakeIndex !== -1) { // Check if the snake is found
+        this.world.snakes.splice(snakeIndex, 1); // Remove the snake from the array
+      }
+    }
+  }
 }
 
 

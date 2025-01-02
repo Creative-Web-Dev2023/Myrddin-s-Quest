@@ -18,8 +18,7 @@ class Level {
     this.clouds.forEach((cloud) => cloud.draw(ctx)); // Zeichne die Wolken
     this.enemies.forEach((enemy) => enemy.draw(ctx)); // Zeichne die Feinde
     this.poisonObjects.forEach((poison) => {
-      poison.draw(ctx, camera_x);         // Zeichne das Poison-Objekt
-      poison.drawCollisionBox(ctx, camera_x); // Zeichne die Kollisionbox
+      poison.drawFrame(ctx, camera_x);         // Zeichne das Poison-Objekt
     });
   }
 

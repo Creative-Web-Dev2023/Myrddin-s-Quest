@@ -37,18 +37,8 @@ class Door extends DrawableObject {
   }
 
   draw(ctx) {
-    ctx.save();
-    ctx.translate(this.x + this.width / 2, this.y + this.height / 2); // Ursprung in die Mitte verschieben
-    ctx.transform(1, 0.3, 0.11, 1.1, 0, 0); // Transformation
-    ctx.drawImage(
-      this.img,
-      -this.width / 2,
-      -this.height / 2,
-      this.width,
-      this.height
-    ); // Zeichnet die animierte Tür
-    ctx.restore();
-    this.drawCollisionBox(ctx); // Zeichnet die Kollisionsbox
+    super.draw(ctx); // Zeichne das Türbild
+    this.drawFrame(ctx); // Zeichne die Kollisionsbox der Tür
   }
 
   static checkCharacterNearDoor(world) {
@@ -107,8 +97,7 @@ class Door extends DrawableObject {
 
   static drawDoor(world) {
     if (world.door) {
-      world.door.draw(world.ctx); // Zeichnet die Tür
-      world.door.drawCollisionBox(world.ctx); // Optional: Kollisionsbox anzeigen
+      world.door.drawFrame(world.ctx); // Zeichnet die Tür
     }
   }
 

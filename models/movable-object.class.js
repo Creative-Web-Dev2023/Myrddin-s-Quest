@@ -31,17 +31,29 @@ class MovableObject extends DrawableObject {
       return this.y < 150; // Check if y position is above 150
     }
   }
-
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false; // Prüfen, ob mo ein MovableObject ist
     const box1 = this.getCollisionBox(); // Kollisionsbox des aktuellen Objekts
     const box2 = mo.getCollisionBox();   // Kollisionsbox des anderen Objekts
-    return (
+    // console.log('Charakter Kollisionsbox:', box1); // Debugging-Log für die Kollisionsbox des Charakters
+    // console.log('Ritter Kollisionsbox:', box2); // Debugging-Log für die Kollisionsbox des Ritters
+    const isColliding = (
       box1.x < box2.x + box2.width &&  // Linke Seite von box1 vor der rechten Seite von box2
       box1.x + box1.width > box2.x &&  // Rechte Seite von box1 hinter der linken Seite von box2
       box1.y < box2.y + box2.height && // Oberseite von box1 über der Unterseite von box2
       box1.y + box1.height > box2.y    // Unterseite von box1 unter der Oberseite von box2
     );
+
+    return isColliding;
+  }
+
+  getCollisionBox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
+    };
   }
  
   isHurt() { // Check if object is hurt

@@ -10,13 +10,12 @@ class Character extends MovableObject {
   deadAnimationPlayed = false; // Track if the dead animation has been played
   hasKey = false; // Track if the character has a key
   isVisible = true; // Set the character to be visible by default
-
-  offset = {
-    top: 50, // Reduce the rectangle from the top
-    bottom: 10, // Reduce the rectangle from the bottom
-    left: 210, // Reduce the rectangle from the left
-    right: 200, // Reduce the rectangle from the right
-  };
+offset = {
+  top: 50, // Weniger oben abschneiden
+  bottom: 10, // Weniger unten abschneiden
+  left: 210, // Weniger links abschneiden
+  right: 200 // Weniger rechts abschneiden
+};
 
   IMAGES_IDLE = [
     "img/wizard/idle/idle_000.png",
@@ -176,12 +175,22 @@ class Character extends MovableObject {
         this.jump();
       }
   
+      if (this.world.keyboard.ATTACK) {
+        this.playAnimation(this.IMAGES_ATTACK); // Spiele die Angriff-Animation
+        this.attackEnemies(); // Führe den Angriff aus
+      }
+
+      if (this.world.keyboard.THROW_FIRE) {
+        this.playAnimation(this.IMAGES_FIRE_ATTACK); // Spiele die Feuer-Attacken-Animation
+        this.shoot(); // Führe den Schuss aus
+      }
+  
       this.world.camera_x = -this.x - 190;
       this.checkCollisions();
+      
     }
   }
   
-
   checkCollisions() {
     this.world.poisonsArray.forEach((poison, index) => {
       if (this.checkCollision(this, poison)) {
@@ -235,7 +244,8 @@ class Character extends MovableObject {
   hit(enemy) {
     const distance = Math.abs(this.x - enemy.x);  // Calculate the distance between the character and the enemy
     if (!this.invulnerable && distance < 100) { // Check if the character is vulnerable and close enough to the enemy
-      this.takeDamage(10);  // Use takeDamage method to reduce the character's energy
+      this.takeDamage(5);  // Reduce the damage amount
+      this.playAnimation(this.IMAGES_HURT); // Zeige Hurt-Animation
     }
   }
 
@@ -249,7 +259,7 @@ class Character extends MovableObject {
       this.invulnerable = true;
       setTimeout(() => {
         this.invulnerable = false;
-      }, 1000);
+      }, 2000); // Increase the invulnerability time to 2 seconds
     }
   }
 
@@ -303,12 +313,30 @@ class Character extends MovableObject {
     }
   }
 
-  getCollisionBox() {
-    return {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom
-    };
+  attackEnemies() {
+    if (this.world.knights) {
+      this.world.knights.forEach(knight => {
+        if (this.checkCollision(this, knight)) {
+          this.attack(knight); // Füge Schaden zu
+        }
+      });
+    }
+  }
+
+  attack(target) {
+    if ((target instanceof Knight || target instanceof Snake) && !target.isDead()) {
+      target.takeDamage(10); // Füge dem Ritter oder der Schlange Schaden zu
+    }
+  }
+
+  shoot() {
+    if (this.world.snakes) {
+      this.world.snakes.forEach(snake => {
+        if (this.isColliding(snake)) {
+          this.attack(snake); // Nutze attack() für Schaden
+        }
+      });
+    }
   }
 }
+  
