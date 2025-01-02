@@ -9,6 +9,7 @@ class Knight extends MovableObject {
   isMoving = false; // State for moving the knight left and right
   isAttacking = false; // State for attacking the knight
   dead = false; // State for dead
+  deathAnimationPlayed = false; // Neues Flag für die Todesanimation
  
   offset = {
     top: 80, // Reduce the top offset values
@@ -106,18 +107,23 @@ class Knight extends MovableObject {
   }
 
   handleAnimation() { // Handle the knight's animation
-    if (this.dead) {
-      this.playAnimation(this.IMAGES_DEAD, 100); // Increase the dead animation speed
-    } else if (this.isAttacking) { // If the knight is attacking
-      this.playAnimation(this.IMAGES_ATTACKING, 100); // Increase the attack animation speed
-    } else if (this.isMoving) { // If the knight is moving
-      this.playAnimation(this.IMAGES_WALKING, 100); // Increase the walking animation speed
+    if (this.dead) { // Wenn der Ritter tot ist, spiele nur die Todesanimation ab
+      this.playAnimation(this.IMAGES_DEAD, 100); // Geschwindigkeit anpassen
+    } else if (this.isAttacking) {
+      this.playAnimation(this.IMAGES_ATTACKING, 100);
+    } else if (this.isMoving) {
+      this.playAnimation(this.IMAGES_WALKING, 100);
     }
   }
 
   playDeathAnimation() {
-    if (this.IMAGES_DEAD) { // Prüfen, ob es eine Todesanimation gibt
+    if (!this.deathAnimationPlayed) { // Todesanimation nur einmal starten
+      this.deathAnimationPlayed = true; // Markiere die Animation als gestartet
+      this.dead = true; // Setze den Zustand des Ritters auf "tot"
       this.playAnimation(this.IMAGES_DEAD); // Animation abspielen
+      setTimeout(() => {
+        this.removeKnight(); // Ritter nach der Animation entfernen
+      }, 1500); // Wartezeit für die Animation
     }
   }
 
@@ -138,24 +144,21 @@ class Knight extends MovableObject {
     return this.energy == 0;
   }
 
-  hit(damage) {   // Reduce the knight's energy when hit
-    this.energy -= damage; // Reduce the energy
-    if (this.energy < 0) { // If the energy is less than 0
-      this.energy = 0; // Set the energy to 0
-    }
-    if (this.energy == 0) { // If the energy is 0
-      this.die(); // Call the die function
-      this.playDeathAnimation(); // Play the death animation
-      setTimeout(() => {
-        this.removeKnight(); // Remove the knight from the game
-      }, 1500); // Wartezeit, um die Animation abzuschließen
+  hit(damage) {
+    if (this.dead || this.deathAnimationPlayed) return; // Wenn der Ritter tot ist, nichts tun
+    this.energy -= damage;
+    if (this.energy <= 0) {
+      this.energy = 0;
+      this.playDeathAnimation(); // Todesanimation abspielen
     }
   }
 
   removeKnight() {
-    const knightIndex = this.world.knights.findIndex(knight => knight.id === this.id);
-    if (knightIndex !== -1) {
-      this.world.knights.splice(knightIndex, 1);
+    if (this.world && this.world.knights) { // Überprüfen, ob this.world und this.world.knights definiert sind
+      const knightIndex = this.world.knights.findIndex(knight => knight.id === this.id);
+      if (knightIndex !== -1) {
+        this.world.knights.splice(knightIndex, 1); // Entferne den Ritter aus dem Array
+      }
     }
   }
 
@@ -165,6 +168,15 @@ class Knight extends MovableObject {
 
   drawCollisionBox(ctx) {  // Draw the collision box for the knight
     super.drawCollisionBox(ctx, 'blue');
+  }
+
+  getCollisionBox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
+    };
   }
 
 }

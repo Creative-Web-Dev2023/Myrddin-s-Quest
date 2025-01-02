@@ -129,6 +129,18 @@ class Character extends MovableObject {
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
   }
 
+  applyGravity() {
+    setInterval(() => {
+      if (this.isAboveGround() || this.speedY > 0) {
+        this.y -= this.speedY;
+        this.speedY -= this.acceleration;
+      } else {
+        this.speedY = 0;
+        this.y = 150; // Setze die y-Position auf den Boden
+      }
+    }, 1000 / 25);
+  }
+
   throwObject() {
     if (this.canThrow()) {
       let bottle = new ThrowableObject(this.x, this.y);
@@ -191,12 +203,14 @@ class Character extends MovableObject {
   }
 
   jump() {
-    this.speedY = 33; // Set the jump speed
-    playJumpSound(); // Play the jump sound
+    if (!this.isAboveGround()) {
+      this.speedY = 33; // Set the jump speed
+      playJumpSound(); // Play the jump sound
+    }
   }
 
   isAboveGround() {
-    return this.y < 150;  // Return true if the character is above the ground
+    return this.y < 150 || this.speedY > 0;  // Return true if the character is above the ground or moving upwards
   }
 
   isMoving() {
@@ -274,5 +288,14 @@ class Character extends MovableObject {
     if (this.isVisible) {
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
+  }
+
+  getCollisionBox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
+    };
   }
 }
