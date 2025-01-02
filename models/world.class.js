@@ -126,7 +126,7 @@ class World {
     }
   }
 
-  checkCollisionsWithEnemies( ) {
+  checkCollisionsWithEnemies() {
     this.enemies.forEach((enemy) => {
       if (this.checkCollision(this.character, enemy)) {
         if (this.character.isAboveGround() && this.character.speedY > 0) {

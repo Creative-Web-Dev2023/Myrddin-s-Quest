@@ -617,15 +617,17 @@ svg {
 #key-info {
   font-family: Arial, sans-serif;
   font-size: 16px;
-  color: rgb(225, 217, 209);
+  color: rgb(26, 25, 24);
   background-color: rgba(0, 0, 0, 0.5);
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 15px;
   width: 60%; /* Reduziere die Breite weiter */
   max-width: 600px; /* Setze eine maximale Breite */
   margin: 0 auto;
   box-sizing: border-box;
   display: none; /* Standardmäßig ausblenden */
+  border: 2px solid #9e841f; /* Gelber Rand */
+  background-image: linear-gradient(45deg, #ffcc00, #ffcc66);
 }
 
 #key-info.show {
@@ -640,7 +642,9 @@ svg {
 #key-info span strong {
   font-weight: bold;
   font-size: 1.2em; /* Größerer Schriftgrad für die Pfeile */
+  color: #7b00ff; /* Farbe der Pfeile ändern */
 }
+
 #level-completed-overlay {
   position: absolute;
   top: 0;

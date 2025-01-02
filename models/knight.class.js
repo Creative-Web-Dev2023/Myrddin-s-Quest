@@ -59,7 +59,6 @@ class Knight extends MovableObject {
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-    
     this.speed = 0.01 + Math.random() * 0.05; // Reduced speed for the knight
     this.otherDirection = true; // Ensure the knight always faces left
     setTimeout(() => { // Delay the start of the knight's movement
@@ -108,7 +107,7 @@ class Knight extends MovableObject {
 
   handleAnimation() { // Handle the knight's animation
     if (this.dead) { // Wenn der Ritter tot ist, spiele nur die Todesanimation ab
-      this.playAnimation(this.IMAGES_DEAD, 100); // Geschwindigkeit anpassen
+      this.playAnimation(this.IMAGES_DEAD, 100); // Geschwindigkeit anpassen, um die Todesanimation deutlicher zu machen
     } else if (this.isAttacking) {
       this.playAnimation(this.IMAGES_ATTACKING, 100);
     } else if (this.isMoving) {
@@ -122,14 +121,14 @@ class Knight extends MovableObject {
       this.dead = true; // Setze den Zustand des Ritters auf "tot"
       this.playAnimation(this.IMAGES_DEAD); // Animation abspielen
       setTimeout(() => {
-        this.removeKnight(); // Ritter nach der Animation entfernen
-      }, 1500); // Wartezeit für die Animation
+        // Ritter bleibt kurz liegen, bevor er verschwindet
+        setTimeout(() => {
+          this.removeKnight(); // Ritter nach einer längeren Verzögerung entfernen
+        }, 1000); // Wartezeit, bevor der Ritter verschwindet
+      }, 3000); // Wartezeit für die Animation verlängern
     }
   }
 
-  updateHealthBar() {
-    // Update the knight's health bar
-  }
 
   die() {
     this.energy = 0;
