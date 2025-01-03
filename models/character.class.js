@@ -106,6 +106,7 @@ class Character extends MovableObject {
   world = {};
   constructor(world,poisonStatusBar) {
     super();
+
     this.loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_WALKING);
@@ -114,15 +115,12 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_FIRE_ATTACK);
-    this.world = world || {}; // Ensure world is initialized
-    this.applyGravity();
-    this.energy = 100; // Energie des Charakters
+    this.world = world || {};
+    this.energy = 100;
     this.playAnimation(this.IMAGES_IDLE);
     this.animate(); // Aufruf der geerbten Methode animate
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar(); 
     this.poisonStatusBar.setPercentage(0); 
-    this.CharacterHealthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
-    this.CharacterHealthBar.setPercentage(this.energy); // Setze die Energie der Statusleiste
     this.statusBar = new StatusBar();
     this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
@@ -156,38 +154,40 @@ class Character extends MovableObject {
   update() {
     if (!this.isVisible) return;
   
-    if (!this.isDead()) { // Funktion mit Klammern
-      walkingSound.pause();
+    if (this.energy > 0) {  // Prüfe direkt die energy statt isDead()
+        walkingSound.pause();
   
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.moveRight();
-        this.otherDirection = false;
-        playWalkingSound();
-      }
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.otherDirection = false;
+            playWalkingSound();
+        }
   
-      if (this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        playWalkingSound();
-      }
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+            playWalkingSound();
+        }
   
-      if (this.world.keyboard.JUMP && !this.isAboveGround()) {
-        this.jump();
-      }
+        if (this.world.keyboard.JUMP && !this.isAboveGround()) {
+            this.jump();
+        }
   
-      if (this.world.keyboard.ATTACK) {
-        this.playAnimation(this.IMAGES_ATTACK); // Spiele die Angriff-Animation
-        this.attackEnemies(); // Führe den Angriff aus
-      }
+        if (this.world.keyboard.ATTACK) {
+            this.isAttacking = true;
+            this.playAnimation(this.IMAGES_ATTACK);
+            this.attackEnemies();
+        } else {
+            this.isAttacking = false;
+        }
 
-      if (this.world.keyboard.THROW_FIRE) {
-        this.playAnimation(this.IMAGES_FIRE_ATTACK); // Spiele die Feuer-Attacken-Animation
-        this.shoot(); // Führe den Schuss aus
-      }
+        if (this.world.keyboard.THROW_FIRE) {
+            this.playAnimation(this.IMAGES_FIRE_ATTACK);
+            this.shoot();
+        }
   
-      this.world.camera_x = -this.x - 190;
-      this.checkCollisions();
-      
+        this.world.camera_x = -this.x - 190;
+        this.checkCollisions();
     }
   }
   
@@ -237,24 +237,45 @@ class Character extends MovableObject {
   }
 
   hit(enemy) {
-    const distance = Math.abs(this.x - enemy.x);  // Calculate the distance between the character and the enemy
-    if (!this.invulnerable && distance < 100) { // Check if the character is vulnerable and close enough to the enemy
-      this.takeDamage(5);  // Reduce the damage amount
-      this.playAnimation(this.IMAGES_HURT); // Zeige Hurt-Animation
+    const distance = Math.abs(this.x - enemy.x);
+    if (!this.invulnerable && distance < 100) {
+        this.takeDamage(5);
+        this.world.characterStatusBar.setPercentage(this.energy); // Aktualisiere die Statusleiste direkt
+        this.playAnimation(this.IMAGES_HURT);
     }
   }
 
   takeDamage(damage) {
-    if (!this.invulnerable) {
-      this.energy -= damage;
-      if (this.energy <= 0) {
-        this.energy = 0;
-      }
-      this.CharacterHealthBar.setPercentage(this.energy);
-      this.invulnerable = true;
+    if (this.energy > 0 && !this.invulnerable) {
+        this.energy -= damage;
+        this.world.characterStatusBar.setPercentage(this.energy); // Aktualisiere die Statusleiste direkt
+        this.playAnimation(this.IMAGES_HURT);
+
+        if (this.energy <= 0) {
+            this.energy = 0;
+            this.die(); // Charakter stirbt, wenn Energie 0 ist
+        } else {
+            this.invulnerable = true;
+            setTimeout(() => {
+                this.invulnerable = false;
+            }, 2000);
+        }
+    }
+  }
+
+  die() {
+    if (!this.deadAnimationPlayed) {
+      this.deadAnimationPlayed = true;
+      this.playAnimation(this.IMAGES_DEAD); // Play dead animation
       setTimeout(() => {
-        this.invulnerable = false;
-      }, 2000); // Increase the invulnerability time to 2 seconds
+        this.isVisible = false; // Make the character invisible after death
+      }, 3000);
+    }
+  }
+
+  updateStatusBar() {
+    if (this.world && this.world.statusBar) {
+      this.world.statusBar.update(this.energy); // Update the status bar with the new energy
     }
   }
 
@@ -268,6 +289,7 @@ class Character extends MovableObject {
     }
     this.poisonCollected = 0; // Reset the poison collected
     this.poisonStatusBar.setPercentage(0); // Reset the poison status bar
+    this.CharacterHealthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
     this.CharacterHealthBar.setPercentage(this.energy); // Reset the character's health bar
     this.playAnimation(this.IMAGES_IDLE); // Play the idle animation
     this.animate(); // Start the animation
@@ -315,7 +337,7 @@ class Character extends MovableObject {
                 const distance = Math.abs(this.x - enemy.x);
                 if (distance < 150) {  // Überprüfe die Angriffsreichweite
                     console.log('Character greift Knight an!');
-                    enemy.takeDamage(10); // 10 Schaden pro Treffer (3 Treffer bis zum Tod)
+                    enemy.takeDamage(10);
                 }
             }
         });
@@ -323,19 +345,19 @@ class Character extends MovableObject {
   }
 
   attack(target) {
-    if ((target instanceof Knight || target instanceof Snake) && !target.isDead()) {
-      target.takeDamage(10); // Füge dem Ritter oder der Schlange Schaden zu
+    
+    if ((target instanceof Knight || target instanceof Snake) && target.energy > 0) {  // Prüfe direkt die energy
+        target.takeDamage(10);
     }
   }
 
   shoot() {
     if (this.world.snakes) {
-      this.world.snakes.forEach(snake => {
-        if (this.isColliding(snake)) {
-          this.attack(snake); // Nutze attack() für Schaden
-        }
-      });
+        this.world.snakes.forEach(snake => {
+            if (this.isColliding(snake) && snake.energy > 0) {  // Prüfe direkt die energy
+                this.attack(snake);
+            }
+        });
     }
   }
 }
-  

@@ -41,6 +41,10 @@ class StatusBar extends DrawableObject {
       return 0;
     }
   }
+
+  setHealth(health) {
+    this.healthElement.style.width = health + "%"; // Aktualisiere die Breite der Statusleiste
+  }
 }
 
 class PoisonStatusBar extends DrawableObject {

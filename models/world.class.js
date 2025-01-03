@@ -52,7 +52,7 @@ class World {
     this.clouds = new Clouds(this.level.clouds); // Initialize the Clouds class
     this.clouds.randomizePositions(); // Set random positions for the clouds
     this.poisonStatusBar = new PoisonStatusBar(); // Initialize the poison status bar
-    this.characterStatusBar = new StatusBar(this.character); // Initialize character status bar
+    this.characterStatusBar = new StatusBar(); // Initialisiere vor dem Character
     if (this.level.endboss) { // Check if the level has an endboss
       this.endbossHealthBar = new EndbossStatusBar( // Initialize the endboss health bar
         this.level.endboss.x, // X position of the endboss health bar
@@ -113,25 +113,25 @@ class World {
   }
 
   update() {
-    if (this.levelCompleted) return; // Stop the update if the level is completed
-    this.checkCollisionsWithEnemies(); // Check collisions with enemies
-    this.checkCollisionWithKnights(); // Check collisions with knights
-    this.character.update(); // Update the character
-    this.updatePoison(); // Update poison objects
-    this.checkThrowableObject(); // Check if a bottle should be thrown
-    this.checkCollisionsWithCollectables(); // Check collisions with collectables
-    this.checkDoorCollision(); // Check collisions with the door
-    if (this.character.isMoving() && musicIsOn) { // Check if the character is moving and music is on
-      playWalkingSound(); // Play walking sound only if music is on
+    if (this.levelCompleted || this.character.energy <= 0) return; // Stoppe die Aktualisierung, wenn der Charakter tot ist
+    this.checkCollisionsWithEnemies();
+    this.checkCollisionWithKnights();
+    this.character.update();
+    this.updatePoison();
+    this.checkThrowableObject();
+    this.checkCollisionsWithCollectables();
+    this.checkDoorCollision();
+    if (this.character.isMoving() && musicIsOn) {
+        playWalkingSound();
     }
-    if (this.character.isDead() && !this.levelCompleted) { // Check if the character is dead
-      setTimeout(() => {
-        this.endGame.showYouLostScreen(); // Show the "You Lost" screen
-      }, 200); // Short delay before showing the screen
+    if (this.character.energy <= 0 && !this.levelCompleted) {
+        setTimeout(() => {
+            this.endGame.showYouLostScreen();
+        }, 200);
     }
-    if (this.keyboard.ATTACK) {  // Wenn die Angriffstaste gedrückt wird
-        this.character.attackEnemies();  // Führe den Angriff aus
-        this.character.playAnimation(this.character.IMAGES_ATTACK);  // Spiele die Angriffsanimation
+    if (this.keyboard.ATTACK) {
+        this.character.attackEnemies();
+        this.character.playAnimation(this.character.IMAGES_ATTACK);
     }
   }
 
@@ -217,22 +217,32 @@ class World {
   }
 
   draw() {
-    this.clearCanvas(); // Clear the canvas
-    this.drawBackground(); // Draw the background
-    this.drawStatusBars(); // Draw the status bars
-    this.drawGameObjects(); // Draw the game objects
-    this.drawEnemies(); // Draw the enemies
-    this.drawCharacter(); // Draw the character
+    this.clearCanvas();
+    this.drawBackground();
+    this.drawStatusBars();
+    this.drawGameObjects();
+    this.drawEnemies();
+    this.drawCharacter();
     if (this.keysArray.length > 0) {
-      this.keysArray[0].draw(this.ctx); // Draw the single key
+        this.keysArray[0].draw(this.ctx);
     }
    
     if (this.door) {
-      this.door.draw(this.ctx); // Draw the door
+        this.door.draw(this.ctx);
     }
-    if (this.character.isDead()) {
-      this.endGame.showYouLostScreen(); // Show the "You Lost" screen
+    if (this.character.energy <= 0) {
+        this.endGame.showYouLostScreen();
     }
+    this.characters.forEach(character => {
+        this.ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'; // Rote Farbe für die Kollisionsbox
+        let box = character.getCollisionBox();
+        this.ctx.fillRect(box.x, box.y, box.width, box.height);
+    });
+    this.enemies.forEach(enemy => {
+        this.ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'; // Blaue Farbe für die Kollisionsbox
+        let box = enemy.getCollisionBox();
+        this.ctx.fillRect(box.x, box.y, box.width, box.height);
+    });
   }
 
   drawGameObjects() { // Draw the game objects
@@ -260,10 +270,8 @@ class World {
   }
 
   drawStatusBars() {
-    this.addToMap(this.poisonStatusBar); // Draw the poison status bar
-    this.addToMap(this.characterStatusBar); // Draw the character status bar
-    this.characterStatusBar.draw(this.ctx); // Draw the character status bar
-    this.poisonStatusBar.draw(this.ctx); // Draw the poison status bar
+    this.addToMap(this.poisonStatusBar);
+    this.addToMap(this.characterStatusBar);
     if (this.currentLevelIndex === 1 && this.level.endboss) { // Check if the level is level 2 and the endboss exists
       this.endbossHealthBar.x = this.level.endboss.x; // Set the x position of the endboss health bar
       this.endbossHealthBar.y = this.level.endboss.y - 50; // Set the y position of the endboss health bar

@@ -29,3 +29,5 @@ class KnightHealthDisplay extends DrawableObject {
         this.y = knightY ;  // 50 Pixel über dem Knight
     }
 } 
+
+

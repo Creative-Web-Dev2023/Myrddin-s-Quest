@@ -106,6 +106,7 @@ class Snake extends MovableObject {
     if (this.attackCooldown) return;
     if (!this.isDead && !character.isDead()) {
       character.hit(this); // Character takes damage from the snake
+      character.updateStatusBar(); // Update the character's status bar
     }
     this.attackCooldown = true;
     this.attack();
@@ -151,6 +152,7 @@ class Snake extends MovableObject {
     if (this.energy > 0) { // Check if the snake is alive
       this.energy -= damage; // Reduce the energy of the snake
       this.playAnimation(this.IMAGES_HURT);
+      this.updateStatusBar(); // Update the status bar
 
       if (this.energy <= 0) { // Check if the snake has died
         this.energy = 0; // Set the energy to 0
@@ -158,6 +160,12 @@ class Snake extends MovableObject {
       }
     } else {
       console.log("Snake is dead.");
+    }
+  }
+
+  updateStatusBar() {
+    if (this.world && this.world.statusBar) {
+      this.world.statusBar.update(this.energy); // Update the status bar with the new energy
     }
   }
 

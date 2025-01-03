@@ -101,9 +101,8 @@ class Knight extends MovableObject {
       }
     }, 500 / 2); // Further reduce the attack animation speed
   }
-
   handleMovement() { // Handle the knight's movement
-    if (!this.isDead() && this.isMoving) { // Nutze die Methode isDead()
+    if (!this.dead && this.isMoving) { // Nutze die Property statt Methode
       this.moveLeft(); // Always move left
       this.otherDirection = true; // Mirror the image
       if (this.x <= this.startX - this.moveRange) {
@@ -113,7 +112,7 @@ class Knight extends MovableObject {
   }
 
   handleAnimation() { // Handle the knight's animation
-    if (this.isDead()) { // Nutze die Methode isDead()
+    if (this.dead) { // Nutze die Property statt Methode
       this.playAnimation(this.IMAGES_DEAD); // Geschwindigkeit anpassen, um die Todesanimation deutlicher zu machen
     } else if (this.isAttacking) {
       this.playAnimation(this.IMAGES_ATTACKING);
@@ -220,12 +219,12 @@ class Knight extends MovableObject {
 
   takeDamage(damage) {
     if (!this.dead) {
-        this.energy -= damage;
-        this.healthDisplay.energy = this.energy;
-        console.log(`Knight nimmt ${damage} Schaden, verbleibende Energie: ${this.energy}`);
+        // Reduziere die Energie immer nur um 10 (ein Herz)
+        this.energy = Math.max(0, this.energy - 10);
+        this.healthDisplay.energy = this.energy; // Aktualisiere die Anzeige
+        console.log(`Knight nimmt 10 Schaden, verbleibende Energie: ${this.energy}`);
         
         if (this.energy <= 0) {
-            this.energy = 0;
             this.dead = true;
             this.playDeathAnimation();
             setTimeout(() => {
@@ -238,7 +237,7 @@ class Knight extends MovableObject {
             this.playAnimation(this.IMAGES_HURT);
         }
     }
-  }
+}
 
   getCollisionBox() {
     return {
