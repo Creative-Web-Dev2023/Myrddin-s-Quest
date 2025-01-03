@@ -9,8 +9,8 @@ class Snake extends MovableObject {
   startX = 1200; // Startposition geändert, damit die Schlange von rechts kommt
   isIdle = false; // Schlange ist nicht idle
   attackCooldown = false;
-  isDead = false; // Track if the snake is dead
   isAttacking = false; // Track if the snake is attacking
+  energy = 20; // Snake hat 20 Lebenspunkte
 
   offset = {
     top: 20,
@@ -136,7 +136,7 @@ class Snake extends MovableObject {
       x: this.x + this.offset.left, // Verschiebung der Kollisionsbox
       y: this.y + this.offset.top, // Höhe anpassen, da die Schlange kriecht
       width: this.width * 0.8, // Kollisionsbox etwas kleiner machen
-      height: this.height * 0.2 // Nur die untere Hälfte berücksichtigen
+      height: this.height * 0.5 // Nur die untere Hälfte berücksichtigen
     };
   }
 
@@ -185,6 +185,10 @@ class Snake extends MovableObject {
         this.world.snakes.splice(snakeIndex, 1); // Remove the snake from the array
       }
     }
+  }
+
+  isDead() {
+    return this.energy <= 0;
   }
 }
 

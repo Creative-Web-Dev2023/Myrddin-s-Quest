@@ -10,12 +10,12 @@ class Character extends MovableObject {
   deadAnimationPlayed = false; // Track if the dead animation has been played
   hasKey = false; // Track if the character has a key
   isVisible = true; // Set the character to be visible by default
-offset = {
-  top: 50, // Weniger oben abschneiden
-  bottom: 10, // Weniger unten abschneiden
-  left: 210, // Weniger links abschneiden
-  right: 200 // Weniger rechts abschneiden
-};
+  offset = {
+    top: 50, // Weniger oben abschneiden
+    bottom: 10, // Weniger unten abschneiden
+    left: 210, // Weniger links abschneiden
+    right: 200 // Weniger rechts abschneiden
+  };
 
   IMAGES_IDLE = [
     "img/wizard/idle/idle_000.png",
@@ -236,11 +236,6 @@ offset = {
     return this.energy < 100 && this.energy > 0;  // Energy is less than 100 and greater than 0, character is hurt
   }
 
-   isDead() {
-    return this.energy <= 0; // Rückgabe: true, wenn die Energie des Charakters 0 oder weniger ist
-}
-
-  
   hit(enemy) {
     const distance = Math.abs(this.x - enemy.x);  // Calculate the distance between the character and the enemy
     if (!this.invulnerable && distance < 100) { // Check if the character is vulnerable and close enough to the enemy
@@ -314,12 +309,16 @@ offset = {
   }
 
   attackEnemies() {
-    if (this.world.knights) {
-      this.world.knights.forEach(knight => {
-        if (this.checkCollision(this, knight)) {
-          this.attack(knight); // Füge Schaden zu
-        }
-      });
+    if (this.world.enemies) {
+        this.world.enemies.forEach(enemy => {
+            if (enemy instanceof Knight && !enemy.dead) {  // Prüfe ob Knight und nicht tot
+                const distance = Math.abs(this.x - enemy.x);
+                if (distance < 150) {  // Überprüfe die Angriffsreichweite
+                    console.log('Character greift Knight an!');
+                    enemy.takeDamage(10); // 10 Schaden pro Treffer (3 Treffer bis zum Tod)
+                }
+            }
+        });
     }
   }
 

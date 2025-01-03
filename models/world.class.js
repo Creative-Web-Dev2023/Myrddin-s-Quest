@@ -129,41 +129,37 @@ class World {
         this.endGame.showYouLostScreen(); // Show the "You Lost" screen
       }, 200); // Short delay before showing the screen
     }
+    if (this.keyboard.ATTACK) {  // Wenn die Angriffstaste gedrückt wird
+        this.character.attackEnemies();  // Führe den Angriff aus
+        this.character.playAnimation(this.character.IMAGES_ATTACK);  // Spiele die Angriffsanimation
+    }
   }
 
   checkCollisionsWithEnemies() {
     this.enemies.forEach((enemy) => {
-      if (this.checkCollision(this.character, enemy)) {
-        if (this.character.isAboveGround() && this.character.speedY > 0) {
-          this.character.jump();
-          if (enemy.isDead) {
-            return;
-          } else {
-            if (enemy.IMAGES_HURT) { // Check if the enemy has hurt images
-              enemy.playAnimation(enemy.IMAGES_HURT);
-            }
-            setTimeout(() => {
-              if (enemy.IMAGES_DEAD) { // Check if the enemy has dead images
-                enemy.playAnimation(enemy.IMAGES_DEAD);
-              }
-              setTimeout(() => {
-                const index = this.enemies.findIndex(e => e.id === enemy.id);
-                if (index !== -1) {
-                  this.enemies.splice(index, 1);
+        if (this.checkCollision(this.character, enemy)) {
+            if (enemy instanceof Snake) {
+                // Wenn der Character von oben auf die Schlange springt
+                if (this.character.isAboveGround() && this.character.speedY > 0) {
+                    this.character.jump();
+                    if (!enemy.isDead) {
+                        enemy.takeDamage(20);
+                    }
+                } else {
+                    // Wenn der Character seitlich mit der Schlange kollidiert
+                    if (!enemy.isDead) {
+                        this.character.hit(enemy);
+                        this.characterStatusBar.setPercentage(this.character.energy);
+                    }
                 }
-              }, 1500);
-            }, 1000);
-          }
-        } else {
-          this.character.hit(enemy);
-          this.characterStatusBar.setPercentage(this.character.energy);
+            }
+        } else if (enemy instanceof Snake) {
+            // Prüfe Angriffsreichweite der Schlange
+            const distance = Math.abs(this.character.x - enemy.x);
+            if (distance <= 100 && !enemy.isDead) {
+                enemy.attack();
+            }
         }
-      } else if (enemy instanceof Snake) {
-        const distance = Math.abs(this.character.x - enemy.x);
-        if (distance <= 100 && !enemy.isDead) {
-          enemy.attack();
-        }
-      }
     });
   }
 
@@ -381,6 +377,21 @@ class World {
         this.levelCompleted = true; // Mark the level as completed
         continueToNextLevel(); // Switch to the next level
       }, 2000); // Short delay before switching levels
+    }
+  }
+
+  loadLevel2() {
+    if (typeof level2 !== 'undefined') {
+        world.level = level2;
+        world.backgroundObjects = level2.backgroundObjects;
+        world.enemies = level2.enemies;
+        
+        // Setze die World-Referenz für jede Snake
+        world.enemies.forEach(enemy => {
+            if (enemy instanceof Snake) {
+                enemy.setWorld(this);
+            }
+        });
     }
   }
 }

@@ -62,8 +62,8 @@ class MovableObject extends DrawableObject {
     return timepassed < 5; // Check if hurt within last 5 seconds
   }
 
-  isDead() { // Check if object is dead
-    return this.energy <= 0; // Check if energy is zero
+  isDead() {
+    return this.energy <= 0;
   }
 
   playAnimation(images, delay = 100) { // Play animation frames for the object

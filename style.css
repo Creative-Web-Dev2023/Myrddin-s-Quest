@@ -360,7 +360,7 @@ h3 {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 850px;
-  height: 531px;
+  height: 515px;
   background-image: url("img/game_ui/login&pass/loghin_pass_fullwindow.png"),
     url("img/game_backgrounds/wood.png");
   background-size: contain, cover;

@@ -56,8 +56,42 @@ function quitGame() { // Quit game function
   location.reload(); // Reload the page to restart the game
 }
 
-function tryAgain() { // Try again function
-  location.reload(); // Reload the page to restart the game
+function tryAgain() {
+    // Verstecke den Game Over Screen
+    document.getElementById('game-over-container').style.display = 'none';
+    
+    // Setze die Welt zurück, aber behalte das aktuelle Level
+    const currentLevelIndex = world.currentLevelIndex;
+    
+    if (currentLevelIndex === 0) {
+        // Wenn in Level 1
+        world.character.reset(1);
+        world.level = level1;
+        world.enemies = level1.enemies;
+        world.backgroundObjects = level1.backgroundObjects;
+        stopAllSounds();
+        playLevel1Sound();
+    } else {
+        // Wenn in Level 2
+        world.character.reset(2);
+        world.level = level2;
+        world.enemies = level2.enemies;
+        world.backgroundObjects = level2.backgroundObjects;
+        world.level.endboss = level2.endboss;
+        stopAllSounds();
+        playLevel2Sound();
+    }
+    
+    // Setze die Kamera zurück
+    world.camera_x = -world.character.x - 190;
+    
+    // Setze die Statusbars zurück
+    world.character.energy = 100;
+    world.characterStatusBar.setPercentage(100);
+    
+    // Setze den Game Over Status zurück
+    world.character.isDead = false;
+    world.levelCompleted = false;
 }
 
 function continueToNextLevel() {   // Continue to the next level
