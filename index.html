@@ -77,52 +77,51 @@
             </text>
         </svg>
 
-        <div class="button-container"> <!-- Neuer Container für die Buttons -->
-            <a id="startButton" class="start-button" onclick="startGame()"><span>Start Game</span></a>
-            <!-- Start Game Button -->
-            <div id="description-container" class="how-to-play-button" onclick="handleDescription()">
+        <div class="button-container">
+            <a id="startButton" class="game-button start-button" onclick="startGame()"><span>Start Game</span></a>
+            <div id="description-container" class="game-button how-to-play-button" onclick="handleDescription()">
                 <span>How to Play</span>
             </div>
-            <div id="description" class="description hidden">
-                <h3>How to Play</h3>
-                <p class="description-text">Use the following keys:</p>
-                <table class="table-keys">
-                    <tbody>
-                        <tr>
-                            <td class="key">Right Arrow</td>
-                            <td class="action">Move right</td>
-                        </tr>
-                        <tr>
-                            <td class="key">Left Arrow</td>
-                            <td class="action">Move left</td>
-                        </tr>
-                        <tr>
-                            <td class="key">W</td>
-                            <td class="action">Jump</td>
-                        </tr>
-                        <tr>
-                            <td class="key">A</td>
-                            <td class="action">Attack</td>
-                        </tr>
-                        <tr>
-                            <td class="key">S</td>
-                            <td class="action">Fire</td>
-                        </tr>
-                        <tr>
-                            <td class="key">D</td>
-                            <td class="action">Throw Bottle</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p class="description-text">
-                    The powerful wizard Myrddin lives in a magical land that is threatened by dark forces.
-                    An evil troll boss has stolen the source of the land's magic - a powerful crystal that sustains all
-                    life.
-                    Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal.
-                    On his way, he must cross dangerous forests guarded by knights, poisonous snakes and dark magic.
-                </p>
-                <p class="back-link" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
-            </div>
+        </div>
+        <div id="description" class="description hidden">
+            <h3>How to Play</h3>
+            <p class="description-text">Use the following keys:</p>
+            <table class="table-keys">
+                <tbody>
+                    <tr>
+                        <td class="key">Right Arrow</td>
+                        <td class="action">Move right</td>
+                    </tr>
+                    <tr>
+                        <td class="key">Left Arrow</td>
+                        <td class="action">Move left</td>
+                    </tr>
+                    <tr>
+                        <td class="key">W</td>
+                        <td class="action">Jump</td>
+                    </tr>
+                    <tr>
+                        <td class="key">A</td>
+                        <td class="action">Attack</td>
+                    </tr>
+                    <tr>
+                        <td class="key">S</td>
+                        <td class="action">Fire</td>
+                    </tr>
+                    <tr>
+                        <td class="key">D</td>
+                        <td class="action">Throw Bottle</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="description-text">
+                The powerful wizard Myrddin lives in a magical land that is threatened by dark forces.
+                An evil troll boss has stolen the source of the land's magic - a powerful crystal that sustains all
+                life.
+                Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal.
+                On his way, he must cross dangerous forests guarded by knights, poisonous snakes and dark magic.
+            </p>
+            <p class="back-link" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
         </div>
         <div id="impressum-container" class="impressum-button" onclick="handleImpressum()">
             <span>Impressum</span>
