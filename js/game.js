@@ -203,8 +203,7 @@ function checkOrientation() {
   }
 }
 
-window.addEventListener('orientationchange', checkOrientation);
-window.addEventListener('resize', checkOrientation);
-
-// Initial check
+// Event Listener für das Laden der Seite und Änderungen der Bildschirmgröße
 window.addEventListener('load', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);

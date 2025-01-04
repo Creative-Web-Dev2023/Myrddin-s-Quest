@@ -40,6 +40,10 @@
             <h1>Level 1 Complete</h1> 
             <img src="img/game_ui/level-complete.png" alt="Level Complete"/>
         </div>
+        <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png" onclick="toggleFullscreen()" alt="Fullscreen">
+    <!-- Das Sound-Icon versteckt sich zu Beginn -->
+    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()"
+        alt="Sound Control">
     </div>
     <div id="key-info" style="text-align: center; margin-top: 20px;">
         <p><strong>Control buttons:</strong></p>
@@ -53,10 +57,7 @@
             
         </p>
     </div>
-    <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png" onclick="toggleFullscreen()" alt="Fullscreen">
-    <!-- Das Sound-Icon versteckt sich zu Beginn -->
-    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()"
-        alt="Sound Control">
+    
     <div id="rotate" style="display: flex;">
         <img class="rotate-icon" src="img/game_ui/device-mobile-phone.png" alt="Rotate">
         <p class="rotate-message">Please rotate your device</p>
@@ -143,9 +144,7 @@
     <div id="game-over-container" style="display: none;">
         <div class="you-lost-image"></div>
         <div class="game-button-container">
-            <button id="quitButton" class="game-button" style="display: none;" onclick="quitGame()">
-                <img src="img/game_ui/quit.png" alt="Quit game">
-            </button>
+
             <button id="tryAgain" class="game-button" style="display:none;" onclick="tryAgain()">
                 <img src="img/game_ui/try_again.png" alt="Try Again">
             </button>

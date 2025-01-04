@@ -1,13 +1,17 @@
+
 body {
+  margin: 0; /* Entfernt alle Standardabstände */
+  padding: 0;
   display: flex;
-  flex-direction: column; /* Wenn du mehrere Elemente vertikal stapeln möchtest */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-image: url("img/game_backgrounds/8YGJao.png");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw;
   height: 100vh;
-  margin: 0;
   font-family: "sylfaen";
   overflow: hidden; /* Optional: Verhindert Scrollen */
 }
@@ -230,8 +234,8 @@ h2 {
 
 .audio-icon {
   position: absolute;
-  top: 26vh;
-  right: 28vw;
+  top: 3vh;
+  right: 11vw;
   width: 30px;
   cursor: pointer;
   z-index: 10;
@@ -242,8 +246,8 @@ h2 {
 
 .big-screen {
   position: absolute;
-  top: 26vh;
-  right: 24vw; /* Adjusted to be next to the audio switcher */
+  top: 3vh;
+  right: 8vw; /* Adjusted to be next to the audio switcher */
   width: 30px; /* Adjusted to match the info icon */
   cursor: pointer;
   z-index: 10;
@@ -687,7 +691,7 @@ svg {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   color: white;
   padding: 20px;
   text-align: center;
@@ -703,49 +707,39 @@ svg {
   height: 100px;
   animation: rotate-animation 2s linear infinite; /* Rotation */
 }
+@media screen and (max-width: 1024px) {
+ .audio-icon {
+  width: 25px; /* Adjust the width for smaller screens */
+  top: 5%; /* Adjust the top position for smaller screens */
+  right: 3%; /* Adjust the right position for smaller screens */
+ }
 
-@media (max-width: 768px) {
-  .audio-icon,
-  .info-icon,
-  .big-screen {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 25vh; /* Adjust the top position for smaller screens */
-    right: 5vw; /* Adjust the right position for smaller screens */
-  }
-
-  .info-icon {
-    right: 10vw; /* Adjust the right position for smaller screens */
-  }
-
-  .big-screen {
-    right: 15vw; /* Adjust the right position for smaller screens */
-  }
+.big-screen {
+  width: 25px; /* Adjust the width for smaller screens */
+  top: 5%; /* Adjust the top position for smaller screens */
+  right: 8%; /* Adjust the right position for smaller screens */
 }
 
-@media (max-width: 480px) {
-  .audio-icon,
-  .info-icon,
-  .big-screen {
-    width: 20px; /* Further adjust the width for very small screens */
-    top: 20vh; /* Further adjust the top position for very small screens */
-    right: 5vw; /* Further adjust the right position for very small screens */
-  }
-
-  .info-icon {
-    right: 10vw; /* Further adjust the right position for very small screens */
-  }
-
-  .big-screen {
-    right: 15vw; /* Further adjust the right position for very small screens */
-  }
 }
-
 @media screen and (max-width: 870px) and (orientation: portrait) {
   #rotate {
     font-size: 30px;
   }
   .rotate-message {
     font-family: Lucida Sans Unicode;
+  }
+  .audio-icon {
+    width: 25px; /* Adjust the width for smaller screens */
+    top: 5%; /* Adjust the top position for smaller screens */
+    right: 3%; /* Adjust the right position for smaller screens */
+  }
+  .big-screen {
+    width: 25px; /* Adjust the width for smaller screens */
+    top: 5%; /* Adjust the top position for smaller screens */
+    right: 8%; /* Adjust the right position for smaller screens */
+  }
+  h2 {
+    font-size: 3.5rem;
   }
 }
 
@@ -756,10 +750,53 @@ svg {
   .rotate-message {
     font-family: Lucida Sans Unicode;
   }
-}
-
-html, body {
+  html, body {
   margin: 0;
   padding: 0;
   overflow: hidden; /* Keine Scrollleisten */
+}
+.audio-icon {
+  width: 25px; /* Adjust the width for smaller screens */
+  top: 5%; /* Adjust the top position for smaller screens */
+  right: 3%; /* Adjust the right position for smaller screens */
+}
+.big-screen {
+  width: 25px; /* Adjust the width for smaller screens */
+  top: 5%; /* Adjust the top position for smaller screens */
+  right: 8%; /* Adjust the right position for smaller screens */
+}
+h2{
+ font-size: 3rem;
+}
+}
+
+@media (max-width: 768px) {
+  .audio-icon {
+    width: 25px; /* Adjust the width for smaller screens */
+    top: 5%; /* Adjust the top position for smaller screens */
+    right: 3%; /* Adjust the right position for smaller screens */
+  }
+  .big-screen {
+    width: 25px; /* Adjust the width for smaller screens */
+    top: 5%; /* Adjust the top position for smaller screens */
+    right: 8%; /* Adjust the right position for smaller screens */
+  }
+  h2 {
+    font-size: 2.5rem;
+  }
+}
+@media (max-width: 480px) {
+  .audio-icon {
+    width: 25px; /* Adjust the width for smaller screens */
+    top: 5%; /* Adjust the top position for smaller screens */
+    right: 3%; /* Adjust the right position for smaller screens */
+  }
+  .big-screen {
+    width: 25px; /* Adjust the width for smaller screens */
+    top: 5%; /* Adjust the top position for smaller screens */
+    right: 8%; /* Adjust the right position for smaller screens */
+  }
+  h2 {
+    font-size: 2rem;
+  }
 }
