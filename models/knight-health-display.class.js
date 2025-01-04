@@ -9,15 +9,16 @@ class KnightHealthDisplay extends DrawableObject {
         this.loadImages(this.IMAGES_HEARTS);
         this.x = 0;
         this.y = 0;
-        this.width = 120; // Breite für 3 Herzen
+        this.width = 120;
         this.height = 30;
+        this.energy = 30; // Volle Energie zu Beginn
     }
 
     draw(ctx) {
-        let heartDistance = 40; // Abstand zwischen den Herzen
+        let heartDistance = 40;
         for (let i = 0; i < 3; i++) {
-            if (this.energy > i * 10) { // Jedes Herz repräsentiert 10 Energie
-                ctx.drawImage(this.imageCache[this.IMAGES_HEARTS[1]], this.x + (i * heartDistance), this.y, 30, 30);//
+            if (this.energy > i * 10) {
+                ctx.drawImage(this.imageCache[this.IMAGES_HEARTS[1]], this.x + (i * heartDistance), this.y, 30, 30);
             } else {
                 ctx.drawImage(this.imageCache[this.IMAGES_HEARTS[0]], this.x + (i * heartDistance), this.y, 30, 30);
             }
@@ -25,9 +26,7 @@ class KnightHealthDisplay extends DrawableObject {
     }
 
     updatePosition(knightX, knightY) {
-        this.x = knightX + 140; // Position über dem Knight
-        this.y = knightY ;  // 50 Pixel über dem Knight
+        this.x = knightX + 140;
+        this.y = knightY - 30;  // Etwas höher über dem Knight
     }
 } 
-
-
