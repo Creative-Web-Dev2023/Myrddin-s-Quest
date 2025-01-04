@@ -17,26 +17,25 @@ class MovableObject extends DrawableObject {
 
   applyGravity() { // Apply gravity effect to the object
     this.gravityInterval = setInterval(() => {
-      if (this.isAboveGround() || this.speedY > 0) {
-        this.y -= this.speedY; // Move object down
-        this.speedY -= this.acceleration; // Decrease speedY by acceleration
+      if (this.isAboveGround() || this.speedY > 0) { // Überprüfe, ob der Charakter über dem Boden ist oder nach oben springt
+        this.y -= this.speedY; // Bewege das Objekt nach oben, wenn speedY positiv ist
+        this.speedY -= this.acceleration; // Verringere die vertikale Geschwindigkeit
+        console.log(`y-Position: ${this.y}, speedY: ${this.speedY}`); // Debugging-Log
+      } else {
+        this.y = 150; // Setze die y-Position auf den Boden, wenn das Objekt den Boden erreicht
+        this.speedY = 0; // Setze die vertikale Geschwindigkeit zurück
       }
-    }, 1000 / 25); // Interval for gravity effect
+    }, 1000 / 25); // Intervall für die Schwerkraft
   }
 
   isAboveGround() { // Check if object is above ground 
-    if (this instanceof ThrowableObject) { // Check if object is ThrowableObject
-      return true; // Always above ground for ThrowableObject
-    } else {
-      return this.y < 150; // Check if y position is above 150
-    }
+    return this.y < 150; // Überprüfe, ob die y-Position über 150 ist
   }
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false; // Prüfen, ob mo ein MovableObject ist
     const box1 = this.getCollisionBox(); // Kollisionsbox des aktuellen Objekts
     const box2 = mo.getCollisionBox();   // Kollisionsbox des anderen Objekts
-    // console.log('Charakter Kollisionsbox:', box1); // Debugging-Log für die Kollisionsbox des Charakters
-    // console.log('Ritter Kollisionsbox:', box2); // Debugging-Log für die Kollisionsbox des Ritters
+    
     const isColliding = (
       box1.x < box2.x + box2.width &&  // Linke Seite von box1 vor der rechten Seite von box2
       box1.x + box1.width > box2.x &&  // Rechte Seite von box1 hinter der linken Seite von box2
