@@ -1,23 +1,23 @@
 class Knight extends MovableObject {
-  height = 290; // Increase the height of the knight
-  width = 520; // Increase the width of the knight
-  y = 190; // Increase the Y position to position the knight higher
-  delay = 3000; // Delay before the knight starts moving
-  direction = 'left'; // Initial direction
-  moveRange = 100; // Movement range
-  startX = 800; // Starting position
-  isMoving = false; // State for moving the knight left and right
-  isAttacking = false; // State for attacking the knight
-  deathAnimationPlayed = false; // Neues Flag für die Todesanimation
+  height = 290; // Back to original height for sprite
+  width = 520;  // Back to original width for sprite
+  y = 190;
+  delay = 3000;
+  direction = 'left';
+  moveRange = 100;
+  startX = 800;
+  isMoving = false;
+  isAttacking = false;
+  deathAnimationPlayed = false;
   energy = 30;
-  dead = false; // Verwende 'dead' als Property statt 'isDead'
+  dead = false;
  
   offset = {
-    top: 80, // Weniger oben abschneiden
-    bottom: 30, // Weniger unten abschneiden
-    left: 110, // Weniger links abschneiden
-    right: 210 // Weniger rechts abschneiden
-}
+    top: 120,    // Increased top offset for smaller collision box
+    bottom: 70,  // Increased bottom offset for smaller collision box
+    left: 210,   // Increased left offset for smaller collision box
+    right: 210   // Increased right offset for smaller collision box
+  };
 
   IMAGES_WALKING = [
     'img/knight/walk/walk 0.png',
@@ -160,46 +160,71 @@ class Knight extends MovableObject {
       this.playDeathAnimation(); // Todesanimation abspielen
     }
   }
- 
-  attack(character) {
-    if (this.isColliding(character)) { // Überprüfen, ob der Ritter mit dem Charakter kollidiert
-      character.takeDamage(this.attackDamage); // Schaden auf den Charakter anwenden
-      this.playAttackAnimation(); // Angriff-Animation abspielen
-    } 
-    
-  }
+  // ... existing code ...
 
-  playAttackAnimation() {
-    if (!this.isAttacking) { // Verhindere, dass die Animation mehrfach gleichzeitig abgespielt wird
-      this.isAttacking = true; // Setze den Zustand auf "angreifend"
-      this.playAnimation(this.IMAGES_ATTACKING, 200); // Spiele die Animation mit einer Frame-Verzögerung ab
-      setTimeout(() => {
-        this.isAttacking = false; // Setze den Zustand nach der Animation zurück
-      }, this.IMAGES_ATTACKING.length * 200); // Gesamtdauer der Animation basierend auf der Anzahl der Frames
-    }
-  }
+checkForAttack(character) {
+  const knightBox = this.getCollisionBox();
+  const characterBox = character.getCollisionBox();
   
-  checkForAttack(character) {
-    const knightBox = this.getCollisionBox(); // Kollisionsbox des Ritters
-    const characterBox = character.getCollisionBox(); // Kollisionsbox des Charakters
-    // console.log('Ritter Kollisionsbox:', knightBox); // Debugging-Log für die Kollisionsbox des Ritters
-    // console.log('Charakter Kollisionsbox:', characterBox); // Debugging-Log für die Kollisionsbox des Charakters
+  // Calculate the attack range box in front of the knight
+  const attackBox = {
+      x: this.otherDirection ? knightBox.x - this.attackRange : knightBox.x + knightBox.width,
+      y: knightBox.y,
+      width: this.attackRange,
+      height: knightBox.height
+  };
 
-    const isColliding = (
-      knightBox.x < characterBox.x + characterBox.width &&
-      knightBox.x + knightBox.width > characterBox.x &&
-      knightBox.y < characterBox.y + characterBox.height &&
-      knightBox.y + knightBox.height > characterBox.y
-    );
-    // console.log('Kollision erkannt:', isColliding); // Debugging-Log für Kollisionserkennung
-    if (isColliding) { // Wenn die Kollisionsboxen sich überschneiden
-      this.attack(character); // Angriff ausführen
-    }
+  // Check if character is within attack range
+  const isInAttackRange = (
+      attackBox.x < characterBox.x + characterBox.width &&
+      attackBox.x + attackBox.width > characterBox.x &&
+      attackBox.y < characterBox.y + characterBox.height &&
+      attackBox.y + attackBox.height > characterBox.y
+  );
+
+  if (isInAttackRange && !this.isAttacking) {
+      this.attack(character);
   }
+}
+
+attack(character) {
+  if (this.dead || this.isAttacking) return; // Don't attack if dead or already attacking
+  
+  this.isAttacking = true;
+  this.playAttackAnimation();
+  
+  // Deal damage at the end of the attack animation
+  setTimeout(() => {
+      const characterBox = character.getCollisionBox();
+      const knightBox = this.getCollisionBox();
+      
+      // Check if still in range when the attack lands
+      const isStillInRange = (
+          knightBox.x < characterBox.x + characterBox.width &&
+          knightBox.x + knightBox.width > characterBox.x &&
+          knightBox.y < characterBox.y + characterBox.height &&
+          knightBox.y + knightBox.height > characterBox.y
+      );
+      
+      if (isStillInRange) {
+          character.takeDamage(this.attackDamage);
+      }
+      
+      // Reset attack state after animation
+      setTimeout(() => {
+          this.isAttacking = false;
+      }, 500); // Adjust this timing based on your attack animation duration
+  }, 400); // Adjust this timing to match when the attack animation shows the hit
+}
+
+playAttackAnimation() {
+  this.playAnimation(this.IMAGES_ATTACKING);
+}
+
 
   update(character) {
     this.checkForAttack(character); // Prüfen, ob der Angriff ausgeführt werden soll
-    // Weitere Logik für Bewegung des Ritters kann hier hinzugefügt werden
+   
   }
 
   removeKnight() {
@@ -222,8 +247,6 @@ class Knight extends MovableObject {
         // Reduziere die Energie immer nur um 10 (ein Herz)
         this.energy = Math.max(0, this.energy - 10);
         this.healthDisplay.energy = this.energy; // Aktualisiere die Anzeige
-        console.log(`Knight nimmt 10 Schaden, verbleibende Energie: ${this.energy}`);
-        
         if (this.energy <= 0) {
             this.dead = true;
             this.playDeathAnimation();

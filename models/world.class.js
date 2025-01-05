@@ -21,9 +21,10 @@ class World {
   tryAgainButtonImage = "img/game_ui/try_again.png"; // Path to the try again button image
   levelCompleted = false; // Variable to track level completion
   collectables = []; // Array for collectables
-  keys = []; // Array for keys
+  key; // Array for keys
   endGame; // EndGame class attribute
   door; // Door attribute
+  snakes = []; // Array for snakes
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d"); // Get the canvas context
@@ -62,7 +63,8 @@ class World {
     this.character = new Character(this, this.poisonStatusBar); // Initialize character with parameters
     this.character.world.keyboard = this.keyboard; // Forward keyboard to character
     this.poisonsArray = PoisonObject.initializePoisons(); // Initialize poison objects
-    this.keysArray = Key.initializeKeys(); // Initialize keys
+    this.key = Key.initializeKey(); // Initialize the key
+    
     this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
     this.enemies = this.level.enemies || []; // Initialize enemies from the level
     this.level.objects = this.level.objects || []; // Ensure objects is an array
@@ -223,10 +225,7 @@ class World {
     this.drawGameObjects();
     this.drawEnemies();
     this.drawCharacter();
-    if (this.keysArray.length > 0) {
-        this.keysArray[0].draw(this.ctx);
-    }
-   
+    this.drawSnakes(); // Zeichne die Schlangen
     if (this.door) {
         this.door.draw(this.ctx);
     }
@@ -243,6 +242,18 @@ class World {
         let box = enemy.getCollisionBox();
         this.ctx.fillRect(box.x, box.y, box.width, box.height);
     });
+  }
+
+  drawSnakes() {
+    this.snakes.forEach(snake => {
+      snake.draw(this.ctx); // Zeichne jede Schlange
+    });
+  }
+
+  drawKey() {
+    if (this.key) {
+      this.key.draw(this.ctx); // Zeichne den Schlüssel
+    }
   }
 
   drawGameObjects() { // Draw the game objects
@@ -368,18 +379,15 @@ class World {
         this.character.collectPoison(poison, index); // Collect the poison
       }
     });
-    this.keysArray.forEach((key, index) => {
-      if (key.isActive && this.checkCollision(this.character, key)) {
-        key.deactivate(); // Deaktiviert den Schlüssel
-        this.keysArray.splice(index, 1); // Entfernt den Schlüssel aus dem Array
-        this.character.collectKey(); // Implementiere diese Methode, falls du zusätzliche Logik für das Aufsammeln hinzufügen willst
-      }
-    });
+    if (this.key && this.key.isActive && this.checkCollision(this.character, this.key)) {
+      this.key.deactivate(); // Deaktiviert den Schlüssel
+      this.character.collectKey(this.key); // Implementiere diese Methode, falls du zusätzliche Logik für das Aufsammeln hinzufügen willst
+    }
   }
 
   checkDoorCollision() {
     const door = this.door; // Door from the current level
-    if (this.character.checkCollisionWithDoor(door)) {
+    if (this.character.hasKey && this.character.checkCollisionWithDoor(door)) {
       this.character.enterDoor(); // Animation when entering the door
       setTimeout(() => {
         this.levelCompleted = true; // Mark the level as completed
@@ -401,5 +409,27 @@ class World {
             }
         });
     }
+  }
+
+  checkCollisions() {
+    this.snakes.forEach(snake => {
+      if (this.character.isColliding(snake)) {
+        this.character.hit();
+        this.statusBar.setPercentage(this.character.energy);
+      }
+    });
+  }
+
+  addEnemies() {
+    this.level.enemies.forEach(enemy => {
+        if (enemy instanceof Knight) {
+            enemy.world = this;
+            enemy.otherDirection = true; // Knights bleiben wie sie sind
+        }
+        if (enemy instanceof Snake) {
+            enemy.world = this;
+            enemy.otherDirection = false; // Schlangen bewegen sich nach links
+        }
+    });
   }
 }

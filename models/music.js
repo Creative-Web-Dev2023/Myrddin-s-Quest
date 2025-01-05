@@ -6,7 +6,7 @@ let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
 let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
-let level1Sound = new Audio('audio/background music .mp3'); // Hintergrundsound für Level 1
+let level1Sound = new Audio('audio/woodsounds.mp3'); // Hintergrundsound für Level 1
 let level2Sound = new Audio('audio/level2_sound.mp3'); // Hintergrundsound für Level 2
 let allSounds = [backgroundMusic, walkingSound, attackSound, fireAttackSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
 

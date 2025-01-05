@@ -37,7 +37,7 @@ class DrawableObject {
   }
 
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof Door || this instanceof PoisonObject) {
+    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof Door || this instanceof PoisonObject || this instanceof Key) {
       ctx.beginPath();
       ctx.lineWidth = '4';
       if (this instanceof Character) {
@@ -52,6 +52,8 @@ class DrawableObject {
         ctx.strokeStyle = 'green';
       } else if (this instanceof PoisonObject) {
         ctx.strokeStyle = 'black';
+      } else if (this instanceof Key) {
+        ctx.strokeStyle = 'red';
       }
       ctx.rect(
         this.x + this.offset.left,
@@ -65,10 +67,10 @@ class DrawableObject {
 
   getCollisionBox() {
     return {
-      x: this.x + this.offset.left,// X and Y position plus offset values from all sides of the rectangle
-      y: this.y + this.offset.top, // X and Y position plus offset values from all sides of the rectangle
-      width: this.width - this.offset.left - this.offset.right, // Width and height minus offset values from all sides of the rectangle
-      height: this.height - this.offset.top - this.offset.bottom // Width and height minus offset values from all sides of the rectangle
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
     };
   }
 }

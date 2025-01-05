@@ -2,7 +2,7 @@ class Character extends MovableObject {
   height = 290; // Set the character's height
   width = 520; // Set the character's width
   x = 130; // Set the character's initial x position
-  y = 150; // Set the character's initial y position
+  y = 210; // Set the character's initial y position
   speed = 5; // Set the character's speed
   invulnerable = false; // Set the character's invulnerability status
   poisonCollected = 0; // Initialize the collected poison count
@@ -154,26 +154,21 @@ class Character extends MovableObject {
 
   update() {
     if (!this.isVisible) return;
-  
     if (this.energy > 0) {  // Prüfe direkt die energy statt isDead()
-        walkingSound.pause();
-  
+        walkingSound.pause(); 
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.otherDirection = false;
             playWalkingSound();
         }
-  
         if (this.world.keyboard.LEFT && this.x > 0) {
             this.moveLeft();
             this.otherDirection = true;
             playWalkingSound();
         }
-  
         if (this.world.keyboard.JUMP && !this.isAboveGround()) {
             this.jump();
         }
-  
         if (this.world.keyboard.ATTACK) {
             this.isAttacking = true;
             this.playAnimation(this.IMAGES_ATTACK);
@@ -186,7 +181,6 @@ class Character extends MovableObject {
             this.playAnimation(this.IMAGES_FIRE_ATTACK);
             this.shoot();
         }
-  
         this.world.camera_x = -this.x - 190;
         this.checkCollisions();
     }
@@ -198,18 +192,18 @@ class Character extends MovableObject {
         this.collectPoison(poison, index);
       }
     });
-    this.world.keysArray.forEach((key, index) => {
-      if (this.checkCollision(this, key)) {
-        this.collectKey(key, index);
+    
+    this.world.enemies.forEach((enemy) => {
+      if (enemy instanceof Key && this.checkCollision(this, enemy)) {
+        this.collectKey(enemy);
       }
-    });
-    Door.checkCharacterNearDoor(this.world); // Check if the character is near the door
+    }); 
+    Door.checkCharacterNearDoor(this.world);
   }
 
   checkCollision(character, object) { // Check collision between character and object
     const charBox = character.getCollisionBox(); // Get the character's collision box
     const objBox = object.getCollisionBox(); // Get the object's collision box
-
     return ( // Check if there is a collision between the character and the object
       charBox.x < objBox.x + objBox.width && // Check collision on the x-axis
       charBox.x + charBox.width > objBox.x && // Check collision on the x-axis
@@ -288,9 +282,10 @@ class Character extends MovableObject {
     if (level === 2) { // If the level is 2
       this.energy = 100; // Optionale Anpassung für Level 2
       this.world.level.level_end_x = 3500; // Verkürze die Länge des Levels 2
+    } else {
+      this.poisonCollected = 0; // Reset the poison collected
+      this.poisonStatusBar.setPercentage(0); // Reset the poison status bar
     }
-    this.poisonCollected = 0; // Reset the poison collected
-    this.poisonStatusBar.setPercentage(0); // Reset the poison status bar
     this.CharacterHealthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
     this.CharacterHealthBar.setPercentage(this.energy); // Reset the character's health bar
     this.playAnimation(this.IMAGES_IDLE); // Play the idle animation
@@ -307,7 +302,6 @@ class Character extends MovableObject {
   checkCollisionWithDoor(door) { // Check if the character is colliding with the door
     return this.isColliding(door); // Return true if the character is colliding with the door
   }
-
   collectPoison(poison, index) {
     if (poison && poison.isActive) { // If the poison object is active
       poison.deactivate(); // Deactivate the poison object
@@ -317,21 +311,17 @@ class Character extends MovableObject {
       playCollectPoisonBottleSound(); // Play the collect poison bottle sound
     }
   }
-
-  collectKey(key, index) {
+  collectKey(key) {
     if (key && key.isActive) { // If the key object is active
       key.deactivate(); // Deactivate the key object
       this.hasKey = true; // Set the character's hasKey property to true
-      this.world.keysArray.splice(index, 1); // Remove the key object from the array
     }
   }
-
   draw(ctx) {
     if (this.isVisible) {
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
   }
-
   attackEnemies() {
     if (this.world.enemies) {
         this.world.enemies.forEach(enemy => {
@@ -344,20 +334,10 @@ class Character extends MovableObject {
         });
     }
   }
-
   attack(target) {
-    
-    if ((target instanceof Knight || target instanceof Snake) && target.energy > 0) {  // Prüfe direkt die energy
+    if ((target instanceof Knight) && target.energy > 0) {  // Prüfe direkt die energy
         target.takeDamage(10);
     }
   }
-  shoot() {
-    if (this.world.snakes) {
-        this.world.snakes.forEach(snake => {
-            if (this.isColliding(snake) && snake.energy > 0) {  // Prüfe direkt die energy
-                this.attack(snake);
-            }
-        });
-    }
-  }
+
 }

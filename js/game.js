@@ -73,9 +73,9 @@ function loadLevel2() { // Load level 2
     world.character.reset(2); // Reset the character for level 2
     world.character.x = 0; // Set the character to the starting point of level 2
     world.backgroundObjects = level2.backgroundObjects; // Set the new background
-    world.enemies = level2.enemies; // Set the new enemies (snakes and end boss)
+    world.enemies = level2.enemies; // Use the existing enemies from level 2
     if (level2.endboss) { // Check if the end boss is defined
-      world.level.endboss = level2.endboss; // Add the end boss only in level 2
+      world.level.endboss = new Endboss(level2.endboss.x, level2.endboss.y); // Add the end boss only in level 2
     }
     stopAllSounds(); // Stop all running sounds
     playLevel2Sound(); // Play the background sound for level 2
@@ -203,7 +203,7 @@ function checkOrientation() {
   }
 }
 
-// Event Listener für das Laden der Seite und Änderungen der Bildschirmgröße
-window.addEventListener('load', checkOrientation);
-window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+// Initial check
+window.addEventListener('load', checkOrientation);

@@ -1,11 +1,10 @@
 const level2 = {
     enemies: [
         new Snake(900, 200, 1),
-        new Snake(1400, 200, 2),
-        new Snake(2000, 200,3),
-        new Snake(2900, 200,4),
-        new Snake(4100, 200,5),
-        new Endboss(15000, 150),
+        new Snake(1900, 200, 2),
+        new Snake(3000, 200,3),
+        new Snake(4500, 200,4),
+        new Endboss(6000, 150),
     ],
     clouds: [
         new Cloud(0, 50),
@@ -37,7 +36,7 @@ const level2 = {
         new BackgroundObject("img/game_backgrounds/3/2.png", 15101),
         new BackgroundObject("img/game_backgrounds/3/2.png", 15820),
     ],
-    level_end_x: 3500,
+    level_end_x: 6500,
     endboss: new Endboss()
 };
 

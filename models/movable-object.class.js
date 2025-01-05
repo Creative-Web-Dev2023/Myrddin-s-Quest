@@ -33,17 +33,13 @@ class MovableObject extends DrawableObject {
   }
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false; // Prüfen, ob mo ein MovableObject ist
-    const box1 = this.getCollisionBox(); // Kollisionsbox des aktuellen Objekts
-    const box2 = mo.getCollisionBox();   // Kollisionsbox des anderen Objekts
     
-    const isColliding = (
-      box1.x < box2.x + box2.width &&  // Linke Seite von box1 vor der rechten Seite von box2
-      box1.x + box1.width > box2.x &&  // Rechte Seite von box1 hinter der linken Seite von box2
-      box1.y < box2.y + box2.height && // Oberseite von box1 über der Unterseite von box2
-      box1.y + box1.height > box2.y    // Unterseite von box1 unter der Oberseite von box2
+    return (
+      this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+      this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+      this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+      this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom
     );
-
-    return isColliding;
   }
 
   getCollisionBox() {

@@ -38,8 +38,8 @@ class Key extends DrawableObject {
     }
   }
 
-  static initializeKeys() {
-    return [new Key(4300, 350)];
+  static initializeKey() {
+    
+    return new Key(4500, 200);
   }
 }
-
