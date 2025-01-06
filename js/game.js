@@ -128,7 +128,8 @@ window.addEventListener("keydown", (e) => {
     keyboard.ATTACK = true; // Attack key
   }
   if (e.code === "KeyS") {
-    keyboard.THROW = true; // Fire animation key
+    keyboard.THROW_FIRE = true; // Fire animation key
+    console.log("THROW_FIRE key down"); // Debugging-Ausgabe
   }
   if (e.code === "KeyD") {
     keyboard.D = true; // D key
@@ -159,7 +160,8 @@ window.addEventListener("keyup", (e) => {
     keyboard.ATTACK = false; // Release attack key
   }
   if (e.code === "KeyS") {
-    keyboard.THROW = false; // Release fire animation key
+    keyboard.THROW_FIRE = false; // Release fire animation key
+    console.log("THROW_FIRE key up"); // Debugging-Ausgabe
   }
   if (e.code === "KeyD") {
     keyboard.D = false; // Release D key

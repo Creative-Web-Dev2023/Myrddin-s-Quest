@@ -1,8 +1,8 @@
-window.DEBUG_COLLISION_BOXES = true;class Knight extends MovableObject {
+class Knight extends MovableObject {
   height = 290; // Back to original height for sprite
   width = 520;  // Back to original width for sprite
   y = 190;
-  delay = 3000;
+  delay = 2000; // wait 3 seconds before moving
   direction = 'left';
   moveRange = 100;
   startX = 800;
@@ -139,8 +139,6 @@ window.DEBUG_COLLISION_BOXES = true;class Knight extends MovableObject {
     if (!this.isDead()) {
       this.isDead = true;
       this.playDeathAnimation();
-      // Optional: Sound abspielen
-      // playKnightDeathSound();
     }
   }
 
@@ -160,7 +158,7 @@ window.DEBUG_COLLISION_BOXES = true;class Knight extends MovableObject {
       this.playDeathAnimation(); // Todesanimation abspielen
     }
   }
-  // ... existing code ...
+ 
 
 checkForAttack(character) {
   const knightBox = this.getCollisionBox();

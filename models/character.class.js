@@ -139,66 +139,82 @@ class Character extends MovableObject {
     }, 1000 / 25);
   }
 
-  throwObject() {
-    if (this.canThrow()) {
-      let bottle = new ThrowableObject(this.x, this.y);
-      this.world.throwableObjects.push(bottle);
-      this.poisonCollected--; // Decrease the collected poison count
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
-    }
-  }
-  canThrow() {
-    return this.poisonCollected > 0; // Check if the character has collected poison
-  }
-
-
   update() {
     if (!this.isVisible) return;
-    if (this.energy > 0) {  // Prüfe direkt die energy statt isDead()
-        walkingSound.pause(); 
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-            this.moveRight();
-            this.otherDirection = false;
-            playWalkingSound();
-        }
-        if (this.world.keyboard.LEFT && this.x > 0) {
-            this.moveLeft();
-            this.otherDirection = true;
-            playWalkingSound();
-        }
-        if (this.world.keyboard.JUMP && !this.isAboveGround()) {
-            this.jump();
-        }
-        if (this.world.keyboard.ATTACK) {
-            this.isAttacking = true;
-            this.playAnimation(this.IMAGES_ATTACK);
-            this.attackEnemies();
-        } else {
-            this.isAttacking = false;
-        }
-
-        if (this.world.keyboard.THROW_FIRE) {
-            this.playAnimation(this.IMAGES_FIRE_ATTACK);
-            this.shoot();
-        }
-        this.world.camera_x = -this.x - 190;
-        this.checkCollisions();
+    if (this.energy > 0) {
+      this.handleMovement();
+      this.handleActions();
+      this.updateCamera();
+      this.checkCollisions();
     }
   }
-  
+
+  handleMovement() {
+    walkingSound.pause();
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      this.moveRight();
+      this.otherDirection = false;
+      playWalkingSound();
+    }
+    if (this.world.keyboard.LEFT && this.x > 0) {
+      this.moveLeft();
+      this.otherDirection = true;
+      playWalkingSound();
+    }
+    if (this.world.keyboard.JUMP && !this.isAboveGround()) {
+      this.jump();
+    }
+  }
+
+  handleActions() {
+    if (this.world.keyboard.ATTACK) {
+      this.isAttacking = true;
+      this.playAnimation(this.IMAGES_ATTACK);
+      this.attackEnemies();
+    } else {
+      this.isAttacking = false;
+    }
+
+    if (this.world.keyboard.THROW_FIRE) {
+      console.log("THROW_FIRE key pressed"); // Debugging-Ausgabe
+      this.playAnimation(this.IMAGES_FIRE_ATTACK);
+      this.shoot();
+    }
+  }
+
+  updateCamera() {
+    this.world.camera_x = -this.x - 190;
+  }
+
   checkCollisions() {
+    this.checkCollisionWithPoisons();
+    this.checkCollisionWithEnemies();
+    this.checkCollisionWithKey();
+    Door.checkCharacterNearDoor(this.world);
+  }
+
+  checkCollisionWithPoisons() {
     this.world.poisonsArray.forEach((poison, index) => {
       if (this.checkCollision(this, poison)) {
         this.collectPoison(poison, index);
       }
     });
-    
+  }
+
+  checkCollisionWithEnemies() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Key && this.checkCollision(this, enemy)) {
         this.collectKey(enemy);
       }
-    }); 
-    Door.checkCharacterNearDoor(this.world);
+    });
+  }
+
+  checkCollisionWithKey() {
+    this.world.enemies.forEach((enemy) => {
+      if (enemy instanceof Key && this.checkCollision(this, enemy)) {
+        this.collectKey(enemy);
+      }
+    });
   }
 
   checkCollision(character, object) { // Check collision between character and object
@@ -334,10 +350,45 @@ class Character extends MovableObject {
         });
     }
   }
-  attack(target) {
-    if ((target instanceof Knight) && target.energy > 0) {  // Prüfe direkt die energy
-        target.takeDamage(10);
+
+  shoot() {
+    console.log("Shoot method called"); // Debugging-Ausgabe
+    this.world.checkFireAttackOnSnakes();
+  }
+
+  throwObject() {
+    if (this.canThrow()) {
+      let bottle = new ThrowableObject(this.x, this.y);
+      this.world.throwableObjects.push(bottle);
+      this.poisonCollected--; // Decrease the collected poison count
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
     }
+  }
+
+  canThrow() {
+    return this.poisonCollected > 0; // Check if the character has collected poison
+  }
+
+  attackKnights() {
+    this.world.enemies.forEach(enemy => {
+      if (enemy instanceof Knight && !enemy.dead) {
+        const distance = Math.abs(this.x - enemy.x);
+        if (distance < 150) { // Überprüfe die Angriffsreichweite
+          enemy.takeDamage(10);
+        }
+      }
+    });
+  }
+
+  attackSnakes() {
+    this.world.enemies.forEach(enemy => {
+      if (enemy instanceof Snake && !enemy.dead) {
+        const distance = Math.abs(this.x - enemy.x);
+        if (distance < 150) { // Überprüfe die Angriffsreichweite
+          enemy.takeDamage(10);
+        }
+      }
+    });
   }
 
 }

@@ -34,7 +34,7 @@ class World {
     const buttonHeight = 40; // Height of the buttons
     const canvasCenterX = canvas.width / 2; // Center of the canvas
     const buttonSpacing = 20; // Spacing between buttons
- 
+
     this.quitButton = {
       x: canvasCenterX - buttonWidth - buttonSpacing / 2, // X position of the quit button
       y: this.canvas.height - buttonHeight - 20, // Y position of the quit button
@@ -54,7 +54,8 @@ class World {
     this.clouds.randomizePositions(); // Set random positions for the clouds
     this.poisonStatusBar = new PoisonStatusBar(); // Initialize the poison status bar
     this.characterStatusBar = new StatusBar(); // Initialisiere vor dem Character
-    if (this.level.endboss) { // Check if the level has an endboss
+    if (this.level.endboss) {
+      // Check if the level has an endboss
       this.endbossHealthBar = new EndbossStatusBar( // Initialize the endboss health bar
         this.level.endboss.x, // X position of the endboss health bar
         this.level.endboss.y - 50 // Y position of the endboss health bar
@@ -66,6 +67,7 @@ class World {
     this.key = Key.initializeKey(); // Initialize the key
     this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
     this.enemies = this.level.enemies || []; // Initialize enemies from the level
+    // this.snakes = this.enemies.filter(enemy => enemy instanceof Snake); // Initialize snakes from enemies
     this.level.objects = this.level.objects || []; // Ensure objects is an array
     this.level.clouds = this.level.clouds || []; // Ensure clouds is an array
     this.loadImages(this.IMAGES_YOU_LOST); // Load the "You Lost" image
@@ -79,20 +81,25 @@ class World {
 
   setWorld() {
     this.character.world = this; // Set the world property for the character
-    this.enemies.forEach((enemy) => { // Iterate over the enemies
-      if (enemy instanceof Knight) { // Check if the enemy is a knight 
+    this.enemies.forEach((enemy) => {
+      // Iterate over the enemies
+      if (enemy instanceof Knight) {
+        // Check if the enemy is a knight
         enemy.world = this; // Set the world property for the knight
         enemy.otherDirection = true; // Ensure the knight always faces left
       }
     });
-    if (this.door) { // Check if the door exists
+    if (this.door) {
+      // Check if the door exists
       this.door.world = this; // Set the world property for the door
     }
   }
 
-  loadImages(images) { // Load images into the image cache
-    images.forEach((path) => { // Iterate over the image paths
-      const img = new Image(); // Create a new image object 
+  loadImages(images) {
+    // Load images into the image cache
+    images.forEach((path) => {
+      // Iterate over the image paths
+      const img = new Image(); // Create a new image object
       img.src = path; // Set the source of the image
       this.imageCache[path] = img; // Store the image in the cache
     });
@@ -100,17 +107,18 @@ class World {
 
   startGameLoop() {
     this.canvas.addEventListener("click", this.handleMouseClick.bind(this)); // Add event listener
-    const gameLoop = () => { // Define the game loop
+    const gameLoop = () => {
+      // Define the game loop
       this.update(); // Update the game state
       this.draw(); // Draw the game state
       this.enemies.forEach((enemy) => {
-        if (enemy instanceof Knight) {
-          enemy.update(this.character); // Überprüfe, ob der Ritter angreifen soll
+        if (enemy instanceof Knight || enemy instanceof Snake) {
+          enemy.update(this.character); // Überprüfe, ob der Ritter oder die Schlange angreifen soll
         }
       });
       requestAnimationFrame(gameLoop); // Call the game loop again
     };
-    gameLoop(); // Start the game loop 
+    gameLoop(); // Start the game loop
   }
 
   update() {
@@ -123,45 +131,45 @@ class World {
     this.checkCollisionsWithCollectables();
     this.checkDoorCollision();
     if (this.character.isMoving() && musicIsOn) {
-        playWalkingSound();
+      playWalkingSound();
     }
     if (this.character.energy <= 0 && !this.levelCompleted) {
-        setTimeout(() => {
-            this.endGame.showYouLostScreen();
-        }, 200);
+      setTimeout(() => {
+        this.endGame.showYouLostScreen();
+      }, 200);
     }
     if (this.keyboard.ATTACK) {
-        this.character.attackEnemies();
-        this.character.playAnimation(this.character.IMAGES_ATTACK);
+      this.character.attackKnights();
+      this.character.attackSnakes();
+      this.character.playAnimation(this.character.IMAGES_ATTACK);
     }
-    
   }
 
   checkCollisionsWithEnemies() {
     this.enemies.forEach((enemy) => {
-        if (this.checkCollision(this.character, enemy)) {
-            if (enemy instanceof Snake) {
-                // Wenn der Character von oben auf die Schlange springt
-                if (this.character.isAboveGround() && this.character.speedY > 0) {
-                    this.character.jump();
-                    if (!enemy.isDead) {
-                        enemy.takeDamage(20);
-                    }
-                } else {
-                    // Wenn der Character seitlich mit der Schlange kollidiert
-                    if (!enemy.isDead) {
-                        this.character.hit(enemy);
-                        this.characterStatusBar.setPercentage(this.character.energy);
-                    }
-                }
+      if (this.checkCollision(this.character, enemy)) {
+        if (enemy instanceof Snake) {
+          // Wenn der Character von oben auf die Schlange springt
+          if (this.character.isAboveGround() && this.character.speedY > 0) {
+            this.character.jump();
+            if (!enemy.isDead) {
+              enemy.takeDamage(20);
             }
-        } else if (enemy instanceof Snake) {
-            // Prüfe Angriffsreichweite der Schlange
-            const distance = Math.abs(this.character.x - enemy.x);
-            if (distance <= 100 && !enemy.isDead) {
-                enemy.attack();
+          } else {
+            // Wenn der Character seitlich mit der Schlange kollidiert
+            if (!enemy.isDead) {
+              this.character.hit(enemy);
+              this.characterStatusBar.setPercentage(this.character.energy);
             }
+          }
         }
+      } else if (enemy instanceof Snake) {
+        // Prüfe Angriffsreichweite der Schlange
+        const distance = Math.abs(this.character.x - enemy.x);
+        if (distance <= 100 && !enemy.isDead) {
+          enemy.attack();
+        }
+      }
     });
   }
 
@@ -172,14 +180,17 @@ class World {
         const knightBox = enemy.getCollisionBox();
         if (
           this.character.speedY > 20 &&
-          characterBox.y + characterBox.height <= knightBox.y + knightBox.height &&
+          characterBox.y + characterBox.height <=
+            knightBox.y + knightBox.height &&
           characterBox.x + characterBox.width > knightBox.x &&
           characterBox.x < knightBox.x + knightBox.width
         ) {
           this.character.jump();
           enemy.playDeathAnimation();
           setTimeout(() => {
-            const knightIndex = this.enemies.findIndex(knight => knight.id === enemy.id);
+            const knightIndex = this.enemies.findIndex(
+              (knight) => knight.id === enemy.id
+            );
             if (knightIndex !== -1) {
               this.enemies.splice(knightIndex, 1);
             }
@@ -189,20 +200,24 @@ class World {
     });
   }
 
-  updatePoison() { // Update the poison objects 
-    this.poisonsArray.forEach((poison, index) => { // Iterate over the poison objects
-      if (poison.isActive && this.checkCollision(this.character, poison)) { // Check if the poison is active and colliding with the character
+  updatePoison() {
+    // Update the poison objects
+    this.poisonsArray.forEach((poison, index) => {
+      // Iterate over the poison objects
+      if (poison.isActive && this.checkCollision(this.character, poison)) {
+        // Check if the poison is active and colliding with the character
         this.character.collectPoison(poison, index); // Collect the poison
       }
     });
   }
 
- 
-  checkCollision(character, object) { // Check collision between character and object	
+  checkCollision(character, object) {
+    // Check collision between character and object
     const charBox = character.getCollisionBox(); // Get the character's collision box
     const objBox = object.getCollisionBox(); // Get the object's collision box
 
-    return ( // Check if there is a collision between the character and the object
+    return (
+      // Check if there is a collision between the character and the object
       charBox.x < objBox.x + objBox.width && // Check collision on the x-axis
       charBox.x + charBox.width > objBox.x && // Check collision on the x-axis
       charBox.y < objBox.y + objBox.height && // Check collision on the y-axis
@@ -227,15 +242,15 @@ class World {
     this.drawCharacter();
     this.drawSnakes(); // Zeichne die Schlangen
     if (this.door) {
-        this.door.draw(this.ctx);
+      this.door.draw(this.ctx);
     }
     if (this.character.energy <= 0) {
-        this.endGame.showYouLostScreen();
+      this.endGame.showYouLostScreen();
     }
   }
 
   drawSnakes() {
-    this.snakes.forEach(snake => {
+    this.snakes.forEach((snake) => {
       snake.draw(this.ctx); // Zeichne jede Schlange
     });
   }
@@ -246,7 +261,8 @@ class World {
     }
   }
 
-  drawGameObjects() { // Draw the game objects
+  drawGameObjects() {
+    // Draw the game objects
     this.ctx.translate(this.camera_x, 0); // Translate the canvas
     this.addObjectsToMap(this.enemies); // Add enemies to the map
     this.addObjectsToMap(this.poisonsArray); // Add poison objects to the map
@@ -256,14 +272,17 @@ class World {
     this.ctx.translate(-this.camera_x, 0); // Reset the translation
   }
 
-  clearCanvas() { // Clear the canvas 
+  clearCanvas() {
+    // Clear the canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
   }
 
-  drawBackground() { // Draw the background
+  drawBackground() {
+    // Draw the background
     this.ctx.translate(this.camera_x, 0); // Translate the canvas
     this.addObjectsToMap(this.backgroundObjects); // Add background objects to the map
-    if (Array.isArray(this.level.clouds)) { // Ensure clouds is an array
+    if (Array.isArray(this.level.clouds)) {
+      // Ensure clouds is an array
       this.addObjectsToMap(this.level.clouds); // Add clouds to the map
     }
     this.ctx.translate(-this.camera_x, 0); // Reset the translation
@@ -272,7 +291,8 @@ class World {
   drawStatusBars() {
     this.addToMap(this.poisonStatusBar);
     this.addToMap(this.characterStatusBar);
-    if (this.currentLevelIndex === 1 && this.level.endboss) { // Check if the level is level 2 and the endboss exists
+    if (this.currentLevelIndex === 1 && this.level.endboss) {
+      // Check if the level is level 2 and the endboss exists
       this.endbossHealthBar.x = this.level.endboss.x; // Set the x position of the endboss health bar
       this.endbossHealthBar.y = this.level.endboss.y - 50; // Set the y position of the endboss health bar
       this.addToMap(this.endbossHealthBar); // Add the endboss health bar to the map
@@ -281,11 +301,13 @@ class World {
     this.addToMap(this.character.healthBar); // Add the character's health bar to the map
   }
 
-  drawEnemies() { // Draw the enemies
+  drawEnemies() {
+    // Draw the enemies
     this.enemies.forEach((enemy) => {
       enemy.draw(this.ctx); // Draw the enemy
     });
-    if (this.level === level2 && this.level.endboss) { // Check if the level is level 2 and the endboss exists
+    if (this.level === level2 && this.level.endboss) {
+      // Check if the level is level 2 and the endboss exists
       this.level.endboss.draw(this.ctx); // Draw the endboss only in level 2
     }
   }
@@ -312,9 +334,12 @@ class World {
     }
   }
 
-  addObjectsToMap(objects) { // Add objects to the map 
-    if (objects && Array.isArray(objects)) { // Check if objects is an array and exists 
-      objects.forEach((object) => { // Iterate over the objects 
+  addObjectsToMap(objects) {
+    // Add objects to the map
+    if (objects && Array.isArray(objects)) {
+      // Check if objects is an array and exists
+      objects.forEach((object) => {
+        // Iterate over the objects
         this.addToMap(object); // Add objects to the map
       });
     } else {
@@ -329,33 +354,40 @@ class World {
     }
   }
 
-  addToMap(mo) { // Add the object to the map
-    if (mo && mo.otherDirection) { // Check if the object is facing the other direction 
+  addToMap(mo) {
+    // Add the object to the map
+    if (mo && mo.otherDirection) {
+      // Check if the object is facing the other direction
       this.flipImage(mo); // Flip the image if necessary
     }
-    if (mo) { // Check if the object exists 
+    if (mo) {
+      // Check if the object exists
       mo.draw(this.ctx); // Draw the image
       mo.drawFrame(this.ctx); // Update the image
     }
-    if (mo && mo.otherDirection) { // Check if the object is facing the other direction
+    if (mo && mo.otherDirection) {
+      // Check if the object is facing the other direction
       this.flipImageBack(mo); // Flip the image back
     }
   }
 
-  flipImage(mo) { // Flip the image 
+  flipImage(mo) {
+    // Flip the image
     this.ctx.save(); // Save the current state of the canvas
     this.ctx.translate(mo.width, 0); // Move the image by the width of the image
     this.ctx.scale(-1, 1); // Flip the image
     mo.x = mo.x * -1; // Rotate the image 180 degrees
   }
 
-  flipImageBack(mo) { // Flip the image back to the original state 
+  flipImageBack(mo) {
+    // Flip the image back to the original state
     mo.x = mo.x * -1; // Rotate the image 180 degrees back
     this.ctx.restore(); // Restore the saved state
   }
 
   checkThrowableObject() {
-    if (this.keyboard.D && this.character.poisonCollected > 0) { // Check if the D key is pressed and poison is collected
+    if (this.keyboard.D && this.character.poisonCollected > 0) {
+      // Check if the D key is pressed and poison is collected
       this.character.throwObject(); // Throw the object
       playPoisonBottleSound(); // Play sound when the bottle is thrown
     }
@@ -368,7 +400,11 @@ class World {
         this.character.collectPoison(poison, index); // Collect the poison
       }
     });
-    if (this.key && this.key.isActive && this.checkCollision(this.character, this.key)) {
+    if (
+      this.key &&
+      this.key.isActive &&
+      this.checkCollision(this.character, this.key)
+    ) {
       this.key.deactivate(); // Deaktiviert den Schlüssel
       this.character.collectKey(this.key); // Implementiere diese Methode, falls du zusätzliche Logik für das Aufsammeln hinzufügen willst
     }
@@ -386,23 +422,23 @@ class World {
   }
 
   loadLevel2() {
-    if (typeof level2 !== 'undefined') {
-        world.level = level2;
-        world.backgroundObjects = level2.backgroundObjects;
-        world.enemies = level2.enemies;
-        world.enemies.forEach(enemy => {
-            if (enemy instanceof Snake) {
-                enemy.setWorld(this);
-                enemy.otherDirection = true; // Schlange schaut nach links
-                enemy.speedX = -enemy.speedX; // Schlange bewegt sich nach links
-                enemy.direction = 'left'; // Setze die Richtung auf 'links'
-            }
-        });
+    if (typeof level2 !== "undefined") {
+      world.level = level2;
+      world.backgroundObjects = level2.backgroundObjects;
+      world.enemies = level2.enemies;
+      world.enemies.forEach((enemy) => {
+        if (enemy instanceof Snake) {
+          enemy.setWorld(this);
+          enemy.otherDirection = true; // Schlange schaut nach links
+          enemy.speedX = -enemy.speedX; // Schlange bewegt sich nach links
+          enemy.direction = "left"; // Setze die Richtung auf 'links'
+        }
+      });
     }
   }
 
   checkCollisions() {
-    this.snakes.forEach(snake => {
+    this.snakes.forEach((snake) => {
       if (this.character.isColliding(snake)) {
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
@@ -410,4 +446,20 @@ class World {
     });
   }
 
+  checkFireAttackOnSnakes() {
+    this.snakes.forEach((snake) => {
+      const distance = Math.abs(this.character.x - snake.x);
+
+      if (snake.isDead()) {
+        return;
+      }
+
+      if (distance < 300) {
+        // Angriff nur wenn Schlange in Reichweite
+
+        snake.takeFireDamage(20); // Schaden für Feuerball
+      } else {
+      }
+    });
+  }
 }

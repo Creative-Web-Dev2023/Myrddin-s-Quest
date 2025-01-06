@@ -74,7 +74,6 @@ class MovableObject extends DrawableObject {
 
   loadImages(images) { // Load images for the object
     if (!images || !Array.isArray(images) || images.length === 0) { // Check for valid images array
-      console.error('Invalid images array:', images); // Log error for invalid images array
       return;
     }
     this.imageCache = this.imageCache || {}; // Initialize image cache
