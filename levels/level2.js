@@ -1,9 +1,9 @@
 const level2 = {
     enemies: [
-        new Snake(900, 200, 1),
+        new Snake(1000, 200, 1),
         new Snake(1800, 200, 2),
-        new Snake(2700, 200, 3),
-        new Snake(3600, 200, 4),
+        new Snake(2600, 200, 3),
+        new Snake(3200, 200, 4),
         new Endboss(6000, 150),
     ],
     clouds: [

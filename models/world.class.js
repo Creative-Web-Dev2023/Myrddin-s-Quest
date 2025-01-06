@@ -134,6 +134,7 @@ class World {
         this.character.attackEnemies();
         this.character.playAnimation(this.character.IMAGES_ATTACK);
     }
+    
   }
 
   checkCollisionsWithEnemies() {

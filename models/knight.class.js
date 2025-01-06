@@ -1,4 +1,4 @@
-class Knight extends MovableObject {
+window.DEBUG_COLLISION_BOXES = true;class Knight extends MovableObject {
   height = 290; // Back to original height for sprite
   width = 520;  // Back to original width for sprite
   y = 190;

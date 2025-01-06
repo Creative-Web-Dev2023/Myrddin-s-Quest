@@ -1,15 +1,19 @@
 class Snake extends MovableObject {
   height = 150;
   width = 250;
-  y = 350;
+  y = 300;
   isMoving = true; // Schlange bewegt sich immer
-  direction = 'right';
-  moveRange = 200; // Standardbewegungsbereich
-  startX = 1200; // Startposition geändert, damit die Schlange von rechts kommt
+  direction = 'left';
+  moveRange = 150; // Reduzierte Bewegungsreichweite
+  startX = 400; // Angepasste Startposition
   isIdle = false; // Schlange ist nicht idle
   isAttacking = false; // Track if the snake is attacking
+  isHurt = false;
+  isDying = false;
   energy = 10; // Snake hat 20 Lebenspunkte
-  speed = 0.015; // Reduce base speed
+  speed = 0.5; // Reduce base speed
+  otherDirection = 1; // Füge otherDirection hinzu, um die Bildrichtung zu korrigieren
+  deathTimeout = null;
 
   offset = {
     top: 60,
@@ -39,6 +43,12 @@ class Snake extends MovableObject {
     'img/snake/attack/attack 003.png',
   ];
 
+  IMAGES_HURT = [
+    'img/snake/hurt/hurt 000.png',
+    'img/snake/hurt/hurt 001.png',
+
+  ];
+
   IMAGES_DEAD = [
     'img/snake/die/die 000.png',
     'img/snake/die/die 001.png',
@@ -46,51 +56,60 @@ class Snake extends MovableObject {
     'img/snake/die/die 003.png',
   ];
 
-  constructor(startX = 1500, moveRange = 200, id) { // Fügen Sie die id hinzu
+  constructor(startX = 400, moveRange = 150, id) { 
     super();
-    this.id = id; // Initialisieren Sie die id
+    this.id = id; 
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
-    this.loadImage('img/snake/walk/Walk1.png'); // Stellen Sie sicher, dass dieser Pfad korrekt ist
+    this.loadImage(this.IMAGES_WALKING[0]); 
     this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_IDLE); // Lade Idle-Bilder
-    this.loadImages(this.IMAGES_ATTACKING); // Lade Angriffs-Bilder
-    this.loadImages(this.IMAGES_DEAD); // Lade Dead-Bilder
-    this.speed = 0.02 + Math.random() * 0.05; // Geschwindigkeit reduziert
+    this.loadImages(this.IMAGES_IDLE); 
+    this.loadImages(this.IMAGES_ATTACKING); 
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_DEAD); 
     this.animate();
   }
 
   animate() {
-    this.movementInterval = setInterval(() => {
-      if (this.direction === 'right') {
-        this.moveRight(); // Bewege die Schlange nach rechts
-      } else {
-        this.moveLeft(); 
-      }
-    }, 1000 / 60); 
-  
-    this.animationInterval = setInterval(() => {
-      if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
-      } else if (this.isAttacking) {
-        this.playAnimation(this.IMAGES_ATTACKING);
-      } else {
-        this.playAnimation(this.IMAGES_WALKING); // Bild wechseln während der Bewegung
-      }
-    }, 100); 
-   
-  }
-  
+    setInterval(() => {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isDying) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isHurt) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.isAttacking) {
+            this.playAnimation(this.IMAGES_ATTACKING);
+        } else if (this.isIdle) {
+            this.playAnimation(this.IMAGES_IDLE);
+        } else {
+            this.playAnimation(this.IMAGES_WALKING); 
+        }
+    }, 200);
+
+    setInterval(() => {
+        if (!this.isDead() && this.isMoving) {
+            if (this.direction === 'left') {
+                if (this.x > this.startX - this.moveRange) { 
+                    this.x -= this.speed;
+                    this.otherDirection = true; // Schlange schaut nach links
+                } else {
+                    this.direction = 'right';
+                }
+            } else {
+                if (this.x < this.startX) { 
+                    this.x += this.speed;
+                    this.otherDirection = false; // Schlange schaut nach rechts
+                } else {
+                    this.direction = 'left';
+                }
+            }
+        }
+    }, 1000 / 60);
+}
+
   update() {
-    this.x += this.speedX; // Bewege die Schlange basierend auf der Geschwindigkeit
+    this.x += this.speedX; 
   }
-  
-  
-
-
-
- 
- 
-
 }
