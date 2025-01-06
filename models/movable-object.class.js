@@ -1,7 +1,6 @@
 class MovableObject extends DrawableObject {
   drawRectangle = true; // Default is no rectangle
   speed = 0.15; // Default speed 
-  otherDirection = false; // Default is no other direction
   speedY = 0; // Vertical speed
   acceleration = 2.5; // Acceleration for gravity
   energy = 100; // Energy for the object
@@ -20,7 +19,6 @@ class MovableObject extends DrawableObject {
       if (this.isAboveGround() || this.speedY > 0) { // Überprüfe, ob der Charakter über dem Boden ist oder nach oben springt
         this.y -= this.speedY; // Bewege das Objekt nach oben, wenn speedY positiv ist
         this.speedY -= this.acceleration; // Verringere die vertikale Geschwindigkeit
-        console.log(`y-Position: ${this.y}, speedY: ${this.speedY}`); // Debugging-Log
       } else {
         this.y = 150; // Setze die y-Position auf den Boden, wenn das Objekt den Boden erreicht
         this.speedY = 0; // Setze die vertikale Geschwindigkeit zurück

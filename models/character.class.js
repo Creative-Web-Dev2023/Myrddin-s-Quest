@@ -325,9 +325,9 @@ class Character extends MovableObject {
   attackEnemies() {
     if (this.world.enemies) {
         this.world.enemies.forEach(enemy => {
-            if (enemy instanceof Knight && !enemy.dead) {  // Prüfe ob Knight und nicht tot
+            if ((enemy instanceof Knight || enemy instanceof Snake) && !enemy.dead) {  // Prüfe ob Knight oder Snake und nicht tot
                 const distance = Math.abs(this.x - enemy.x);
-                if (distance < 150) {  // Überprüfe die Angriffsreichweit
+                if (distance < 150) {  // Überprüfe die Angriffsreichweite
                     enemy.takeDamage(10);
                 }
             }

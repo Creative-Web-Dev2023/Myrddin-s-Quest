@@ -64,7 +64,6 @@ class World {
     this.character.world.keyboard = this.keyboard; // Forward keyboard to character
     this.poisonsArray = PoisonObject.initializePoisons(); // Initialize poison objects
     this.key = Key.initializeKey(); // Initialize the key
-    
     this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
     this.enemies = this.level.enemies || []; // Initialize enemies from the level
     this.level.objects = this.level.objects || []; // Ensure objects is an array
@@ -232,16 +231,6 @@ class World {
     if (this.character.energy <= 0) {
         this.endGame.showYouLostScreen();
     }
-    this.characters.forEach(character => {
-        this.ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'; // Rote Farbe für die Kollisionsbox
-        let box = character.getCollisionBox();
-        this.ctx.fillRect(box.x, box.y, box.width, box.height);
-    });
-    this.enemies.forEach(enemy => {
-        this.ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'; // Blaue Farbe für die Kollisionsbox
-        let box = enemy.getCollisionBox();
-        this.ctx.fillRect(box.x, box.y, box.width, box.height);
-    });
   }
 
   drawSnakes() {
@@ -265,7 +254,6 @@ class World {
     });
     this.ctx.translate(-this.camera_x, 0); // Reset the translation
   }
-  
 
   clearCanvas() { // Clear the canvas 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
@@ -401,11 +389,12 @@ class World {
         world.level = level2;
         world.backgroundObjects = level2.backgroundObjects;
         world.enemies = level2.enemies;
-        
-        // Setze die World-Referenz für jede Snake
         world.enemies.forEach(enemy => {
             if (enemy instanceof Snake) {
                 enemy.setWorld(this);
+                enemy.otherDirection = true; // Schlange schaut nach links
+                enemy.speedX = -enemy.speedX; // Schlange bewegt sich nach links
+                enemy.direction = 'left'; // Setze die Richtung auf 'links'
             }
         });
     }
@@ -420,16 +409,4 @@ class World {
     });
   }
 
-  addEnemies() {
-    this.level.enemies.forEach(enemy => {
-        if (enemy instanceof Knight) {
-            enemy.world = this;
-            enemy.otherDirection = true; // Knights bleiben wie sie sind
-        }
-        if (enemy instanceof Snake) {
-            enemy.world = this;
-            enemy.otherDirection = false; // Schlangen bewegen sich nach links
-        }
-    });
-  }
 }
