@@ -1,7 +1,7 @@
 class Snake extends MovableObject {
   height = 150;
   width = 250;
-  y = 300;
+  y = 260;
   isMoving = true; // Schlange bewegt sich immer
   direction = "left"; // Richtung fixieren
   moveRange = 100; // Reduzierte Bewegungsreichweite
@@ -114,14 +114,14 @@ class Snake extends MovableObject {
     if (!this.deathAnimationPlayed) {
       this.deathAnimationPlayed = true;
       this.dead = true;
-      this.playAnimation(this.IMAGES_DEAD);
+      this.playAnimation(this.IMAGES_DEAD);  // Tot-Animation abspielen
+      // Schlange nach 3 Sekunden entfernen
       setTimeout(() => {
-        setTimeout(() => {
-          this.removeSnake();
-        }, 1000);
-      }, 3000);
+        this.removeSnake();  // Schlange nach der Animation aus der Welt entfernen
+      }, 3000); // Warte 3 Sekunden, um die Tot-Animation zu Ende zu sehen
     }
   }
+  
 
   die() {
     if (!this.isDead()) {
@@ -138,16 +138,11 @@ class Snake extends MovableObject {
     return this.energy <= 0 || this.dead;
   }
 
-  hit(damage) {
-    if (this.isDead() || this.deathAnimationPlayed) return;
-    this.energy -= damage;
-    if (this.energy <= 0) {
-      this.energy = 0;
-      this.playDeathAnimation();
-    }
-  }
+  hit(damage) { if (this.isDead()) return; this.energy -= damage; if (this.energy <= 0) { this.energy = 0; this.die(); } else { this.playAnimation(this.IMAGES_HURT); } }
 
   checkForAttack(character) {
+    if (this.energy <= 0) return; // Schlange kann nicht angreifen, wenn sie keine Energie hat
+
     const snakeBox = this.getCollisionBox();
     const characterBox = character.getCollisionBox();
 
@@ -190,45 +185,44 @@ class Snake extends MovableObject {
       }, 500);
     }, 400);
   }
-
   playAttackAnimation() {
     this.playAnimation(this.IMAGES_ATTACKING);
   }
-
   update(character) {
     this.checkForAttack(character);
   }
-
   removeSnake() {
     if (this.world && this.world.snakes) {
       const snakeIndex = this.world.snakes.findIndex((snake) => snake.id === this.id);
       if (snakeIndex !== -1) {
-        this.world.snakes.splice(snakeIndex, 1);
+        this.world.snakes.splice(snakeIndex, 1); // Entferne die Schlange aus der Liste
       }
     }
+    this.isVisible = false; // Make the snake invisible
   }
-
+  
   draw(ctx) {
     super.draw(ctx);
   }
-
   takeDamage(damage) {
     if (!this.dead) {
-      this.energy = Math.max(0, this.energy - 10);
+      this.energy = Math.max(0, this.energy - damage);  // Reduziere die Energie
       if (this.energy <= 0) {
-        this.dead = true;
-        this.playDeathAnimation();
+        this.energy = 0;
+        this.dead = true;  // Schlange ist tot
+        this.playAnimation(this.IMAGES_HURT);  // Schaden-Animation abspielen
         setTimeout(() => {
-          const snakeIndex = this.world.enemies.findIndex((snake) => snake.id === this.id);
-          if (snakeIndex !== -1) {
-            this.world.enemies.splice(snakeIndex, 1);
-          }
-        }, 1000);
+          this.playAnimation(this.IMAGES_DEAD);  // Tot-Animation abspielen
+          setTimeout(() => {
+            this.removeSnake();  // Schlange nach der Animation aus der Welt entfernen
+          }, 3000); // Warte 3 Sekunden, um die Tot-Animation zu Ende zu sehen
+        }, 500); // Warte 0.5 Sekunden nach der Hurt-Animation
       } else {
-        this.playAnimation(this.IMAGES_HURT);
+        this.playAnimation(this.IMAGES_HURT);  // Schaden-Animation abspielen
       }
     }
   }
+  
 
   getCollisionBox() {
     return {

@@ -166,19 +166,19 @@ class Character extends MovableObject {
     }
   }
 
+  
   handleActions() {
     if (this.world.keyboard.ATTACK) {
       this.isAttacking = true;
-      this.playAnimation(this.IMAGES_ATTACK);
+      this.playAnimation(this.IMAGES_ATTACK); // Angriffsanimation abspielen
       this.attackEnemies();
     } else {
       this.isAttacking = false;
     }
-
     if (this.world.keyboard.THROW_FIRE) {
-      console.log("THROW_FIRE key pressed"); // Debugging-Ausgabe
-      this.playAnimation(this.IMAGES_FIRE_ATTACK);
-      this.shoot();
+      this.playAnimation(this.IMAGES_FIRE_ATTACK);  // Schuss-Animation abspielen
+      this.attackKnights();  // Schlangen angreifen, wenn der Charakter schießt
+      this.shoot();  // Aufruf der Schuss-Logik
     }
   }
 
@@ -352,9 +352,13 @@ class Character extends MovableObject {
   }
 
   shoot() {
-    console.log("Shoot method called"); // Debugging-Ausgabe
+   this.attackKnights(); // Schieße auf Schlangen
     this.world.checkFireAttackOnSnakes();
+    setTimeout(() => {
+      this.playAnimation(this.IMAGES_IDLE);  // Setze die Animation zurück auf Idle
+    }, 1000);  // Die Dauer der Schuss-Animation, z.B. 1 Sekunde
   }
+  
 
   throwObject() {
     if (this.canThrow()) {
@@ -371,8 +375,8 @@ class Character extends MovableObject {
 
   attackKnights() {
     this.world.enemies.forEach(enemy => {
-      if (enemy instanceof Knight && !enemy.dead) {
-        const distance = Math.abs(this.x - enemy.x);
+      if (enemy instanceof Knight && !enemy.dead || enemy instanceof Snake && !enemy.dead) {
+        const distance = Math.sqrt(Math.pow(this.x - enemy.x, 2) + Math.pow(this.y - enemy.y, 2));
         if (distance < 150) { // Überprüfe die Angriffsreichweite
           enemy.takeDamage(10);
         }
@@ -380,15 +384,35 @@ class Character extends MovableObject {
     });
   }
 
-  attackSnakes() {
-    this.world.enemies.forEach(enemy => {
-      if (enemy instanceof Snake && !enemy.dead) {
-        const distance = Math.abs(this.x - enemy.x);
-        if (distance < 150) { // Überprüfe die Angriffsreichweite
-          enemy.takeDamage(10);
-        }
-      }
-    });
-  }
+//   attackSnakes() {
+//     const attackRange = 150; // Definierter Angriffsradius
+//     let isAttacking = false;
 
+//     this.world.enemies.forEach(enemy => {
+//       if (enemy instanceof Snake && !enemy.dead) {
+//         // Berechne die Mittelpunkte des Charakters und der Schlange
+//         const characterCenterX = this.x + this.width / 2;
+//         const characterCenterY = this.y + this.height / 2;
+//         const snakeCenterX = enemy.x + enemy.width / 2;
+//         const snakeCenterY = enemy.y + enemy.height / 2;
+
+//         // Berechne die echte Distanz zwischen dem Charakter und der Schlange
+//         const distance = Math.sqrt(Math.pow(characterCenterX - snakeCenterX, 2) + Math.pow(characterCenterY - snakeCenterY, 2));
+//         // console.log(`Character Position: (${this.x}, ${this.y})`);
+//         // console.log(`Snake Position: (${enemy.x}, ${enemy.y})`);
+//         // console.log(`Calculated Distance: ${distance}`); // Debugging-Ausgabe
+
+//         // Überprüfe, ob die Distanz innerhalb des Angriffsradius liegt
+//         if (distance <= attackRange && !isAttacking) {
+//           isAttacking = true;
+//           enemy.takeDamage(10); // Schaden zufügen
+
+//           // Setze einen Timer, um den Angriff zu beenden
+//           setTimeout(() => {
+//             isAttacking = false;
+//           }, 1000); // Zeit, die für den Angriff benötigt wird
+//         }
+//       }
+//     });
+//   }  
 }
