@@ -127,18 +127,6 @@ class Character extends MovableObject {
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
   }
 
-  applyGravity() {
-    setInterval(() => {
-      if (this.isAboveGround() || this.speedY > 0) {
-        this.y -= this.speedY;
-        this.speedY -= this.acceleration;
-      } else {
-        this.speedY = 0;
-        this.y = 150; // Setze die y-Position auf den Boden
-      }
-    }, 1000 / 25);
-  }
-
   update() {
     if (!this.isVisible) return;
     if (this.energy > 0) {
@@ -235,16 +223,8 @@ class Character extends MovableObject {
     }
   }
 
-  isAboveGround() {
-    return this.y < 150 || this.speedY > 0;  // Return true if the character is above the ground or moving upwards
-  }
-
   isMoving() {
     return this.world.keyboard.RIGHT || this.world.keyboard.LEFT; // Return true if the character is moving right or left
-  }
-
-  isHurt() {
-    return this.energy < 100 && this.energy > 0;  // Energy is less than 100 and greater than 0, character is hurt
   }
 
   hit(enemy) {
@@ -384,35 +364,32 @@ class Character extends MovableObject {
     });
   }
 
-//   attackSnakes() {
-//     const attackRange = 150; // Definierter Angriffsradius
-//     let isAttacking = false;
+  attackSnakes() {
+    const attackRange = 150; // Definierter Angriffsradius
+    let isAttacking = false;
 
-//     this.world.enemies.forEach(enemy => {
-//       if (enemy instanceof Snake && !enemy.dead) {
-//         // Berechne die Mittelpunkte des Charakters und der Schlange
-//         const characterCenterX = this.x + this.width / 2;
-//         const characterCenterY = this.y + this.height / 2;
-//         const snakeCenterX = enemy.x + enemy.width / 2;
-//         const snakeCenterY = enemy.y + enemy.height / 2;
+    this.world.enemies.forEach(enemy => {
+      if (enemy instanceof Snake && !enemy.dead) {
+        // Berechne die Mittelpunkte des Charakters und der Schlange
+        const characterCenterX = this.x + this.width / 2;
+        const characterCenterY = this.y + this.height / 2;
+        const snakeCenterX = enemy.x + enemy.width / 2;
+        const snakeCenterY = enemy.y + enemy.height / 2;
 
-//         // Berechne die echte Distanz zwischen dem Charakter und der Schlange
-//         const distance = Math.sqrt(Math.pow(characterCenterX - snakeCenterX, 2) + Math.pow(characterCenterY - snakeCenterY, 2));
-//         // console.log(`Character Position: (${this.x}, ${this.y})`);
-//         // console.log(`Snake Position: (${enemy.x}, ${enemy.y})`);
-//         // console.log(`Calculated Distance: ${distance}`); // Debugging-Ausgabe
+        // Berechne die echte Distanz zwischen dem Charakter und der Schlange
+        const distance = Math.sqrt(Math.pow(characterCenterX - snakeCenterX, 2) + Math.pow(characterCenterY - snakeCenterY, 2));
 
-//         // Überprüfe, ob die Distanz innerhalb des Angriffsradius liegt
-//         if (distance <= attackRange && !isAttacking) {
-//           isAttacking = true;
-//           enemy.takeDamage(10); // Schaden zufügen
+        // Überprüfe, ob die Distanz innerhalb des Angriffsradius liegt
+        if (distance <= attackRange && !isAttacking) {
+          isAttacking = true;
+          enemy.takeDamage(10); // Schaden zufügen
 
-//           // Setze einen Timer, um den Angriff zu beenden
-//           setTimeout(() => {
-//             isAttacking = false;
-//           }, 1000); // Zeit, die für den Angriff benötigt wird
-//         }
-//       }
-//     });
-//   }  
+          // Setze einen Timer, um den Angriff zu beenden
+          setTimeout(() => {
+            isAttacking = false;
+          }, 1000); // Zeit, die für den Angriff benötigt wird
+        }
+      }
+    });
+  }  
 }
