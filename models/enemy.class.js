@@ -9,20 +9,45 @@ class Enemy extends MovableObject {
 
     takeDamage(damage) {
         if (!this.dead) {
+            console.log(`Feind nimmt Schaden: ${damage}`);
             this.energy -= damage;
             if (this.energy <= 0) {
                 this.energy = 0;
                 this.die();
-            } else {
-                this.playAnimation(this.IMAGES_HURT);
             }
         }
     }
 
     die() {
         if (!this.isDead()) {
+            console.log('Feind stirbt');
             this.dead = true;
             this.playDeathAnimation();
+        }
+    }
+
+    isDead() {
+        return this.energy <= 0 || this.dead;
+    }
+
+    playDeathAnimation() {
+        if (!this.deathAnimationPlayed) {
+            this.deathAnimationPlayed = true;
+            console.log('Todesanimation abspielen');
+            this.playAnimation(this.IMAGES_DEAD);
+            setTimeout(() => {
+                this.removeEnemy();
+            }, 3000);
+        }
+    }
+
+    removeEnemy() {
+        if (this.world && this.world.enemies) {
+            const enemyIndex = this.world.enemies.findIndex(enemy => enemy.id === this.id);
+            if (enemyIndex !== -1) {
+                this.world.enemies.splice(enemyIndex, 1);
+                console.log('Feind entfernt');
+            }
         }
     }
 
@@ -37,30 +62,6 @@ class Enemy extends MovableObject {
 
     isHurt() {
         return this.energy < 100 && this.energy > 0;
-    }
-
-    isDead() {
-        return this.energy <= 0 || this.dead;
-    }
-
-    playDeathAnimation() {
-        if (!this.deathAnimationPlayed) {
-            this.deathAnimationPlayed = true;
-            this.dead = true;
-            this.playAnimation(this.IMAGES_DEAD);
-            setTimeout(() => {
-                this.removeEnemy();
-            }, 3000);
-        }
-    }
-
-    removeEnemy() {
-        if (this.world && this.world.enemies) {
-            const enemyIndex = this.world.enemies.findIndex(enemy => enemy.id === this.id);
-            if (enemyIndex !== -1) {
-                this.world.enemies.splice(enemyIndex, 1);
-            }
-        }
     }
 
     attack(character) {
@@ -83,6 +84,7 @@ class Enemy extends MovableObject {
         }, 400);
     }
 
+ 
     animate() {
         setInterval(() => {
             if (this.dead) {

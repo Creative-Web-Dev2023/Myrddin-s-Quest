@@ -3,7 +3,7 @@ class KnightHealthDisplay extends DrawableObject {
         'img/game_ui/heart_empty.png',
         'img/game_ui/heart_full.png'
     ];
-    
+
     constructor() {
         super();
         this.loadImages(this.IMAGES_HEARTS);
@@ -26,7 +26,7 @@ class KnightHealthDisplay extends DrawableObject {
     }
 
     updatePosition(knightX, knightY) {
-        this.x = knightX + 140;
-        this.y = knightY - 30;  // Etwas höher über dem Knight
+        this.x = knightX + 195;
+        this.y = knightY + 30;  // Etwas höher über dem Knight
     }
-}
+} 

@@ -79,10 +79,7 @@ class Endboss extends Enemy {
         }
     }
 
-    die() {
-        super.die();
-        this.playDeadSound();
-    }
+   
 }
 
 

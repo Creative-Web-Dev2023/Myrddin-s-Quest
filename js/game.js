@@ -1,8 +1,10 @@
 let canvas; // Define the canvas
+let ctx; // Define the context
 let keyboard = new Keyboard();
 let world; // Define the world object
 let candleImage = new Image(); // Create the image object
 let IntervallIDs = [];
+let knightHealthDisplay; // Deklaration der Variable
 
 function startGame() { // Start game function
   document.querySelector(".overlay").style.display = "none"; // Hide the overlay
@@ -17,6 +19,7 @@ function startGame() { // Start game function
 
 function init() { // Initialize the game
   canvas = document.getElementById("canvas"); // Get the canvas element
+  ctx = canvas.getContext("2d"); // Erstelle den 2D-Kontext
   world = new World(canvas, keyboard); // Ensure that World is defined
   playLevel1Sound(); // Play the background sound for level 1
   gameLoop();

@@ -3182,9 +3182,9 @@ function checkOrientation() {
 }
 
 // Event Listener für das Laden der Seite und Änderungen der Bildschirmgröße
-// window.addEventListener('load', checkOrientation);
-// window.addEventListener('resize', checkOrientation);
-// window.addEventListener('orientationchange', checkOrientation);
+window.addEventListener('load', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
 ```
 
 Stelle sicher, dass diese Event Listener korrekt in deinem Code hinzugefügt werden und dass die `checkOrientation` Funktion nicht unnötig aufgerufen wird, wenn der "Try Again" Button geklickt wird. Dies sollte das Problem beheben, dass die Meldung unerwünscht erscheint.

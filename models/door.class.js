@@ -72,13 +72,7 @@ class Door extends DrawableObject {
   
   
   enterDoor(character) {
-    this.animateOpening();
-    character.isVisible = false;
-    setTimeout(() => {
-      character.x = this.x + this.width + 50; // Position auf der anderen Seite der Tür
-      character.isVisible = true; // Charakter wieder sichtbar machen
-      this.checkLevelCompletion(); // Überprüfe, ob der Level abgeschlossen ist
-    }, 1000); // Warte 1 Sekunde
+    character.enterDoor(this); // Übergibt die Tür an die Charakter-Methode
   }
   
   animateOpening() {

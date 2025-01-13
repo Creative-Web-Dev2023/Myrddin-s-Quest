@@ -88,7 +88,8 @@ class Knight extends Enemy {
 
     draw(ctx) {
         super.draw(ctx);
-        this.healthDisplay.draw(ctx); // Draw the health display
+        this.healthDisplay.updatePosition(this.x, this.y);
+        this.healthDisplay.draw(ctx);
     }
 
     hit(damage) {
@@ -100,4 +101,25 @@ class Knight extends Enemy {
             this.playHurtAnimation();
         }
     }
+    takeDamage(damage) {
+        if (!this.dead) {
+          // Reduziere die Energie immer nur um 10 (ein Herz)
+          this.energy = Math.max(0, this.energy - 10);
+          this.healthDisplay.energy = this.energy; // Aktualisiere die Anzeige
+          if (this.energy <= 0) {
+            this.dead = true;
+            this.playDeathAnimation();
+            setTimeout(() => {
+              const knightIndex = this.world.enemies.findIndex(
+                (knight) => knight.id === this.id
+              );
+              if (knightIndex !== -1) {
+                this.world.enemies.splice(knightIndex, 1);
+              }
+            }, 1000);
+          } else {
+            this.playAnimation(this.IMAGES_HURT);
+          }
+        }
+      }
 }

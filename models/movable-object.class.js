@@ -29,9 +29,9 @@ class MovableObject extends DrawableObject {
   isAboveGround() { // Check if object is above ground 
     return this.y < 150; // Überprüfe, ob die y-Position über 150 ist
   }
+  
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false; // Prüfen, ob mo ein MovableObject ist
-    
     return (
       this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
       this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
@@ -121,9 +121,9 @@ class MovableObject extends DrawableObject {
   die() {
     if (!this.deadAnimationPlayed) {
       this.deadAnimationPlayed = true;
-      this.playAnimation(this.IMAGES_DEAD);
+      this.playAnimation(this.IMAGES_DEAD); // Play dead animation
       setTimeout(() => {
-        this.isVisible = false;
+        this.isVisible = false; // Make the object invisible after death
       }, 3000);
     }
   }

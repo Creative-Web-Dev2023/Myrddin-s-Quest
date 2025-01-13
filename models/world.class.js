@@ -69,24 +69,22 @@ class World {
           enemy.otherDirection = true; // Ensure the knight or endboss always faces left
         }
       });
-      if (this.door) { // Check if the door exists
-        this.door.world = this; // Set the world property for the door
+      if (this.door) { 
+        this.door.world = this; 
       }
       this.traps.forEach(trap => {
-        trap.world = this; // Setze die Welt für jede Falle
+        trap.world = this; 
       });
     }
 
-    
-    loadImages(images) { // Load images into the image cache
-      images.forEach((path) => { // Iterate over the image paths
-        const img = new Image(); // Create a new image object 
-        img.src = path; // Set the source of the image
-        this.imageCache[path] = img; // Store the image in the cache
+    loadImages(images) { 
+      images.forEach((path) => { 
+        const img = new Image();  
+        img.src = path; 
+        this.imageCache[path] = img; 
       });
     }
     
-  
     update() {
       if (this.levelCompleted || this.character.energy <= 0) return; // Stoppe die Aktualisierung, wenn der Charakter tot ist
       if (this.collisionHandler) { // Check if collisionHandler is defined
@@ -103,29 +101,18 @@ class World {
               this.endGame.showYouLostScreen();
           }, 200);
       }
-      if (this.keyboard.ATTACK) {
-          this.character.attackEnemies(); // Verwenden Sie attackEnemies anstelle von attackKnights
-          this.character.playAnimation(this.character.IMAGES_ATTACK);
-      }
+      this.character.handleActions(); // Stellen Sie sicher, dass handleActions aufgerufen wird
+      this.collisionHandler.checkDoorCollision(); // Fügen Sie diesen Aufruf hinzu
     }
+
     updatePoison() { // Update the poison objects 
       this.poisonsArray.forEach((poison, index) => { // Iterate over the poison objects
-        if (poison.isActive && this.checkCollision(this.character, poison)) { // Check if the poison is active and colliding with the character
+        if (this.collisionHandler.checkCollision(this.character, poison)) { // Verwenden Sie die Methode der CollisionHandler-Klasse
           this.character.collectPoison(poison, index); // Collect the poison
         }
       });
     }
    
-    checkCollision(character, object) { // Check collision between character and object	
-      const charBox = character.getCollisionBox(); // Get the character's collision box
-      const objBox = object.getCollisionBox(); // Get the object's collision box
-      return ( // Check if there is a collision between the character and the object
-        charBox.x < objBox.x + objBox.width && // Check collision on the x-axis
-        charBox.x + charBox.width > objBox.x && // Check collision on the x-axis
-        charBox.y < objBox.y + objBox.height && // Check collision on the y-axis
-        charBox.y + charBox.height > objBox.y // Check collision on the y-axis
-      );
-    }
     addCharacter(character) {
       this.characters.push(character); // Add a character to the array
     }
@@ -155,6 +142,7 @@ class World {
         this.camera_x = 0; // Reset the camera
       }
     }
+
     addToMap(mo) { // Add the object to the map
       if (mo && mo.otherDirection) { // Check if the object is facing the other direction 
         this.flipImage(mo); // Flip the image if necessary
@@ -174,6 +162,7 @@ class World {
       this.ctx.scale(-1, 1); // Flip the image
       mo.x = mo.x * -1; // Rotate the image 180 degrees
     }
+
     flipImageBack(mo) { // Flip the image back to the original state 
       mo.x = mo.x * -1; // Rotate the image 180 degrees back
       this.ctx.restore(); // Restore the saved state
@@ -194,31 +183,4 @@ class World {
           });
       }
     }
-  
-    checkCollisions() {
-      this.snakes.forEach(snake => {
-        if (this.character.isColliding(snake)) {
-          this.character.hit();
-          this.statusBar.setPercentage(this.character.energy);
-        }
-      });
-    }
-  
-    checkFireAttackOnSnakes() {
-      console.log("checkFireAttackOnSnakes called"); // Debugging-Ausgabe
-      this.snakes.forEach((snake) => {
-        const distance = Math.abs(this.character.x - snake.x);
-        console.log(`Distance to snake: ${distance}`);
-        if (snake.isDead()) {
-          console.log("Snake is already dead");
-          return;
-        }
-        if (distance < 300) { // Angriff nur wenn Schlange in Reichweite
-          console.log("Fire attack hits snake!");
-          snake.takeFireDamage(20); // Schaden für Feuerball
-        } else {
-          console.log("Snake is out of range");
-        }
-      });
-    } 
   }

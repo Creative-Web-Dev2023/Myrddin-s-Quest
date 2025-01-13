@@ -133,7 +133,6 @@ class Character extends MovableObject {
       this.handleMovement();
       this.handleActions();
       this.updateCamera();
-      this.checkCollisions();
     }
   }
 
@@ -156,6 +155,7 @@ class Character extends MovableObject {
  
   handleActions() {
     if (this.world.keyboard.ATTACK) {
+      console.log('ATTACK-Taste gedrückt');
       this.isAttacking = true;
       this.playAnimation(this.IMAGES_ATTACK); // Angriffsanimation abspielen
       this.attackEnemies();
@@ -163,6 +163,7 @@ class Character extends MovableObject {
       this.isAttacking = false;
     }
     if (this.world.keyboard.THROW_FIRE) {
+      console.log('THROW_FIRE-Taste gedrückt');
       this.playAnimation(this.IMAGES_FIRE_ATTACK);  // Schuss-Animation abspielen
       this.attackEnemies();  // Alle Feinde angreifen, wenn der Charakter schießt
       this.shoot();  // Aufruf der Schuss-Logik
@@ -171,48 +172,6 @@ class Character extends MovableObject {
 
   updateCamera() {
     this.world.camera_x = -this.x - 190;
-  }
-
-  checkCollisions() {
-    this.checkCollisionWithPoisons();
-    this.checkCollisionWithEnemies();
-    this.checkCollisionWithKey();
-    Door.checkCharacterNearDoor(this.world);
-  }
-
-  checkCollisionWithPoisons() {
-    this.world.poisonsArray.forEach((poison, index) => {
-      if (this.checkCollision(this, poison)) {
-        this.collectPoison(poison, index);
-      }
-    });
-  }
-
-  checkCollisionWithEnemies() {
-    this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Key && this.checkCollision(this, enemy)) {
-        this.collectKey(enemy);
-      }
-    });
-  }
-
-  checkCollisionWithKey() {
-    this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Key && this.checkCollision(this, enemy)) {
-        this.collectKey(enemy);
-      }
-    });
-  }
-
-  checkCollision(character, object) { // Check collision between character and object
-    const charBox = character.getCollisionBox(); // Get the character's collision box
-    const objBox = object.getCollisionBox(); // Get the object's collision box
-    return ( // Check if there is a collision between the character and the object
-      charBox.x < objBox.x + objBox.width && // Check collision on the x-axis
-      charBox.x + charBox.width > objBox.x && // Check collision on the x-axis
-      charBox.y < objBox.y + objBox.height && // Check collision on the y-axis
-      charBox.y + charBox.height > objBox.y // Check collision on the y-axis
-    );
   }
 
   jump() {
@@ -254,16 +213,6 @@ class Character extends MovableObject {
     } 
   }
 
-  die() {
-    if (!this.deadAnimationPlayed) {
-      this.deadAnimationPlayed = true;
-      this.playAnimation(this.IMAGES_DEAD); // Play dead animation
-      setTimeout(() => {
-        this.isVisible = false; // Make the character invisible after death
-      }, 3000);
-    }
-  }
-
   updateStatusBar() {
     if (this.world && this.world.statusBar) {
       this.world.statusBar.update(this.energy); // Update the status bar with the new energy
@@ -288,9 +237,11 @@ class Character extends MovableObject {
   }
 
   enterDoor() { 
-    this.isVisible = false; // Make the character invisible
+    this.isVisible = false; // Unsichtbar machen
+    this.x = 1000; // Beispiel: Charakter wird hinter die Tür teleportiert
     setTimeout(() => {
-      this.isVisible = true;  // Make the character visible after 2 seconds
+        this.isVisible = true; // Sichtbar machen
+        this.x += 50; // Beispiel: Charakter wird hinter die Tür teleportiert
     }, 2000);
   }
 
@@ -316,15 +267,18 @@ class Character extends MovableObject {
 
   attackEnemies() {
     const attackRange = 150; // Definierter Angriffsradius
-  
+    console.log('attackEnemies aufgerufen');
+
     this.world.enemies.forEach(enemy => {
-      if ((enemy instanceof Knight || enemy instanceof Snake) && !enemy.dead) {
+      if ((enemy instanceof Knight || enemy instanceof Snake || enemy instanceof Endboss) && !enemy.dead) {
         const distance = Math.sqrt(
           Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
           Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
         );
-  
+        console.log(`Entfernung zum Feind: ${distance}`);
+
         if (distance <= attackRange) {
+          console.log('Feind in Reichweite, Schaden zufügen');
           enemy.takeDamage(10); // Schaden zufügen
         }
       }
@@ -332,8 +286,8 @@ class Character extends MovableObject {
   }
 
   shoot() {
-   this.attackEnemies(); // Schieße auf Schlangen
-    this.world.checkFireAttackOnSnakes();
+    this.attackEnemies(); // Schieße auf Schlangen
+    this.world.collisionHandler.checkFireAttackOnSnakes(); // Verwenden Sie die Methode der CollisionHandler-Klasse
     setTimeout(() => {
       this.playAnimation(this.IMAGES_IDLE);  // Setze die Animation zurück auf Idle
     }, 1000);  // Die Dauer der Schuss-Animation, z.B. 1 Sekunde
