@@ -1,35 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Myrddin's Quest</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="img/game_items/magic.png" type="image/x-icon">
-    <script src="models/drawable-object.class.js"></script>
-    <script src="models/movable-object.class.js"></script>
-    <script src="models/statusbar.class.js"></script>
-    <script src="models/throwable-object.class.js"></script>
-    <script src="models/door.class.js"></script> <!-- Stellen Sie sicher, dass dieses Skript vor world.class.js geladen wird -->
-    <script src="models/character.class.js"></script>
-    <script src="models/knight-health-display.class.js"></script>
-    <script src="models/knight.class.js"></script>
-    <script src="models/clouds.class.js"></script>   
-    <script src="models/level.class.js"></script>
-    <script src="models/endboss.class.js"></script>
-    <script src="models/background-object.class.js"></script>
-    <script src="models/snake.class.js"></script> <!-- Lade die Snake-Klasse vor level2.js -->
-    <script src="models/key.class.js"></script> <!-- Fügen Sie das Skript für collectable.js hinzu -->
-    <script src="models/poison.class.js"></script> <!-- Fügen Sie das Skript für poison.class.js hinzu -->
-    <script src="levels/level1.js"></script>
-    <script src="levels/level2.js"></script>
-    <script src="models/endgame.class.js"></script> <!-- Fügen Sie das Skript für endgame.class.js hinzu -->
-    <script src="models/world.class.js"></script> <!-- world.class.js sollte nach door.class.js geladen werden -->
-    <script src="models/keyboard.class.js"></script>
-    <script src="models/music.js"></script> <!-- Fügen Sie das Skript für music.js hinzu -->
-    <script src="js/game.js"></script> <!-- Korrigiere den Pfad zur game.js Datei -->
-    <title>Myrddin's Quest</title>
+    <script src="models/drawable-object.class.js" defer></script>
+    <script src="models/movable-object.class.js" defer></script>
+    <script src="models/statusbar.class.js" defer></script>
+    <script src="models/throwable-object.class.js" defer></script>
+    <script src="models/door.class.js" defer></script> <!-- Stellen Sie sicher, dass dieses Skript vor world.class.js geladen wird -->
+    <script src="models/character.class.js" defer></script>
+    <script src="models/knight-health-display.class.js" defer></script>
+    <script src="models/enemy.class.js" defer></script> <!-- Fügen Sie das Skript für enemy.class.js hinzu -->
+    <script src="models/knight.class.js" defer></script>
+    <script src="models/clouds.class.js" defer></script>   
+    <script src="models/level.class.js" defer></script>
+    <script src="models/endboss.class.js" defer></script>
+    <script src="models/background-object.class.js" defer></script>
+    <script src="models/snake.class.js" defer></script> <!-- Lade die Snake-Klasse vor level2.js -->
+    <script src="models/key.class.js" defer></script> <!-- Fügen Sie das Skript für collectable.js hinzu -->
+    <script src="models/poison.class.js" defer></script> <!-- Fügen Sie das Skript für poison.class.js hinzu -->
+    <script src="levels/level1.js" defer></script>
+    <script src="models/endgame.class.js" defer></script> <!-- Fügen Sie das Skript für endgame.class.js hinzu -->
+    <script src="models/world.class.js" defer></script> <!-- world.class.js sollte nach door.class.js geladen werden -->
+    <script src="models/keyboard.class.js" defer></script>
+    <script src="models/music.js" defer></script> <!-- Fügen Sie das Skript für music.js hinzu -->
+    <script src="models/trap.class.js" defer></script> <!-- Fügen Sie diese Zeile hinzu --> 
+    <script src="levels/level2.js" defer></script> <!-- Lade level2.js nach trap.class.js -->
+    <script src="js/game.js" defer></script> <!-- Korrigiere den Pfad zur game.js Datei -->
+    <script src="models/gameLoop.class.js" defer></script>
+    <script src="models/drawer.class.js" defer></script>
+    <script src="models/collisionHandler.class.js" defer></script>
+    <script src="models/ui.class.js" defer></script> <!-- Fügen Sie das Skript für ui.class.js hinzu -->
 </head>
 
 <body>
@@ -150,18 +155,6 @@
         </div>
     </div>
     <div id="level-completed-container" class="hidden">Level 1 geschafft</div>
-    <script>
-        function checkOrientation() {
-            if (window.innerHeight > window.innerWidth && window.innerWidth <= 870) {
-                document.getElementById('rotate').style.display = 'flex';
-            } else {
-                document.getElementById('rotate').style.display = 'none';
-            }
-        }
-
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('load', checkOrientation);
-    </script>
 </body>
 
 </html>

@@ -9,9 +9,7 @@ function startGame() { // Start game function
   document.getElementById("audioSwitcher").classList.remove("hidden"); // Show the audio switcher
   document.getElementById("bigScreen").classList.remove("hidden"); // Show the fullscreen icon
   document.getElementById('key-info').classList.add('show');
-  document.addEventListener('DOMContentLoaded', (event) => {
-
-  });
+  document.addEventListener('DOMContentLoaded', (event) => {});
 
   document.getElementById("audioSwitcher").setAttribute("onclick", "musicSwitcher()");
   init(); // Initialize the game
@@ -26,8 +24,7 @@ function init() { // Initialize the game
 
 function gameLoop() { // Game loop function
   world.update(); // Collision checks and other updates
-  world.draw(); // Draw all objects, including character and coins
-  world.checkThrowableObject(); // Regularly call checkThrowableObject method
+  world.draw(); // Draw all objects, including character and traps
   requestAnimationFrame(gameLoop); // Request the next frame
 }
 
@@ -129,7 +126,6 @@ window.addEventListener("keydown", (e) => {
   }
   if (e.code === "KeyS") {
     keyboard.THROW_FIRE = true; // Fire animation key
-    console.log("THROW_FIRE key down"); // Debugging-Ausgabe
   }
   if (e.code === "KeyD") {
     keyboard.D = true; // D key
@@ -161,7 +157,7 @@ window.addEventListener("keyup", (e) => {
   }
   if (e.code === "KeyS") {
     keyboard.THROW_FIRE = false; // Release fire animation key
-    console.log("THROW_FIRE key up"); // Debugging-Ausgabe
+    
   }
   if (e.code === "KeyD") {
     keyboard.D = false; // Release D key
@@ -207,5 +203,3 @@ function checkOrientation() {
 
 window.addEventListener('orientationchange', checkOrientation);
 window.addEventListener('resize', checkOrientation);
-// Initial check
-window.addEventListener('load', checkOrientation);

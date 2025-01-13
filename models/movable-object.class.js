@@ -102,6 +102,53 @@ class MovableObject extends DrawableObject {
     this.speedY = 30; // Set vertical speed for jump
   }
 
+  takeDamage(damage) {
+    if (this.energy > 0 && !this.invulnerable) {
+      this.energy -= damage;
+      this.playAnimation(this.IMAGES_HURT);
+      if (this.energy <= 0) {
+        this.energy = 0;
+        this.die();
+      } else {
+        this.invulnerable = true;
+        setTimeout(() => {
+          this.invulnerable = false;
+        }, 2000);
+      }
+    }
+  }
+
+  die() {
+    if (!this.deadAnimationPlayed) {
+      this.deadAnimationPlayed = true;
+      this.playAnimation(this.IMAGES_DEAD);
+      setTimeout(() => {
+        this.isVisible = false;
+      }, 3000);
+    }
+  }
+
+  attack(character) {
+    if (this.dead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAnimation(this.IMAGES_ATTACKING);
+    setTimeout(() => {
+      const characterBox = character.getCollisionBox();
+      const thisBox = this.getCollisionBox();
+      const isStillInRange =
+        thisBox.x < characterBox.x + characterBox.width &&
+        thisBox.x + thisBox.width > characterBox.x &&
+        thisBox.y < characterBox.y + characterBox.height &&
+        thisBox.y + thisBox.height > characterBox.y;
+      if (isStillInRange) {
+        character.takeDamage(this.attackDamage);
+      }
+      setTimeout(() => {
+        this.isAttacking = false;
+      }, 500);
+    }, 400);
+  }
+
   animate() { // Animate the object
     this.animationInterval = setInterval(() => {
       if (this.isDead()) { // Check if object is dead 

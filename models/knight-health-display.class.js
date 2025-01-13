@@ -29,4 +29,4 @@ class KnightHealthDisplay extends DrawableObject {
         this.x = knightX + 140;
         this.y = knightY - 30;  // Etwas höher über dem Knight
     }
-} 
+}

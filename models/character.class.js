@@ -153,8 +153,7 @@ class Character extends MovableObject {
       this.jump();
     }
   }
-
-  
+ 
   handleActions() {
     if (this.world.keyboard.ATTACK) {
       this.isAttacking = true;
@@ -165,7 +164,7 @@ class Character extends MovableObject {
     }
     if (this.world.keyboard.THROW_FIRE) {
       this.playAnimation(this.IMAGES_FIRE_ATTACK);  // Schuss-Animation abspielen
-      this.attackKnights();  // Schlangen angreifen, wenn der Charakter schießt
+      this.attackEnemies();  // Alle Feinde angreifen, wenn der Charakter schießt
       this.shoot();  // Aufruf der Schuss-Logik
     }
   }
@@ -298,6 +297,7 @@ class Character extends MovableObject {
   checkCollisionWithDoor(door) { // Check if the character is colliding with the door
     return this.isColliding(door); // Return true if the character is colliding with the door
   }
+
   collectPoison(poison, index) {
     if (poison && poison.isActive) { // If the poison object is active
       poison.deactivate(); // Deactivate the poison object
@@ -313,26 +313,26 @@ class Character extends MovableObject {
       this.hasKey = true; // Set the character's hasKey property to true
     }
   }
-  draw(ctx) {
-    if (this.isVisible) {
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
-  }
+
   attackEnemies() {
-    if (this.world.enemies) {
-        this.world.enemies.forEach(enemy => {
-            if ((enemy instanceof Knight || enemy instanceof Snake) && !enemy.dead) {  // Prüfe ob Knight oder Snake und nicht tot
-                const distance = Math.abs(this.x - enemy.x);
-                if (distance < 150) {  // Überprüfe die Angriffsreichweite
-                    enemy.takeDamage(10);
-                }
-            }
-        });
-    }
+    const attackRange = 150; // Definierter Angriffsradius
+  
+    this.world.enemies.forEach(enemy => {
+      if ((enemy instanceof Knight || enemy instanceof Snake) && !enemy.dead) {
+        const distance = Math.sqrt(
+          Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
+          Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
+        );
+  
+        if (distance <= attackRange) {
+          enemy.takeDamage(10); // Schaden zufügen
+        }
+      }
+    });
   }
 
   shoot() {
-   this.attackKnights(); // Schieße auf Schlangen
+   this.attackEnemies(); // Schieße auf Schlangen
     this.world.checkFireAttackOnSnakes();
     setTimeout(() => {
       this.playAnimation(this.IMAGES_IDLE);  // Setze die Animation zurück auf Idle
@@ -353,43 +353,16 @@ class Character extends MovableObject {
     return this.poisonCollected > 0; // Check if the character has collected poison
   }
 
-  attackKnights() {
-    this.world.enemies.forEach(enemy => {
-      if (enemy instanceof Knight && !enemy.dead || enemy instanceof Snake && !enemy.dead) {
-        const distance = Math.sqrt(Math.pow(this.x - enemy.x, 2) + Math.pow(this.y - enemy.y, 2));
-        if (distance < 150) { // Überprüfe die Angriffsreichweite
-          enemy.takeDamage(10);
-        }
-      }
-    });
+  draw(ctx) {
+    if (this.isVisible) {
+      super.draw(ctx);
+    }
   }
 
-  attackSnakes() {
-    const attackRange = 150; // Definierter Angriffsradius
-    let isAttacking = false;
-
-    this.world.enemies.forEach(enemy => {
-      if (enemy instanceof Snake && !enemy.dead) {
-        // Berechne die Mittelpunkte des Charakters und der Schlange
-        const characterCenterX = this.x + this.width / 2;
-        const characterCenterY = this.y + this.height / 2;
-        const snakeCenterX = enemy.x + enemy.width / 2;
-        const snakeCenterY = enemy.y + enemy.height / 2;
-
-        // Berechne die echte Distanz zwischen dem Charakter und der Schlange
-        const distance = Math.sqrt(Math.pow(characterCenterX - snakeCenterX, 2) + Math.pow(characterCenterY - snakeCenterY, 2));
-
-        // Überprüfe, ob die Distanz innerhalb des Angriffsradius liegt
-        if (distance <= attackRange && !isAttacking) {
-          isAttacking = true;
-          enemy.takeDamage(10); // Schaden zufügen
-
-          // Setze einen Timer, um den Angriff zu beenden
-          setTimeout(() => {
-            isAttacking = false;
-          }, 1000); // Zeit, die für den Angriff benötigt wird
-        }
-      }
-    });
-  }  
+  checkThrowableObject() {
+    if (this.world.keyboard.D && this.poisonCollected > 0) { // Check if the D key is pressed and poison is collected
+        this.throwObject(); // Throw the object
+        playPoisonBottleSound(); // Play sound when the bottle is thrown
+    }
+  }
 }

@@ -25,69 +25,59 @@ class World {
     endGame; // EndGame class attribute
     door; // Door attribute
     snakes = []; // Array for snakes
+    traps = []; // Initialisiere das Array für Fallen
     constructor(canvas, keyboard) {
       this.ctx = canvas.getContext("2d"); // Get the canvas context
       this.canvas = canvas; // Set the canvas
       this.keyboard = keyboard; // Set the keyboard input
-      const buttonWidth = 100; // Width of the buttons
-      const buttonHeight = 40; // Height of the buttons
-      const canvasCenterX = canvas.width / 2; // Center of the canvas
-      const buttonSpacing = 20; // Spacing between buttons
-   
-      this.quitButton = {
-        x: canvasCenterX - buttonWidth - buttonSpacing / 2, // X position of the quit button
-        y: this.canvas.height - buttonHeight - 20, // Y position of the quit button
-        width: buttonWidth, // Width of the quit button
-        height: buttonHeight, // Height of the quit button
-      };
-      this.tryAgainButton = {
-        x: canvasCenterX + buttonSpacing / 2, // X position of the try again button
-        y: this.quitButton.y, // Y position of the try again button
-        width: buttonWidth, // Width of the try again button
-        height: buttonHeight, // Height of the try again button
-      };
-      this.keyboard.T = false; // Initialize the T key
-      this.keyboard.D = false; // Initialize the D key
+      this.ui = new UI(canvas); // Initialize UI
+      this.initializeGameObjects(); // Initialize game objects before setting the world
+      this.setWorld();
+      this.collisionHandler = new CollisionHandler(this); // Initialize collisionHandler before gameLoop
+      this.drawer = new Drawer(this); // Initialize drawer before gameLoop
+      this.gameLoop = new GameLoop(this);
+      this.gameLoop.start();
+    }
+
+    initializeGameObjects() {
       this.level = this.levels[this.currentLevelIndex]; // Initialize the first level
       this.clouds = new Clouds(this.level.clouds); // Initialize the Clouds class
       this.clouds.randomizePositions(); // Set random positions for the clouds
       this.poisonStatusBar = new PoisonStatusBar(); // Initialize the poison status bar
-      this.characterStatusBar = new StatusBar(); // Initialisiere vor dem Character
-      // if (this.level.endboss) { // Check if the level has an endboss
-      //   this.endbossHealthBar = new EndbossStatusBar( // Initialize the endboss health bar
-      //     this.level.endboss.x, // X position of the endboss health bar
-      //     this.level.endboss.y - 50 // Y position of the endboss health bar
-      //   );
-      // }
+      this.characterStatusBar = new StatusBar(); // Initialize the character status bar
       this.character = new Character(this, this.poisonStatusBar); // Initialize character with parameters
       this.character.world.keyboard = this.keyboard; // Forward keyboard to character
       this.poisonsArray = PoisonObject.initializePoisons(); // Initialize poison objects
       this.key = Key.initializeKey(); // Initialize the key
       this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
       this.enemies = this.level.enemies || []; // Initialize enemies from the level
-      // this.snakes = this.enemies.filter(enemy => enemy instanceof Snake); // Initialize snakes from enemies
       this.level.objects = this.level.objects || []; // Ensure objects is an array
       this.level.clouds = this.level.clouds || []; // Ensure clouds is an array
       this.loadImages(this.IMAGES_YOU_LOST); // Load the "You Lost" image
       this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Load the button images
       this.door = new Door(1000, 200); // Initialize the door with a position
-      this.setWorld(); // Set the world for the character and enemies
-      this.startGameLoop(); // Start the game loop
+      this.traps = this.level.traps || []; // Initialize traps from the current level
       this.camera_x = -this.character.x - 190; // Set the camera to the character's starting position
       this.endGame = new EndGame(this); // Initialize the EndGame class
     }
+
     setWorld() {
       this.character.world = this; // Set the world property for the character
       this.enemies.forEach((enemy) => { // Iterate over the enemies
-        if (enemy instanceof Knight) { // Check if the enemy is a knight 
-          enemy.world = this; // Set the world property for the knight
-          enemy.otherDirection = true; // Ensure the knight always faces left
+        if (enemy instanceof Knight || enemy instanceof Endboss) { // Check if the enemy is a knight or endboss
+          enemy.world = this; // Set the world property for the knight or endboss
+          enemy.otherDirection = true; // Ensure the knight or endboss always faces left
         }
       });
       if (this.door) { // Check if the door exists
         this.door.world = this; // Set the world property for the door
       }
+      this.traps.forEach(trap => {
+        trap.world = this; // Setze die Welt für jede Falle
+      });
     }
+
+    
     loadImages(images) { // Load images into the image cache
       images.forEach((path) => { // Iterate over the image paths
         const img = new Image(); // Create a new image object 
@@ -95,30 +85,16 @@ class World {
         this.imageCache[path] = img; // Store the image in the cache
       });
     }
-    startGameLoop() {
-      this.canvas.addEventListener("click", this.handleMouseClick.bind(this)); // Add event listener
-      const gameLoop = () => { // Define the game loop
-        this.update(); // Update the game state
-        this.draw(); // Draw the game state
-        this.enemies.forEach((enemy) => {
-          if (enemy instanceof Knight || enemy instanceof Snake) {
-            enemy.update(this.character); // Überprüfe, ob der Ritter oder die Schlange angreifen soll
-          }
-        });
-        requestAnimationFrame(gameLoop); // Call the game loop again
-      };
-      gameLoop(); // Start the game loop 
-    }
+    
   
     update() {
       if (this.levelCompleted || this.character.energy <= 0) return; // Stoppe die Aktualisierung, wenn der Charakter tot ist
-      this.checkCollisionsWithEnemies();
-      this.checkCollisionWithKnights();
+      if (this.collisionHandler) { // Check if collisionHandler is defined
+        this.collisionHandler.checkCollisions();
+      }
       this.character.update();
       this.updatePoison();
-      this.checkThrowableObject();
-      this.checkCollisionsWithCollectables();
-      this.checkDoorCollision();
+      this.character.checkThrowableObject(); // Rufen Sie die Methode der Character-Klasse auf
       if (this.character.isMoving() && musicIsOn) {
           playWalkingSound();
       }
@@ -128,60 +104,9 @@ class World {
           }, 200);
       }
       if (this.keyboard.ATTACK) {
-          this.character.attackKnights();
-          // this.character.attackSnakes();
+          this.character.attackEnemies(); // Verwenden Sie attackEnemies anstelle von attackKnights
           this.character.playAnimation(this.character.IMAGES_ATTACK);
       }
-    }
-    checkCollisionsWithEnemies() {
-      this.enemies.forEach((enemy) => {
-          if (this.checkCollision(this.character, enemy)) {
-              if (enemy instanceof Snake) {
-                  // Wenn der Character von oben auf die Schlange springt
-                  if (this.character.isAboveGround() && this.character.speedY > 0) {
-                      this.character.jump();
-                      if (!enemy.isDead) {
-                          enemy.takeDamage(20);
-                      }
-                  } else {
-                      // Wenn der Character seitlich mit der Schlange kollidiert
-                      if (!enemy.isDead) {
-                          this.character.hit(enemy);
-                          this.characterStatusBar.setPercentage(this.character.energy);
-                      }
-                  }
-              }
-          } else if (enemy instanceof Snake) {
-              // Prüfe Angriffsreichweite der Schlange
-              const distance = Math.abs(this.character.x - enemy.x);
-              if (distance <= 100 && !enemy.isDead) {
-                  enemy.attack();
-              }
-          }
-      });
-    }
-    checkCollisionWithKnights() {
-      this.enemies.forEach((enemy) => {
-        if (enemy instanceof Knight && this.character.isColliding(enemy)) {
-          const characterBox = this.character.getCollisionBox();
-          const knightBox = enemy.getCollisionBox();
-          if (
-            this.character.speedY > 20 &&
-            characterBox.y + characterBox.height <= knightBox.y + knightBox.height &&
-            characterBox.x + characterBox.width > knightBox.x &&
-            characterBox.x < knightBox.x + knightBox.width
-          ) {
-            this.character.jump();
-            enemy.playDeathAnimation();
-            setTimeout(() => {
-              const knightIndex = this.enemies.findIndex(knight => knight.id === enemy.id);
-              if (knightIndex !== -1) {
-                this.enemies.splice(knightIndex, 1);
-              }
-            }, 1500);
-          }
-        }
-      });
     }
     updatePoison() { // Update the poison objects 
       this.poisonsArray.forEach((poison, index) => { // Iterate over the poison objects
@@ -208,97 +133,20 @@ class World {
       this.enemies.push(enemy); // Add an enemy to the array
     }
     draw() {
-      this.clearCanvas();
-      this.drawBackground();
-      this.drawStatusBars();
-      this.drawGameObjects();
-      this.drawEnemies();
-      this.drawCharacter();
-      this.drawSnakes(); // Zeichne die Schlangen
-      if (this.door) {
-          this.door.draw(this.ctx);
-      }
-      if (this.character.energy <= 0) {
-          this.endGame.showYouLostScreen();
+      if (this.drawer) { // Check if drawer is defined
+          this.drawer.draw();
       }
     }
-    drawSnakes() {
-      this.snakes.forEach(snake => {
-        snake.draw(this.ctx); // Zeichne jede Schlange
-      });
-    }
-    drawKey() {
-      if (this.key) {
-        this.key.draw(this.ctx); // Zeichne den Schlüssel
-      }
-    }
-    drawGameObjects() { // Draw the game objects
-      this.ctx.translate(this.camera_x, 0); // Translate the canvas
-      this.addObjectsToMap(this.enemies); // Add enemies to the map
-      this.addObjectsToMap(this.poisonsArray); // Add poison objects to the map
-      this.throwableObjects.forEach((bottle) => {
-        bottle.draw(this.ctx, this.camera_x); // Draw the throwable objects
-      });
-      this.ctx.translate(-this.camera_x, 0); // Reset the translation
-    }
+   
     clearCanvas() { // Clear the canvas 
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
     }
-    drawBackground() { // Draw the background
-      this.ctx.translate(this.camera_x, 0); // Translate the canvas
-      this.addObjectsToMap(this.backgroundObjects); // Add background objects to the map
-      if (Array.isArray(this.level.clouds)) { // Ensure clouds is an array
-        this.addObjectsToMap(this.level.clouds); // Add clouds to the map
-      }
-      this.ctx.translate(-this.camera_x, 0); // Reset the translation
-    }
-    drawStatusBars() {
-      this.addToMap(this.poisonStatusBar);
-      this.addToMap(this.characterStatusBar);
-      if (this.currentLevelIndex === 1 && this.level.endboss) { // Check if the level is level 2 and the endboss exists
-        this.endbossHealthBar.x = this.level.endboss.x; // Set the x position of the endboss health bar
-        this.endbossHealthBar.y = this.level.endboss.y - 50; // Set the y position of the endboss health bar
-        this.addToMap(this.endbossHealthBar); // Add the endboss health bar to the map
-        this.endbossHealthBar.draw(this.ctx); // Draw the endboss health bar
-      }
-      this.addToMap(this.character.healthBar); // Add the character's health bar to the map
-    }
-  
-    drawEnemies() { // Draw the enemies
-      this.enemies.forEach((enemy) => {
-        enemy.draw(this.ctx); // Draw the enemy
-      });
-      if (this.level === level2 && this.level.endboss) { // Check if the level is level 2 and the endboss exists
-        this.level.endboss.draw(this.ctx); // Draw the endboss only in level 2
-      }
-    }
-  
-    drawCharacter() {
-      this.ctx.translate(this.camera_x, 0); // Translate the canvas
-      this.addToMap(this.character); // Add the character to the map
-      this.characters.forEach((character) => character.draw(this.ctx)); // Draw the characters
-      this.ctx.translate(-this.camera_x, 0); // Reset the translation
-    }
-    handleMouseClick(event) {
-      const rect = this.canvas.getBoundingClientRect(); // Get the canvas bounding rectangle
-      const x = event.clientX - rect.left; // Get the x position of the click
-      const y = event.clientY - rect.top; // Get the y position of the click
-      if (
-        x >= this.quitButton.x && // Check if the click is within the quit button
-        x <= this.quitButton.x + this.quitButton.width && // Check if the click is within the quit button
-        y >= this.quitButton.y && // Check if the click is within the quit button
-        y <= this.quitButton.y + this.quitButton.height // Check if the click is within the quit button
-      ) {
-        // Handle quit button click
-      }
-    }
+
     addObjectsToMap(objects) { // Add objects to the map 
       if (objects && Array.isArray(objects)) { // Check if objects is an array and exists 
         objects.forEach((object) => { // Iterate over the objects 
           this.addToMap(object); // Add objects to the map
         });
-      } else {
-        console.error("Objects is not an array or is undefined"); // Log an error if objects is not an array
       }
       if (
         this.backgroundObjects.length > 0 && // Check if there are background objects
@@ -330,35 +178,7 @@ class World {
       mo.x = mo.x * -1; // Rotate the image 180 degrees back
       this.ctx.restore(); // Restore the saved state
     }
-    checkThrowableObject() {
-      if (this.keyboard.D && this.character.poisonCollected > 0) { // Check if the D key is pressed and poison is collected
-        this.character.throwObject(); // Throw the object
-        playPoisonBottleSound(); // Play sound when the bottle is thrown
-      }
-    }
-    checkCollisionsWithCollectables() {
-      this.poisonsArray.forEach((poison, index) => {
-        if (this.checkCollision(this.character, poison) && poison.isActive) {
-          poison.deactivate(); // Deactivate the poison
-          this.character.collectPoison(poison, index); // Collect the poison
-        }
-      });
-      if (this.key && this.key.isActive && this.checkCollision(this.character, this.key)) {
-        this.key.deactivate(); // Deaktiviert den Schlüssel
-        this.character.collectKey(this.key); // Implementiere diese Methode, falls du zusätzliche Logik für das Aufsammeln hinzufügen willst
-      }
-    }
-    checkDoorCollision() {
-      const door = this.door; // Door from the current level
-      if (this.character.hasKey && this.character.checkCollisionWithDoor(door)) {
-        this.character.enterDoor(); // Animation when entering the door
-        setTimeout(() => {
-          this.levelCompleted = true; // Mark the level as completed
-          continueToNextLevel(); // Switch to the next level
-        }, 2000); // Short delay before switching levels
-      }
-    }
-  
+    
     loadLevel2() {
       if (typeof level2 !== 'undefined') {
           world.level = level2;
@@ -400,5 +220,5 @@ class World {
           console.log("Snake is out of range");
         }
       });
-    }
+    } 
   }

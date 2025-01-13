@@ -1,8 +1,12 @@
+
 const level2 = {
     enemies: [
         new Snake(1000, 200, 1),
+        new Trap(1300, 355),
         new Snake(1800, 200, 2),
+        new Trap(2400, 355),
         new Snake(2600, 200, 3),
+        new Trap(3200, 355),
         new Snake(3200, 200, 4),
         new Endboss(6000, 150),
     ],
@@ -11,6 +15,7 @@ const level2 = {
         new Cloud(500, 100),
         new Cloud(1000, 150),
     ],
+  
     backgroundObjects: [
         new BackgroundObject("img/game_backgrounds/3/2.png", 0),
         new BackgroundObject("img/game_backgrounds/3/2.png", 719),
