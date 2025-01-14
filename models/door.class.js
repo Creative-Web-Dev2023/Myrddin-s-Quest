@@ -42,18 +42,14 @@ class Door extends DrawableObject {
   }
 
   static checkCharacterNearDoor(world) {
-    if (!world.door) {
-      return;
-    }
-
-    const character = world.character;
     const door = world.door;
-    const distance = Math.abs(character.x - door.x);
-
-    if (distance < 100) { // Überprüfe, ob der Charakter in der Nähe der Tür ist
-      if (door.isCollidingWithDoor(character)) {
-        door.enterDoor(character); // Charakter betritt die Tür
-      }
+    const character = world.character;
+    if (character.hasKey && character.isColliding(door)) {
+      character.enterDoor();
+      setTimeout(() => {
+        world.levelCompleted = true;
+        continueToNextLevel();
+      }, 2000);
     }
   }
 
@@ -98,6 +94,13 @@ class Door extends DrawableObject {
   }
 
   getCollisionBox() {
-    return super.getCollisionBox('door');
+    const box = {
+        x: this.x,
+        y: this.y,
+        width: this.width,
+        height: this.height
+    };
+    console.log("Door Collision Box:", box); // Debugging-Log
+    return box;
   }
 }

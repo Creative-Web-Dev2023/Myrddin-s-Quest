@@ -42,14 +42,14 @@ class CollisionHandler {
     }
 
     handleEnemyCollision(enemy) {
-        if (enemy instanceof Snake) {
+        if (enemy instanceof Snake || enemy instanceof Knight) {
             if (this.world.character.isAboveGround() && this.world.character.speedY > 0) {
                 this.world.character.jump();
-                if (!enemy.isDead) {
-                    enemy.takeDamage(20);
+                if (!enemy.isDead()) {
+                    enemy.takeDamage(enemy.energy); // Verursacht maximalen Schaden
                 }
             } else {
-                if (!enemy.isDead) {
+                if (!enemy.isDead()) {
                     this.world.character.hit(enemy);
                     this.world.characterStatusBar.setPercentage(this.world.character.energy);
                 }
@@ -80,12 +80,10 @@ class CollisionHandler {
 
     checkDoorCollision() {
         const door = this.world.door;
-        if (this.world.character.hasKey && this.world.character.checkCollisionWithDoor(door)) {
-            this.world.character.enterDoor();
-            setTimeout(() => {
-                this.world.levelCompleted = true;
-                continueToNextLevel();
-            }, 2000);
+        const isCollidingWithDoor = this.world.character.checkCollisionWithDoor(door);
+        if (this.world.character.hasKey && isCollidingWithDoor) {
+            console.log("Character is entering the door.");
+            this.world.character.enterDoor(door);
         }
     }
 

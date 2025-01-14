@@ -121,7 +121,6 @@ class Character extends MovableObject {
     this.animate(); // Aufruf der geerbten Methode animate
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar(); 
     this.poisonStatusBar.setPercentage(0); 
-    
     this.statusBar = new StatusBar();
     this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
@@ -236,18 +235,37 @@ class Character extends MovableObject {
     this.animate(); // Start the animation
   }
 
-  enterDoor() { 
-    this.isVisible = false; // Unsichtbar machen
-    this.x = 1000; // Beispiel: Charakter wird hinter die Tür teleportiert
-    setTimeout(() => {
-        this.isVisible = true; // Sichtbar machen
-        this.x += 50; // Beispiel: Charakter wird hinter die Tür teleportiert
-    }, 2000);
-  }
+  enterDoor(door) {
+    this.visible = true; // Stelle sicher, dass der Charakter sichtbar ist, bevor er die Tür betritt
 
-  checkCollisionWithDoor(door) { // Check if the character is colliding with the door
-    return this.isColliding(door); // Return true if the character is colliding with the door
+    // Setze die Position des Charakters direkt an die Tür
+    this.x = door.x; // Setze die X-Position des Charakters auf die X-Position der Tür
+
+    // Optional: Füge eine kurze Animation oder einen Effekt hinzu, um anzuzeigen, dass der Charakter die Tür betritt
+    setTimeout(() => {
+        this.visible = false; // Charakter unsichtbar machen
+        this.x = door.x + door.width + 50; // Position auf der anderen Seite der Tür
+        this.visible = true; // Charakter wieder sichtbar machen
+        door.checkLevelCompletion(); // Überprüfe, ob der Level abgeschlossen ist
+    }, 2000); // Warte 1 Sekunde, bevor der Charakter unsichtbar wird
   }
+  
+
+  checkCollisionWithDoor(door) {
+    const charBox = this.getCollisionBox(); // Kollision des Charakters
+    const doorBox = door.getCollisionBox(); // Kollision der Tür
+
+    console.log("Character Box:", charBox); // Debugging-Log
+    console.log("Door Box:", doorBox); // Debugging-Log
+
+    return (
+        charBox.x < doorBox.x + doorBox.width &&
+        charBox.x + charBox.width > doorBox.x &&
+        charBox.y < doorBox.y + doorBox.height &&
+        charBox.y + charBox.height > doorBox.y
+    );
+  }
+  
 
   collectPoison(poison, index) {
     if (poison && poison.isActive) { // If the poison object is active
