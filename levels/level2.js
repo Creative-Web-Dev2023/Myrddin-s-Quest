@@ -1,14 +1,14 @@
 
 const level2 = {
     enemies: [
-        new Snake(1000, 200, 1),
+        new Snake(1000, 200, 9),
         new Trap(1300, 355),
-        new Snake(1800, 200, 2),
+        new Snake(1800, 200, 10),
         new Trap(2400, 355),
-        new Snake(2600, 200, 3),
+        new Snake(2600, 200, 11),
         new Trap(3200, 355),
-        new Snake(3200, 200, 4),
-        new Endboss(6000, 150),
+        new Snake(3200, 200, 12),
+        new Endboss(6000, 150, 13),
     ],
     clouds: [
         new Cloud(0, 50),

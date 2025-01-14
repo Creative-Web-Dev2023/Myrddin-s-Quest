@@ -9,7 +9,7 @@ class CollisionHandler {
         this.checkCollisionWithKey();
         this.checkDoorCollision();
         this.checkTraps();
-        this.checkFireAttackOnSnakes();
+       
     }
 
     checkCollision(character, object) {
@@ -101,20 +101,4 @@ class CollisionHandler {
         }
     }
 
-    checkFireAttackOnSnakes() {
-        this.world.snakes.forEach((snake) => {
-            const distance = Math.abs(this.world.character.x - snake.x);
-            console.log(`Distance to snake: ${distance}`);
-            if (snake.isDead()) {
-                console.log("Snake is already dead");
-                return;
-            }
-            if (distance < 300) {
-                console.log("Fire attack hits snake!");
-                snake.takeFireDamage(20);
-            } else {
-                console.log("Snake is out of range");
-            }
-        });
-    }
 }

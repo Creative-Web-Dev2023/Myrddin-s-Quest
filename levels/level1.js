@@ -12,7 +12,7 @@ function generateEnemiesLvl1() {
     new Knight(8000, 2700, 100, 4),
     new Knight(10000, 3300, 100, 5),
     new Knight(12000, 3900, 100, 6),
-    new Key(4400, 130, 7), // Ändern Sie die Position der Schlüssel
+    new Key(4400, 130,7 ), // Ändern Sie die Position der Schlüssel
     new Door(4500, 80, 8), // Ändern Sie die Position der Tür
   ];
 }

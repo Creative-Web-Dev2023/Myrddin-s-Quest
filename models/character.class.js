@@ -88,18 +88,6 @@ class Character extends MovableObject {
     "img/wizard/hurt/hurt_008.png",
     "img/wizard/hurt/hurt_009.png",
   ];
-  IMAGES_FIRE_ATTACK = [
-    "img/wizard/fire/fire1.png",
-    "img/wizard/fire/fire2.png",
-    "img/wizard/fire/fire3.png",
-    "img/wizard/fire/fire4.png",
-    "img/wizard/fire/fire5.png",
-    "img/wizard/fire/fire6.png",
-    "img/wizard/fire/fire7.png",
-    "img/wizard/fire/fire8.png",
-    "img/wizard/fire/fire9.png",
-    "img/wizard/fire/fire10.png",
-  ];
   IMAGES_YOU_LOST = [
     "img/game_ui/login&pass/game_over.png",
   ];
@@ -113,7 +101,6 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_ATTACK);
-    this.loadImages(this.IMAGES_FIRE_ATTACK);
     this.world = world || {}; // Ensure world is initialized
     this.applyGravity();
     this.energy = 100; // Energie des Charakters
@@ -160,12 +147,6 @@ class Character extends MovableObject {
       this.attackEnemies();
     } else {
       this.isAttacking = false;
-    }
-    if (this.world.keyboard.THROW_FIRE) {
-      console.log('THROW_FIRE-Taste gedrückt');
-      this.playAnimation(this.IMAGES_FIRE_ATTACK);  // Schuss-Animation abspielen
-      this.attackEnemies();  // Alle Feinde angreifen, wenn der Charakter schießt
-      this.shoot();  // Aufruf der Schuss-Logik
     }
   }
 
@@ -254,10 +235,6 @@ class Character extends MovableObject {
   checkCollisionWithDoor(door) {
     const charBox = this.getCollisionBox(); // Kollision des Charakters
     const doorBox = door.getCollisionBox(); // Kollision der Tür
-
-    console.log("Character Box:", charBox); // Debugging-Log
-    console.log("Door Box:", doorBox); // Debugging-Log
-
     return (
         charBox.x < doorBox.x + doorBox.width &&
         charBox.x + charBox.width > doorBox.x &&
@@ -303,14 +280,6 @@ class Character extends MovableObject {
     });
   }
 
-  shoot() {
-    this.attackEnemies(); // Schieße auf Schlangen
-    this.world.collisionHandler.checkFireAttackOnSnakes(); // Verwenden Sie die Methode der CollisionHandler-Klasse
-    setTimeout(() => {
-      this.playAnimation(this.IMAGES_IDLE);  // Setze die Animation zurück auf Idle
-    }, 1000);  // Die Dauer der Schuss-Animation, z.B. 1 Sekunde
-  }
-  
 
   throwObject() {
     if (this.canThrow()) {

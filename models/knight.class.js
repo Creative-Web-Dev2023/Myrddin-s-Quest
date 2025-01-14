@@ -101,6 +101,7 @@ class Knight extends Enemy {
             this.playHurtAnimation();
         }
     }
+    
     takeDamage(damage) {
         if (!this.dead) {
           // Reduziere die Energie immer nur um 10 (ein Herz)

@@ -127,9 +127,6 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "KeyA") {
     keyboard.ATTACK = true; // Attack key
   }
-  if (e.code === "KeyS") {
-    keyboard.THROW_FIRE = true; // Fire animation key
-  }
   if (e.code === "KeyD") {
     keyboard.D = true; // D key
     if (world && world.character) {
@@ -157,10 +154,6 @@ window.addEventListener("keyup", (e) => {
   }
   if (e.code === "KeyA") {
     keyboard.ATTACK = false; // Release attack key
-  }
-  if (e.code === "KeyS") {
-    keyboard.THROW_FIRE = false; // Release fire animation key
-    
   }
   if (e.code === "KeyD") {
     keyboard.D = false; // Release D key

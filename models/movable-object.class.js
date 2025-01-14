@@ -158,8 +158,6 @@ class MovableObject extends DrawableObject {
     this.animationInterval = setInterval(() => {
       if (this.isDead()) { // Check if object is dead 
         this.handleDeadAnimation(); // Handle dead animation for the object  
-      } else if (this.world && this.world.keyboard && this.world.keyboard.THROW) { // Check if object is throwing
-        this.playAnimationWithSound(this.IMAGES_FIRE_ATTACK, fireAttackSound); // Play fire attack animation frames with sound
       } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) { // Check if object is attacking
         this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound); // Play attack animation frames with sound
       } else if (this.isHurt()) { // Check if object is hurt within last 5 seconds 

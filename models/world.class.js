@@ -62,11 +62,12 @@ class World {
     }
 
     setWorld() {
-      this.character.world = this; // Set the world property for the character
-      this.enemies.forEach((enemy) => { // Iterate over the enemies
-        if (enemy instanceof Knight || enemy instanceof Endboss) { // Check if the enemy is a knight or endboss
-          enemy.world = this; // Set the world property for the knight or endboss
-          enemy.otherDirection = true; // Ensure the knight or endboss always faces left
+      this.character.world = this;
+      this.enemies.forEach((enemy) => {
+        if (enemy instanceof Enemy) { 
+          enemy.setWorld(this); 
+          enemy.otherDirection = true; 
+          console.log(`Feind hinzugefügt: ${enemy.constructor.name} mit ID: ${enemy.id}`); // Debugging
         }
       });
       if (this.door) { 
@@ -86,13 +87,13 @@ class World {
     }
     
     update() {
-      if (this.levelCompleted || this.character.energy <= 0) return; // Stoppe die Aktualisierung, wenn der Charakter tot ist
+      if (this.levelCompleted || this.character.energy <= 0) return; // Stop updating if the character is dead
       if (this.collisionHandler) { // Check if collisionHandler is defined
         this.collisionHandler.checkCollisions();
       }
       this.character.update();
       this.updatePoison();
-      this.character.checkThrowableObject(); // Rufen Sie die Methode der Character-Klasse auf
+      this.character.checkThrowableObject(); // Call the method of the Character class
       if (this.character.isMoving() && musicIsOn) {
           playWalkingSound();
       }
@@ -101,8 +102,13 @@ class World {
               this.endGame.showYouLostScreen();
           }, 200);
       }
-      this.character.handleActions(); // Stellen Sie sicher, dass handleActions aufgerufen wird
-      this.collisionHandler.checkDoorCollision(); // Fügen Sie diesen Aufruf hinzu
+      this.character.handleActions(); // Ensure handleActions is called
+      this.collisionHandler.checkDoorCollision(); // Add this call
+      this.enemies.forEach(enemy => {
+        if (enemy instanceof Endboss || enemy instanceof Snake) {
+          enemy.update(this.character); // Endboss und Snake prüfen, ob sie angreifen sollen
+        }
+      });
     }
 
     updatePoison() { // Update the poison objects 

@@ -100,7 +100,6 @@ class Door extends DrawableObject {
         width: this.width,
         height: this.height
     };
-    console.log("Door Collision Box:", box); // Debugging-Log
     return box;
   }
 }
