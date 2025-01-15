@@ -4,9 +4,6 @@ class CollisionHandler {
   }
 
   checkCollisions() {
-    console.log("checkCollisions called");
-    console.log("this:", this); // Prüfen, ob `this` wirklich `CollisionHandler` ist
-    console.log("checkDoorCollision:", this.checkDoorCollision); // Prüfen, ob die Methode existiert
     this.checkCollisionWithPoisons();
     this.checkCollisionsWithEnemies();
     this.checkCollisionWithKey();
@@ -17,6 +14,8 @@ class CollisionHandler {
   checkCollision(character, object) {
     const charBox = character.getCollisionBox();
     const objBox = object.getCollisionBox();
+    // console.log("Character Box:", charBox);
+    // console.log("Object Box:", objBox); // Korrigierte Ausgabe
     return (
       charBox.x < objBox.x + objBox.width &&
       charBox.x + charBox.width > objBox.x &&
@@ -77,25 +76,21 @@ class CollisionHandler {
   }
 
   checkCollisionWithKey() {
-    if (
-      this.world.key &&
-      this.world.key.isActive &&
-      this.checkCollision(this.world.character, this.world.key)
-    ) {
-      this.world.key.deactivate();
-      this.world.character.collectKey(this.world.key);
+    // console.log("Checking collision with key...", this.world.character, this.world.key);
+    if (!this.world.character || !this.world.key) {
+        return;
     }
-  }
+    if (this.checkCollision(this.world.character, this.world.key)) 
+        this.world.character.collectKey(this.world.key);
+    }
 
   checkDoorCollision() {
     const character = this.world.character;
     const door = this.world.door;
     if (!door) {
-      console.log("No door found in world");
       return;
     }
     if (this.checkCollision(character, door)) {
-      console.log("Character collided with door! Calling enterDoor()...");
       character.enterDoor(door);
     }
   }

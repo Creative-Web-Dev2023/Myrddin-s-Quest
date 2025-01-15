@@ -123,4 +123,8 @@ class Knight extends Enemy {
           }
         }
       }
+
+    remove() {
+        this.removeEnemy(); // Verwenden Sie die Methode der Basisklasse
+    }
 }

@@ -92,12 +92,12 @@ class PoisonStatusBar extends DrawableObject {
 
 class EndbossStatusbar extends DrawableObject {
   IMAGES = [
-    "img/game_ui/statusbars/statusbar-knight/0.png",
-    "img/game_ui/statusbars/statusbar-knight/20.png",
-    "img/game_ui/statusbars/statusbar-knight/40.png",
-    "img/game_ui/statusbars/statusbar-knight/60.png",
-    "img/game_ui/statusbars/statusbar-knight/80.png",
-    "img/game_ui/statusbars/statusbar-knight/100.png",
+    "img/game_ui/statusbars/statusbar-endboss/0.png",
+    "img/game_ui/statusbars/statusbar-endboss/20.png",
+    "img/game_ui/statusbars/statusbar-endboss/40.png",
+    "img/game_ui/statusbars/statusbar-endboss/60.png",
+    "img/game_ui/statusbars/statusbar-endboss/80.png",
+    "img/game_ui/statusbars/statusbar-endboss/100.png",
   ];
 
   percentage = 100; // Start with a full status bar

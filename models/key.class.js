@@ -13,9 +13,11 @@ class Key extends DrawableObject {
     this.height = 60;
     this.isActive = true;
     this.opacity = 1.0;
+    this.offset = { top: 0, bottom: 0, left: 0, right: 0 }; // Setze Offsets
   }
 
   deactivate() {
+    this.isActive = false; // Setze isActive auf false
     this.fadeOut();
   }
 
@@ -24,13 +26,12 @@ class Key extends DrawableObject {
       this.opacity -= 0.2;
       if (this.opacity <= 0) {
         clearInterval(fadeInterval);
-        this.isActive = false;
       }
     }, 50);
   }
 
   draw(ctx) {
-    if (this.isActive) {
+    if (this.isActive || this.opacity > 0) { // Zeichne nur, wenn isActive oder opacity > 0
       ctx.save();
       ctx.globalAlpha = this.opacity;
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
@@ -38,4 +39,12 @@ class Key extends DrawableObject {
     }
   }
 
+  getCollisionBox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom
+    };
+  }
 }

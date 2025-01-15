@@ -60,6 +60,7 @@ function tryAgain() { // Try again function
   location.reload(); // Reload the page to restart the game
 
 }
+
 function continueToNextLevel() {   // Continue to the next level
   const overlay = document.getElementById('level-completed-overlay'); // Get the overlay
   if (overlay) { overlay.classList.remove('show');
@@ -68,33 +69,27 @@ function continueToNextLevel() {   // Continue to the next level
 }
 
 function loadLevel2() { 
-  console.log('loadLevel2() was called!'); // Debugging
   if (typeof level2 !== 'undefined') {
-      console.log('Level 2 exists!'); // Debugging
+      
       world.level = level2; 
       world.character.reset(2); 
       world.character.x = 0; 
       world.backgroundObjects = level2.backgroundObjects;
       world.enemies = level2.enemies; 
-
       if (level2.endboss) { 
           world.level.endboss = new Endboss(level2.endboss.x, level2.endboss.y);
-          console.log('Endboss loaded at:', level2.endboss.x, level2.endboss.y); // Debugging
+          
       }
 
       stopAllSounds();
       playLevel2Sound();
-
       if (!world.door) {
           world.door = new Door(5500, 150);
           world.door.world = world;
-          console.log('New door created in level 2 at:', 5500, 150); // Debugging
+        
       }
-  } else {
-      console.error('Level 2 is not defined.');
-  }
+  } 
 }
-
 
 function playLevel2Sound() { // Play the background sound for level 2
   if (musicIsOn) {     // Check if music is on
@@ -113,8 +108,6 @@ function toggleFullscreen() { // Toggle fullscreen mode
     document.exitFullscreen();
   }
 }
-
-// Event listener for key presses
 
 window.addEventListener("keydown", (e) => {
   if (e.keyCode == 39) {

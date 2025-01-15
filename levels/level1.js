@@ -2,7 +2,6 @@ const level1 = new Level(
   generateEnemiesLvl1(),
   generateEnvironmentsLvl1(),
   generateBackgroundsLvl1(),
- 
 );
 
 function generateEnemiesLvl1() {

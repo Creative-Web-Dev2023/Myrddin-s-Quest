@@ -11,24 +11,29 @@ class Enemy extends MovableObject {
     }
 
     setWorld(world) {
+        if (!(this instanceof Enemy)) {
+            console.error("setWorld called on non-Enemy object:", this);
+            return;
+        }
         this.world = world;
-       
+        console.log(`World set for enemy with ID: ${this.id}, world:`, this.world); // Debugging
     }
 
     takeDamage(damage) {
         if (!this.dead) {
-            // console.log(`Feind nimmt Schaden: ${damage}`);
             this.energy -= damage;
+            console.log(`Feind mit ID ${this.id} nimmt Schaden: ${damage}. Verbleibende Energie: ${this.energy}`);
             if (this.energy <= 0) {
                 this.energy = 0;
                 this.die();
             }
         }
     }
+    
 
     die() {
         if (!this.isDead()) {
-            console.log('Feind stirbt');
+            console.log(`Feind mit ID ${this.id} stirbt.`);
             this.dead = true;
             this.playDeathAnimation();
         }
@@ -42,42 +47,32 @@ class Enemy extends MovableObject {
         if (!this.deathAnimationPlayed) {
             this.deathAnimationPlayed = true;
             this.dead = true;
-            // console.log(`Feind mit ID ${this.id} spielt die Todesanimation`);
+            console.log(`Todesanimation gestartet für Feind mit ID: ${this.id}`);
             this.playAnimation(this.IMAGES_DEAD);
-            
+    
             setTimeout(() => {
-                // console.log(`Feind mit ID ${this.id} sollte jetzt entfernt werden`);
+                console.log(`Entferne Feind mit ID: ${this.id}`);
                 this.removeEnemy();
-            }, 3000);
+            }, 1500); // Zeit anpassen, wie lange die Todesanimation dauert
         }
     }
-
+    
     removeEnemy() {
-        if (this.isRemoved) return; // Bereits entfernt
-
-        if (!this.world || !this.world.enemies) {
-            // console.error(`Fehler: this.world oder this.world.enemies ist undefined für Feind mit ID ${this.id}!`);
-            return;
-        }
-    
-        // console.log(`removeEnemy: Suche nach Feind mit ID ${this.id}`);
-        // console.log("Aktuelle Feinde vor Entfernen:", this.world.enemies.map(enemy => enemy?.id));
-    
-        const enemyIndex = this.world.enemies.findIndex(enemy => enemy?.id === this.id);
-        
-        if (enemyIndex !== -1) {
-            console.log(`Feind gefunden! Entferne ${this.constructor.name} mit ID: ${this.id}`);
-            this.world.enemies.splice(enemyIndex, 1);
-            this.isRemoved = true; // Markiere den Feind als entfernt
+        if (this.isRemoved) return; // Überprüfen, ob der Feind bereits entfernt wurde
+        if (this.world && this.world.enemies) {
+            const index = this.world.enemies.findIndex(enemy => enemy.id === this.id);
+            if (index !== -1) {
+                this.world.enemies.splice(index, 1);
+                this.isRemoved = true; // Markiere den Feind als entfernt
+                console.log('Enemy removed');
+            } else {
+                console.log('Enemy not found');
+            }
         } else {
-            // console.warn(`Fehler: Feind mit ID ${this.id} wurde nicht gefunden!`);
+            console.log('World or enemies not defined');
         }
-    
-        // Entferne alle undefined-Einträge aus der Liste der Feinde
-        this.world.enemies = this.world.enemies.filter(enemy => enemy !== undefined);
-        // console.log("Aktuelle Feinde nach Entfernen:", this.world.enemies.map(enemy => enemy?.id));
     }
-
+    
     hit(damage) {
         if (this.isDead() || this.deathAnimationPlayed) return;
         this.energy -= damage;

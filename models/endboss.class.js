@@ -1,16 +1,16 @@
-// Import the Enemy class
 class Endboss extends Enemy {
   constructor(id) {
     super(id); // ID an den Konstruktor der Basisklasse übergeben
     this.height = 600;
     this.width = 450;
-    this.y = -100;
+    this.y = -70;
     this.x = 3500;
     this.attackRange = 200; // Setzt die Reichweite für den Angriff
     this.attackDamage = 20; // Schaden, den der Endboss verursacht
     this.speed = 5;
     this.deadSound = new Audio("audio/troll dead.mp3");
     this.offset = { top: 180, bottom: 65, left: 90, right: 90 };
+    this.statusBarEndboss = new EndbossStatusbar(); // Initialisiere die Statusleiste des Endbosses
     this.IMAGES_WALKING = [
       "img/troll/idle/idle_000.png",
       "img/troll/idle/idle_001.png",
@@ -68,7 +68,6 @@ class Endboss extends Enemy {
 
   setWorld(world) {
     this.world = world;
-    
   }
 
   playDeadSound() {
@@ -76,13 +75,13 @@ class Endboss extends Enemy {
   }
 
   checkForAttack(character) {
-    const bossBox = this.getCollisionBox();
+    const endbossBox = this.getCollisionBox();
     const characterBox = character.getCollisionBox();
     const attackBox = {
-      x: bossBox.x + bossBox.width,
-      y: bossBox.y,
-      width: this.attackRange,
-      height: bossBox.height,
+      x: endbossBox.x - this.attackRange,
+      y: endbossBox.y,
+      width: this.attackRange * 2,
+      height: endbossBox.height,
     };
     const isInAttackRange =
       attackBox.x < characterBox.x + characterBox.width &&
@@ -100,12 +99,12 @@ class Endboss extends Enemy {
     this.playAnimation(this.IMAGES_ATTACKING);
     setTimeout(() => {
       const characterBox = character.getCollisionBox();
-      const bossBox = this.getCollisionBox();
+      const endbossBox = this.getCollisionBox();
       const isStillInRange =
-        bossBox.x < characterBox.x + characterBox.width &&
-        bossBox.x + bossBox.width > characterBox.x &&
-        bossBox.y < characterBox.y + characterBox.height &&
-        bossBox.y + bossBox.height > characterBox.y;
+        endbossBox.x < characterBox.x + characterBox.width &&
+        endbossBox.x + endbossBox.width > characterBox.x &&
+        endbossBox.y < characterBox.y + characterBox.height &&
+        endbossBox.y + endbossBox.height > characterBox.y;
       if (isStillInRange) {
         character.takeDamage(this.attackDamage);
       }
@@ -119,33 +118,12 @@ class Endboss extends Enemy {
     this.checkForAttack(character);
   }
 
-  playDeathAnimation() {
-    if (!this.deathAnimationPlayed) {
-      this.deathAnimationPlayed = true;
-      this.dead = true;
-      // console.log('Todesanimation abspielen');
-      this.playAnimation(this.IMAGES_DEAD);
-      setTimeout(() => {
-        if (this.world) {
-          this.remove(); // Verwenden Sie die eigene remove-Methode
-        } else {
-          // console.log('Welt nicht definiert');
-        }
-      }, 3000);
-    }
-  }
-
-  remove() {
-    if (this.world && this.world.enemies) {
-      const bossIndex = this.world.enemies.findIndex((boss) => boss.id === this.id);
-      if (bossIndex !== -1) {
-        this.world.enemies.splice(bossIndex, 1);
-        // console.log('Endboss entfernt');
-      } else {
-        // console.log('Endboss nicht gefunden');
-      }
-    } else {
-      // console.log('Welt oder Feinde nicht definiert');
+  draw(ctx) {
+    if (this.img && this.img.complete) {
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
+      this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; // Position über dem Kopf des Endbosses
+      this.statusBarEndboss.draw(ctx);
     }
   }
 }

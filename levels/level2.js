@@ -8,13 +8,13 @@ const level2 = new Level(
 function generateEnemiesLvl2() {
   return [
     new Snake(1000, 200, 9), // IDs ab 7, um Kollision mit Level 1 zu vermeiden
-    new Trap(1300, 355, 10),
-    new Snake(1800, 200, 11),
-    new Trap(2400, 355, 12),
-    new Snake(2600, 200, 13),
-    new Trap(3200, 355, 14),
-    new Snake(3200, 200, 15),
-    new Endboss(6000, 150, 16),
+    new Trap(1300, 355),
+    new Snake(1800, 200, 10),
+    new Trap(2400, 355),
+    new Snake(2600, 200, 11),
+    new Trap(3200, 355),
+    new Snake(3200, 200, 14),
+    new Endboss(6000, 150, 15),
   ];
 }
 

@@ -217,21 +217,18 @@ class Character extends MovableObject {
   }
 
   enterDoor(door) {
-    console.log('enterDoor called - Character enters door at:', door.x, door.y); // Debugging
     this.isVisible = false;
     this.x = door.x; 
     this.y = door.y;
     setTimeout(() => {
         this.isVisible = false;
-        console.log('Loading next level...'); // Debugging
         loadLevel2();
         setTimeout(() => {
-            console.log('Character repositioned in new level at:', 130, 210); // Debugging
             this.x = 130;
             this.y = 210;
             this.isVisible = true;
-        }, 500);
-    }, 2000);
+        }, 200);  
+    }, 2000); 
   }
 
   checkCollisionWithDoor(door) {
@@ -259,11 +256,14 @@ class Character extends MovableObject {
     }
   }
   collectKey(key) {
+    console.log("Collecting key..."); // Debugging
     if (key && key.isActive) {
       key.deactivate();
       this.hasKey = true;
+      // console.log("Key collected! hasKey:", this.hasKey); // Debugging
     }
   }
+  
 
   attackEnemies() {
     const attackRange = 150;

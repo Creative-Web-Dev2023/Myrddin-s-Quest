@@ -134,20 +134,18 @@ class Snake extends Enemy {
 
   takeDamage(damage) {
     if (!this.dead) {
-      this.energy = Math.max(0, this.energy - damage);
-      if (this.energy <= 0) {
-        this.dead = true;
-        this.playDeathAnimation();
-        setTimeout(() => {
-          if (this.world) {
-            this.remove(); // Verwenden Sie die eigene remove-Methode
-          } 
-        }, 1000);
-      } else {
-        this.playAnimation(this.IMAGES_HURT);
-      }
+        this.energy -= damage;
+        if (this.energy <= 0) {
+            console.log(`Schlange mit ID ${this.id} stirbt.`);
+            this.energy = 0;
+            this.die();
+        } else {
+            console.log(`Schlange mit ID ${this.id} verletzt. Verbleibende Energie: ${this.energy}`);
+            this.playAnimation(this.IMAGES_HURT); // Spiele Hurt-Animation
+        }
     }
-  }
+}
+
 
   playDeathAnimation() {
     if (!this.deathAnimationPlayed) {
@@ -157,24 +155,13 @@ class Snake extends Enemy {
       setTimeout(() => {
         if (this.world) {
           this.remove(); // Verwenden Sie die eigene remove-Methode
-        } else {
         }
-      }, 3000);
+      }, 1000); // Wartezeit für die Dead-Animation
     }
   }
 
   remove() {
-    if (this.world && this.world.enemies) {
-      const snakeIndex = this.world.enemies.findIndex((snake) => snake.id === this.id);
-      if (snakeIndex !== -1) {
-        this.world.enemies.splice(snakeIndex, 1);
-        console.log('Schlange entfernt');
-      } else {
-        console.log('Schlange nicht gefunden');
-      }
-    } else {
-      console.log('Welt oder Feinde nicht definiert');
-    }
+    this.removeEnemy(); // Verwenden Sie die Methode der Basisklasse
   }
 
   getCollisionBox() {
@@ -188,9 +175,23 @@ class Snake extends Enemy {
 
   onCharacterJump(character) {
     if (!this.dead) {
-      console.log('Charakter springt auf Schlange');
-      this.takeDamage(this.energy); // Schlange sofort töten
-      character.jump(); // Charakter springt zurück
+        console.log(`Charakter ist auf Schlange mit ID ${this.id} gesprungen.`);
+        
+        // Schlange nimmt Schaden
+        this.takeDamage(5); // Beispiel: Charakter fügt 5 Schaden zu
+
+        // Prüfen, ob die Schlange nach dem Schaden tot ist
+        if (this.energy <= 0) {
+            this.dead = true; // Markiere die Schlange als tot
+            this.playDeathAnimation(); // Starte Todesanimation
+            setTimeout(() => {
+                if (this.world) {
+                    this.remove(); // Entferne die Schlange aus der Welt
+                }
+            }, 1000); // Warte auf das Ende der Todesanimation
+        }
+        character.jump();
     }
-  }
+}
+
 }
