@@ -2,8 +2,6 @@
 class Endboss extends Enemy {
   constructor(id) {
     super(id); // ID an den Konstruktor der Basisklasse übergeben
-    console.log(`Endboss erstellt mit ID: ${this.id}`); // Debugging
-
     this.height = 600;
     this.width = 450;
     this.y = -100;
@@ -70,7 +68,7 @@ class Endboss extends Enemy {
 
   setWorld(world) {
     this.world = world;
-    console.log(`Welt gesetzt für Endboss mit ID: ${this.id}, world:`, this.world); // Debugging
+    
   }
 
   playDeadSound() {
@@ -125,13 +123,13 @@ class Endboss extends Enemy {
     if (!this.deathAnimationPlayed) {
       this.deathAnimationPlayed = true;
       this.dead = true;
-      console.log('Todesanimation abspielen');
+      // console.log('Todesanimation abspielen');
       this.playAnimation(this.IMAGES_DEAD);
       setTimeout(() => {
         if (this.world) {
           this.remove(); // Verwenden Sie die eigene remove-Methode
         } else {
-          console.log('Welt nicht definiert');
+          // console.log('Welt nicht definiert');
         }
       }, 3000);
     }
@@ -142,12 +140,12 @@ class Endboss extends Enemy {
       const bossIndex = this.world.enemies.findIndex((boss) => boss.id === this.id);
       if (bossIndex !== -1) {
         this.world.enemies.splice(bossIndex, 1);
-        console.log('Endboss entfernt');
+        // console.log('Endboss entfernt');
       } else {
-        console.log('Endboss nicht gefunden');
+        // console.log('Endboss nicht gefunden');
       }
     } else {
-      console.log('Welt oder Feinde nicht definiert');
+      // console.log('Welt oder Feinde nicht definiert');
     }
   }
 }

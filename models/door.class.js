@@ -1,4 +1,4 @@
-class Door extends DrawableObject {
+class Door extends MovableObject {
   IMAGE_DOOR = [
     'img/door/door 0.png',
     'img/door/door 1.png',
@@ -16,6 +16,7 @@ class Door extends DrawableObject {
     this.y = y;
     this.width = 300; // Breite der Tür
     this.height = 460; // Höhe der Tür
+    this.offset = { top: 0, bottom: 250, left: 200, right: 200 }; // Setze Offsets
     this.img = this.imageCache[this.IMAGE_DOOR[0]];
     this.animate(); // Startet die Animation
   }
@@ -41,18 +42,6 @@ class Door extends DrawableObject {
     this.drawFrame(ctx); // Zeichne die Kollisionsbox der Tür
   }
 
-  static checkCharacterNearDoor(world) {
-    const door = world.door;
-    const character = world.character;
-    if (character.hasKey && character.isColliding(door)) {
-      character.enterDoor();
-      setTimeout(() => {
-        world.levelCompleted = true;
-        continueToNextLevel();
-      }, 2000);
-    }
-  }
-
   isCollidingWithDoor(character) {
     const box1 = this.getCollisionBox();
     const box2 = character.getCollisionBox();
@@ -65,7 +54,6 @@ class Door extends DrawableObject {
 
     return isColliding;
   }
-  
   
   enterDoor(character) {
     character.enterDoor(this); // Übergibt die Tür an die Charakter-Methode
@@ -91,15 +79,5 @@ class Door extends DrawableObject {
     if (world.door) {
       world.door.drawFrame(world.ctx); // Zeichnet die Tür
     }
-  }
-
-  getCollisionBox() {
-    const box = {
-        x: this.x,
-        y: this.y,
-        width: this.width,
-        height: this.height
-    };
-    return box;
   }
 }

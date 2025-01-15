@@ -26,6 +26,8 @@ class World {
     door; // Door attribute
     snakes = []; // Array for snakes
     traps = []; // Initialisiere das Array für Fallen
+
+    
     constructor(canvas, keyboard) {
       this.ctx = canvas.getContext("2d"); // Get the canvas context
       this.canvas = canvas; // Set the canvas
@@ -37,28 +39,34 @@ class World {
       this.drawer = new Drawer(this); // Initialize drawer before gameLoop
       this.gameLoop = new GameLoop(this);
       this.gameLoop.start();
+      console.log('Door in world constructor:', this.door); // Debugging-Ausgabe
+      if (!this.door) {
+        this.door = new Door(4500, 150); // Setze die Tür, falls sie nicht definiert ist
+        this.door.world = this;
+        console.log('Door set in constructor:', this.door); // Debugging-Ausgabe
+      }
     }
 
     initializeGameObjects() {
       this.level = this.levels[this.currentLevelIndex]; // Initialize the first level
-      this.clouds = new Clouds(this.level.clouds); // Initialize the Clouds class
-      this.clouds.randomizePositions(); // Set random positions for the clouds
+      this.clouds = this.level.clouds || []; // Initialize the Clouds class
       this.poisonStatusBar = new PoisonStatusBar(); // Initialize the poison status bar
       this.characterStatusBar = new StatusBar(); // Initialize the character status bar
       this.character = new Character(this, this.poisonStatusBar); // Initialize character with parameters
       this.character.world.keyboard = this.keyboard; // Forward keyboard to character
       this.poisonsArray = PoisonObject.initializePoisons(); // Initialize poison objects
-      this.key = Key.initializeKey(); // Initialize the key
+      this.key = this.level.key; // Initialize the key from the level
       this.backgroundObjects = this.level.backgroundObjects || []; // Ensure it is an array
       this.enemies = this.level.enemies || []; // Initialize enemies from the level
       this.level.objects = this.level.objects || []; // Ensure objects is an array
       this.level.clouds = this.level.clouds || []; // Ensure clouds is an array
       this.loadImages(this.IMAGES_YOU_LOST); // Load the "You Lost" image
       this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]); // Load the button images
-      this.door = new Door(1000, 200); // Initialize the door with a position
+      this.door = this.level.door; // Initialize the door from the level
       this.traps = this.level.traps || []; // Initialize traps from the current level
       this.camera_x = -this.character.x - 190; // Set the camera to the character's starting position
       this.endGame = new EndGame(this); // Initialize the EndGame class
+      console.log('Door in initializeGameObjects:', this.door); // Debugging-Ausgabe
     }
 
     setWorld() {
@@ -66,16 +74,19 @@ class World {
       this.enemies.forEach((enemy) => {
         if (enemy instanceof Enemy) { 
           enemy.setWorld(this); 
-          enemy.otherDirection = true; 
-          console.log(`Feind hinzugefügt: ${enemy.constructor.name} mit ID: ${enemy.id}`); // Debugging
+          enemy.otherDirection = true;
         }
       });
       if (this.door) { 
         this.door.world = this; 
       }
+      if (this.key) {
+        this.key.world = this;
+      }
       this.traps.forEach(trap => {
         trap.world = this; 
       });
+      console.log('Door in setWorld:', this.door); // Debugging-Ausgabe
     }
 
     loadImages(images) { 
@@ -87,28 +98,27 @@ class World {
     }
     
     update() {
-      if (this.levelCompleted || this.character.energy <= 0) return; // Stop updating if the character is dead
-      if (this.collisionHandler) { // Check if collisionHandler is defined
-        this.collisionHandler.checkCollisions();
-      }
-      this.character.update();
-      this.updatePoison();
-      this.character.checkThrowableObject(); // Call the method of the Character class
-      if (this.character.isMoving() && musicIsOn) {
-          playWalkingSound();
-      }
-      if (this.character.energy <= 0 && !this.levelCompleted) {
-          setTimeout(() => {
-              this.endGame.showYouLostScreen();
-          }, 200);
-      }
-      this.character.handleActions(); // Ensure handleActions is called
-      this.collisionHandler.checkDoorCollision(); // Add this call
-      this.enemies.forEach(enemy => {
-        if (enemy instanceof Endboss || enemy instanceof Snake) {
-          enemy.update(this.character); // Endboss und Snake prüfen, ob sie angreifen sollen
+        if (this.levelCompleted || this.character.energy <= 0) return; // Stop updating if the character is dead
+        if (this.collisionHandler) { // Check if collisionHandler is defined
+            this.collisionHandler.checkCollisions();
         }
-      });
+        this.character.update();
+        this.updatePoison();
+        this.character.checkThrowableObject(); // Call the method of the Character class
+        if (this.character.isMoving() && musicIsOn) {
+            playWalkingSound();
+        }
+        if (this.character.energy <= 0 && !this.levelCompleted) {
+            setTimeout(() => {
+                this.endGame.showYouLostScreen();
+            }, 200);
+        }
+        this.character.handleActions(); // Ensure handleActions is called
+        this.enemies.forEach(enemy => {
+            if (enemy instanceof Endboss || enemy instanceof Snake) {
+                enemy.update(this.character); // Endboss und Snake prüfen, ob sie angreifen sollen
+            }
+        });
     }
 
     updatePoison() { // Update the poison objects 
@@ -122,6 +132,7 @@ class World {
     addCharacter(character) {
       this.characters.push(character); // Add a character to the array
     }
+    
     addEnemy(enemy) {
       this.enemies.push(enemy); // Add an enemy to the array
     }
@@ -173,20 +184,15 @@ class World {
       mo.x = mo.x * -1; // Rotate the image 180 degrees back
       this.ctx.restore(); // Restore the saved state
     }
-    
-    loadLevel2() {
-      if (typeof level2 !== 'undefined') {
-          world.level = level2;
-          world.backgroundObjects = level2.backgroundObjects;
-          world.enemies = level2.enemies;
-          world.enemies.forEach(enemy => {
-              if (enemy instanceof Snake) {
-                  enemy.setWorld(this);
-                  enemy.otherDirection = true; // Schlange schaut nach links
-                  enemy.speedX = -enemy.speedX; // Schlange bewegt sich nach links
-                  enemy.direction = 'left'; // Setze die Richtung auf 'links'
-              }
-          });
-      }
+
+    loadNextLevel() {
+        this.currentLevelIndex++;
+        if (this.currentLevelIndex >= this.levels.length) {
+            this.currentLevelIndex = 0; // Zurück zum ersten Level, wenn alle Levels abgeschlossen sind
+        }
+        this.level = this.levels[this.currentLevelIndex];
+        this.initializeGameObjects();
+        this.setWorld();
     }
+    
   }

@@ -64,29 +64,37 @@ function continueToNextLevel() {   // Continue to the next level
   const overlay = document.getElementById('level-completed-overlay'); // Get the overlay
   if (overlay) { overlay.classList.remove('show');
   }
-  loadLevel2(); // Load level 2
+  loadLevel2(); 
 }
 
-function loadLevel2() { // Load level 2
+function loadLevel2() { 
+  console.log('loadLevel2() was called!'); // Debugging
   if (typeof level2 !== 'undefined') {
-    world.level = level2; // Set the current level to level 2
-    world.character.reset(2); // Reset the character for level 2
-    world.character.x = 0; // Set the character to the starting point of level 2
-    world.backgroundObjects = level2.backgroundObjects; // Set the new background
-    world.enemies = level2.enemies; // Use the existing enemies from level 2
-    if (level2.endboss) { // Check if the end boss is defined
-      world.level.endboss = new Endboss(level2.endboss.x, level2.endboss.y); // Add the end boss only in level 2
-    }
-    stopAllSounds(); // Stop all running sounds
-    playLevel2Sound(); // Play the background sound for level 2
+      console.log('Level 2 exists!'); // Debugging
+      world.level = level2; 
+      world.character.reset(2); 
+      world.character.x = 0; 
+      world.backgroundObjects = level2.backgroundObjects;
+      world.enemies = level2.enemies; 
+
+      if (level2.endboss) { 
+          world.level.endboss = new Endboss(level2.endboss.x, level2.endboss.y);
+          console.log('Endboss loaded at:', level2.endboss.x, level2.endboss.y); // Debugging
+      }
+
+      stopAllSounds();
+      playLevel2Sound();
+
+      if (!world.door) {
+          world.door = new Door(5500, 150);
+          world.door.world = world;
+          console.log('New door created in level 2 at:', 5500, 150); // Debugging
+      }
   } else {
-    console.error('Level 2 is not defined.');
-  }
-  if (this.door) { // Check if the door exists
-    this.door = new Door(5500, 150); // New door for level 2
-    this.door.world = this; // Assign the world to the door
+      console.error('Level 2 is not defined.');
   }
 }
+
 
 function playLevel2Sound() { // Play the background sound for level 2
   if (musicIsOn) {     // Check if music is on
@@ -199,3 +207,5 @@ function checkOrientation() {
 
 window.addEventListener('orientationchange', checkOrientation);
 window.addEventListener('resize', checkOrientation);
+
+

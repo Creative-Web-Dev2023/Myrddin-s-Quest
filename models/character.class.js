@@ -1,20 +1,20 @@
 class Character extends MovableObject {
-  height = 290; // Set the character's height
-  width = 520; // Set the character's width
-  x = 130; // Set the character's initial x position
-  y = 210; // Set the character's initial y position
-  speed = 5; // Set the character's speed
-  invulnerable = false; // Set the character's invulnerability status
-  poisonCollected = 0; // Initialize the collected poison count
-  poisonStatusBar; // Add the PoisonStatusBar
-  deadAnimationPlayed = false; // Track if the dead animation has been played
-  hasKey = false; // Track if the character has a key
-  isVisible = true; // Set the character to be visible by default
+  height = 290;
+  width = 520;
+  x = 130;
+  y = 210;
+  speed = 5;
+  invulnerable = false;
+  poisonCollected = 0;
+  poisonStatusBar;
+  deadAnimationPlayed = false;
+  hasKey = false;
+  isVisible = true;
   offset = {
-    top: 50, // Weniger oben abschneiden
-    bottom: 10, // Weniger unten abschneiden
-    left: 210, // Weniger links abschneiden
-    right: 200 // Weniger rechts abschneiden
+    top: 50,
+    bottom: 10,
+    left: 210,
+    right: 200
   };
 
   IMAGES_IDLE = [
@@ -101,16 +101,16 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_ATTACK);
-    this.world = world || {}; // Ensure world is initialized
+    this.world = world || {};
     this.applyGravity();
-    this.energy = 100; // Energie des Charakters
+    this.energy = 100;
     this.playAnimation(this.IMAGES_IDLE);
-    this.animate(); // Aufruf der geerbten Methode animate
+    this.animate();
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar(); 
     this.poisonStatusBar.setPercentage(0); 
     this.statusBar = new StatusBar();
     this.loadImages(this.IMAGES_YOU_LOST);
-    this.world.camera_x = -this.x - 190; // Setze die Kamera auf die Anfangsposition des Charakters
+    this.world.camera_x = -this.x - 190;
   }
 
   update() {
@@ -143,7 +143,7 @@ class Character extends MovableObject {
     if (this.world.keyboard.ATTACK) {
       console.log('ATTACK-Taste gedrückt');
       this.isAttacking = true;
-      this.playAnimation(this.IMAGES_ATTACK); // Angriffsanimation abspielen
+      this.playAnimation(this.IMAGES_ATTACK);
       this.attackEnemies();
     } else {
       this.isAttacking = false;
@@ -156,38 +156,38 @@ class Character extends MovableObject {
 
   jump() {
     if (!this.isAboveGround()) {
-      this.speedY = 33; // Set the jump speed
-      playJumpSound(); // Play the jump sound
+      this.speedY = 33;
+      playJumpSound();
     }
   }
 
   isMoving() {
-    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT; // Return true if the character is moving right or left
+    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
   }
 
   hit(enemy) {
-    const distance = Math.abs(this.x - enemy.x);  // Calculate the distance between the character and the enemy
-    if (!this.invulnerable && distance < 100) { // Check if the character is vulnerable and close enough to the enemy
-      this.takeDamage(5);  // Reduce the damage amount
-      this.world.characterStatusBar.setPercentage(this.energy); // Aktualisiere die Statusleiste direkt
-      this.playAnimation(this.IMAGES_HURT); // Zeige Hurt-Animation
+    const distance = Math.abs(this.x - enemy.x);
+    if (!this.invulnerable && distance < 100) {
+      this.takeDamage(5);
+      this.world.characterStatusBar.setPercentage(this.energy);
+      this.playAnimation(this.IMAGES_HURT);
     }
   }
 
   takeDamage(damage) {
-    if (this.energy > 0 && !this.invulnerable) { // Check if the character is alive and not invulnerable
-      this.energy -= damage; // Reduce the energy of the character
-      this.world.characterStatusBar.setPercentage(this.energy); // Aktualisiere die Statusleiste direkt
+    if (this.energy > 0 && !this.invulnerable) {
+      this.energy -= damage;
+      this.world.characterStatusBar.setPercentage(this.energy);
       this.playAnimation(this.IMAGES_HURT);
-      this.updateStatusBar(); // Update the status bar
+      this.updateStatusBar();
 
-      if (this.energy <= 0) { // Check if the character has died
-        this.energy = 0; // Set the energy to 0
-        this.die(); // Character dies if energy is 0
+      if (this.energy <= 0) {
+        this.energy = 0;
+        this.die();
       } else {
-        this.invulnerable = true; // Make the character invulnerable for a short period
+        this.invulnerable = true;
         setTimeout(() => {
-          this.invulnerable = false; // Remove invulnerability after 2 seconds
+          this.invulnerable = false;
         }, 2000);
       }
     } 
@@ -195,46 +195,51 @@ class Character extends MovableObject {
 
   updateStatusBar() {
     if (this.world && this.world.statusBar) {
-      this.world.statusBar.update(this.energy); // Update the status bar with the new energy
+      this.world.statusBar.update(this.energy);
     }
   }
 
-  reset(level) { // Reset the character's position and energy
-    this.x = 130; // Set the character's x position
-    this.y = 150; // Set the character's y position
-    this.isVisible = true; // 
-    if (level === 2) { // If the level is 2
-      this.energy = 100; // Optionale Anpassung für Level 2
-      this.world.level.level_end_x = 3500; // Verkürze die Länge des Levels 2
+  reset(level) {
+    this.x = 130;
+    this.y = 150;
+    this.isVisible = true;
+    if (level === 2) {
+      this.energy = 100;
+      this.world.level.level_end_x = 3500;
     } else {
-      this.poisonCollected = 0; // Reset the poison collected
-      this.poisonStatusBar.setPercentage(0); // Reset the poison status bar
+      this.poisonCollected = 0;
+      this.poisonStatusBar.setPercentage(0);
     }
-    this.CharacterHealthBar = new StatusBar(); // Füge eine Statusleiste für den Charakter hinzu
-    this.CharacterHealthBar.setPercentage(this.energy); // Reset the character's health bar
-    this.playAnimation(this.IMAGES_IDLE); // Play the idle animation
-    this.animate(); // Start the animation
+    this.CharacterHealthBar = new StatusBar();
+    this.CharacterHealthBar.setPercentage(this.energy);
+    this.playAnimation(this.IMAGES_IDLE);
+    this.animate();
   }
 
   enterDoor(door) {
-    this.visible = true; // Stelle sicher, dass der Charakter sichtbar ist, bevor er die Tür betritt
-
-    // Setze die Position des Charakters direkt an die Tür
-    this.x = door.x; // Setze die X-Position des Charakters auf die X-Position der Tür
-
-    // Optional: Füge eine kurze Animation oder einen Effekt hinzu, um anzuzeigen, dass der Charakter die Tür betritt
+    console.log('enterDoor called - Character enters door at:', door.x, door.y); // Debugging
+    this.isVisible = false;
+    this.x = door.x; 
+    this.y = door.y;
     setTimeout(() => {
-        this.visible = false; // Charakter unsichtbar machen
-        this.x = door.x + door.width + 50; // Position auf der anderen Seite der Tür
-        this.visible = true; // Charakter wieder sichtbar machen
-        door.checkLevelCompletion(); // Überprüfe, ob der Level abgeschlossen ist
-    }, 2000); // Warte 1 Sekunde, bevor der Charakter unsichtbar wird
+        this.isVisible = false;
+        console.log('Loading next level...'); // Debugging
+        loadLevel2();
+        setTimeout(() => {
+            console.log('Character repositioned in new level at:', 130, 210); // Debugging
+            this.x = 130;
+            this.y = 210;
+            this.isVisible = true;
+        }, 500);
+    }, 2000);
   }
-  
 
   checkCollisionWithDoor(door) {
-    const charBox = this.getCollisionBox(); // Kollision des Charakters
-    const doorBox = door.getCollisionBox(); // Kollision der Tür
+    if (!door) {
+      return false;
+    }
+    const charBox = this.getCollisionBox();
+    const doorBox = door.getCollisionBox();
     return (
         charBox.x < doorBox.x + doorBox.width &&
         charBox.x + charBox.width > doorBox.x &&
@@ -245,25 +250,23 @@ class Character extends MovableObject {
   
 
   collectPoison(poison, index) {
-    if (poison && poison.isActive) { // If the poison object is active
-      poison.deactivate(); // Deactivate the poison object
-      this.poisonCollected += 1; // Increase the collected poison count
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
-      this.world.poisonsArray.splice(index, 1); // Remove the poison object from the array
-      playCollectPoisonBottleSound(); // Play the collect poison bottle sound
+    if (poison && poison.isActive) {
+      poison.deactivate();
+      this.poisonCollected += 1;
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+      this.world.poisonsArray.splice(index, 1);
+      playCollectPoisonBottleSound();
     }
   }
   collectKey(key) {
-    if (key && key.isActive) { // If the key object is active
-      key.deactivate(); // Deactivate the key object
-      this.hasKey = true; // Set the character's hasKey property to true
+    if (key && key.isActive) {
+      key.deactivate();
+      this.hasKey = true;
     }
   }
 
   attackEnemies() {
-    const attackRange = 150; // Definierter Angriffsradius
-    console.log('attackEnemies aufgerufen');
-
+    const attackRange = 150;
     this.world.enemies.forEach(enemy => {
       if ((enemy instanceof Knight || enemy instanceof Snake || enemy instanceof Endboss) && !enemy.dead) {
         const distance = Math.sqrt(
@@ -274,7 +277,7 @@ class Character extends MovableObject {
 
         if (distance <= attackRange) {
           console.log('Feind in Reichweite, Schaden zufügen');
-          enemy.takeDamage(10); // Schaden zufügen
+          enemy.takeDamage(10);
         }
       }
     });
@@ -285,13 +288,13 @@ class Character extends MovableObject {
     if (this.canThrow()) {
       let bottle = new ThrowableObject(this.x, this.y);
       this.world.throwableObjects.push(bottle);
-      this.poisonCollected--; // Decrease the collected poison count
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20); // Update the poison status bar
+      this.poisonCollected--;
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
     }
   }
 
   canThrow() {
-    return this.poisonCollected > 0; // Check if the character has collected poison
+    return this.poisonCollected > 0;
   }
 
   draw(ctx) {
@@ -301,9 +304,9 @@ class Character extends MovableObject {
   }
 
   checkThrowableObject() {
-    if (this.world.keyboard.D && this.poisonCollected > 0) { // Check if the D key is pressed and poison is collected
-        this.throwObject(); // Throw the object
-        playPoisonBottleSound(); // Play sound when the bottle is thrown
+    if (this.world.keyboard.D && this.poisonCollected > 0) {
+        this.throwObject();
+        playPoisonBottleSound();
     }
   }
 }

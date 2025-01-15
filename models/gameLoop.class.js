@@ -29,7 +29,7 @@ class GameLoop {
             y >= ui.quitButton.y && // Check if the click is within the quit button
             y <= ui.quitButton.y + ui.quitButton.height // Check if the click is within the quit button
         ) {
-            // Handle quit button click
+            
         }
     }
 }

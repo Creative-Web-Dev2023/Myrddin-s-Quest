@@ -1,8 +1,6 @@
 class Snake extends Enemy {
   constructor(startX = 400, moveRange = 100, id) {
     super(id); // ID an den Konstruktor der Basisklasse übergeben
-    console.log(`Schlange erstellt mit ID: ${this.id}`); // Debugging
-
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
@@ -137,16 +135,13 @@ class Snake extends Enemy {
   takeDamage(damage) {
     if (!this.dead) {
       this.energy = Math.max(0, this.energy - damage);
-      console.log(`Schlange nimmt Schaden: ${damage}, verbleibende Energie: ${this.energy}`);
       if (this.energy <= 0) {
         this.dead = true;
         this.playDeathAnimation();
         setTimeout(() => {
           if (this.world) {
             this.remove(); // Verwenden Sie die eigene remove-Methode
-          } else {
-            console.log('Welt nicht definiert');
-          }
+          } 
         }, 1000);
       } else {
         this.playAnimation(this.IMAGES_HURT);
@@ -158,13 +153,11 @@ class Snake extends Enemy {
     if (!this.deathAnimationPlayed) {
       this.deathAnimationPlayed = true;
       this.dead = true;
-      console.log('Todesanimation abspielen');
       this.playAnimation(this.IMAGES_DEAD);
       setTimeout(() => {
         if (this.world) {
           this.remove(); // Verwenden Sie die eigene remove-Methode
         } else {
-          console.log('Welt nicht definiert');
         }
       }, 3000);
     }
