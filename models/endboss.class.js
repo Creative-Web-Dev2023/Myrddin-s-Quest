@@ -1,17 +1,17 @@
 class Endboss extends Enemy {
-  constructor(id) {
+  constructor(x, y, id) {
     super(id); // ID an den Konstruktor der Basisklasse übergeben
+    this.x = x;
+    this.y = y;
     this.height = 600;
     this.width = 450;
-    this.y = -70;
-    this.x = 3500;
     this.attackRange = 200; // Setzt die Reichweite für den Angriff
     this.attackDamage = 20; // Schaden, den der Endboss verursacht
     this.speed = 5;
     this.deadSound = new Audio("audio/troll dead.mp3");
     this.offset = { top: 180, bottom: 65, left: 90, right: 90 };
     this.statusBarEndboss = new EndbossStatusbar(); // Initialisiere die Statusleiste des Endbosses
-    this.IMAGES_WALKING = [
+    this.IMAGES_IDLE = [
       "img/troll/idle/idle_000.png",
       "img/troll/idle/idle_001.png",
       "img/troll/idle/idle_002.png",
@@ -59,7 +59,11 @@ class Endboss extends Enemy {
       "img/troll/die/die_008.png",
       "img/troll/die/die_009.png",
     ];
-    this.loadImages(this.IMAGES_WALKING);
+    this.img = new Image();
+    this.img.src = "img/troll/idle/idle_000.png"; // Beispielbild für den Endboss
+    this.world = null; // Initialisiere die Welt als null
+
+    this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
@@ -121,9 +125,11 @@ class Endboss extends Enemy {
   draw(ctx) {
     if (this.img && this.img.complete) {
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
-      this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; // Position über dem Kopf des Endbosses
-      this.statusBarEndboss.draw(ctx);
+      if (this.world) { // Überprüfen, ob die Welt gesetzt ist
+        this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
+        this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; // Position über dem Kopf des Endbosses
+        this.statusBarEndboss.draw(ctx);
+      }
     }
   }
 }

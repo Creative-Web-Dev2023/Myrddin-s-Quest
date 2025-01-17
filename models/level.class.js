@@ -18,6 +18,7 @@ class Level {
     this.backgroundObjects.forEach((bg) => bg.draw(ctx)); 
     this.clouds.forEach((cloud) => cloud.draw(ctx)); 
     this.enemies.forEach((enemy) => enemy.draw(ctx));
+    console.log("Zeichne Feind:", enemy);
     this.poisonObjects.forEach((poison) => {
       poison.drawFrame(ctx, camera_x);     
     });

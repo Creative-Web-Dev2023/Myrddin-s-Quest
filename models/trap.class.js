@@ -31,8 +31,11 @@ class Trap extends MovableObject {
   }
 
   static drawTraps(ctx, traps) {
-    traps.forEach(trap => {
-      trap.draw(ctx); // Ensure the trap has a draw method
-    });
+    traps.forEach(trap => trap.draw(ctx));
+  }
+
+  setWorld(world) {
+    this.world = world;
+    console.log(`Trap bei x=${this.x}, y=${this.y} mit Welt verbunden:`, !!this.world);
   }
 }

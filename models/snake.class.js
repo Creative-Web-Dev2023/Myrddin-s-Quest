@@ -146,7 +146,6 @@ class Snake extends Enemy {
     }
 }
 
-
   playDeathAnimation() {
     if (!this.deathAnimationPlayed) {
       this.deathAnimationPlayed = true;
@@ -154,7 +153,7 @@ class Snake extends Enemy {
       this.playAnimation(this.IMAGES_DEAD);
       setTimeout(() => {
         if (this.world) {
-          this.remove(); // Verwenden Sie die eigene remove-Methode
+          this.removeEnemy(); // Verwenden Sie die Methode der Basisklasse
         }
       }, 1000); // Wartezeit für die Dead-Animation
     }

@@ -67,29 +67,44 @@ function continueToNextLevel() {   // Continue to the next level
   }
   loadLevel2(); 
 }
+function resetWorldForNewLevel() {
+  if (world) {
+      world.enemies = [];
+      world.traps = [];
+      world.backgroundObjects = [];
+      console.log("World wurde für das neue Level zurückgesetzt.");
+  }
+}
 
 function loadLevel2() { 
   if (typeof level2 !== 'undefined') {
-      
+      resetWorldForNewLevel(); 
       world.level = level2; 
       world.character.reset(2); 
       world.character.x = 0; 
       world.backgroundObjects = level2.backgroundObjects;
-      world.enemies = level2.enemies; 
+      world.enemies = [...level2.enemies]; 
+      level2.traps = generateTrapsLvl2();
+      world.traps = Array.isArray(level2.traps) ? [...level2.traps] : [];
+      world.traps.forEach(trap => {
+          if (typeof trap.setWorld === 'function') {
+              trap.setWorld(world); // Fallen mit Welt verknüpfen
+          } 
+      }); 
       if (level2.endboss) { 
+          // Wenn Endboss existiert, instanziiere ihn
           world.level.endboss = new Endboss(level2.endboss.x, level2.endboss.y);
-          
+          console.log("Endboss initialisiert in loadLevel2:", world.level.endboss); // Debugging
       }
-
       stopAllSounds();
       playLevel2Sound();
       if (!world.door) {
           world.door = new Door(5500, 150);
           world.door.world = world;
-        
       }
-  } 
+  }
 }
+
 
 function playLevel2Sound() { // Play the background sound for level 2
   if (musicIsOn) {     // Check if music is on

@@ -104,9 +104,8 @@ class Knight extends Enemy {
     
     takeDamage(damage) {
         if (!this.dead) {
-          // Reduziere die Energie immer nur um 10 (ein Herz)
           this.energy = Math.max(0, this.energy - 10);
-          this.healthDisplay.energy = this.energy; // Aktualisiere die Anzeige
+          this.healthDisplay.energy = this.energy; 
           if (this.energy <= 0) {
             this.dead = true;
             this.playDeathAnimation();

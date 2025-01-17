@@ -5,12 +5,12 @@ let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
 let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
-let level1Sound = new Audio('audio/woodsounds.mp3'); // Hintergrundsound für Level 1
-let level2Sound = new Audio('audio/level2_sound.mp3'); // Hintergrundsound für Level 2
+let level1Sound = new Audio('audio/woodsounds.mp3'); 
+let level2Sound = new Audio('audio/level2_sound.mp3'); 
 let allSounds = [backgroundMusic, walkingSound, attackSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
 
 function musicSwitcher() {
-    const audioIcon = document.getElementById('audioSwitcher'); // Icon für Sound an/aus
+    const audioIcon = document.getElementById('audioSwitcher'); 
     musicIsOn = !musicIsOn;
     if (musicIsOn) {
         if (world.level === level2) {
@@ -18,17 +18,17 @@ function musicSwitcher() {
         } else {
             playLevel1Sound();
         }
-        audioIcon.src = 'img/app_icons/soundon.png'; // Icon für Sound an
+        audioIcon.src = 'img/app_icons/soundon.png'; 
     } else {
         stopAllSounds();
-        audioIcon.src = 'img/app_icons/soundoff.png'; // Icon für Sound aus
+        audioIcon.src = 'img/app_icons/soundoff.png'; 
     }
 }
 
 function playMusic() {
     if (!musicIsOn) {
         backgroundMusic.play();
-        backgroundMusic.loop = true;  // Musik in Endlosschleife
+        backgroundMusic.loop = true; 
         musicIsOn = true;
     }
 }
@@ -36,11 +36,11 @@ function playMusic() {
 function stopMusic() {
     if (musicIsOn) {
         backgroundMusic.pause();
-        backgroundMusic.currentTime = 0; // Musik von Anfang abspielen, wenn sie wieder gestartet wird
+        backgroundMusic.currentTime = 0; 
         musicIsOn = false;
-        pauseAllSounds(); // Pausiere alle Sounds
-        walkingSound.pause(); // Speziell Walking Sound pausieren
-        walkingSound.currentTime = 0; // Zurücksetzen auf Anfang
+        pauseAllSounds(); 
+        walkingSound.pause(); 
+        walkingSound.currentTime = 0;
     }
 }
 
@@ -55,7 +55,7 @@ function stopAllSounds() {
 function pauseAllSounds() {
     allSounds.forEach(sound => {
         sound.pause();
-        sound.currentTime = 0; // Setze den Sound auf den Anfang zurück
+        sound.currentTime = 0; 
     });
 }
 
@@ -63,22 +63,22 @@ function playWalkingSound() {
     if (musicIsOn && walkingSound.paused) {
         walkingSound.play();
     } else if (!musicIsOn) {
-        walkingSound.pause(); // Falls der Schalter off ist, Walking Sound pausieren
-        walkingSound.currentTime = 0; // Zurücksetzen auf Anfang
+        walkingSound.pause(); 
+        walkingSound.currentTime = 0;
     }
 }
 
 function playLevel1Sound() {
     if (musicIsOn) {
         level1Sound.play();
-        level1Sound.loop = true; // Wiederhole den Sound
+        level1Sound.loop = true;
     }
 }
 
 function playLevel2Sound() {
     if (musicIsOn) {
         level2Sound.play();
-        level2Sound.loop = true; // Wiederhole den Sound
+        level2Sound.loop = true; 
     }
 }
 

@@ -255,12 +255,13 @@ class Character extends MovableObject {
       playCollectPoisonBottleSound();
     }
   }
+  
   collectKey(key) {
     console.log("Collecting key..."); // Debugging
     if (key && key.isActive) {
       key.deactivate();
       this.hasKey = true;
-      // console.log("Key collected! hasKey:", this.hasKey); // Debugging
+      console.log("Key collected! hasKey:", this.hasKey); // Debugging
     }
   }
   
@@ -282,7 +283,6 @@ class Character extends MovableObject {
       }
     });
   }
-
 
   throwObject() {
     if (this.canThrow()) {

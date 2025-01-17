@@ -2,25 +2,33 @@ const level2 = new Level(
   generateEnemiesLvl2(),
   generateEnvironmentsLvl2(),
   generateBackgroundsLvl2(),
-  generatePoisonObjectsLvl2()
+  generatePoisonObjectsLvl2(),
+  generateTrapsLvl2()
 );
 
 function generateEnemiesLvl2() {
+  const enemies = [
+    new Snake(1000, 200, 101), 
+    new Snake(1800, 200, 103),
+    new Snake(2600, 200, 105),
+    new Snake(3200, 200, 107),
+    new Endboss(6000, 150, 108),
+  ];
+  console.log("Endboss in Feindliste:", enemies.find(enemy => enemy instanceof Endboss));
+  return enemies;
+}
+
+function generateTrapsLvl2() {
   return [
-    new Snake(1000, 200, 9), // IDs ab 7, um Kollision mit Level 1 zu vermeiden
     new Trap(1300, 355),
-    new Snake(1800, 200, 10),
     new Trap(2400, 355),
-    new Snake(2600, 200, 11),
     new Trap(3200, 355),
-    new Snake(3200, 200, 14),
-    new Endboss(6000, 150, 15),
   ];
 }
 
 function generateEnvironmentsLvl2() {
   return [
-    new Cloud(0, 50), // Fügen Sie x und y Positionen für die Wolken hinzu
+    new Cloud(0, 50), 
     new Cloud(500, 100),
     new Cloud(1000, 150),
   ];
@@ -56,7 +64,7 @@ function generateBackgroundsLvl2() {
 
 function generatePoisonObjectsLvl2() {
   return [
-    // Fügen Sie hier die Giftobjekte hinzu
+    
   ];
 }
 
