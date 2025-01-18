@@ -2,36 +2,25 @@ const level2 = new Level(
   generateEnemiesLvl2(),
   generateEnvironmentsLvl2(),
   generateBackgroundsLvl2(),
-  generatePoisonObjectsLvl2(),
-  generateTrapsLvl2()
+  generatePoisonObjectsLvl2(), // PoisonObjects
+  null, // Key
+  generateTrapsLvl2(),
+  generateEndbossLvl2(), // Endboss
+  2 // Index
 );
 
 function generateEnemiesLvl2() {
   const enemies = [
-    new Snake(1000, 200, 101), 
+    new Snake(1000, 200, 101),
     new Snake(1800, 200, 103),
     new Snake(2600, 200, 105),
     new Snake(3200, 200, 107),
-    new Endboss(6000, 150, 108),
   ];
-  console.log("Endboss in Feindliste:", enemies.find(enemy => enemy instanceof Endboss));
   return enemies;
 }
 
-function generateTrapsLvl2() {
-  return [
-    new Trap(1300, 355),
-    new Trap(2400, 355),
-    new Trap(3200, 355),
-  ];
-}
-
 function generateEnvironmentsLvl2() {
-  return [
-    new Cloud(0, 50), 
-    new Cloud(500, 100),
-    new Cloud(1000, 150),
-  ];
+  return [new Cloud(0, 50), new Cloud(500, 100), new Cloud(1000, 150)];
 }
 
 function generateBackgroundsLvl2() {
@@ -61,10 +50,17 @@ function generateBackgroundsLvl2() {
     new BackgroundObject("img/game_backgrounds/3/2.png", 15820),
   ];
 }
-
 function generatePoisonObjectsLvl2() {
-  return [
-    
-  ];
+  return [];
 }
+
+function generateEndbossLvl2() {
+  return new Endboss(6000, 150, 108);
+}
+
+function generateTrapsLvl2() {
+  const traps = [new Trap(1300, 355), new Trap(2400, 355), new Trap(3200, 355)];
+  return traps;
+}
+
 

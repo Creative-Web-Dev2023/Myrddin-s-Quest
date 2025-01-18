@@ -2,16 +2,21 @@ const level1 = new Level(
   generateEnemiesLvl1(),
   generateEnvironmentsLvl1(),
   generateBackgroundsLvl1(),
+  null, // PoisonObjects
+  null, // Key
+  null, // Traps
+  null, // Endboss
+  1 // Index
 );
 
 function generateEnemiesLvl1() {
   return [
-    new Knight(0, 900, 100, 1),
-    new Knight(2000, 1500, 100, 2),
-    new Knight(4000, 2100, 100, 3),
-    new Knight(8000, 2700, 100, 4),
-    new Knight(10000, 3300, 100, 5),
-    new Knight(12000, 3900, 100, 6),
+    new Knight(0, 900, 1),
+    new Knight(2000, 1500, 2),
+    new Knight(4000, 2100, 3),
+    new Knight(8000, 2700, 4),
+    new Knight(10000, 3300, 5),
+    new Knight(12000, 3900, 6),
   ];
 }
 

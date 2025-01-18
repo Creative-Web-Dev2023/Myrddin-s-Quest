@@ -61,6 +61,12 @@ class Endboss extends Enemy {
     ];
     this.img = new Image();
     this.img.src = "img/troll/idle/idle_000.png"; // Beispielbild für den Endboss
+    this.img.onload = () => {
+      console.log("Endboss-Bild erfolgreich geladen:", this.img.src);
+    };
+    this.img.onerror = () => {
+      console.error("Fehler beim Laden des Endboss-Bildes:", this.img.src);
+    };
     this.world = null; // Initialisiere die Welt als null
 
     this.loadImages(this.IMAGES_IDLE);
@@ -130,6 +136,8 @@ class Endboss extends Enemy {
         this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; // Position über dem Kopf des Endbosses
         this.statusBarEndboss.draw(ctx);
       }
+    } else {
+      console.error("Endboss-Bild nicht geladen:", this.img);
     }
   }
 }

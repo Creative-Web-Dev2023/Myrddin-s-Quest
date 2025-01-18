@@ -17,25 +17,24 @@ class Trap extends MovableObject {
     this.y = y;
     this.loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
+    console.log("Trap erstellt mit Bild:", this.img);
     this.animate();
   }
 
   draw(ctx) {
+    if (!this.img || !this.img.complete) {
+        console.error("Fehler: Bild nicht gefunden oder nicht geladen für Trap:", this);
+        return;
+    }
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  }
-
+}
   animate() {
     setInterval(() => {
       this.playAnimation(this.IMAGES_IDLE);
     }, 100);
   }
 
-  static drawTraps(ctx, traps) {
-    traps.forEach(trap => trap.draw(ctx));
-  }
-
   setWorld(world) {
     this.world = world;
-    console.log(`Trap bei x=${this.x}, y=${this.y} mit Welt verbunden:`, !!this.world);
   }
 }

@@ -14,12 +14,16 @@ class DrawableObject {
   }
 
   loadImages(images) {
+    if (!images || images.length === 0) {
+        console.error("Fehler: Bilder-Array ist leer oder undefined!");
+        return;
+    }
     images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
+        const img = new Image();
+        img.src = path;
+        this.imageCache[path] = img;
     });
-    this.img = this.imageCache[images[0]]; // Set the initial image
+    this.img = this.imageCache[images[0]] || new Image(); // Falls Bild nicht geladen, setze Platzhalter
   }
 
   playAnimation(images) {
@@ -33,8 +37,10 @@ class DrawableObject {
   }
 
   draw(ctx) {
-    if (this.img && this.img.complete) {
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    if (this.img) {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    } else {
+        console.warn("Trap-Bild nicht geladen:", this);
     }
   }
 

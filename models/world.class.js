@@ -1,6 +1,6 @@
 class World {
   character;
-  level;
+  level = level1;
   canvas;
   ctx;
   keyboard;
@@ -12,7 +12,7 @@ class World {
   enemies = [];
   throwableObjects = [];
   currentLevelIndex = 0;
-  levels = [level1];
+  levels = [level1, level2]; // Fügen Sie level2 zur levels-Liste hinzu
   imageCache = {};
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
@@ -27,13 +27,18 @@ class World {
   snakes = [];
   knights = [];
   traps = [];
-  endboss = null;
-  enemies = [...this.knights, ...this.snakes, ...this.traps];
+  endboss;
+  enemies = [];
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.level = this.levels[this.currentLevelIndex]; // Initialisiere das Level
+    if (!this.level) {
+      console.error("Fehler: Level ist undefined.");
+      return;
+    }
     this.enemies = []; // Initialisiere die enemies-Liste als leeres Array
     this.ui = new UI(canvas);
     this.initializeGameObjects();
@@ -51,7 +56,11 @@ class World {
   }
 
   initializeGameObjects() {
-    this.level = this.levels[this.currentLevelIndex];
+    this.level = this.levels[this.currentLevelIndex]; // Falls mehrere Level existieren
+    if (!this.level) {
+      console.error("Fehler: Level ist undefined.");
+      return;
+    }
     this.clouds = this.level.clouds || [];
     this.poisonStatusBar = new PoisonStatusBar();
     this.characterStatusBar = new StatusBar();
@@ -60,44 +69,54 @@ class World {
     this.poisonsArray = PoisonObject.initializePoisons();
     this.key = this.level.key;
     this.backgroundObjects = this.level.backgroundObjects || [];
+    
     this.initializeEnemies();
-    this.initializeTraps();
-    this.initializeEndboss(); // Sicherstellen, dass der Endboss initialisiert wird
+    this.initializeTraps();  // Hier werden die Traps geladen
+    this.initializeEndboss();
     this.initializeOtherObjects();
     this.updateEnemiesList();
   }
 
   initializeEnemies() {
-    this.enemies = this.level.enemies || [];
-    this.snakes = this.level.enemies.filter(enemy => enemy instanceof Snake);
-    this.knights = this.level.enemies.filter(enemy => enemy instanceof Knight);
-    console.log("Endboss in initializeEnemies:", this.level.enemies.find(enemy => enemy instanceof Endboss));
+    this.level.enemies.forEach(enemyData => {
+        if (!enemyData) {
+            return;
+        }
+        let enemy;
+        if (enemyData instanceof Knight) {
+          enemy = new Knight(0, enemyData.x, 100, enemyData.id);
+        } else if (enemyData instanceof Snake) {
+            enemy = new Snake(enemyData.x, enemyData.y, enemyData.id);
+        }
+        if (enemy) {
+            this.enemies.push(enemy);
+            enemy.setWorld(this); // Welt für den Gegner setzen
+        }
+    });
   }
+
   initializeEndboss() {
-    this.endboss = this.level.enemies.find(enemy => enemy instanceof Endboss);
-    if (this.endboss) {
-        console.log("Endboss gefunden:", this.endboss);
-        this.enemies.push(this.endboss);
+    if (this.level === level2) {
+      this.endboss = generateEndbossLvl2();
+      if (this.endboss) {
         this.endboss.setWorld(this);
-    } else {
-        console.warn("Kein Endboss gefunden in der Feindliste!");
+        console.log("Endboss initialisiert:", this.endboss);
+      } else {
+        console.error("Fehler: Endboss konnte nicht initialisiert werden.");
+      }
     }
-}
+  }
 
   initializeTraps() {
-    this.traps = this.level.traps || [];
-    this.traps.forEach(trap => trap.setWorld(this));
-  }
-
-  initializeEndboss() {
-    this.endboss = this.level.enemies.find(enemy => enemy instanceof Endboss);
-    if (this.endboss) {
-        console.log("Endboss gefunden:", this.endboss);
-        this.enemies.push(this.endboss);
-        this.endboss.setWorld(this); // Endboss die Welt zuweisen
-    } else {
-        console.warn("Kein Endboss gefunden in der Feindliste!");
+    if (!this.level.traps || this.level.traps.length === 0) {
+        return;
     }
+    this.traps = [...this.level.traps];
+    this.traps.forEach(trap => {
+        trap.setWorld(this);
+        console.log("Trap initialisiert:", trap);
+    });
+    console.log("Traps erfolgreich geladen:", this.traps);
   }
 
   initializeOtherObjects() {
@@ -117,46 +136,31 @@ class World {
     }
     this.character.world = world;
     this.updateEnemiesList();
-    if (this.endboss) {
-        if (!world.enemies.includes(this.endboss)) {
-            world.enemies.push(this.endboss);
-        }
-        this.endboss.setWorld(world); // Endboss die Welt zuweisen
+    if (this.level.endboss) {
+        this.level.endboss.setWorld(world); 
     }
-    this.enemies.forEach((enemy) => {
+    this.level.enemies.forEach((enemy) => {
         if (enemy instanceof Enemy) {
             enemy.setWorld(world);
             enemy.otherDirection = true;
         }
     });
-    this.traps.forEach(trap => trap.setWorld(world));
+    if (this.level && this.level.traps) {
+        this.level.traps.forEach(trap => trap.setWorld(world));
+    }
     if (this.door) {
         this.door.world = this;
     }
     if (this.key) {
         this.key.world = this;
     }
-}
-
+  }
 
   updateEnemiesList() {
-    this.enemies = this.level.enemies.filter(enemy => !enemy.isRemoved);
+    this.enemies = this.enemies.filter(enemy => !enemy.isRemoved);
     this.snakes = this.enemies.filter(enemy => enemy instanceof Snake);
     this.knights = this.enemies.filter(enemy => enemy instanceof Knight);
-    this.traps = this.level.traps || [];
-    this.endboss = this.level.enemies.find(enemy => enemy instanceof Endboss);
-    if (this.endboss) {
-        console.log("Endboss in updateEnemiesList:", this.endboss);
-    } else {
-        console.warn("Kein Endboss gefunden in der Feindliste!");
-    }
-    this.level.enemies = [...this.knights, ...this.snakes, ...this.traps];
-    this.enemies = [...this.knights, ...this.snakes, ...this.traps];
-    if (this.endboss) {
-        this.enemies.push(this.endboss);
-    }
-}
-
+  }
 
   loadImages(images) {
     images.forEach((path) => {
@@ -223,13 +227,15 @@ class World {
     this.throwableObjects.forEach((obj) => {
       obj.draw(this.ctx);
     });
-    this.traps.forEach((trap) => {
-      trap.draw(this.ctx);
-    });
-    if (this.endboss) {
-      this.endboss.draw(this.ctx);
+    if (this.level && this.level.traps) {
+      this.level.traps.forEach((trap) => {
+        trap.draw(this.ctx);
+      });
     }
-    console.log("Endboss in draw:", this.endboss); // Debugging
+    if (this.endboss) {
+      console.log("Endboss wird gezeichnet:", this.endboss);
+      this.endboss.draw(this.ctx);
+    } 
   }
 
   clearCanvas() {
@@ -284,7 +290,6 @@ class World {
     this.level = this.levels[this.currentLevelIndex];
     this.initializeGameObjects(); // Neue Gegner hinzufügen
     this.setWorld();
-    
   }
 
   clearEnemies() {
@@ -293,7 +298,7 @@ class World {
   }
 
   updateEnemies() {
-    this.enemies = [...this.knights, ...this.snakes, ...this.traps];
+    this.enemies = [...this.knights, ...this.snakes, ...this.endboss];
     if (this.endboss) {
       this.enemies.push(this.endboss);
     }
@@ -303,4 +308,10 @@ class World {
       }
     });
   }
+}
+
+function generateEndbossLvl2() {
+  const someEndbossObject = new Endboss(); // Beispiel für die Erzeugung des Endboss-Objekts
+  console.log("Endboss generiert:", someEndbossObject); // Debugging
+  return someEndbossObject; // Stelle sicher, dass ein gültiges Endboss-Objekt zurückgegeben wird
 }
