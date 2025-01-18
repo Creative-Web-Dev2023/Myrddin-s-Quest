@@ -1,15 +1,13 @@
 const level1 = new Level(
-  generateEnemiesLvl1(),
-  generateEnvironmentsLvl1(),
-  generateBackgroundsLvl1(),
-  null, // PoisonObjects
+  generateEnemiesLvl(),
+  generateEnvironmentsLvl(),
+  generateBackgroundsLvl(), // Hintergrundobjekte von Level 1 und Level 2
+  // generateTrapsLvl(), 
+  generatePoisonObjectsLvl(), 
   null, // Key
-  null, // Traps
-  null, // Endboss
-  1 // Index
 );
 
-function generateEnemiesLvl1() {
+function generateEnemiesLvl() {
   return [
     new Knight(0, 900, 1),
     new Knight(2000, 1500, 2),
@@ -17,20 +15,33 @@ function generateEnemiesLvl1() {
     new Knight(8000, 2700, 4),
     new Knight(10000, 3300, 5),
     new Knight(12000, 3900, 6),
+    
+    new Snake(7000, 200, 7), 
+    new Snake(8500, 200, 8),
+    new Snake(9800, 200, 9), 
+    new Snake(11000, 200, 10), 
+    new Snake(11600, 200, 11), 
+    new Endboss(11800, 200, 12),
   ];
 }
 
-function generateEnvironmentsLvl1() {
+function generateEnvironmentsLvl() {
   return [
-    new Cloud(0, 50), // Fügen Sie x und y Positionen für die Wolken hinzu
+    new Cloud(0, 50), 
     new Cloud(500, 100),
     new Cloud(1000, 150),
-    new Key(4400, 130), // Schlüssel
-    new Door(4500, 80) // Tür
+    new Key(4400, 130), 
+    new Door(4500, 80), 
+    new Cloud(8000, 50),
+    new Cloud(10500, 100),
+    new Cloud(12000, 150),
+    new Trap(7500, 330), new Trap(8600, 330), new Trap(9900, 330), new Trap(11100, 330), new Trap(11700, 330),
   ];
 }
-
-function generateBackgroundsLvl1() {
+// function generateTrapsLvl() {
+//   return [new Trap(4400, 130), new Trap(4800, 130), new Trap(5900, 130)];
+// }
+function generateBackgroundsLvl() {
   return [
     new BackgroundObject("img/game_backgrounds/4/7.png", -719), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/6.png", -719), // -719 = x, 0 = y
@@ -111,6 +122,28 @@ function generateBackgroundsLvl1() {
     new BackgroundObject("img/game_items/candle.png", 5800, 50, 10, 30),
     new BackgroundObject("img/skull/scull 000.png", 6000, 50, 10, 30), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 8),
-    
+    // Füge die Hintergrundobjekte von Level 2 hinzu
+     new BackgroundObject("img/game_backgrounds/3/2.png", 6471),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 7190),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 7910),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 8629),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 9348),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 10067),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 10786),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 11505),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 12225),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 12944),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 13000),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 13719),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 14438),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 15157),
   ];
 }
+
+function generatePoisonObjectsLvl() {
+  return [];
+}
+
+
+
+

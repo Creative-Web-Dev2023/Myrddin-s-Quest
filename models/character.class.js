@@ -1,3 +1,4 @@
+
 class Character extends MovableObject {
   height = 290;
   width = 520;
@@ -14,7 +15,7 @@ class Character extends MovableObject {
     top: 50,
     bottom: 10,
     left: 210,
-    right: 200
+    right: 200,
   };
 
   IMAGES_IDLE = [
@@ -88,11 +89,9 @@ class Character extends MovableObject {
     "img/wizard/hurt/hurt_008.png",
     "img/wizard/hurt/hurt_009.png",
   ];
-  IMAGES_YOU_LOST = [
-    "img/game_ui/login&pass/game_over.png",
-  ];
+  IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   world = {};
-  constructor(world,poisonStatusBar) {
+  constructor(world, poisonStatusBar) {
     super();
     this.loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
@@ -106,11 +105,12 @@ class Character extends MovableObject {
     this.energy = 100;
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
-    this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar(); 
-    this.poisonStatusBar.setPercentage(0); 
+    this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
+    this.poisonStatusBar.setPercentage(0);
     this.statusBar = new StatusBar();
     this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190;
+    this.canMoveLeft = true;
   }
 
   update() {
@@ -138,10 +138,20 @@ class Character extends MovableObject {
       this.jump();
     }
   }
- 
+
+  moveLeft() {
+    if (!this.canMoveLeft && this.x <= 6471) {
+      return; // Verhindern, dass der Charakter bei der Position 6471 nach links geht
+    }
+    this.x -= this.speed; 
+    if (this.walking_sound && this.walking_sound.paused) {
+      this.walking_sound.play(); 
+    }
+  }
+
   handleActions() {
     if (this.world.keyboard.ATTACK) {
-      console.log('ATTACK-Taste gedrückt');
+      console.log("ATTACK-Taste gedrückt");
       this.isAttacking = true;
       this.playAnimation(this.IMAGES_ATTACK);
       this.attackEnemies();
@@ -190,7 +200,7 @@ class Character extends MovableObject {
           this.invulnerable = false;
         }, 2000);
       }
-    } 
+    }
   }
 
   updateStatusBar() {
@@ -218,17 +228,18 @@ class Character extends MovableObject {
 
   enterDoor(door) {
     this.isVisible = false;
-    this.x = door.x; 
+    this.x = door.x;
     this.y = door.y;
     setTimeout(() => {
-        this.isVisible = false;
-        loadLevel2();
-        setTimeout(() => {
-            this.x = 130;
-            this.y = 210;
-            this.isVisible = true;
-        }, 200);  
-    }, 2000); 
+      this.isVisible = false;
+      setTimeout(() => {
+        this.x = 6471; // Setzen Sie die Charakter-Position auf 6471
+        this.y = 210;
+        this.world.camera_x = -this.x - 190; // Aktualisieren Sie die Kamera-Position
+        this.isVisible = true;
+        this.canMoveLeft = false; // Setzen Sie die Flagge, um zu verhindern, dass der Charakter nach links geht
+      }, 200);
+    }, 2000);
   }
 
   checkCollisionWithDoor(door) {
@@ -238,13 +249,12 @@ class Character extends MovableObject {
     const charBox = this.getCollisionBox();
     const doorBox = door.getCollisionBox();
     return (
-        charBox.x < doorBox.x + doorBox.width &&
-        charBox.x + charBox.width > doorBox.x &&
-        charBox.y < doorBox.y + doorBox.height &&
-        charBox.y + charBox.height > doorBox.y
+      charBox.x < doorBox.x + doorBox.width &&
+      charBox.x + charBox.width > doorBox.x &&
+      charBox.y < doorBox.y + doorBox.height &&
+      charBox.y + charBox.height > doorBox.y
     );
   }
-  
 
   collectPoison(poison, index) {
     if (poison && poison.isActive) {
@@ -255,29 +265,31 @@ class Character extends MovableObject {
       playCollectPoisonBottleSound();
     }
   }
-  
   collectKey(key) {
     console.log("Collecting key..."); // Debugging
     if (key && key.isActive) {
       key.deactivate();
       this.hasKey = true;
-      console.log("Key collected! hasKey:", this.hasKey); // Debugging
+      // console.log("Key collected! hasKey:", this.hasKey); // Debugging
     }
   }
-  
 
   attackEnemies() {
     const attackRange = 150;
-    this.world.enemies.forEach(enemy => {
-      if ((enemy instanceof Knight || enemy instanceof Snake || enemy instanceof Endboss) && !enemy.dead) {
+    this.world.enemies.forEach((enemy) => {
+      if (
+        (enemy instanceof Knight ||
+          enemy instanceof Snake ||
+          enemy instanceof Endboss) &&
+        !enemy.dead
+      ) {
         const distance = Math.sqrt(
           Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
-          Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
+            Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
         );
         console.log(`Entfernung zum Feind: ${distance}`);
 
         if (distance <= attackRange) {
-          console.log('Feind in Reichweite, Schaden zufügen');
           enemy.takeDamage(10);
         }
       }
@@ -305,8 +317,8 @@ class Character extends MovableObject {
 
   checkThrowableObject() {
     if (this.world.keyboard.D && this.poisonCollected > 0) {
-        this.throwObject();
-        playPoisonBottleSound();
+      this.throwObject();
+      playPoisonBottleSound();
     }
   }
 }

@@ -68,12 +68,7 @@ class Door extends MovableObject {
     }, 100); // Zeigt jede Frame der Tür-Animation
   }
 
-  checkLevelCompletion() {
-    const overlay = document.getElementById('level-completed-overlay');
-    if (overlay) {
-      overlay.classList.add('show');
-    }
-  }
+  
 
   static drawDoor(world) {
     if (world.door) {

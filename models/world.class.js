@@ -1,6 +1,6 @@
 class World {
   character;
-  level = level1;
+  level;
   canvas;
   ctx;
   keyboard;
@@ -11,8 +11,6 @@ class World {
   characters = [];
   enemies = [];
   throwableObjects = [];
-  currentLevelIndex = 0;
-  levels = [level1, level2]; // Fügen Sie level2 zur levels-Liste hinzu
   imageCache = {};
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
@@ -25,26 +23,17 @@ class World {
   endGame;
   door;
   snakes = [];
-  knights = [];
   traps = [];
-  endboss;
-  enemies = [];
-
+  
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
-    this.level = this.levels[this.currentLevelIndex]; // Initialisiere das Level
-    if (!this.level) {
-      console.error("Fehler: Level ist undefined.");
-      return;
-    }
-    this.enemies = []; // Initialisiere die enemies-Liste als leeres Array
     this.ui = new UI(canvas);
     this.initializeGameObjects();
-    this.environments = generateEnvironmentsLvl1();
+    this.environments = generateEnvironmentsLvl();
     this.key = this.environments.find((obj) => obj instanceof Key);
-    this.setWorld(this); // Stellen Sie sicher, dass die Welt korrekt gesetzt wird
+    this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
     this.gameLoop = new GameLoop(this);
@@ -56,11 +45,7 @@ class World {
   }
 
   initializeGameObjects() {
-    this.level = this.levels[this.currentLevelIndex]; // Falls mehrere Level existieren
-    if (!this.level) {
-      console.error("Fehler: Level ist undefined.");
-      return;
-    }
+    this.level = level1;
     this.clouds = this.level.clouds || [];
     this.poisonStatusBar = new PoisonStatusBar();
     this.characterStatusBar = new StatusBar();
@@ -69,97 +54,40 @@ class World {
     this.poisonsArray = PoisonObject.initializePoisons();
     this.key = this.level.key;
     this.backgroundObjects = this.level.backgroundObjects || [];
-    
-    this.initializeEnemies();
-    this.initializeTraps();  // Hier werden die Traps geladen
-    this.initializeEndboss();
-    this.initializeOtherObjects();
-    this.updateEnemiesList();
-  }
-
-  initializeEnemies() {
-    this.level.enemies.forEach(enemyData => {
-        if (!enemyData) {
-            return;
-        }
-        let enemy;
-        if (enemyData instanceof Knight) {
-          enemy = new Knight(0, enemyData.x, 100, enemyData.id);
-        } else if (enemyData instanceof Snake) {
-            enemy = new Snake(enemyData.x, enemyData.y, enemyData.id);
-        }
-        if (enemy) {
-            this.enemies.push(enemy);
-            enemy.setWorld(this); // Welt für den Gegner setzen
-        }
-    });
-  }
-
-  initializeEndboss() {
-    if (this.level === level2) {
-      this.endboss = generateEndbossLvl2();
-      if (this.endboss) {
-        this.endboss.setWorld(this);
-        console.log("Endboss initialisiert:", this.endboss);
-      } else {
-        console.error("Fehler: Endboss konnte nicht initialisiert werden.");
-      }
-    }
-  }
-
-  initializeTraps() {
-    if (!this.level.traps || this.level.traps.length === 0) {
-        return;
-    }
-    this.traps = [...this.level.traps];
-    this.traps.forEach(trap => {
-        trap.setWorld(this);
-        console.log("Trap initialisiert:", trap);
-    });
-    console.log("Traps erfolgreich geladen:", this.traps);
-  }
-
-  initializeOtherObjects() {
+    this.traps = this.level.traps || [];
+    this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
-    this.level.clouds = this.level.clouds || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.door = this.level.door;
     this.camera_x = -this.character.x - 190;
     this.endGame = new EndGame(this);
-    this.level.enemies = this.level.enemies || [];
   }
 
-  setWorld(world) {
-    if (!world.enemies) {
-        world.enemies = [];
-    }
-    this.character.world = world;
-    this.updateEnemiesList();
-    if (this.level.endboss) {
-        this.level.endboss.setWorld(world); 
-    }
-    this.level.enemies.forEach((enemy) => {
-        if (enemy instanceof Enemy) {
-            enemy.setWorld(world);
-            enemy.otherDirection = true;
-        }
+  setWorld() {
+    this.character.world = this;
+    this.enemies.forEach((enemy) => {
+      if (enemy instanceof Enemy) { 
+        enemy.setWorld(this); 
+        enemy.otherDirection = true;
+      } else {
+        console.error("Non-Enemy object found in enemies array:", enemy);
+      }
     });
-    if (this.level && this.level.traps) {
-        this.level.traps.forEach(trap => trap.setWorld(world));
-    }
-    if (this.door) {
-        this.door.world = this;
+    if (this.door) { 
+      this.door.world = this; 
     }
     if (this.key) {
-        this.key.world = this;
+      this.key.world = this;
     }
-  }
-
-  updateEnemiesList() {
-    this.enemies = this.enemies.filter(enemy => !enemy.isRemoved);
-    this.snakes = this.enemies.filter(enemy => enemy instanceof Snake);
-    this.knights = this.enemies.filter(enemy => enemy instanceof Knight);
+    this.traps.forEach(trap => {
+      trap.world = this; 
+    });
+    if (this.level.endboss) {
+      this.level.endboss.world = this;
+    }
+    // Setzen Sie die Kamera-Position basierend auf dem aktuellen Level
+    this.camera_x = -this.character.x - 190;
   }
 
   loadImages(images) {
@@ -189,12 +117,12 @@ class World {
     }
     this.character.handleActions();
 
-    this.updateEnemiesList();
     this.enemies.forEach((enemy) => {
       if (enemy instanceof Endboss || enemy instanceof Snake) {
         enemy.update(this.character);
       }
     });
+
   }
 
   updatePoison() {
@@ -205,7 +133,7 @@ class World {
     });
   }
 
-  updateThrowableObjects(objects) {
+  updateThrowableObjects() {
     this.throwableObjects.forEach((obj) => {
       obj.update();
     });
@@ -216,8 +144,10 @@ class World {
   }
 
   addEnemy(enemy) {
-    this.level.enemies.push(enemy); 
-    this.updateEnemiesList();
+    this.enemies.push(enemy);
+    console.log(
+      `Feind hinzugefügt: ${enemy.constructor.name}, ID: ${enemy.id}`
+    );
   }
 
   draw() {
@@ -227,15 +157,10 @@ class World {
     this.throwableObjects.forEach((obj) => {
       obj.draw(this.ctx);
     });
-    if (this.level && this.level.traps) {
-      this.level.traps.forEach((trap) => {
-        trap.draw(this.ctx);
-      });
-    }
-    if (this.endboss) {
-      console.log("Endboss wird gezeichnet:", this.endboss);
-      this.endboss.draw(this.ctx);
-    } 
+    this.traps.forEach((trap) => {
+      console.log(`Trap position: x=${trap.x}, y=${trap.y}`); // Log die Position der Fallen
+      trap.draw(this.ctx); // Zeichne die Fallen
+    });
   }
 
   clearCanvas() {
@@ -280,38 +205,4 @@ class World {
     mo.x = mo.x * -1;
     this.ctx.restore();
   }
-
-  loadNextLevel() {
-    this.clearEnemies(); // Entferne alle alten Gegner
-    this.currentLevelIndex++;
-    if (this.currentLevelIndex >= this.levels.length) {
-      this.currentLevelIndex = 0; // Zurück zum ersten Level
-    }
-    this.level = this.levels[this.currentLevelIndex];
-    this.initializeGameObjects(); // Neue Gegner hinzufügen
-    this.setWorld();
-  }
-
-  clearEnemies() {
-    this.enemies.forEach(enemy => enemy.isRemoved = true); // Markiere alle alten Gegner als entfernt
-    this.enemies = []; // Leere die Gegnerliste
-  }
-
-  updateEnemies() {
-    this.enemies = [...this.knights, ...this.snakes, ...this.endboss];
-    if (this.endboss) {
-      this.enemies.push(this.endboss);
-    }
-    this.enemies.forEach((enemy) => {
-      if (typeof enemy.update === 'function') {
-        enemy.update();
-      }
-    });
-  }
-}
-
-function generateEndbossLvl2() {
-  const someEndbossObject = new Endboss(); // Beispiel für die Erzeugung des Endboss-Objekts
-  console.log("Endboss generiert:", someEndbossObject); // Debugging
-  return someEndbossObject; // Stelle sicher, dass ein gültiges Endboss-Objekt zurückgegeben wird
 }

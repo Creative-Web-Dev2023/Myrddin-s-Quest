@@ -543,16 +543,6 @@ svg {
   }
 }
 
-#level-completed-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: rgb(27, 25, 25);
-  font-size: 3rem;
-  text-align: center;
-  z-index: 2000; /* Erhöhen Sie den z-index */
-}
 
 #game-over-container {
   position: absolute;

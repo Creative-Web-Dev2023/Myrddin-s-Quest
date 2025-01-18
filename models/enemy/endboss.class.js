@@ -1,17 +1,18 @@
 class Endboss extends Enemy {
-  constructor(x, y, id) {
+  constructor(id) {
     super(id); // ID an den Konstruktor der Basisklasse übergeben
-    this.x = x;
-    this.y = y;
     this.height = 600;
     this.width = 450;
+    this.y = -70;
+    this.x = 13000; // Passen Sie die Position des Endbosses an
     this.attackRange = 200; // Setzt die Reichweite für den Angriff
     this.attackDamage = 20; // Schaden, den der Endboss verursacht
     this.speed = 5;
     this.deadSound = new Audio("audio/troll dead.mp3");
     this.offset = { top: 180, bottom: 65, left: 90, right: 90 };
     this.statusBarEndboss = new EndbossStatusbar(); // Initialisiere die Statusleiste des Endbosses
-    this.IMAGES_IDLE = [
+    this.otherDirection = true; // Endboss schaut nach links
+    this.IMAGES_WALKING = [
       "img/troll/idle/idle_000.png",
       "img/troll/idle/idle_001.png",
       "img/troll/idle/idle_002.png",
@@ -59,17 +60,7 @@ class Endboss extends Enemy {
       "img/troll/die/die_008.png",
       "img/troll/die/die_009.png",
     ];
-    this.img = new Image();
-    this.img.src = "img/troll/idle/idle_000.png"; // Beispielbild für den Endboss
-    this.img.onload = () => {
-      console.log("Endboss-Bild erfolgreich geladen:", this.img.src);
-    };
-    this.img.onerror = () => {
-      console.error("Fehler beim Laden des Endboss-Bildes:", this.img.src);
-    };
-    this.world = null; // Initialisiere die Welt als null
-
-    this.loadImages(this.IMAGES_IDLE);
+    this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
@@ -126,18 +117,23 @@ class Endboss extends Enemy {
 
   update(character) {
     this.checkForAttack(character);
+    this.statusBarEndboss.setPercentage(this.energy); // Aktualisiere die Statusleiste basierend auf der Energie des Endbosses
   }
 
   draw(ctx) {
     if (this.img && this.img.complete) {
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      if (this.world) { // Überprüfen, ob die Welt gesetzt ist
-        this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
-        this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; // Position über dem Kopf des Endbosses
-        this.statusBarEndboss.draw(ctx);
+      if (this.otherDirection) {
+        ctx.save();
+        ctx.translate(this.x + this.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(this.img, 0, this.y, this.width, this.height);
+        ctx.restore();
+      } else {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
       }
-    } else {
-      console.error("Endboss-Bild nicht geladen:", this.img);
+      this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
+      this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; // Position über dem Kopf des Endbosses
+      this.statusBarEndboss.draw(ctx);
     }
   }
 }

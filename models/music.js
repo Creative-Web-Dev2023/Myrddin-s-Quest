@@ -6,18 +6,14 @@ let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
 let level1Sound = new Audio('audio/woodsounds.mp3'); 
-let level2Sound = new Audio('audio/level2_sound.mp3'); 
-let allSounds = [backgroundMusic, walkingSound, attackSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
+ 
+let allSounds = [backgroundMusic, walkingSound, attackSound, throwPoisonBottleSound, jumpSound, level1Sound];
 
 function musicSwitcher() {
     const audioIcon = document.getElementById('audioSwitcher'); 
     musicIsOn = !musicIsOn;
     if (musicIsOn) {
-        if (world.level === level2) {
-            playLevel2Sound();
-        } else {
-            playLevel1Sound();
-        }
+        playLevel1Sound();
         audioIcon.src = 'img/app_icons/soundon.png'; 
     } else {
         stopAllSounds();
@@ -47,8 +43,6 @@ function stopMusic() {
 function stopAllSounds() {
     level1Sound.pause();
     level1Sound.currentTime = 0;
-    level2Sound.pause();
-    level2Sound.currentTime = 0;
     pauseAllSounds();
 }
 
@@ -75,12 +69,6 @@ function playLevel1Sound() {
     }
 }
 
-function playLevel2Sound() {
-    if (musicIsOn) {
-        level2Sound.play();
-        level2Sound.loop = true; 
-    }
-}
 
 function playAttackSound() {
     if (musicIsOn && attackSound.paused) {

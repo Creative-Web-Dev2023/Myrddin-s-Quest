@@ -4,20 +4,19 @@ class Level {
   backgroundObjects;
   key;
   poisonObjects;
-  traps;
-  endboss;
-  level_end_x = 5000;
-  index;
+  // traps;
+  // endboss;
+  level_end_x = 12595; // Setzen Sie die Länge des Levels bis kurz nach dem Endboss
 
-  constructor(enemies, clouds, backgroundObjects, poisonObjects, key, traps, endboss, index) {
+  constructor(enemies, clouds, backgroundObjects, poisonObjects, key) {
     this.enemies = enemies || [];
     this.clouds = clouds || [];
     this.backgroundObjects = backgroundObjects || [];
-    this.traps = traps || [];
     this.key = key || null;
+    // this.traps = traps || [];
+    // this.endboss = endboss || null;
     this.poisonObjects = poisonObjects || [];  
-    this.endboss = endboss || null;
-    this.index = index || null;
+   
   }
 
   draw(ctx) {

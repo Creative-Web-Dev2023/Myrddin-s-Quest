@@ -97,6 +97,7 @@ class MovableObject extends DrawableObject {
     if (this.walking_sound && this.walking_sound.paused) { // Check if walking sound is paused
       this.walking_sound.play(); // Play walking sound if paused
     }
+    
   }
 
   jump() { // Jump function for the object 

@@ -58,48 +58,8 @@ function quitGame() { // Quit game function
 
 function tryAgain() { // Try again function
   location.reload(); // Reload the page to restart the game
-
 }
 
-function continueToNextLevel() {   // Continue to the next level
-  const overlay = document.getElementById('level-completed-overlay'); // Get the overlay
-  if (overlay) { overlay.classList.remove('show');
-  }
-  loadLevel2(); 
-}
-
-function resetWorldForNewLevel() {
-  if (world) {
-      world.enemies = [];
-      world.backgroundObjects = [];
-  }
-}
-
-function loadLevel2() { 
-  if (typeof level2 !== 'undefined') {
-      world.level = level2; 
-      world.character.reset(2); 
-      world.character.x = 0; 
-      world.backgroundObjects = level2.backgroundObjects;
-      world.enemies = level2.enemies; 
-      if (level2.endboss) { 
-          world.level.endboss = new Endboss(level2.endboss.x, level2.endboss.y);  
-      }
-      stopAllSounds();
-      playLevel2Sound();
-      if (!world.door) {
-          world.door = new Door(5500, 150);
-          world.door.world = world;       
-      }
-  } 
-}
-
-function playLevel2Sound() { // Play the background sound for level 2
-  if (musicIsOn) {     // Check if music is on
-    level2Sound.play(); // Play the sound
-    level2Sound.loop = true; // Loop the sound
-  }
-}
 
 function toggleFullscreen() { // Toggle fullscreen mode
   const canvas = document.getElementById("canvas");

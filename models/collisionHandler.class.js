@@ -14,8 +14,7 @@ class CollisionHandler {
   checkCollision(character, object) {
     const charBox = character.getCollisionBox();
     const objBox = object.getCollisionBox();
-    // console.log("Character Box:", charBox);
-    // console.log("Object Box:", objBox); // Korrigierte Ausgabe
+
     return (
       charBox.x < objBox.x + objBox.width &&
       charBox.x + charBox.width > objBox.x &&
