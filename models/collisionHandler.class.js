@@ -44,8 +44,7 @@ class CollisionHandler {
   handleEnemyCollision(enemy) {
     if (enemy instanceof Snake || enemy instanceof Knight) {
       if (
-        this.world.character.isAboveGround() &&
-        this.world.character.speedY > 0
+        this.world.character.isAboveGround() && this.world.character.speedY > 0
       ) {
         this.world.character.jump();
         if (!enemy.isDead()) {
@@ -68,20 +67,21 @@ class CollisionHandler {
   checkEnemyAttack(enemy) {
     if (enemy instanceof Snake) {
       const distance = Math.abs(this.world.character.x - enemy.x);
-      if (distance <= 100 && !enemy.isDead) {
-        enemy.attack();
+      if (distance <= 100 && !enemy.isDead()) {
+        enemy.attack(this.world.character); 
       }
     }
   }
-
+  
   checkCollisionWithKey() {
-    // console.log("Checking collision with key...", this.world.character, this.world.key);
-    if (!this.world.character || !this.world.key) {
-        return;
+    if (!this.world.character || !this.world.key || !this.world.key.isActive) {
+      return; 
     }
-    if (this.checkCollision(this.world.character, this.world.key)) 
-        this.world.character.collectKey(this.world.key);
+    if (this.checkCollision(this.world.character, this.world.key)) {
+      console.log("Collision detected! Collecting key...");
+      this.world.character.collectKey(this.world.key); 
     }
+  }
 
   checkDoorCollision() {
     const character = this.world.character;

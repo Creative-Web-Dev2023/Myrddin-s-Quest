@@ -1,39 +1,38 @@
 class MovableObject extends DrawableObject {
-  drawRectangle = true; // Default is no rectangle
-  speed = 0.15; // Default speed 
-  speedY = 0; // Vertical speed
-  acceleration = 2.5; // Acceleration for gravity
-  energy = 100; // Energy for the object
-  lastHit = 0; // Time of last hit
-  currentImage = 0; // Current image index
+  drawRectangle = true; 
+  speed = 0.15; 
+  speedY = 0; 
+  acceleration = 2.5; 
+  energy = 100; 
+  lastHit = 0; 
+  currentImage = 0;
 
   offset = {
-      top: 0,     // How much smaller the rectangle should be from the top
-      bottom: 0,  // How much smaller the rectangle should be from the bottom
-      left: 0,    // How much smaller the rectangle should be from the left
-      right: 0    // How much smaller the rectangle should be from the right
+      top: 0,     
+      bottom: 0,  
+      left: 0,   
+      right: 0   
   };
 
-  applyGravity() { // Apply gravity effect to the object
+  applyGravity() { 
     this.gravityInterval = setInterval(() => {
-      if (this.isAboveGround() || this.speedY > 0) { // Überprüfe, ob der Charakter über dem Boden ist oder nach oben springt
-        this.y -= this.speedY; // Bewege das Objekt nach oben, wenn speedY positiv ist
-        this.speedY -= this.acceleration; // Verringere die vertikale Geschwindigkeit
+      if (this.isAboveGround() || this.speedY > 0) { 
+        this.y -= this.speedY; 
+        this.speedY -= this.acceleration; 
       } else {
-        this.y = 150; // Setze die y-Position auf den Boden, wenn das Objekt den Boden erreicht
-        this.speedY = 0; // Setze die vertikale Geschwindigkeit zurück
+        this.y = 150; 
+        this.speedY = 0; 
       }
-    }, 1000 / 25); // Intervall für die Schwerkraft
+    }, 1000 / 25); 
   }
 
-  isAboveGround() { // Check if object is above ground 
-    return this.y < 150; // Überprüfe, ob die y-Position über 150 ist
+  isAboveGround() { 
+    return this.y < 150; 
   }
   
   isColliding(mo) {
-    if (!(mo instanceof MovableObject)) return false; // Prüfen, ob mo ein MovableObject ist
+    if (!(mo instanceof MovableObject)) return false; 
     return (
-    
         this.x + this.width > mo.x &&
         this.x < mo.x + mo.width &&
         this.y + this.height > mo.y &&
@@ -50,60 +49,58 @@ class MovableObject extends DrawableObject {
     };
   }
  
-  isHurt() { // Check if object is hurt
-    let timepassed = new Date().getTime() - this.lastHit; // Calculate time passed since last hit in milliseconds
-    timepassed = timepassed / 1000; // Convert to seconds  
-    return timepassed < 5; // Check if hurt within last 5 seconds
+  isHurt() { 
+    let timepassed = new Date().getTime() - this.lastHit; 
+    timepassed = timepassed / 1000;  
+    return timepassed < 5;
   }
 
   isDead() {
     return this.energy <= 0;
   }
 
-  playAnimation(images, delay = 100) { // Play animation frames for the object
-    if (images && images.length > 0) { // Prüfe, ob die Bilder vorhanden sind
-      let i = this.currentImage % images.length; // Bestimme das aktuelle Bild
-      let path = images[i]; // Hole den Pfad des aktuellen Bildes
-      this.img = this.imageCache[path]; // Setze das Bild
-      this.currentImage++; // Erhöhe den aktuellen Bildindex
-      if (this.currentImage >= images.length) { // Wenn alle Bilder durchlaufen sind
-        this.currentImage = 0; // Setze den Index zurück
+  playAnimation(images, delay = 100) { 
+    if (images && images.length > 0) { 
+      let i = this.currentImage % images.length; 
+      let path = images[i];
+      this.img = this.imageCache[path]; 
+      this.currentImage++;
+      if (this.currentImage >= images.length) { 
+        this.currentImage = 0; 
       }
     }
-    setTimeout(() => {}, delay); // Verzögerung zwischen den Frames
+    setTimeout(() => {}, delay);
   }
 
-  loadImages(images) { // Load images for the object
-    if (!images || !Array.isArray(images) || images.length === 0) { // Check for valid images array
-      return;
+  loadImages(images) { 
+    if (!images || !Array.isArray(images) || images.length === 0) { 
     }
-    this.imageCache = this.imageCache || {}; // Initialize image cache
-    images.forEach((path) => { // Load the images
-      const img = new Image(); // Create a new image
-      img.src = path; // Set the image source
-      this.imageCache[path] = img; // Cache the image
+    this.imageCache = this.imageCache || {}; 
+    images.forEach((path) => { 
+      const img = new Image(); 
+      img.src = path; 
+      this.imageCache[path] = img; 
     });
   }
 
-  moveRight() { // Move right function for the object
-    this.x += this.speed; // Move right by speed
-    if (this.walking_sound && this.walking_sound.paused) { // Check if walking sound is paused
-      this.walking_sound.play(); // Play walking sound if paused
+  moveRight() { 
+    this.x += this.speed; 
+    if (this.walking_sound && this.walking_sound.paused) { 
+      this.walking_sound.play(); 
     }
   }
 
-  moveLeft() { // Move left function for the object
-    this.x -= this.speed; // Move left by speed
-    if (this.walking_sound && this.walking_sound.paused) { // Check if walking sound is paused
-      this.walking_sound.play(); // Play walking sound if paused
-    }
-    
+  moveLeft() { 
+    this.x -= this.speed; 
+    if (this.walking_sound && this.walking_sound.paused) { 
+      this.walking_sound.play();
+    }   
   }
 
-  jump() { // Jump function for the object 
-    this.speedY = 30; // Set vertical speed for jump
+  jump() { 
+    this.speedY = 30; 
   }
-
+  
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
       this.energy -= damage;
@@ -123,9 +120,9 @@ class MovableObject extends DrawableObject {
   die() {
     if (!this.deadAnimationPlayed) {
       this.deadAnimationPlayed = true;
-      this.playAnimation(this.IMAGES_DEAD); // Play dead animation
+      this.playAnimation(this.IMAGES_DEAD); 
       setTimeout(() => {
-        this.isVisible = false; // Make the object invisible after death
+        this.isVisible = false; 
       }, 3000);
     }
   }
@@ -151,47 +148,47 @@ class MovableObject extends DrawableObject {
     }, 400);
   }
 
-  animate() { // Animate the object
+  animate() {
     this.animationInterval = setInterval(() => {
-      if (this.isDead()) { // Check if object is dead 
-        this.handleDeadAnimation(); // Handle dead animation for the object  
-      } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) { // Check if object is attacking
-        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound); // Play attack animation frames with sound
-      } else if (this.isHurt()) { // Check if object is hurt within last 5 seconds 
-        this.playAnimation(this.IMAGES_HURT); // Play hurt animation frames for the object
-      } else if (this.isAboveGround()) { // Check if object is above ground
-        this.playAnimation(this.IMAGES_JUMPING); // Play jumping animation frames for the object
+      if (this.isDead()) { 
+        this.handleDeadAnimation(); 
+      } else if (this.world && this.world.keyboard && this.world.keyboard.ATTACK) {
+        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound);
+      } else if (this.isHurt()) { 
+        this.playAnimation(this.IMAGES_HURT); 
+      } else if (this.isAboveGround()) {
+        this.playAnimation(this.IMAGES_JUMPING); 
       } else if (this.world && this.world.keyboard && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound); // Play walking animation frames with sound
+        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound); 
       } else {
-        this.playAnimation(this.IMAGES_IDLE); // Play idle animation frames for the object
+        this.playAnimation(this.IMAGES_IDLE); 
       }
-    }, 100); // 100 ms between frames for smooth animation
+    }, 100); 
   }
 
-  playAnimationWithSound(images, sound) { // Play animation frames with sound
-    this.playAnimation(images); // Play animation frames for the object
+  playAnimationWithSound(images, sound) { 
+    this.playAnimation(images);
     if (musicIsOn) {
-      if (sound.paused) { // Check if sound is paused
-        sound.play(); // Play sound if paused
+      if (sound.paused) { 
+        sound.play(); 
       }
     } else {
-      sound.pause(); // Pause sound if music is off
-      sound.currentTime = 0; // Reset to start
+      sound.pause(); 
+      sound.currentTime = 0; 
     }
   }
 
   handleDeadAnimation() {
-    this.playAnimation(this.IMAGES_DEAD); // Play dead animation frames for the object  
-    if (this.currentImage >= this.IMAGES_DEAD.length - 1) { // Check if last frame is reached
-      clearInterval(this.animationInterval); // Stop animation after death animation completes
-      clearInterval(this.movementInterval); // Stop movement interval
-      clearInterval(this.attackAnimationInterval); // Stop attack animation interval
+    this.playAnimation(this.IMAGES_DEAD);
+    if (this.currentImage >= this.IMAGES_DEAD.length - 1) { 
+      clearInterval(this.animationInterval); 
+      clearInterval(this.movementInterval); 
+      clearInterval(this.attackAnimationInterval);
       setTimeout(() => {
-        if (this.world.endGame) { // If endGame is available
-          this.world.endGame.showYouLostScreen(); // Show "You Lost" screen
+        if (this.world.endGame) { 
+          this.world.endGame.showYouLostScreen(); 
         }
-      }, 3500); // Delay before showing overlay
+      }, 3500); 
     }
   }
 }

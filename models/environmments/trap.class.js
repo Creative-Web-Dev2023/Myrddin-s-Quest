@@ -1,7 +1,7 @@
 class Trap extends MovableObject {
   height = 180;
   width = 180;
-  isActive = false; // Status der Falle
+  isActive = false; 
   IMAGES_IDLE = [
     "img/obstacles/trap/trap1.png",
     "img/obstacles/trap/trap2.png",

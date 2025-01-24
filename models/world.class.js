@@ -17,14 +17,13 @@ class World {
   quitButtonImage = "img/game_ui/quit.png";
   tryAgainButton;
   tryAgainButtonImage = "img/game_ui/try_again.png";
-  levelCompleted = false;
-  collectables = [];
   key;
   endGame;
   door;
   snakes = [];
   traps = [];
-  
+  environments = []; 
+
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -32,7 +31,7 @@ class World {
     this.ui = new UI(canvas);
     this.initializeGameObjects();
     this.environments = generateEnvironmentsLvl();
-    this.key = this.environments.find((obj) => obj instanceof Key);
+    this.key = this.level.key;
     this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
@@ -52,6 +51,7 @@ class World {
     this.character = new Character(this, this.poisonStatusBar);
     this.character.world.keyboard = this.keyboard;
     this.poisonsArray = PoisonObject.initializePoisons();
+    this.environments = generateEnvironmentsLvl();
     this.key = this.level.key;
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
@@ -67,26 +67,22 @@ class World {
   setWorld() {
     this.character.world = this;
     this.enemies.forEach((enemy) => {
-      if (enemy instanceof Enemy) { 
-        enemy.setWorld(this); 
-        enemy.otherDirection = true;
-      } else {
-        console.error("Non-Enemy object found in enemies array:", enemy);
+      if (enemy instanceof Enemy) {
+        enemy.setWorld(this);
       }
     });
-    if (this.door) { 
-      this.door.world = this; 
+    if (this.door) {
+      this.door.world = this;
     }
     if (this.key) {
       this.key.world = this;
     }
-    this.traps.forEach(trap => {
-      trap.world = this; 
+    this.traps.forEach((trap) => {
+      trap.world = this;
     });
     if (this.level.endboss) {
       this.level.endboss.world = this;
     }
-    // Setzen Sie die Kamera-Position basierend auf dem aktuellen Level
     this.camera_x = -this.character.x - 190;
   }
 
@@ -116,13 +112,11 @@ class World {
       }, 200);
     }
     this.character.handleActions();
-
     this.enemies.forEach((enemy) => {
       if (enemy instanceof Endboss || enemy instanceof Snake) {
         enemy.update(this.character);
       }
     });
-
   }
 
   updatePoison() {
@@ -145,9 +139,6 @@ class World {
 
   addEnemy(enemy) {
     this.enemies.push(enemy);
-    console.log(
-      `Feind hinzugefügt: ${enemy.constructor.name}, ID: ${enemy.id}`
-    );
   }
 
   draw() {
@@ -158,9 +149,11 @@ class World {
       obj.draw(this.ctx);
     });
     this.traps.forEach((trap) => {
-      console.log(`Trap position: x=${trap.x}, y=${trap.y}`); // Log die Position der Fallen
-      trap.draw(this.ctx); // Zeichne die Fallen
+      trap.draw(this.ctx);
     });
+    if (this.key && this.key.isActive) {
+      this.key.draw(this.ctx);
+    }
   }
 
   clearCanvas() {

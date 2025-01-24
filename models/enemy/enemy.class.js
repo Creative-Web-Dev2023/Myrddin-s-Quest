@@ -16,14 +16,13 @@ class Enemy extends MovableObject {
         }
         this.world = world;
         if (!world.enemies.includes(this)) {
-            world.enemies.push(this); // Füge den Feind hinzu, falls er fehlt
+            world.enemies.push(this); 
         }     
     }
 
     takeDamage(damage) {
         if (!this.dead) {
             this.energy -= damage;
-           
             if (this.energy <= 0) {
                 this.energy = 0;
                 this.die();
@@ -31,6 +30,10 @@ class Enemy extends MovableObject {
         }
     }
     
+    hit(damage) {
+        this.takeDamage(damage);
+    }
+
     die() {
         if (!this.isDead()) {
             this.dead = true;
@@ -45,11 +48,10 @@ class Enemy extends MovableObject {
     playDeathAnimation() {
         if (!this.deathAnimationPlayed) {
             this.deathAnimationPlayed = true;
-            this.dead = true;
             this.playAnimation(this.IMAGES_DEAD);
             setTimeout(() => {
                 this.removeEnemy();
-            }, 1500); // Zeit anpassen, wie lange die Todesanimation dauert
+            }, 1500); 
         }
     }
     
@@ -64,15 +66,6 @@ class Enemy extends MovableObject {
             this.isRemoved = true;
         }
     }
-    
-    hit(damage) {
-        if (this.isDead() || this.deathAnimationPlayed) return;
-        this.energy -= damage;
-        if (this.energy <= 0) {
-            this.energy = 0;
-            this.playDeathAnimation();
-        }
-    }
 
     isHurt() {
         return this.energy < 100 && this.energy > 0;
@@ -83,19 +76,22 @@ class Enemy extends MovableObject {
         this.isAttacking = true;
         this.playAnimation(this.IMAGES_ATTACKING);
         setTimeout(() => {
-            const characterBox = character.getCollisionBox();
-            const enemyBox = this.getCollisionBox();
-            const isStillInRange = enemyBox.x < characterBox.x + characterBox.width &&
-                enemyBox.x + enemyBox.width > characterBox.x &&
-                enemyBox.y < characterBox.y + characterBox.height &&
-                enemyBox.y + enemyBox.height > characterBox.y;
-            if (isStillInRange) {
+            if (this.checkCollision(character)) {
                 character.takeDamage(this.attackDamage);
             }
-            setTimeout(() => {
-                this.isAttacking = false;
-            }, 500);
-        }, 400);
+            this.isAttacking = false;
+        }, 900); 
+    }
+
+    checkCollision(character) {
+        const characterBox = character.getCollisionBox();
+        const enemyBox = this.getCollisionBox();
+        return (
+            enemyBox.x < characterBox.x + characterBox.width &&
+            enemyBox.x + enemyBox.width > characterBox.x &&
+            enemyBox.y < characterBox.y + characterBox.height &&
+            enemyBox.y + enemyBox.height > characterBox.y
+        );
     }
 
     animate() {

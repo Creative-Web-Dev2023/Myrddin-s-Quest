@@ -1,3 +1,4 @@
+let isAfterDoor = false; 
 
 class Character extends MovableObject {
   height = 290;
@@ -124,7 +125,7 @@ class Character extends MovableObject {
 
   handleMovement() {
     walkingSound.pause();
-    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200) { // Erlaubt Bewegung ein wenig nach dem Endboss
       this.moveRight();
       this.otherDirection = false;
       playWalkingSound();
@@ -141,7 +142,7 @@ class Character extends MovableObject {
 
   moveLeft() {
     if (!this.canMoveLeft && this.x <= 6471) {
-      return; // Verhindern, dass der Charakter bei der Position 6471 nach links geht
+      return; 
     }
     this.x -= this.speed; 
     if (this.walking_sound && this.walking_sound.paused) {
@@ -151,7 +152,6 @@ class Character extends MovableObject {
 
   handleActions() {
     if (this.world.keyboard.ATTACK) {
-      console.log("ATTACK-Taste gedrückt");
       this.isAttacking = true;
       this.playAnimation(this.IMAGES_ATTACK);
       this.attackEnemies();
@@ -233,11 +233,13 @@ class Character extends MovableObject {
     setTimeout(() => {
       this.isVisible = false;
       setTimeout(() => {
-        this.x = 6471; // Setzen Sie die Charakter-Position auf 6471
+        this.x = 6471; 
         this.y = 210;
-        this.world.camera_x = -this.x - 190; // Aktualisieren Sie die Kamera-Position
+        this.world.camera_x = -this.x - 190; 
         this.isVisible = true;
-        this.canMoveLeft = false; // Setzen Sie die Flagge, um zu verhindern, dass der Charakter nach links geht
+        this.canMoveLeft = false; 
+        isAfterDoor = true; 
+        playNewSound(); 
       }, 200);
     }, 2000);
   }
@@ -265,12 +267,13 @@ class Character extends MovableObject {
       playCollectPoisonBottleSound();
     }
   }
+
   collectKey(key) {
-    console.log("Collecting key..."); // Debugging
+    console.log("Collecting key...");
     if (key && key.isActive) {
       key.deactivate();
       this.hasKey = true;
-      // console.log("Key collected! hasKey:", this.hasKey); // Debugging
+      console.log("Key collected! hasKey:", this.hasKey);
     }
   }
 
@@ -287,8 +290,6 @@ class Character extends MovableObject {
           Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
             Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
         );
-        console.log(`Entfernung zum Feind: ${distance}`);
-
         if (distance <= attackRange) {
           enemy.takeDamage(10);
         }

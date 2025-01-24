@@ -6,18 +6,23 @@ let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
 let level1Sound = new Audio('audio/woodsounds.mp3'); 
- 
-let allSounds = [backgroundMusic, walkingSound, attackSound, throwPoisonBottleSound, jumpSound, level1Sound];
+let level2Sound = new Audio('audio/level2_sound.mp3'); // Neuer Hintergrundsound
+
+let allSounds = [backgroundMusic, walkingSound, attackSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
 
 function musicSwitcher() {
     const audioIcon = document.getElementById('audioSwitcher'); 
     musicIsOn = !musicIsOn;
     if (musicIsOn) {
-        playLevel1Sound();
+        if (isAfterDoor) {
+            playLevel2Sound();
+        } else {
+            playLevel1Sound();
+        }
         audioIcon.src = 'img/app_icons/soundon.png'; 
     } else {
         stopAllSounds();
-        audioIcon.src = 'img/app_icons/soundoff.png'; 
+        audioIcon.src = 'img/app_icons/sound_off_orange.png'; 
     }
 }
 
@@ -41,9 +46,10 @@ function stopMusic() {
 }
 
 function stopAllSounds() {
-    level1Sound.pause();
-    level1Sound.currentTime = 0;
-    pauseAllSounds();
+    allSounds.forEach(sound => {
+        sound.pause();
+        sound.currentTime = 0; 
+    });
 }
 
 function pauseAllSounds() {
@@ -69,6 +75,12 @@ function playLevel1Sound() {
     }
 }
 
+function playLevel2Sound() {
+    if (musicIsOn) {
+        level2Sound.play();
+        level2Sound.loop = true;
+    }
+}
 
 function playAttackSound() {
     if (musicIsOn && attackSound.paused) {
@@ -87,8 +99,17 @@ function playJumpSound() {
         jumpSound.play();
     }
 }
+
 function playCollectPoisonBottleSound() {
     if (musicIsOn && collectPoisonBottleSound.paused) {
         collectPoisonBottleSound.play();
+    }
+}
+
+function playNewSound() {
+    if (musicIsOn) {
+        stopAllSounds(); // Stoppe alle anderen Sounds
+        level2Sound.play();
+        level2Sound.loop = true; // Schleife den neuen Hintergrundsound
     }
 }

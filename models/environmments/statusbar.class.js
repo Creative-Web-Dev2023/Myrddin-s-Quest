@@ -57,21 +57,19 @@ class PoisonStatusBar extends DrawableObject {
     "img/game_ui/statusbars/statusbar-poison/100.png",
   ];
 
-  percentage = 0; // Start with an empty status bar
-
   constructor() {
     super();
-    this.loadImages(this.IMAGES); // Load the images
-    this.x = 2; // Position of the status bar
-    this.y = 50; // Reduce the space between the status bars further
-    this.width = 190; // Adjust the width
-    this.height = 50; // Adjust the height
-    this.setPercentage(0); // Initialize with 0%
+    this.loadImages(this.IMAGES); 
+    this.x = 2; 
+    this.y = 50; 
+    this.width = 190;
+    this.height = 50; 
+    this.setPercentage(0); 
   }
 
-  setPercentage(percentage) { // Set the percentage value
+  setPercentage(percentage) {
     this.percentage = percentage;
-    let path = this.IMAGES[this.calculateImageIndex()]; // Set image path based on the percentage value
+    let path = this.IMAGES[this.calculateImageIndex()];
     this.img = this.imageCache[path];
   }
 
@@ -84,12 +82,11 @@ class PoisonStatusBar extends DrawableObject {
     return 0;
   }
 
-  increasePercentage(amount) { // Increase the percentage value
-    this.percentage = Math.min(100, this.percentage + amount); // Increase the percentage value
-    this.setPercentage(this.percentage); // Set the percentage value
+  increasePercentage(amount) { 
+    this.percentage = Math.min(100, this.percentage + amount); 
+    this.setPercentage(this.percentage); 
   }
 }
-
 class EndbossStatusbar extends DrawableObject {
   IMAGES = [
     "img/game_ui/statusbars/statusbar-endboss/0.png",
@@ -99,16 +96,14 @@ class EndbossStatusbar extends DrawableObject {
     "img/game_ui/statusbars/statusbar-endboss/80.png",
     "img/game_ui/statusbars/statusbar-endboss/100.png",
   ];
-
-  percentage = 100; // Start with a full status bar
+  percentage = 100; 
 
   constructor() {
     super();
     this.loadImages(this.IMAGES);
-    this.x = 0;
-    this.y = 0; // Position of the status bar
-    this.width = 190; // Adjust the width
-    this.height = 50; // Adjust the height
+    this.y = 510;
+    this.width = 190; 
+    this.height = 50; 
   }
 
   setPercentage(percentage) {

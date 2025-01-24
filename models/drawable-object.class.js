@@ -31,17 +31,13 @@ class DrawableObject {
       let i = this.currentImage % images.length;
       this.img = this.imageCache[images[i]];
       this.currentImage++;
-    } else {
-      console.error('Images array is not defined or empty');
-    }
+    } 
   }
 
   draw(ctx) {
     if (this.img) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    } else {
-        console.warn("Trap-Bild nicht geladen:", this);
-    }
+    } 
   }
 
   drawFrame(ctx) {

@@ -24,11 +24,11 @@ class PoisonObject extends DrawableObject {
 
   static initializePoisons() {
     const poisons = [
-      new PoisonObject(800, 400, 50, 50), // x: 300, y: 400 
-      new PoisonObject(1600, 300,  50, 50), // x: 600, y: 300
-      new PoisonObject(2400, 200, 50, 50), // x: 900, y: 200
-      new PoisonObject(3200, 400,  50, 50), // x: 1200, y: 400
-      new PoisonObject(4000, 300,  50, 50), // x: 1500, y: 300
+      new PoisonObject(800, 400, 50, 50), 
+      new PoisonObject(1600, 300,  50, 50), 
+      new PoisonObject(2400, 200, 50, 50), 
+      new PoisonObject(3200, 400,  50, 50), 
+      new PoisonObject(4000, 300,  50, 50), 
     ];
  
     return poisons;
@@ -36,7 +36,7 @@ class PoisonObject extends DrawableObject {
 
   deactivate() {
     this.isActive = false;
-    this.x = -1000; // Bewege das Objekt aus dem sichtbaren Bereich
+    this.x = -1000; 
   }
 
   drawPoisons(ctx, camera_x) {
@@ -49,7 +49,7 @@ class PoisonObject extends DrawableObject {
   animate() {
     setInterval(() => {
       this.playAnimation(this.IMAGES_POISON);
-    }, 100); // 100 ms zwischen den Frames für eine flüssige Animation
+    }, 100); 
   }
 
 }

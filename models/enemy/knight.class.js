@@ -9,11 +9,11 @@ class Knight extends Enemy {
       this.otherDirection = true;
       this.attackDamage = 20;
       this.attackRange = 50;
-      this.width = 520; // Set the width of the knight
-      this.height = 290; // Set the height of the knight
-      this.y = 190; // Set the y position of the knight
+      this.width = 520; 
+      this.height = 290; 
+      this.y = 190; 
       this.offset = { top: 120, bottom: 70, left: 210, right: 210 };
-      this.healthDisplay = new KnightHealthDisplay(); // Initialize the health display
+      this.healthDisplay = new KnightHealthDisplay(); 
       this.healthDisplay.energy = this.energy;
       this.IMAGES_WALKING = [
           "img/knight/walk/walk 0.png",
@@ -45,7 +45,7 @@ class Knight extends Enemy {
       this.loadImages(this.IMAGES_ATTACKING);
       this.loadImages(this.IMAGES_HURT);
       this.loadImages(this.IMAGES_DEAD);
-      this.loadImage(this.IMAGES_WALKING[0]); // Set the initial image for the knight
+      this.loadImage(this.IMAGES_WALKING[0]); 
       setTimeout(() => {
           this.isMoving = true;
           this.animate();
@@ -82,8 +82,8 @@ class Knight extends Enemy {
 
   update(character) {
       this.checkForAttack(character);
-      this.healthDisplay.updatePosition(this.x, this.y); // Update the health display position
-      this.healthDisplay.energy = this.energy; // Update the health display energy
+      this.healthDisplay.updatePosition(this.x, this.y); 
+      this.healthDisplay.energy = this.energy; 
   }
 
   draw(ctx) {
@@ -124,6 +124,10 @@ class Knight extends Enemy {
     }
 
   remove() {
-      this.removeEnemy(); // Verwenden Sie die Methode der Basisklasse
+      this.removeEnemy(); 
+  }
+
+  isDead() {
+    return this.dead;
   }
 }

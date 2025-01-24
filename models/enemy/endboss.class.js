@@ -1,17 +1,17 @@
 class Endboss extends Enemy {
   constructor(id) {
-    super(id); // ID an den Konstruktor der Basisklasse übergeben
+    super(id);
     this.height = 600;
     this.width = 450;
-    this.y = -70;
-    this.x = 13000; // Passen Sie die Position des Endbosses an
-    this.attackRange = 200; // Setzt die Reichweite für den Angriff
-    this.attackDamage = 20; // Schaden, den der Endboss verursacht
+    this.y = 100; // Stelle sicher, dass der Endboss innerhalb der Canvas-Grenzen bleibt
+    this.x = 13000; 
+    this.attackRange = 200; 
+    this.attackDamage = 20; 
     this.speed = 5;
     this.deadSound = new Audio("audio/troll dead.mp3");
     this.offset = { top: 180, bottom: 65, left: 90, right: 90 };
-    this.statusBarEndboss = new EndbossStatusbar(); // Initialisiere die Statusleiste des Endbosses
-    this.otherDirection = true; // Endboss schaut nach links
+    this.statusBarEndboss = new EndbossStatusbar(); 
+    this.otherDirection = true; 
     this.IMAGES_WALKING = [
       "img/troll/idle/idle_000.png",
       "img/troll/idle/idle_001.png",
@@ -117,23 +117,27 @@ class Endboss extends Enemy {
 
   update(character) {
     this.checkForAttack(character);
-    this.statusBarEndboss.setPercentage(this.energy); // Aktualisiere die Statusleiste basierend auf der Energie des Endbosses
+    this.statusBarEndboss.setPercentage(this.energy); 
   }
 
   draw(ctx) {
     if (this.img && this.img.complete) {
-      if (this.otherDirection) {
-        ctx.save();
-        ctx.translate(this.x + this.width, 0);
-        ctx.scale(-1, 1);
-        ctx.drawImage(this.img, 0, this.y, this.width, this.height);
-        ctx.restore();
-      } else {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      }
-      this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
-      this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; // Position über dem Kopf des Endbosses
-      this.statusBarEndboss.draw(ctx);
+        if (this.otherDirection) {
+            ctx.save();
+            ctx.translate(this.x + this.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(this.img, 0, this.y, this.width, this.height);
+            ctx.restore();
+            this.statusBarEndboss.x = this.x - this.width / 2 - this.statusBarEndboss.width / 2;
+        } else {
+            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+            this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
+        }
+        this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; 
+        // console.log(`Endboss Position: x=${this.x}, y=${this.y}`);
+        // console.log(`Statusbar Position: x=${this.statusBarEndboss.x}, y=${this.statusBarEndboss.y}`);
+        this.statusBarEndboss.setPercentage(this.energy);
+        this.statusBarEndboss.draw(ctx);
     }
   }
 }

@@ -3,7 +3,7 @@ class Door extends MovableObject {
     'img/door/door 0.png',
     'img/door/door 1.png',
     'img/door/door 2.png',
-    'img/door/door 3.png', // Pfad zu door 3.png
+    'img/door/door 3.png', 
     'img/door/door 4.png',
   ];
 
@@ -14,18 +14,18 @@ class Door extends MovableObject {
     this.loadImages(this.IMAGE_DOOR);
     this.x = 4500;
     this.y = y;
-    this.width = 300; // Breite der Tür
-    this.height = 460; // Höhe der Tür
-    this.offset = { top: 0, bottom: 250, left: 200, right: 200 }; // Setze Offsets
+    this.width = 300; 
+    this.height = 460;
+    this.offset = { top: 0, bottom: 250, left: 200, right: 200 };
     this.img = this.imageCache[this.IMAGE_DOOR[0]];
-    this.animate(); // Startet die Animation
+    this.animate();
   }
 
   loadImages(images) {
     images.forEach((src) => {
       const img = new Image();
       img.src = src;
-      this.imageCache[src] = img; // Speichert Bilder im Cache
+      this.imageCache[src] = img;
     });
   }
 
@@ -34,29 +34,29 @@ class Door extends MovableObject {
     setInterval(() => {
       this.img = this.imageCache[this.IMAGE_DOOR[currentImageIndex]];
       currentImageIndex = (currentImageIndex + 1) % this.IMAGE_DOOR.length;
-    }, 1000 / 4); // Animation: 6 Frames pro Sekunde
+    }, 1000 / 4);
   }
 
   draw(ctx) {
-    super.draw(ctx); // Zeichne das Türbild
-    this.drawFrame(ctx); // Zeichne die Kollisionsbox der Tür
+    super.draw(ctx);
+    this.drawFrame(ctx);
   }
 
   isCollidingWithDoor(character) {
     const box1 = this.getCollisionBox();
     const box2 = character.getCollisionBox();
     const isColliding = (
-      box1.x < box2.x + box2.width &&  // Linke Seite von box1 vor der rechten Seite von box2
-      box1.x + box1.width > box2.x &&  // Rechte Seite von box1 hinter der linken Seite von box2
-      box1.y < box2.y + box2.height && // Oberseite von box1 über der Unterseite von box2
-      box1.y + box1.height > box2.y    // Unterseite von box1 unter der Oberseite von box2
+      box1.x < box2.x + box2.width &&
+      box1.x + box1.width > box2.x &&
+      box1.y < box2.y + box2.height &&
+      box1.y + box1.height > box2.y
     );
 
     return isColliding;
   }
   
   enterDoor(character) {
-    character.enterDoor(this); // Übergibt die Tür an die Charakter-Methode
+    character.enterDoor(this);
   }
   
   animateOpening() {
@@ -65,14 +65,12 @@ class Door extends MovableObject {
       this.img = this.imageCache[this.IMAGE_DOOR[doorOpenFrame]];
       doorOpenFrame++;
       if (doorOpenFrame >= this.IMAGE_DOOR.length) clearInterval(openInterval);
-    }, 100); // Zeigt jede Frame der Tür-Animation
+    }, 100);
   }
-
-  
 
   static drawDoor(world) {
     if (world.door) {
-      world.door.drawFrame(world.ctx); // Zeichnet die Tür
+      world.door.drawFrame(world.ctx);
     }
   }
 }
