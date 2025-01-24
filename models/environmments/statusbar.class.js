@@ -101,9 +101,9 @@ class EndbossStatusbar extends DrawableObject {
   constructor() {
     super();
     this.loadImages(this.IMAGES);
-    this.y = 510;
-    this.width = 190; 
-    this.height = 50; 
+    this.y = 710;
+    this.width = 170; 
+    this.height = 40; 
   }
 
   setPercentage(percentage) {

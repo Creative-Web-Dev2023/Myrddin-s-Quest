@@ -1,15 +1,15 @@
 class Endboss extends Enemy {
   constructor(id) {
     super(id);
-    this.height = 600;
-    this.width = 450;
-    this.y = 100; // Stelle sicher, dass der Endboss innerhalb der Canvas-Grenzen bleibt
+    this.height = 450; // Größere Höhe
+    this.width = 360; // Größere Breite
+    this.y = 50; 
     this.x = 13000; 
     this.attackRange = 200; 
     this.attackDamage = 20; 
     this.speed = 5;
     this.deadSound = new Audio("audio/troll dead.mp3");
-    this.offset = { top: 180, bottom: 65, left: 90, right: 90 };
+    this.offset = { top: 50, bottom: 20, left: 20, right: 20 }; // Verkleinere die Offsets
     this.statusBarEndboss = new EndbossStatusbar(); 
     this.otherDirection = true; 
     this.IMAGES_WALKING = [
@@ -128,14 +128,12 @@ class Endboss extends Enemy {
             ctx.scale(-1, 1);
             ctx.drawImage(this.img, 0, this.y, this.width, this.height);
             ctx.restore();
-            this.statusBarEndboss.x = this.x - this.width / 2 - this.statusBarEndboss.width / 2;
         } else {
             ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-            this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
         }
-        this.statusBarEndboss.y = this.y - this.statusBarEndboss.height - 10; 
-        // console.log(`Endboss Position: x=${this.x}, y=${this.y}`);
-        // console.log(`Statusbar Position: x=${this.statusBarEndboss.x}, y=${this.statusBarEndboss.y}`);
+        this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2; 
+        this.statusBarEndboss.y = this.y - this.statusBarEndboss.height + 20; 
+        // console.log(`Endboss Position: x=${this.x}, y=${this.y}`); 
         this.statusBarEndboss.setPercentage(this.energy);
         this.statusBarEndboss.draw(ctx);
     }

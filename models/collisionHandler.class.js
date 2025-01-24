@@ -9,9 +9,11 @@ class CollisionHandler {
     this.checkCollisionWithKey();
     this.checkDoorCollision();
     this.checkTraps();
+    this.checkThrowableObjectsCollision(); // Füge die Kollisionserkennung für geworfene Objekte hinzu
   }
 
   checkCollision(character, object) {
+    if (!character || !object) return false;
     const charBox = character.getCollisionBox();
     const objBox = object.getCollisionBox();
 
@@ -44,7 +46,8 @@ class CollisionHandler {
   handleEnemyCollision(enemy) {
     if (enemy instanceof Snake || enemy instanceof Knight) {
       if (
-        this.world.character.isAboveGround() && this.world.character.speedY > 0
+        this.world.character.isAboveGround() &&
+        this.world.character.speedY > 0
       ) {
         this.world.character.jump();
         if (!enemy.isDead()) {
@@ -68,18 +71,18 @@ class CollisionHandler {
     if (enemy instanceof Snake) {
       const distance = Math.abs(this.world.character.x - enemy.x);
       if (distance <= 100 && !enemy.isDead()) {
-        enemy.attack(this.world.character); 
+        enemy.attack(this.world.character);
       }
     }
   }
-  
+
   checkCollisionWithKey() {
     if (!this.world.character || !this.world.key || !this.world.key.isActive) {
-      return; 
+      return;
     }
     if (this.checkCollision(this.world.character, this.world.key)) {
       console.log("Collision detected! Collecting key...");
-      this.world.character.collectKey(this.world.key); 
+      this.world.character.collectKey(this.world.key);
     }
   }
 
@@ -109,4 +112,16 @@ class CollisionHandler {
       });
     }
   }
+
+  checkThrowableObjectsCollision() {
+    this.world.throwableObjects.forEach((obj) => {
+      if (this.checkCollision(obj, this.world.level.endboss)) {
+        console.log("Endboss hit by throwable object!");
+        this.world.level.endboss.takeDamage(10); // Verursacht Schaden am Endboss
+        obj.deactivate(); // Deaktiviere das geworfene Objekt
+        obj.stop(); // Stoppe die Bewegung der Flasche
+      }
+    });
+  }
+  
 }

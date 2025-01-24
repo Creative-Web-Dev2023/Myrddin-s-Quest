@@ -12,6 +12,7 @@ class Character extends MovableObject {
   deadAnimationPlayed = false;
   hasKey = false;
   isVisible = true;
+  throwCooldown = false; // Abklingzeit-Flag
   offset = {
     top: 50,
     bottom: 10,
@@ -187,6 +188,7 @@ class Character extends MovableObject {
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
       this.energy -= damage;
+      this.lastHit = new Date().getTime(); // Setze lastHit auf die aktuelle Zeit
       this.world.characterStatusBar.setPercentage(this.energy);
       this.playAnimation(this.IMAGES_HURT);
       this.updateStatusBar();
@@ -209,17 +211,13 @@ class Character extends MovableObject {
     }
   }
 
-  reset(level) {
+  reset() {
     this.x = 130;
     this.y = 150;
     this.isVisible = true;
-    if (level === 2) {
-      this.energy = 100;
-      this.world.level.level_end_x = 3500;
-    } else {
-      this.poisonCollected = 0;
-      this.poisonStatusBar.setPercentage(0);
-    }
+    this.energy = 100;
+    this.poisonCollected = 0;
+    this.poisonStatusBar.setPercentage(0);
     this.CharacterHealthBar = new StatusBar();
     this.CharacterHealthBar.setPercentage(this.energy);
     this.playAnimation(this.IMAGES_IDLE);
@@ -298,11 +296,20 @@ class Character extends MovableObject {
   }
 
   throwObject() {
-    if (this.canThrow()) {
-      let bottle = new ThrowableObject(this.x, this.y);
-      this.world.throwableObjects.push(bottle);
-      this.poisonCollected--;
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+    if (this.canThrow() && !this.throwCooldown) {
+      const endboss = this.world.level.enemies.find(enemy => enemy instanceof Endboss);
+      if (endboss) {
+        let bottle = new ThrowableObject(this.x, this.y, endboss.x);
+        this.world.throwableObjects.push(bottle);
+        this.poisonCollected--;
+        this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+        this.throwCooldown = true; // Setze die Abklingzeit
+        setTimeout(() => {
+          this.throwCooldown = false; // Hebe die Abklingzeit nach 1 Sekunde auf
+        }, 1000);
+      } else {
+        console.error("Endboss not found");
+      }
     }
   }
 
