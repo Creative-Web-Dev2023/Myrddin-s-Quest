@@ -10,7 +10,7 @@ class World {
   characterStatusBar;
   characters = [];
   enemies = [];
-  throwableObjects = [];
+  throwableObjects = []; // Entferne die Initialisierung von Flaschen
   imageCache = {};
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
@@ -27,7 +27,7 @@ class World {
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
-    this.keyboard = keyboard;
+    this.keyboard = keyboard; // Stelle sicher, dass das keyboard-Objekt korrekt übergeben wird
     this.ui = new UI(canvas);
     this.initializeGameObjects();
     this.environments = generateEnvironmentsLvl();
@@ -101,8 +101,7 @@ class World {
     }
     this.character.update();
     this.updatePoison();
-    this.character.checkThrowableObject();
-    this.updateThrowableObjects();
+  
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound();
     }
@@ -127,12 +126,6 @@ class World {
     });
   }
 
-  updateThrowableObjects() {
-    this.throwableObjects.forEach((obj) => {
-      obj.update();
-    });
-  }
-
   addCharacter(character) {
     this.characters.push(character);
   }
@@ -148,6 +141,7 @@ class World {
     this.throwableObjects.forEach((obj) => {
       obj.draw(this.ctx);
     });
+    
     this.traps.forEach((trap) => {
       trap.draw(this.ctx);
     });

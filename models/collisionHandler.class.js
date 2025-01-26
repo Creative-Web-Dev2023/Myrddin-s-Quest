@@ -1,22 +1,23 @@
 class CollisionHandler {
   constructor(world) {
     this.world = world;
+    this.canThrow = true; // Cooldown-Flag
   }
 
   checkCollisions() {
     this.checkCollisionWithPoisons();
     this.checkCollisionsWithEnemies();
+    this.checkCollisionWithEndboss();
     this.checkCollisionWithKey();
     this.checkDoorCollision();
     this.checkTraps();
-    this.checkThrowableObjectsCollision(); // Füge die Kollisionserkennung für geworfene Objekte hinzu
+    this.checkThrowableObject(); 
   }
 
   checkCollision(character, object) {
     if (!character || !object) return false;
     const charBox = character.getCollisionBox();
     const objBox = object.getCollisionBox();
-
     return (
       charBox.x < objBox.x + objBox.width &&
       charBox.x + charBox.width > objBox.x &&
@@ -40,6 +41,18 @@ class CollisionHandler {
       } else {
         this.checkEnemyAttack(enemy);
       }
+    });
+  }
+
+  checkCollisionWithEndboss() {
+    this.world.throwableObjects.forEach((bottle) => {
+      this.world.enemies.forEach((enemy) => {
+        if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
+          enemy.takeDamage(10); // Füge dem Endboss Schaden zu
+          bottle.isVisible = false; // Mache die Flasche unsichtbar
+          this.handleBottleCollision(bottle); // Neue Methode aufrufen
+        }
+      });
     });
   }
 
@@ -103,9 +116,7 @@ class CollisionHandler {
         if (this.checkCollision(this.world.character, trap)) {
           trap.isActive = true;
           this.world.character.takeDamage(10);
-          this.world.characterStatusBar.setPercentage(
-            this.world.character.energy
-          );
+          this.world.characterStatusBar.setPercentage(this.world.character.energy);
         } else {
           trap.isActive = false;
         }
@@ -113,15 +124,20 @@ class CollisionHandler {
     }
   }
 
-  checkThrowableObjectsCollision() {
-    this.world.throwableObjects.forEach((obj) => {
-      if (this.checkCollision(obj, this.world.level.endboss)) {
-        console.log("Endboss hit by throwable object!");
-        this.world.level.endboss.takeDamage(10); // Verursacht Schaden am Endboss
-        obj.deactivate(); // Deaktiviere das geworfene Objekt
-        obj.stop(); // Stoppe die Bewegung der Flasche
-      }
-    });
+  checkThrowableObject() {
+    if (this.world.keyboard.D && this.canThrow) {
+      console.log("D key pressed, throwing bottle.");
+      let bottle = new ThrowableObject(this.world.character.x, this.world.character.y); // Verwende die Position des Charakters
+      this.world.throwableObjects.push(bottle);
+      this.canThrow = false; 
+      setTimeout(() => {
+        this.canThrow = true; 
+      }, 500); 
+    }
   }
+
+  handleBottleCollision(bottle) {
+    bottle.isVisible = false;
   
+  }
 }

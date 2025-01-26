@@ -89,10 +89,10 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "KeyA") {
     keyboard.ATTACK = true;
   }
-  if (e.code === "KeyD") {
+  if (e.keyCode === 68) {
     keyboard.D = true;
-    if (world && world.character) {
-      world.character.throwObject();
+    if (world && world.collisionHandler) {
+      world.collisionHandler.checkThrowableObject();
     }
   }
 });
@@ -116,7 +116,7 @@ window.addEventListener("keyup", (e) => {
   if (e.code === "KeyA") {
     keyboard.ATTACK = false;
   }
-  if (e.code === "KeyD") {
+  if (e.keyCode === 68) {
     keyboard.D = false;
   }
 });

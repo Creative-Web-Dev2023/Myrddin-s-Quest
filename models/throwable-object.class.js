@@ -1,53 +1,30 @@
 class ThrowableObject extends MovableObject {
-  constructor(x, y, targetX) {
+  constructor(x, y) {
     super().loadImage("img/poison/1.png");
     this.x = x;
     this.y = y;
-    this.targetX = targetX;
-    this.width = 45;
-    this.height = 45;
-    this.speedX = 10 * (targetX > x ? 1 : -1); // Geschwindigkeit in x-Richtung
-    this.speedY = 15; // Anfangsgeschwindigkeit in y-Richtung
-    this.gravity = 0.5; // Schwerkraft-Effekt
-    this.isActive = true; // Flag, um die Aktivität der Flasche zu verfolgen
-    this.throw();
+    this.height = 80;
+    this.width = 50;
+    this.isVisible = true; // Neue Eigenschaft hinzufügen
+    this.throw(x, y);
   }
 
-  throw() {
-    this.applyGravity();  // Stelle sicher, dass Gravitation angewendet wird
+  throw(x, y) {
+    this.x = x;
+    this.y = y;
+    this.speedY = 20;
+    this.acceleration = 1.5;
+    this.applyGravity();
     setInterval(() => {
-      if (this.isActive) {
-        this.x += this.speedX; // Bewegungsrichtung nach links oder rechts
-        this.y -= this.speedY; // Bewegungsrichtung nach oben oder unten
+      if (this.isVisible) { // Überprüfe, ob die Flasche sichtbar ist
+        this.x += 10;
       }
     }, 25);
   }
-  
 
-  update() {
-    if (this.isActive) {
-      this.x += this.speedX;
-      this.y -= this.speedY;
-      this.speedY -= this.gravity; // Schwerkraft-Effekt
+  draw(ctx) {
+    if (this.isVisible) { // Überprüfe, ob die Flasche sichtbar ist
+      super.draw(ctx);
     }
-  }
-
-  getCollisionBox() {
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height,
-    };
-  }
-
-  deactivate() {
-    this.isActive = false; // Deaktiviere die Flasche
-  }
-
-  stop() {
-    this.speedX = 0;
-    this.speedY = 0;
-    this.isActive = false;
   }
 }

@@ -9,9 +9,11 @@ class Endboss extends Enemy {
     this.attackDamage = 20; 
     this.speed = 5;
     this.deadSound = new Audio("audio/troll dead.mp3");
-    this.offset = { top: 50, bottom: 20, left: 20, right: 20 }; // Verkleinere die Offsets
+    this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
     this.statusBarEndboss = new EndbossStatusbar(); 
     this.otherDirection = true; 
+    this.energy = 100; 
+    this.statusBarEndboss.setPercentage(this.energy); // Statusleiste initialisieren
     this.IMAGES_WALKING = [
       "img/troll/idle/idle_000.png",
       "img/troll/idle/idle_001.png",
@@ -115,6 +117,33 @@ class Endboss extends Enemy {
     }, 400);
   }
 
+  takeDamage(damage) {
+    if (this.energy > 0) {
+      this.energy -= damage;
+      if (this.energy < 0) this.energy = 0; 
+      const percentage = (this.energy / 1000) * 100; 
+      this.statusBarEndboss.setPercentage(percentage);
+      this.playAnimation(this.IMAGES_HURT);
+      if (this.energy <= 0) {
+        this.die();
+      }
+    }
+  }
+  
+  die() {
+    if (!this.isDead()) {
+        this.dead = true;
+        this.playDeathAnimation();
+    }
+}
+  isHurt() {
+    if (this.energy < 100 && this.energy > 0) {
+      this.playAnimation(this.IMAGES_HURT);
+      return true;
+    }
+    return false;
+  }
+
   update(character) {
     this.checkForAttack(character);
     this.statusBarEndboss.setPercentage(this.energy); 
@@ -133,7 +162,6 @@ class Endboss extends Enemy {
         }
         this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2; 
         this.statusBarEndboss.y = this.y - this.statusBarEndboss.height + 20; 
-        // console.log(`Endboss Position: x=${this.x}, y=${this.y}`); 
         this.statusBarEndboss.setPercentage(this.energy);
         this.statusBarEndboss.draw(ctx);
     }

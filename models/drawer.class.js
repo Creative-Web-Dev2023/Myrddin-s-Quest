@@ -81,9 +81,9 @@ class Drawer {
   }
 
   drawKey() {
-    if (this.world.key && this.world.key.isActive) {
-      this.world.key.draw(this.world.ctx);
-    }
+      if (this.world.key) {
+          this.world.key.draw(this.world.ctx);
+      }
   }
 
   drawTraps() {

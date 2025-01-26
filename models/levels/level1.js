@@ -17,9 +17,11 @@ function generateEnemiesLvl() {
     
     new Snake(7000, 200, 7), 
     new Snake(8300, 200, 8),
+    new Snake(8900, 200, 9),
     new Snake(9500, 200, 9), 
+    new Snake(10700, 200, 10),
     new Snake(10000, 200, 10), 
-    new Snake(11600, 200, 11), 
+    new Snake(11700, 200, 11), 
     new Endboss(11800, 200, 12),
   ];
 }
@@ -34,7 +36,7 @@ function generateEnvironmentsLvl() {
     new Cloud(8000, 50),
     new Cloud(10500, 100),
     new Cloud(12000, 150),
-    new Trap(7500, 330), new Trap(8600, 330), new Trap(9900, 330), new Trap(11100, 330), new Trap(11700, 330),
+    new Trap(7500, 330), new Trap(8600, 330), new Trap(9900, 330), new Trap(11000, 330), new Trap(11700, 330),
   ];
 }
 

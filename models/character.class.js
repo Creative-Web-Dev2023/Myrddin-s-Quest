@@ -4,7 +4,7 @@ class Character extends MovableObject {
   height = 290;
   width = 520;
   x = 130;
-  y = 210;
+  y = 150; // Passe die Y-Position an, um den Charakter höher zu platzieren
   speed = 5;
   invulnerable = false;
   poisonCollected = 0;
@@ -192,8 +192,7 @@ class Character extends MovableObject {
       this.world.characterStatusBar.setPercentage(this.energy);
       this.playAnimation(this.IMAGES_HURT);
       this.updateStatusBar();
-
-      if (this.energy <= 0) {
+     if (this.energy <= 0) {
         this.energy = 0;
         this.die();
       } else {
@@ -232,7 +231,7 @@ class Character extends MovableObject {
       this.isVisible = false;
       setTimeout(() => {
         this.x = 6471; 
-        this.y = 210;
+        this.y = 150; // Passe die Y-Position an, um die gleiche Höhe wie vor der Tür zu haben
         this.world.camera_x = -this.x - 190; 
         this.isVisible = true;
         this.canMoveLeft = false; 
@@ -294,39 +293,10 @@ class Character extends MovableObject {
       }
     });
   }
-
-  throwObject() {
-    if (this.canThrow() && !this.throwCooldown) {
-      const endboss = this.world.level.enemies.find(enemy => enemy instanceof Endboss);
-      if (endboss) {
-        let bottle = new ThrowableObject(this.x, this.y, endboss.x);
-        this.world.throwableObjects.push(bottle);
-        this.poisonCollected--;
-        this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-        this.throwCooldown = true; // Setze die Abklingzeit
-        setTimeout(() => {
-          this.throwCooldown = false; // Hebe die Abklingzeit nach 1 Sekunde auf
-        }, 1000);
-      } else {
-        console.error("Endboss not found");
-      }
-    }
-  }
-
-  canThrow() {
-    return this.poisonCollected > 0;
-  }
-
   draw(ctx) {
     if (this.isVisible) {
       super.draw(ctx);
     }
   }
 
-  checkThrowableObject() {
-    if (this.world.keyboard.D && this.poisonCollected > 0) {
-      this.throwObject();
-      playPoisonBottleSound();
-    }
-  }
 }
