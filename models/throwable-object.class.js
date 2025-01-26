@@ -23,7 +23,7 @@ class ThrowableObject extends MovableObject {
   }
 
   draw(ctx) {
-    if (this.isVisible) { // Überprüfe, ob die Flasche sichtbar ist
+    if (this.isVisible) { 
       super.draw(ctx);
     }
   }

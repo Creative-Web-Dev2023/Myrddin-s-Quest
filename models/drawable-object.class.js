@@ -23,11 +23,11 @@ class DrawableObject {
         img.src = path;
         this.imageCache[path] = img;
     });
-    this.img = this.imageCache[images[0]] || new Image(); // Falls Bild nicht geladen, setze Platzhalter
+    this.img = this.imageCache[images[0]] || new Image(); 
   }
 
   playAnimation(images) {
-    if (images && images.length > 0) { // Ensure images is an array and has a length property
+    if (images && images.length > 0) { 
       let i = this.currentImage % images.length;
       this.img = this.imageCache[images[i]];
       this.currentImage++;

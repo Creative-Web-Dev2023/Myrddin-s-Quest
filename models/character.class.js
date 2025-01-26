@@ -4,7 +4,7 @@ class Character extends MovableObject {
   height = 290;
   width = 520;
   x = 130;
-  y = 150; // Passe die Y-Position an, um den Charakter höher zu platzieren
+  y = 150; 
   speed = 5;
   invulnerable = false;
   poisonCollected = 0;
@@ -12,7 +12,7 @@ class Character extends MovableObject {
   deadAnimationPlayed = false;
   hasKey = false;
   isVisible = true;
-  throwCooldown = false; // Abklingzeit-Flag
+  throwCooldown = false; 
   offset = {
     top: 50,
     bottom: 10,
@@ -231,7 +231,7 @@ class Character extends MovableObject {
       this.isVisible = false;
       setTimeout(() => {
         this.x = 6471; 
-        this.y = 150; // Passe die Y-Position an, um die gleiche Höhe wie vor der Tür zu haben
+        this.y = 150; 
         this.world.camera_x = -this.x - 190; 
         this.isVisible = true;
         this.canMoveLeft = false; 
@@ -241,18 +241,13 @@ class Character extends MovableObject {
     }, 2000);
   }
 
-  checkCollisionWithDoor(door) {
-    if (!door) {
-      return false;
-    }
-    const charBox = this.getCollisionBox();
-    const doorBox = door.getCollisionBox();
-    return (
-      charBox.x < doorBox.x + doorBox.width &&
-      charBox.x + charBox.width > doorBox.x &&
-      charBox.y < doorBox.y + doorBox.height &&
-      charBox.y + charBox.height > doorBox.y
-    );
+  getCollisionBox() {
+    return {
+      x: this.x + this.offset.left,
+      y: this.y + this.offset.top,
+      width: this.width - this.offset.left - this.offset.right,
+      height: this.height - this.offset.top - this.offset.bottom,
+    };
   }
 
   collectPoison(poison, index) {
@@ -266,11 +261,9 @@ class Character extends MovableObject {
   }
 
   collectKey(key) {
-    console.log("Collecting key...");
-    if (key && key.isActive) {
-      key.deactivate();
+    if (key && key.isActive) { 
+      key.deactivate(); 
       this.hasKey = true;
-      console.log("Key collected! hasKey:", this.hasKey);
     }
   }
 
@@ -298,5 +291,4 @@ class Character extends MovableObject {
       super.draw(ctx);
     }
   }
-
 }

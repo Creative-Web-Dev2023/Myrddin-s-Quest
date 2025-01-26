@@ -8,10 +8,10 @@ class CollisionHandler {
     this.checkCollisionWithPoisons();
     this.checkCollisionsWithEnemies();
     this.checkCollisionWithEndboss();
-    this.checkCollisionWithKey();
+    this.checkCollisionWithKey(); 
     this.checkDoorCollision();
     this.checkTraps();
-    this.checkThrowableObject(); 
+    this.checkThrowableObject();
   }
 
   checkCollision(character, object) {
@@ -48,11 +48,24 @@ class CollisionHandler {
     this.world.throwableObjects.forEach((bottle) => {
       this.world.enemies.forEach((enemy) => {
         if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
-          enemy.takeDamage(10); // Füge dem Endboss Schaden zu
-          bottle.isVisible = false; // Mache die Flasche unsichtbar
-          this.handleBottleCollision(bottle); // Neue Methode aufrufen
+          enemy.takeDamage(10); 
+          bottle.isVisible = false; 
+          this.handleBottleCollision(bottle); 
         }
       });
+    });
+  }
+
+  checkCollisionWithKey() {
+    if (!this.world.character || !this.world.enemies) {
+      return;
+    }
+    this.world.enemies.forEach((enemy, index) => {
+      if (enemy instanceof Key && this.checkCollision(this.world.character, enemy)) { 
+        enemy.deactivate(); 
+        this.world.enemies.splice(index, 1); 
+        this.world.character.collectKey(enemy); 
+      }
     });
   }
 
@@ -86,16 +99,6 @@ class CollisionHandler {
       if (distance <= 100 && !enemy.isDead()) {
         enemy.attack(this.world.character);
       }
-    }
-  }
-
-  checkCollisionWithKey() {
-    if (!this.world.character || !this.world.key || !this.world.key.isActive) {
-      return;
-    }
-    if (this.checkCollision(this.world.character, this.world.key)) {
-      console.log("Collision detected! Collecting key...");
-      this.world.character.collectKey(this.world.key);
     }
   }
 
@@ -138,6 +141,5 @@ class CollisionHandler {
 
   handleBottleCollision(bottle) {
     bottle.isVisible = false;
-  
   }
 }

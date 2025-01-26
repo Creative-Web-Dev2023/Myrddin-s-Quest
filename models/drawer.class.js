@@ -11,7 +11,6 @@ class Drawer {
       this.drawEnemies();
       this.drawCharacter();
       this.drawSnakes();
-      this.drawKey();
       this.drawTraps(); // Zeichne die Fallen
       if (this.world.door) {
           this.world.door.draw(this.world.ctx);
@@ -46,9 +45,13 @@ class Drawer {
       this.world.ctx.translate(this.world.camera_x, 0);
       this.world.addObjectsToMap(this.world.enemies);
       this.world.addObjectsToMap(this.world.poisonsArray);
+      if (this.world.key && this.world.key.isActive) {
+          this.world.key.draw(this.world.ctx); 
+      }
       this.world.throwableObjects.forEach((bottle) => {
           bottle.draw(this.world.ctx, this.world.camera_x);
       });
+      this.world.addObjectsToMap(this.world.traps); 
       this.world.ctx.translate(-this.world.camera_x, 0);
   }
 
@@ -78,12 +81,6 @@ class Drawer {
       this.world.snakes.forEach(snake => {
           snake.draw(this.world.ctx);
       });
-  }
-
-  drawKey() {
-      if (this.world.key) {
-          this.world.key.draw(this.world.ctx);
-      }
   }
 
   drawTraps() {

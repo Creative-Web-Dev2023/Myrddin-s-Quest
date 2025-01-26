@@ -5,7 +5,6 @@ class Key extends DrawableObject {
     this.y = y;
     this.width = 60;
     this.height = 60;
-    this.id = id;
     this.isActive = true;
   }
 
@@ -17,5 +16,11 @@ class Key extends DrawableObject {
 
   deactivate() {
     this.isActive = false;
+  }
+  
+  static initializeKey() {
+    return [
+      new Key(300, 400), // x: 300, y: 400
+    ];
   }
 }

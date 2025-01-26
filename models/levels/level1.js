@@ -14,6 +14,7 @@ function generateEnemiesLvl() {
     new Knight(8000, 2700, 4),
     new Knight(10000, 3300, 5),
     new Knight(12000, 3900, 6),
+    new Key(4400, 130, 13), 
     
     new Snake(7000, 200, 7), 
     new Snake(8300, 200, 8),
@@ -31,7 +32,6 @@ function generateEnvironmentsLvl() {
     new Cloud(0, 50), 
     new Cloud(500, 100),
     new Cloud(1000, 150),
-    new Key(4400, 130, 13), 
     new Door(4500, 80), 
     new Cloud(8000, 50),
     new Cloud(10500, 100),
@@ -42,19 +42,19 @@ function generateEnvironmentsLvl() {
 
 function generateBackgroundsLvl() {
   return [
-    new BackgroundObject("img/game_backgrounds/4/7.png", -719), //0 = x, 80 = y
-    new BackgroundObject("img/game_backgrounds/4/6.png", -719), // -719 = x, 0 = y
-    new BackgroundObject("img/game_backgrounds/4/4.png", -719, 0), // 719 = x, 80 = y
-    new BackgroundObject("img/game_backgrounds/3/3.png", -719, 100), // 719 = x, 80 = y
-    new BackgroundObject("img/game_backgrounds/3/2.png", -719), // 719 = x, 80 = y
-    new BackgroundObject("img/game_items/candle.png", -685, 50, 10, 30), // Kerze 1 x = -690 y = 50 width = 50 height = 80
-    new BackgroundObject("img/game_backgrounds/4/1.png", -719), // 719 = x, 80 = y
-    new BackgroundObject("img/game_backgrounds/4/7.png", 0), //0 = x, 80 = y
-    new BackgroundObject("img/game_backgrounds/4/6.png", 0), // 0 = x, 0 = y
-    new BackgroundObject("img/game_backgrounds/4/4.png", 0, 0), // 719 = x, 80 = y
-    new BackgroundObject("img/game_backgrounds/3/3.png", 0, 100), // 719 = x, 80 = y
-    new BackgroundObject("img/game_backgrounds/3/2.png", 0), // 719 = x, 80 = y
-    new BackgroundObject("img/game_items/candle.png", 150, 50, 10, 30), // Kerze 2 x = 10 y = 50 width = 50 height = 80
+    new BackgroundObject("img/game_backgrounds/4/7.png", -719), 
+    new BackgroundObject("img/game_backgrounds/4/6.png", -719), 
+    new BackgroundObject("img/game_backgrounds/4/4.png", -719, 0), 
+    new BackgroundObject("img/game_backgrounds/3/3.png", -719, 100), 
+    new BackgroundObject("img/game_backgrounds/3/2.png", -719), 
+    new BackgroundObject("img/game_items/candle.png", -685, 50, 10, 30), 
+    new BackgroundObject("img/game_backgrounds/4/1.png", -719), 
+    new BackgroundObject("img/game_backgrounds/4/7.png", 0), 
+    new BackgroundObject("img/game_backgrounds/4/6.png", 0), 
+    new BackgroundObject("img/game_backgrounds/4/4.png", 0, 0), 
+    new BackgroundObject("img/game_backgrounds/3/3.png", 0, 100), 
+    new BackgroundObject("img/game_backgrounds/3/2.png", 0), 
+    new BackgroundObject("img/game_items/candle.png", 150, 50, 10, 30), 
     new BackgroundObject("img/game_backgrounds/4/1.png", 0), // 719 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/7.png", 719), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/6.png", 719), // 0 = x, 0 = y
@@ -96,7 +96,7 @@ function generateBackgroundsLvl() {
     new BackgroundObject("img/game_items/candle.png", 3700, 50, 10, 30),
     new BackgroundObject("img/skull/scull 000.png", 3900, 50, 10, 30), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 5),
-    // Füge noch mehr Hintergrundobjekte hinzu, um sicherzustellen, dass kein schwarzer Bereich bleibt
+   
     new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 6),
     new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 6),
     new BackgroundObject("img/game_backgrounds/4/4.png", 719 * 6, 0),
@@ -121,7 +121,7 @@ function generateBackgroundsLvl() {
     new BackgroundObject("img/game_items/candle.png", 5800, 50, 10, 30),
     new BackgroundObject("img/skull/scull 000.png", 6000, 50, 10, 30), //0 = x, 80 = y
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 8),
-    // Füge die Hintergrundobjekte von Level 2 hinzu
+    
      new BackgroundObject("img/game_backgrounds/3/2.png", 6471),
     new BackgroundObject("img/game_backgrounds/3/2.png", 7190),
     new BackgroundObject("img/game_backgrounds/3/2.png", 7910),

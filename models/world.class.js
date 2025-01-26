@@ -17,21 +17,21 @@ class World {
   quitButtonImage = "img/game_ui/quit.png";
   tryAgainButton;
   tryAgainButtonImage = "img/game_ui/try_again.png";
-  key;
   endGame;
   door;
+  key;
   snakes = [];
   traps = [];
   environments = []; 
 
+
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
-    this.keyboard = keyboard; // Stelle sicher, dass das keyboard-Objekt korrekt übergeben wird
+    this.keyboard = keyboard; 
     this.ui = new UI(canvas);
     this.initializeGameObjects();
     this.environments = generateEnvironmentsLvl();
-    this.key = this.level.key;
     this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
@@ -52,7 +52,6 @@ class World {
     this.character.world.keyboard = this.keyboard;
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
-    this.key = this.level.key;
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
     this.enemies = this.level.enemies || [];
@@ -60,6 +59,7 @@ class World {
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.door = this.level.door;
+    this.key = Key.initializeKey(); // Initialisiere das Array von Schlüsseln
     this.camera_x = -this.character.x - 190;
     this.endGame = new EndGame(this);
   }
@@ -135,6 +135,7 @@ class World {
   }
 
   draw() {
+    this.clearCanvas(); // Stelle sicher, dass die Leinwand geleert wird
     if (this.drawer) {
       this.drawer.draw();
     }
@@ -145,9 +146,6 @@ class World {
     this.traps.forEach((trap) => {
       trap.draw(this.ctx);
     });
-    if (this.key && this.key.isActive) {
-      this.key.draw(this.ctx);
-    }
   }
 
   clearCanvas() {
@@ -172,7 +170,7 @@ class World {
     if (mo && mo.otherDirection) {
       this.flipImage(mo);
     }
-    if (mo) {
+    if (mo && mo.isActive !== false) {
       mo.draw(this.ctx);
       mo.drawFrame(this.ctx);
     }
