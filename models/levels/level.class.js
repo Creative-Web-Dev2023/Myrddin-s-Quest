@@ -3,13 +3,15 @@ class Level {
   clouds;
   backgroundObjects;
   poisonObjects;
+  traps;
   level_end_x = 13395;
 
-  constructor(enemies, clouds, backgroundObjects, poisonObjects) {
+  constructor(enemies, clouds, backgroundObjects, poisonObjects, traps) {
     this.enemies = enemies || [];
     this.clouds = clouds || [];
     this.backgroundObjects = backgroundObjects || [];
     this.poisonObjects = poisonObjects || [];
+    this.traps = traps || []; // Initialisiere die Fallen
   }
 
   draw(ctx) {

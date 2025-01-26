@@ -1,4 +1,3 @@
-
 body {
   display: flex;
   flex-direction: column;
@@ -554,15 +553,15 @@ svg {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  width: 720px; /* gleiche Breite wie der Canvas */
-  height: 480px; /* gleiche Höhe wie der Canvas */
+  width: 720px; 
+  height: 480px; 
 }
 
 .game-button-container {
   display: flex;
   justify-content: center;
-  gap: 20px; /* Abstand zwischen den Buttons */
-  z-index: 1002; /* Höherer Z-Index als das "Game Over" Bild */
+  gap: 20px;
+  z-index: 1002; 
 }
 
 .game-button {
@@ -573,8 +572,8 @@ svg {
 }
 
 .game-button img {
-  width: 80px; /* Kleinere Breite */
-  height: 32px; /* Kleinere Höhe */
+  width: 80px; 
+  height: 32px; 
 }
 
 .game-button:hover img {
@@ -590,9 +589,9 @@ svg {
   background: url("img/game_ui/login&pass/game_over.png") no-repeat center
     center;
   background-size: cover;
-  z-index: 999; /* Niedrigerer Z-Index als die Buttons */
+  z-index: 999; 
   background-color: #232321;
-  animation: colorShift 10s infinite; /* Füge die neue Animation hinzu */
+  animation: colorShift 10s infinite; 
 }
 
 @keyframes colorShift {
@@ -614,17 +613,17 @@ svg {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 10px;
   border-radius: 15px;
-  width: 60%; /* Reduziere die Breite weiter */
-  max-width: 600px; /* Setze eine maximale Breite */
+  width: 60%; 
+  max-width: 600px; 
   margin: 0 auto;
   box-sizing: border-box;
-  display: none; /* Standardmäßig ausblenden */
-  border: 2px solid #322b0e; /* Gelber Rand */
+  display: none; 
+  border: 2px solid #322b0e; 
   background-image: linear-gradient(45deg, #cc9900, #cc9966);
 }
 
 #key-info.show {
-  display: block; /* Anzeigen, wenn die Klasse 'show' hinzugefügt wird */
+  display: block; 
 }
 
 #key-info p {
@@ -634,8 +633,8 @@ svg {
 
 #key-info span strong {
   font-weight: bold;
-  font-size: 1.2em; /* Größerer Schriftgrad für die Pfeile */
-  color: #7b00ff; /* Farbe der Pfeile ändern */
+  font-size: 1.2em; 
+  color: #7b00ff; 
 }
 
 #level-completed-overlay {
@@ -652,8 +651,8 @@ svg {
   font-size: 2rem;
   z-index: 10000;
   display: none;
-  cursor: pointer; /* Cursor-Pointer hinzufügen */
-  text-align: center; /* Text und Bild zentrieren */
+  cursor: pointer; 
+  text-align: center; 
 }
 
 #level-completed-overlay.show {
@@ -662,7 +661,7 @@ svg {
 
 #level-completed-overlay img {
   display: block;
-  margin: 0 auto; /* Bild zentrieren */
+  margin: 0 auto; 
 }
 
 @keyframes rotate-animation {
@@ -686,28 +685,63 @@ svg {
   text-align: center;
   font-size: 24px;
   z-index: 2000;
-  justify-content: center; /* Zentriert horizontal */
-  align-items: center;    /* Zentriert vertikal */
-  flex-direction: column; /* Text und Bild untereinander */
+  justify-content: center; 
+  align-items: center;    
+  flex-direction: column; 
 }
 
 .rotate-icon {
   width: 100px;
   height: 100px;
-  animation: rotate-animation 2s linear infinite; /* Rotation */
+  animation: rotate-animation 2s linear infinite; 
+}
+
+#controls {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none; /* Standardmäßig ausgeblendet */
+  z-index: 1000; /* Sicherstellen, dass die Buttons über anderen Elementen liegen */
+}
+
+.control-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.control-button {
+  width: 50px; 
+  height: 50px;
+  margin: 5px;
+}
+
+.control-label {
+  font-size: 20px; /* Größere Schriftgröße */
+  color: rgb(24, 23, 23);
+  margin-top: 5px; /* Abstand */
+  font-family: 'MedievalSharp', sans-serif; /* Mittelalterliche Schriftart */
+  font-weight: bold; /* Dickere Schrift */
+}
+
+@media only screen and (max-width: 768px) {
+  #controls {
+    display: flex; /* Auf mobilen Geräten anzeigen */
+  }
 }
 
 @media screen and (max-width: 1024px) {
  .audio-icon {
-  width: 25px; /* Adjust the width for smaller screens */
-  top: 5%; /* Adjust the top position for smaller screens */
-  right: 3%; /* Adjust the right position for smaller screens */
+  width: 25px; 
+  top: 5%; 
+  right: 3%; 
  }
 
 .big-screen {
-  width: 25px; /* Adjust the width for smaller screens */
-  top: 5%; /* Adjust the top position for smaller screens */
-  right: 8%; /* Adjust the right position for smaller screens */
+  width: 25px; 
+  top: 5%; 
+  right: 8%; 
 }
 }
 
@@ -719,14 +753,14 @@ svg {
     font-family: Lucida Sans Unicode;
   }
   .audio-icon {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 5%; /* Adjust the top position for smaller screens */
-    right: 3%; /* Adjust the right position for smaller screens */
+    width: 25px; 
+    top: 5%; 
+    right: 3%; 
   }
   .big-screen {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 5%; /* Adjust the top position for smaller screens */
-    right: 8%; /* Adjust the right position for smaller screens */
+    width: 25px; 
+    top: 5%; 
+    right: 8%; 
   }
 }
 
@@ -740,45 +774,48 @@ svg {
   html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Keine Scrollleisten */
+  overflow: hidden; 
 }
 .audio-icon {
-  width: 25px; /* Adjust the width for smaller screens */
-  top: 5%; /* Adjust the top position for smaller screens */
-  right: 3%; /* Adjust the right position for smaller screens */
+  width: 25px; 
+  top: 5%; 
+  right: 3%; 
 }
 .big-screen {
-  width: 25px; /* Adjust the width for smaller screens */
-  top: 5%; /* Adjust the top position for smaller screens */
-  right: 8%; /* Adjust the right position for smaller screens */
+  width: 25px; 
+  top: 5%; 
+  right: 8%; 
 }
 
 }
 
 @media (max-width: 768px) {
   .audio-icon {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 5%; /* Adjust the top position for smaller screens */
-    right: 3%; /* Adjust the right position for smaller screens */
+    width: 25px; 
+    top: 5%; 
+    right: 3%;
   }
   .big-screen {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 5%; /* Adjust the top position for smaller screens */
-    right: 8%; /* Adjust the right position for smaller screens */
+    width: 25px; 
+    top: 5%; 
+    right: 8%; 
   }
+  #controls {
+    display: flex; /* Auf mobilen Geräten anzeigen */
 }
 @media (max-width: 480px) {
   .audio-icon {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 5%; /* Adjust the top position for smaller screens */
-    right: 3%; /* Adjust the right position for smaller screens */
+    width: 25px; 
+    top: 5%; 
+    right: 3%;
   }
   .big-screen {
-    width: 25px; /* Adjust the width for smaller screens */
-    top: 5%; /* Adjust the top position for smaller screens */
-    right: 8%; /* Adjust the right position for smaller screens */
+    width: 25px; 
+    top: 5%; 
+    right: 8%; 
   }
   h2 {
     font-size: 3.2rem;
   }
+}
 }

@@ -53,7 +53,7 @@ class World {
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
-    this.traps = this.level.traps || [];
+    this.traps = this.level.traps || []; // Initialisiere die Fallen
     this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
     this.loadImages(this.IMAGES_YOU_LOST);
@@ -135,7 +135,7 @@ class World {
   }
 
   draw() {
-    this.clearCanvas(); // Stelle sicher, dass die Leinwand geleert wird
+    this.clearCanvas(); 
     if (this.drawer) {
       this.drawer.draw();
     }

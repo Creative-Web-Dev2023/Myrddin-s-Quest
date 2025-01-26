@@ -22,6 +22,22 @@ function init() {
   world = new World(canvas, keyboard);
   playLevel1Sound();
   gameLoop();
+
+  // Event-Listener für die Steuerungselemente
+  document.getElementById('btn-left').addEventListener('touchstart', () => keyboard.LEFT = true, { passive: true });
+  document.getElementById('btn-left').addEventListener('touchend', () => keyboard.LEFT = false, { passive: true });
+
+  document.getElementById('btn-right').addEventListener('touchstart', () => keyboard.RIGHT = true, { passive: true });
+  document.getElementById('btn-right').addEventListener('touchend', () => keyboard.RIGHT = false, { passive: true });
+
+  document.getElementById('btn-jump').addEventListener('touchstart', () => keyboard.JUMP = true, { passive: true });
+  document.getElementById('btn-jump').addEventListener('touchend', () => keyboard.JUMP = false, { passive: true });
+
+  document.getElementById('btn-attack').addEventListener('touchstart', () => keyboard.ATTACK = true, { passive: true });
+  document.getElementById('btn-attack').addEventListener('touchend', () => keyboard.ATTACK = false, { passive: true });
+
+  document.getElementById('btn-throw').addEventListener('touchstart', () => keyboard.D = true, { passive: true });
+  document.getElementById('btn-throw').addEventListener('touchend', () => keyboard.D = false, { passive: true });
 }
 
 function gameLoop() {

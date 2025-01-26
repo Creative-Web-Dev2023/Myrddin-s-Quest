@@ -11,7 +11,7 @@ class Drawer {
       this.drawEnemies();
       this.drawCharacter();
       this.drawSnakes();
-      this.drawTraps(); // Zeichne die Fallen
+      this.drawTraps(); 
       if (this.world.door) {
           this.world.door.draw(this.world.ctx);
       }
@@ -51,7 +51,7 @@ class Drawer {
       this.world.throwableObjects.forEach((bottle) => {
           bottle.draw(this.world.ctx, this.world.camera_x);
       });
-      this.world.addObjectsToMap(this.world.traps); 
+      this.world.addObjectsToMap(this.world.traps); // Zeichne die Fallen
       this.world.ctx.translate(-this.world.camera_x, 0);
   }
 

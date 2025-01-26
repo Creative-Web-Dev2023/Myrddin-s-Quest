@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Myrddin's Quest</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> <!-- Korrigieren Sie den Pfad zur CSS-Datei -->
     <link rel="icon" href="img/game_items/magic.png" type="image/x-icon">
     <script src="models/drawable-object.class.js" defer></script>
     <script src="models/movable-object.class.js" defer></script>
@@ -33,6 +33,7 @@
     <script src="models/drawer.class.js" defer></script>
     <script src="models/collisionHandler.class.js" defer></script>
     <script src="models/game/ui.class.js" defer></script> <!-- Fügen Sie das Skript für ui.class.js hinzu -->
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet"> <!-- Fügen Sie die mittelalterliche Schriftart hinzu -->
 </head>
 
 <body>
@@ -44,9 +45,32 @@
             <img src="img/game_ui/level-complete.png" alt="Level Complete"/>
         </div>
         <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png" onclick="toggleFullscreen()" alt="Fullscreen">
-    <!-- Das Sound-Icon versteckt sich zu Beginn -->
-    <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()"
-        alt="Sound Control">
+        <!-- Das Sound-Icon versteckt sich zu Beginn -->
+        <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()"
+            alt="Sound Control">
+        <!-- Steuerungsbuttons -->
+        <div id="controls">
+            <div class="control-button-container">
+                <img src="img/app_icons/arrow-left.png" id="btn-left" class="control-button" alt="Left">
+                <span class="control-label"></span>
+            </div>
+            <div class="control-button-container">
+                <img src="img/app_icons/arrow-right.png" id="btn-right" class="control-button" alt="Right">
+                <span class="control-label"></span>
+            </div>
+            <div class="control-button-container">
+                <img src="img/app_icons/arrow-up.png" id="btn-jump" class="control-button" alt="Jump">
+                <span class="control-label">W</span>
+            </div>
+            <div class="control-button-container">
+                <img src="img/app_icons/attack.png" id="btn-attack" class="control-button" alt="Attack">
+                <span class="control-label">A</span>
+            </div>
+            <div class="control-button-container">
+                <img src="img/app_icons/poison-bottle.png" id="btn-throw" class="control-button" alt="Throw Bottle">
+                <span class="control-label">D</span>
+            </div>
+        </div>
     </div>
     <div id="key-info" style="text-align: center; margin-top: 20px;">
         <p><strong>Control buttons:</strong></p>
@@ -67,7 +91,6 @@
     <div class="overlay">
         <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> <!-- Bild des Charakters -->
         <img src="img/game_ui/main/how to play.png" alt="Scroll" class="how-to-play-img"> <!-- Bild der Schriftrolle -->
-        <!-- Gebogener Text -->
         <svg width="750" height="190" style="margin: 47px 0;">
             <defs>
                 <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent" />
@@ -141,12 +164,10 @@
     <div id="game-over-container" style="display: none;">
         <div class="you-lost-image"></div>
         <div class="game-button-container">
-
             <button id="tryAgain" class="game-button" style="display:none;" onclick="tryAgain()">
                 <img src="img/game_ui/try_again.png" alt="Try Again">
             </button>
         </div>
     </div>
 </body>
-
 </html>
