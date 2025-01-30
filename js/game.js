@@ -22,22 +22,20 @@ function init() {
   world = new World(canvas, keyboard);
   playLevel1Sound();
   gameLoop();
+  setupTouchControls();
+}
 
-  // Event-Listener für die Steuerungselemente
-  document.getElementById('btn-left').addEventListener('touchstart', () => keyboard.LEFT = true, { passive: true });
-  document.getElementById('btn-left').addEventListener('touchend', () => keyboard.LEFT = false, { passive: true });
+function setupTouchControls() {
+  setupTouchControl('btn-left', 'LEFT');
+  setupTouchControl('btn-right', 'RIGHT');
+  setupTouchControl('btn-jump', 'JUMP');
+  setupTouchControl('btn-attack', 'ATTACK');
+  setupTouchControl('btn-throw', 'D');
+}
 
-  document.getElementById('btn-right').addEventListener('touchstart', () => keyboard.RIGHT = true, { passive: true });
-  document.getElementById('btn-right').addEventListener('touchend', () => keyboard.RIGHT = false, { passive: true });
-
-  document.getElementById('btn-jump').addEventListener('touchstart', () => keyboard.JUMP = true, { passive: true });
-  document.getElementById('btn-jump').addEventListener('touchend', () => keyboard.JUMP = false, { passive: true });
-
-  document.getElementById('btn-attack').addEventListener('touchstart', () => keyboard.ATTACK = true, { passive: true });
-  document.getElementById('btn-attack').addEventListener('touchend', () => keyboard.ATTACK = false, { passive: true });
-
-  document.getElementById('btn-throw').addEventListener('touchstart', () => keyboard.D = true, { passive: true });
-  document.getElementById('btn-throw').addEventListener('touchend', () => keyboard.D = false, { passive: true });
+function setupTouchControl(buttonId, key) {
+  document.getElementById(buttonId).addEventListener('touchstart', () => keyboard[key] = true, { passive: true });
+  document.getElementById(buttonId).addEventListener('touchend', () => keyboard[key] = false, { passive: true });
 }
 
 function gameLoop() {
@@ -79,7 +77,6 @@ function toggleFullscreen() {
   const canvas = document.getElementById("canvas");
   if (!document.fullscreenElement) {
     canvas.requestFullscreen().catch(err => {
-      console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
     });
   } else {
     document.exitFullscreen();
@@ -141,8 +138,6 @@ window.addEventListener("DOMContentLoaded", () => {
   const startButton = document.getElementById("startButton");
   if (startButton) {
     startButton.addEventListener("click", startGame);
-  } else {
-    console.error("Element with ID 'startButton' not found.");
   }
 });
 
@@ -158,19 +153,17 @@ window.addEventListener("DOMContentLoaded", () => {
     bigScreenButton.addEventListener("click", () => {
       toggleFullscreen();
     });
-  } else {
-    console.error("Element with ID 'bigScreen' not found.");
   }
 });
 
 function checkOrientation() {
   const rotateDiv = document.getElementById('rotate');
-  if (window.innerWidth < 720 && window.innerHeight > window.innerWidth) {
-    rotateDiv.style.display = 'flex';
+
+  if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
+      rotateDiv.style.display = 'flex';
   } else {
-    rotateDiv.style.display = 'none';
+      rotateDiv.style.display = 'none'; 
   }
 }
-
-window.addEventListener('orientationchange', checkOrientation);
 window.addEventListener('resize', checkOrientation);
+document.addEventListener('DOMContentLoaded', checkOrientation);

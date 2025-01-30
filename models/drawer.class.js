@@ -35,9 +35,10 @@ class Drawer {
       if (this.world.currentLevelIndex === 1 && this.world.level.endboss) {
           this.world.endbossHealthBar.x = this.world.level.endboss.x;
           this.world.endbossHealthBar.y = this.world.level.endboss.y - 50;
+          const healthPercentage = (this.world.level.endboss.energy / 100) * 100;
+          this.world.endbossHealthBar.setPercentage(healthPercentage);
           this.world.addToMap(this.world.endbossHealthBar);
-          this.world.endbossHealthBar.draw(this.world.ctx);
-      }
+      }  
       this.world.addToMap(this.world.character.healthBar);
   }
 

@@ -5,7 +5,8 @@ class ThrowableObject extends MovableObject {
     this.y = y;
     this.height = 80;
     this.width = 50;
-    this.isVisible = true; // Neue Eigenschaft hinzufügen
+    this.isVisible = true;
+    this.collided = false; 
     this.throw(x, y);
   }
 
@@ -16,12 +17,14 @@ class ThrowableObject extends MovableObject {
     this.acceleration = 1.5;
     this.applyGravity();
     setInterval(() => {
-      if (this.isVisible) { // Überprüfe, ob die Flasche sichtbar ist
+      if (this.isVisible) { 
         this.x += 10;
       }
     }, 25);
   }
-
+  isColliding(obj) {
+    return !this.collided && super.isColliding(obj);
+}
   draw(ctx) {
     if (this.isVisible) { 
       super.draw(ctx);

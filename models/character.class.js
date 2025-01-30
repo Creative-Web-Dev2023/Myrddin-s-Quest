@@ -12,7 +12,6 @@ class Character extends MovableObject {
   deadAnimationPlayed = false;
   hasKey = false;
   isVisible = true;
-  throwCooldown = false; 
   offset = {
     top: 50,
     bottom: 10,
@@ -161,6 +160,8 @@ class Character extends MovableObject {
     }
   }
 
+
+
   updateCamera() {
     this.world.camera_x = -this.x - 190;
   }
@@ -188,11 +189,11 @@ class Character extends MovableObject {
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
       this.energy -= damage;
-      this.lastHit = new Date().getTime(); // Setze lastHit auf die aktuelle Zeit
+      this.lastHit = new Date().getTime();
       this.world.characterStatusBar.setPercentage(this.energy);
       this.playAnimation(this.IMAGES_HURT);
       this.updateStatusBar();
-     if (this.energy <= 0) {
+      if (this.energy <= 0) {
         this.energy = 0;
         this.die();
       } else {

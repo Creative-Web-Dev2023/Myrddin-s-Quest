@@ -11,9 +11,9 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
+  font-size: 16px;
+  line-height: 1.5;
 }
-
-
 
 @font-face {
   font-family: "sylfaen";
@@ -195,7 +195,7 @@ h2 {
   top: -3px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 3.8rem;
+  font-size: clamp(2rem, 5vw, 3.8rem);
   text-align: center;
   color: rgb(217, 217, 180);
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 1.7);
@@ -208,6 +208,8 @@ h2 {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Schatten für den Rahmen */
   border-radius: 15px; /* Abgerundete Ecken */
   overflow: hidden; /* Verhindert, dass der schwarze Rand oben herauskommt */
+  max-width: 100%;
+  height: auto;
 }
 
 /* Optional: Dekorative Ecken für den Rahmen */
@@ -280,12 +282,13 @@ h2 {
   ); /* Gradient background */
   border-radius: 10px;
   color: rgb(202, 189, 49);
-  padding: 20px;
+  padding: clamp(10px, 2vw, 20px);
   display: none;
   scrollbar-width: thin;
   scrollbar-color: #4e6a76 orange;
   overflow-y: auto; /* Vertikaler Scrollbalken, wenn der Inhalt die Höhe überschreitet */
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Schatten für den Hintergrund */
+  font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
 .impressum-button {
@@ -374,7 +377,6 @@ h3 {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   z-index: 1000;
 }
-
 
 .overlay-text {
   font-size: 1.5rem;
@@ -542,7 +544,6 @@ svg {
   }
 }
 
-
 #game-over-container {
   position: absolute;
   top: 44%;
@@ -701,8 +702,8 @@ svg {
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  display: none; /* Standardmäßig ausgeblendet */
-  z-index: 1000; /* Sicherstellen, dass die Buttons über anderen Elementen liegen */
+  display: none; 
+  z-index: 1000; 
 }
 
 .control-button-container {
@@ -718,16 +719,27 @@ svg {
 }
 
 .control-label {
-  font-size: 20px; /* Größere Schriftgröße */
+  font-size: 20px; 
   color: rgb(24, 23, 23);
   margin-top: 5px; /* Abstand */
-  font-family: 'MedievalSharp', sans-serif; /* Mittelalterliche Schriftart */
-  font-weight: bold; /* Dickere Schrift */
+  font-family: 'MedievalSharp', sans-serif; 
+  font-weight: bold;
+}
+#btn-left, #btn-right, #btn-jump, #btn-attack, #btn-throw {
+  cursor: pointer;
+}
+
+#controls #btn-left, 
+#controls #btn-right, 
+#controls #btn-jump, 
+#controls #btn-attack, 
+#controls #btn-throw {
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 768px) {
   #controls {
-    display: flex; /* Auf mobilen Geräten anzeigen */
+    display: flex; 
   }
 }
 
@@ -801,7 +813,7 @@ svg {
     right: 8%; 
   }
   #controls {
-    display: flex; /* Auf mobilen Geräten anzeigen */
+    display: flex; 
 }
 @media (max-width: 480px) {
   .audio-icon {
@@ -818,4 +830,93 @@ svg {
     font-size: 3.2rem;
   }
 }
+}
+
+/* ===== Responsive Images ===== */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ===== Media Queries ===== */
+/* Mobile (Portrait) */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .start-button {
+    width: 120px;
+    height: 40px;
+    font-size: 20px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  #controls {
+    bottom: 5px;
+  }
+}
+
+/* Mobile (Landscape) & Small Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .start-button {
+    width: 140px;
+    left: 30px;
+  }
+  
+  #canvas {
+    max-width: 90%;
+  }
+}
+
+/* Tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #canvas {
+    max-width: 80%;
+  }
+  
+  .audio-icon, .big-screen {
+    width: 35px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  #canvas {
+    max-width: 1200px;
+  }
+}
+
+/* ===== Flex-Container ===== */
+.responsive-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 15px;
+}
+
+/* ===== Touch-Optimierung ===== */
+@media (hover: none) and (pointer: coarse) {
+  button, .control-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px;
+  }
+  
+  .info-icon, .audio-icon, .big-screen {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ===== Responsive Typography ===== */
+h2 {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+}
+
+.description {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  padding: 10px;
 }

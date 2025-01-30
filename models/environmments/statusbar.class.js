@@ -28,7 +28,7 @@ class StatusBar extends DrawableObject {
 
   resolveImageIndex() { 
     if (this.percentage >= 100) { 
-      return 5; // Return 5
+      return 5; 
     } else if (this.percentage >= 80) { 
       return 4;
     } else if (this.percentage >= 60) {
@@ -104,15 +104,16 @@ class EndbossStatusbar extends DrawableObject {
     this.y = 710;
     this.width = 170; 
     this.height = 40; 
+    this.setPercentage(100); 
   }
 
   setPercentage(percentage) {
     this.percentage = percentage;
-    let path = this.IMAGES[this.calculateImageIndex()];
+    let path = this.IMAGES[this.resolveImageIndex()];
     this.img = this.imageCache[path];
   }
 
-  calculateImageIndex() {
+  resolveImageIndex() {
     if (this.percentage >= 100) return 5;
     if (this.percentage >= 80) return 4;
     if (this.percentage >= 60) return 3;

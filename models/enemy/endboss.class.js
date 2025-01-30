@@ -12,7 +12,7 @@ class Endboss extends Enemy {
     this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
     this.statusBarEndboss = new EndbossStatusbar(); 
     this.otherDirection = true; 
-    this.energy = 100; 
+    this.energy = 100; // Setze die Lebenspunkte des Endbosses auf 100
     this.statusBarEndboss.setPercentage(this.energy); // Statusleiste initialisieren
     this.IMAGES_WALKING = [
       "img/troll/idle/idle_000.png",
@@ -95,53 +95,23 @@ class Endboss extends Enemy {
       this.attack(character);
     }
   }
-
-  attack(character) {
-    if (this.dead || this.isAttacking) return;
-    this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
-    setTimeout(() => {
-      const characterBox = character.getCollisionBox();
-      const endbossBox = this.getCollisionBox();
-      const isStillInRange =
-        endbossBox.x < characterBox.x + characterBox.width &&
-        endbossBox.x + endbossBox.width > characterBox.x &&
-        endbossBox.y < characterBox.y + characterBox.height &&
-        endbossBox.y + endbossBox.height > characterBox.y;
-      if (isStillInRange) {
-        character.takeDamage(this.attackDamage);
-      }
-      setTimeout(() => {
-        this.isAttacking = false;
-      }, 500);
-    }, 400);
-  }
-
   takeDamage(damage) {
-    if (this.energy > 0) {
-      this.energy -= damage;
-      if (this.energy < 0) this.energy = 0; 
-      const percentage = (this.energy / 1000) * 100; 
-      this.statusBarEndboss.setPercentage(percentage);
-      this.playAnimation(this.IMAGES_HURT);
-      if (this.energy <= 0) {
-        this.die();
-      }
+    if (!this.dead) {
+        this.energy = Math.max(this.energy - damage, 0);
+        this.statusBarEndboss.setPercentage(Math.floor(this.energy / 20) * 20);
+        console.log("Endboss Health:", this.energy);
+        if (this.energy <= 0) {
+            this.die();
+        }
     }
-  }
-  
+}
+
   die() {
     if (!this.isDead()) {
         this.dead = true;
-        this.playDeathAnimation();
+        this.playAnimation(this.IMAGES_DEAD);
+        this.playDeadSound();
     }
-}
-  isHurt() {
-    if (this.energy < 100 && this.energy > 0) {
-      this.playAnimation(this.IMAGES_HURT);
-      return true;
-    }
-    return false;
   }
 
   update(character) {
@@ -164,6 +134,11 @@ class Endboss extends Enemy {
         this.statusBarEndboss.y = this.y - this.statusBarEndboss.height + 20; 
         this.statusBarEndboss.setPercentage(this.energy);
         this.statusBarEndboss.draw(ctx);
+    }
+  }
+    updateEndbossHealth(damage) {
+    if (this.world.endboss) {
+      this.world.endboss.takeDamage(damage);
     }
   }
 }

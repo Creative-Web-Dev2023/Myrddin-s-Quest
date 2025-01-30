@@ -20,7 +20,7 @@ class Key extends DrawableObject {
   
   static initializeKey() {
     return [
-      new Key(300, 400), // x: 300, y: 400
+      new Key(300, 400),
     ];
   }
 }

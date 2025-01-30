@@ -46,14 +46,25 @@ class CollisionHandler {
 
   checkCollisionWithEndboss() {
     this.world.throwableObjects.forEach((bottle) => {
+      if (bottle.collided) return;       
       this.world.enemies.forEach((enemy) => {
         if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
-          enemy.takeDamage(10); 
-          bottle.isVisible = false; 
-          this.handleBottleCollision(bottle); 
+          bottle.collided = true;
+          bottle.isVisible = false;
+          const damage = 25; 
+          const steps = Math.ceil(enemy.energy / 20) - 1;
+          enemy.energy = Math.max(steps * 20, 0);
+          enemy.statusBarEndboss.setPercentage(enemy.energy);
+          if (enemy.energy <= 0) {
+            enemy.die();
+          }
         }
       });
     });
+  }
+
+  handleBottleCollision(bottle) {
+    bottle.isVisible = false;
   }
 
   checkCollisionWithKey() {
@@ -129,7 +140,6 @@ class CollisionHandler {
 
   checkThrowableObject() {
     if (this.world.keyboard.D && this.canThrow) {
-      console.log("D key pressed, throwing bottle.");
       let bottle = new ThrowableObject(this.world.character.x, this.world.character.y); // Verwende die Position des Charakters
       this.world.throwableObjects.push(bottle);
       this.canThrow = false; 
@@ -137,9 +147,5 @@ class CollisionHandler {
         this.canThrow = true; 
       }, 500); 
     }
-  }
-
-  handleBottleCollision(bottle) {
-    bottle.isVisible = false;
-  }
+  } 
 }
