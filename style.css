@@ -16,13 +16,17 @@ body {
 }
 
 @font-face {
-  font-family: "sylfaen";
-  src: url("fonts/sylfaen.ttf") format("woff");
+  font-family: 'MedievalSharp';
+  src: url('fonts/MedievalSharp-Regular.ttf') format('truetype');
+}
+
+body {
+  font-family: 'MedievalSharp', sans-serif;
 }
 
 .start-button {
-  position: absolute; /* Benutze absolute Positionierung für Button */
-  bottom: 70px; /* Abstand vom unteren Rand */
+  position: absolute;
+  bottom: 70px;
   left: 117px;
   width: 140px;
   height: 50px;
@@ -36,15 +40,14 @@ body {
   transition: 0.5s;
   -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
   margin-top: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.5); /* Beispiel: Weißer Rand */
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Optional: Schatten für den Rand */
-  font-family: "sylfaen";
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .start-button span {
   position: absolute;
-  bottom: 40px; /* Abstand vom unteren Rand */
-  left: 40px; /* Abstand vom linken Rand */
+  bottom: 40px;
+  left: 40px;
   display: block;
   top: -19px;
   left: 1px;
@@ -57,7 +60,7 @@ body {
 }
 
 .start-button:hover span {
-  color: rgba(255, 255, 255, 1); /* Heller Text beim Hover */
+  color: rgba(255, 255, 255, 1);
 }
 
 .start-button span::before {
@@ -204,15 +207,14 @@ h2 {
   background-color: black;
   position: relative;
   z-index: 1;
-  border: 8px solid #96633f; /* Brauner Rahmen */
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Schatten für den Rahmen */
-  border-radius: 15px; /* Abgerundete Ecken */
-  overflow: hidden; /* Verhindert, dass der schwarze Rand oben herauskommt */
+  border: 8px solid #96633f;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  overflow: hidden;
   max-width: 100%;
   height: auto;
 }
 
-/* Optional: Dekorative Ecken für den Rahmen */
 #canvas::before,
 #canvas::after {
   content: "";
@@ -239,34 +241,29 @@ h2 {
   width: 30px;
   cursor: pointer;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5); /* Add background color */
-  border: 2px solid white; /* Add border */
-  border-radius: 5px; /* Add border radius */
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px solid white;
+  border-radius: 5px;
 }
 
 .big-screen {
   position: absolute;
   top: 8%;
-  right: 9%; /* Adjusted to be next to the audio switcher */
-  width: 30px; /* Adjusted to match the info icon */
+  right: 9%;
+  width: 30px;
   cursor: pointer;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5); /* Add background color */
-  border: 2px solid white; /* Add border */
-  border-radius: 5px; /* Add border radius */
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px solid white;
+  border-radius: 5px;
 }
 
 .info-icon:hover,
 .audio-icon:hover,
 .big-screen:hover {
   transform: scale(1.2);
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.7
-  ); /* Change background color on hover */
-  border-color: black; /* Change border color on hover */
+  background-color: rgba(255, 255, 255, 0.7);
+  border-color: black;
 }
 
 .description {
@@ -279,15 +276,15 @@ h2 {
     135deg,
     #4e6a76,
     #2c3e50
-  ); /* Gradient background */
+  );
   border-radius: 10px;
   color: rgb(202, 189, 49);
   padding: clamp(10px, 2vw, 20px);
   display: none;
   scrollbar-width: thin;
   scrollbar-color: #4e6a76 orange;
-  overflow-y: auto; /* Vertikaler Scrollbalken, wenn der Inhalt die Höhe überschreitet */
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Schatten für den Hintergrund */
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
@@ -296,12 +293,12 @@ h2 {
   color: rgb(202, 189, 49);
   margin-top: 420px;
   cursor: pointer;
-  transition: color 0.3s ease, transform 0.3s ease; /* Transition for color and transform */
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .impressum-button:hover {
-  color: rgb(255, 223, 0); /* Change color on hover */
-  transform: scale(1.1); /* Slightly enlarge the button on hover */
+  color: rgb(255, 223, 0);
+  transform: scale(1.1);
 }
 
 .impressum {
@@ -309,8 +306,8 @@ h2 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 720px; /* dieselbe Breite wie dein Canvas */
-  height: 480px; /* dieselbe Höhe wie dein Canvas */
+  width: 720px;
+  height: 480px;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 20px;
@@ -340,8 +337,8 @@ h3 {
   text-decoration: underline;
   margin-top: 20px;
   font-size: 24px;
-  text-align: center; /* Center the back link */
-  display: block; /* Ensure the link takes up the full width */
+  text-align: center;
+  display: block;
 }
 
 .back-link:hover {
@@ -353,14 +350,14 @@ h3 {
   text-decoration: underline;
   margin-top: 20px;
   font-size: 24px;
-  text-align: center; /* Center the back link */
-  display: block; /* Ensure the link takes up the full width */
+  text-align: center;
+  display: block;
 }
 .back-link2:hover {
   color: rgb(174, 186, 124);
 }
 .overlay {
-  position: fixed; /* Fixiert das Overlay auf die Bildschirmmitte */
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -369,10 +366,10 @@ h3 {
   background-image: url("img/game_ui/login&pass/loghin_pass_fullwindow.png"),
     url("img/game_backgrounds/wood.png");
   background-size: contain, cover;
-  display: flex; /* Flex für Inhalte im Overlay */
+  display: flex;
   flex-direction: column;
-  align-items: center; /* Zentriert Kinder-Elemente horizontal */
-  justify-content: center; /* Zentriert Kinder-Elemente vertikal */
+  align-items: center;
+  justify-content: center;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   z-index: 1000;
@@ -386,8 +383,8 @@ h3 {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 3; /* Höherer z-index für Overlay-Text */
-  margin-top: 100px; /* Abstand nach oben, um den Text nach unten zu verschieben */
+  z-index: 3;
+  margin-top: 100px;
 }
 
 .overlay-character {
@@ -396,7 +393,7 @@ h3 {
   left: -146px;
   width: 649px;
   height: auto;
-  animation: float 3s ease-in-out infinite; /* Füge die Animation hinzu */
+  animation: float 3s ease-in-out infinite;
 }
 .how-to-play-img {
   position: absolute;
@@ -404,7 +401,7 @@ h3 {
   left: 589px;
   width: 154px;
   height: auto;
-  animation: pulse 2s infinite; /* Füge die neue Animation hinzu */
+  animation: pulse 2s infinite;
 }
 svg {
   position: absolute;
@@ -433,8 +430,8 @@ svg {
 }
 .how-to-play-button span {
   position: absolute;
-  bottom: 40px; /* Abstand vom unteren Rand */
-  left: 40px; /* Abstand vom linken Rand */
+  bottom: 40px;
+  left: 40px;
   display: block;
   top: -19px;
   left: 1px;
@@ -447,7 +444,7 @@ svg {
 }
 
 .how-to-play-button:hover span {
-  color: rgba(255, 255, 255, 1); /* Heller Text beim Hover */
+  color: rgba(255, 255, 255, 1);
 }
 
 .how-to-play-button span::before {
@@ -554,15 +551,15 @@ svg {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  width: 720px; 
-  height: 480px; 
+  width: 720px;
+  height: 480px;
 }
 
 .game-button-container {
   display: flex;
   justify-content: center;
   gap: 20px;
-  z-index: 1002; 
+  z-index: 1002;
 }
 
 .game-button {
@@ -573,8 +570,8 @@ svg {
 }
 
 .game-button img {
-  width: 80px; 
-  height: 32px; 
+  width: 80px;
+  height: 32px;
 }
 
 .game-button:hover img {
@@ -590,9 +587,9 @@ svg {
   background: url("img/game_ui/login&pass/game_over.png") no-repeat center
     center;
   background-size: cover;
-  z-index: 999; 
+  z-index: 999;
   background-color: #232321;
-  animation: colorShift 10s infinite; 
+  animation: colorShift 10s infinite;
 }
 
 @keyframes colorShift {
@@ -614,17 +611,17 @@ svg {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 10px;
   border-radius: 15px;
-  width: 60%; 
-  max-width: 600px; 
+  width: 60%;
+  max-width: 600px;
   margin: 0 auto;
   box-sizing: border-box;
-  display: none; 
-  border: 2px solid #322b0e; 
+  display: none;
+  border: 2px solid #322b0e;
   background-image: linear-gradient(45deg, #cc9900, #cc9966);
 }
 
 #key-info.show {
-  display: block; 
+  display: block;
 }
 
 #key-info p {
@@ -634,8 +631,8 @@ svg {
 
 #key-info span strong {
   font-weight: bold;
-  font-size: 1.2em; 
-  color: #7b00ff; 
+  font-size: 1.2em;
+  color: #7b00ff;
 }
 
 #level-completed-overlay {
@@ -652,8 +649,8 @@ svg {
   font-size: 2rem;
   z-index: 10000;
   display: none;
-  cursor: pointer; 
-  text-align: center; 
+  cursor: pointer;
+  text-align: center;
 }
 
 #level-completed-overlay.show {
@@ -662,7 +659,7 @@ svg {
 
 #level-completed-overlay img {
   display: block;
-  margin: 0 auto; 
+  margin: 0 auto;
 }
 
 @keyframes rotate-animation {
@@ -686,15 +683,15 @@ svg {
   text-align: center;
   font-size: 24px;
   z-index: 2000;
-  justify-content: center; 
-  align-items: center;    
-  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .rotate-icon {
   width: 100px;
   height: 100px;
-  animation: rotate-animation 2s linear infinite; 
+  animation: rotate-animation 2s linear infinite;
 }
 
 #controls {
@@ -702,8 +699,8 @@ svg {
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  display: none; 
-  z-index: 1000; 
+  display: none;
+  z-index: 1000;
 }
 
 .control-button-container {
@@ -713,16 +710,16 @@ svg {
 }
 
 .control-button {
-  width: 50px; 
+  width: 50px;
   height: 50px;
   margin: 5px;
 }
 
 .control-label {
-  font-size: 20px; 
+  font-size: 20px;
   color: rgb(24, 23, 23);
-  margin-top: 5px; /* Abstand */
-  font-family: 'MedievalSharp', sans-serif; 
+  margin-top: 5px;
+  font-family: 'MedievalSharp', sans-serif;
   font-weight: bold;
 }
 #btn-left, #btn-right, #btn-jump, #btn-attack, #btn-throw {
@@ -739,21 +736,21 @@ svg {
 
 @media only screen and (max-width: 768px) {
   #controls {
-    display: flex; 
+    display: flex;
   }
 }
 
 @media screen and (max-width: 1024px) {
  .audio-icon {
-  width: 25px; 
-  top: 5%; 
-  right: 3%; 
+  width: 25px;
+  top: 5%;
+  right: 3%;
  }
 
 .big-screen {
-  width: 25px; 
-  top: 5%; 
-  right: 8%; 
+  width: 25px;
+  top: 5%;
+  right: 8%;
 }
 }
 
@@ -765,14 +762,14 @@ svg {
     font-family: Lucida Sans Unicode;
   }
   .audio-icon {
-    width: 25px; 
-    top: 5%; 
-    right: 3%; 
+    width: 25px;
+    top: 5%;
+    right: 3%;
   }
   .big-screen {
-    width: 25px; 
-    top: 5%; 
-    right: 8%; 
+    width: 25px;
+    top: 5%;
+    right: 8%;
   }
 }
 
@@ -786,45 +783,45 @@ svg {
   html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden; 
+  overflow: hidden;
 }
 .audio-icon {
-  width: 25px; 
-  top: 5%; 
-  right: 3%; 
+  width: 25px;
+  top: 5%;
+  right: 3%;
 }
 .big-screen {
-  width: 25px; 
-  top: 5%; 
-  right: 8%; 
+  width: 25px;
+  top: 5%;
+  right: 8%;
 }
 
 }
 
 @media (max-width: 768px) {
   .audio-icon {
-    width: 25px; 
-    top: 5%; 
+    width: 25px;
+    top: 5%;
     right: 3%;
   }
   .big-screen {
-    width: 25px; 
-    top: 5%; 
-    right: 8%; 
+    width: 25px;
+    top: 5%;
+    right: 8%;
   }
   #controls {
-    display: flex; 
+    display: flex;
 }
 @media (max-width: 480px) {
   .audio-icon {
-    width: 25px; 
-    top: 5%; 
+    width: 25px;
+    top: 5%;
     right: 3%;
   }
   .big-screen {
-    width: 25px; 
-    top: 5%; 
-    right: 8%; 
+    width: 25px;
+    top: 5%;
+    right: 8%;
   }
   h2 {
     font-size: 3.2rem;

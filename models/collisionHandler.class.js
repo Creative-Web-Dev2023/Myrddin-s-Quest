@@ -46,23 +46,16 @@ class CollisionHandler {
 
   checkCollisionWithEndboss() {
     this.world.throwableObjects.forEach((bottle) => {
-      if (bottle.collided) return;       
       this.world.enemies.forEach((enemy) => {
         if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
-          bottle.collided = true;
-          bottle.isVisible = false;
-          const damage = 25; 
-          const steps = Math.ceil(enemy.energy / 20) - 1;
-          enemy.energy = Math.max(steps * 20, 0);
-          enemy.statusBarEndboss.setPercentage(enemy.energy);
-          if (enemy.energy <= 0) {
-            enemy.die();
-          }
+          enemy.takeDamage(10); 
+          bottle.isVisible = false; 
+          this.handleBottleCollision(bottle); 
+          enemy.statusBarEndboss.setPercentage(enemy.energy); // Aktualisiere den Statusbalken
         }
       });
     });
   }
-
   handleBottleCollision(bottle) {
     bottle.isVisible = false;
   }

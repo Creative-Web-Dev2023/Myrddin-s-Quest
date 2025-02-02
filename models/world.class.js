@@ -23,7 +23,6 @@ class World {
   snakes = [];
   traps = [];
   environments = []; 
-  endbossHealthBar;
 
 
   constructor(canvas, keyboard) {
@@ -42,7 +41,6 @@ class World {
       this.door = new Door(4500, 150);
       this.door.world = this;
     }
-    this.endbossHealthBar = new EndbossStatusbar();
   }
 
   initializeGameObjects() {
@@ -118,9 +116,6 @@ class World {
         enemy.update(this.character);
       }
     });
-    if (this.level.endboss) {
-      this.endbossHealthBar.setPercentage(this.level.endboss.energy);
-    }
   }
 
   updatePoison() {
@@ -138,6 +133,8 @@ class World {
   addEnemy(enemy) {
     this.enemies.push(enemy);
   }
+
+
 
   draw() {
     this.clearCanvas(); 

@@ -95,16 +95,22 @@ class Endboss extends Enemy {
       this.attack(character);
     }
   }
+
   takeDamage(damage) {
-    if (!this.dead) {
-        this.energy = Math.max(this.energy - damage, 0);
-        this.statusBarEndboss.setPercentage(Math.floor(this.energy / 20) * 20);
-        console.log("Endboss Health:", this.energy);
-        if (this.energy <= 0) {
-            this.die();
-        }
+    if (this.energy > 0) {
+      this.energy -= damage;
+      if (this.energy < 0) this.energy = 0;
+      const percentage = (this.energy / 100) * 100;
+      this.statusBarEndboss.setPercentage(percentage);
+      console.log("Endboss nimmt Schaden:", damage, "Verbleibende Energie:", this.energy);
+      this.playAnimation(this.IMAGES_HURT);
+      if (this.energy <= 0) {
+        this.die();
+      }
     }
-}
+  }
+  
+
 
   die() {
     if (!this.isDead()) {
