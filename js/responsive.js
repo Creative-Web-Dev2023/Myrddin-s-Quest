@@ -20,15 +20,11 @@ function detectTouchDevice() {
 }
 
 function setupResponsiveEvents() {
-    const isTouchDevice = detectTouchDevice();
-    
+    const isTouchDevice = detectTouchDevice(); 
     if (isTouchDevice) {
         setupTouchControls();
-        // Mobile-spezifische Initialisierungen
         adjustControlButtons();
     }
-    
-    // Gemeinsame Events
     window.addEventListener('resize', handleResponsiveResize);
 }
 
@@ -41,7 +37,6 @@ function handleResponsiveResize() {
     }
 }
 
-// Initialisierung
 document.addEventListener('DOMContentLoaded', () => {
     detectTouchDevice();
     setupResponsiveEvents();
