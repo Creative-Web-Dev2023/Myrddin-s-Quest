@@ -2,9 +2,10 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Myrddin's Quest</title>
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/game_items/magic.png" type="image/x-icon">
     <script src="models/drawable-object.class.js" defer></script>
     <script src="models/movable-object.class.js" defer></script>
@@ -33,20 +34,17 @@
     <script src="models/drawer.class.js" defer></script>
     <script src="models/collisionHandler.class.js" defer></script>
     <script src="models/game/ui.class.js" defer></script> 
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <h2>Myrddin's Quest</h2>
     <div id="canvas-container" style="position: relative;">
         <canvas id="canvas" width="720" height="480"></canvas>
-        <div id="level-completed-overlay" onclick="continueToNextLevel()">
-            <h1>Level 1 Complete</h1> 
-            <img src="img/game_ui/level-complete.png" alt="Level Complete"/>
+        <div class="icon-container">
+            <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png" onclick="toggleFullscreen()" alt="Fullscreen">
+            <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()" alt="Sound Control">
         </div>
-        <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png" onclick="toggleFullscreen()" alt="Fullscreen">
-        <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()"
-            alt="Sound Control">
         <div id="controls"  class="mobile-controls">
             <div class="control-button-container">
                 <img src="img/app_icons/arrow-left.png" id="btn-left" class="control-button" alt="Left">
@@ -87,14 +85,15 @@
         <p class="rotate-message">Please rotate your device</p>
     </div>
     <div class="overlay">
-        <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> <!-- Bild des Charakters -->
-        <img src="img/game_ui/main/how to play.png" alt="Scroll" class="how-to-play-img"> <!-- Bild der Schriftrolle -->
-        <svg width="750" height="190" style="margin: 47px 0;">
+        <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> 
+
+        <svg viewBox="0 0 850 190" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
             <defs>
                 <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent" />
             </defs>
-            <text font-size="30" font-family="Roboto" style="text-shadow: 2px 2px 4px black;">
-                <textPath href="#curve" startOffset="50%" text-anchor="middle" fill="yellow"> <!-- Text in hellgrün -->
+            <text font-size="clamp(1.5rem, 4vw, 2.5rem)" style="text-shadow: 2px 2px 4px black;">
+                <textPath href="#curve" startOffset="50%" dy="-1.5em" text-anchor="middle" fill="yellow" 
+                          dominant-baseline="middle" style="font-weight: bold;">
                     Embark on an Epic Adventure
                 </textPath>
             </text>

@@ -1,4 +1,8 @@
+* {
+  font-family: inherit !important;
+}
 body {
+  font-family: 'MedievalSharp', cursive, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,13 +21,11 @@ body {
 
 @font-face {
   font-family: 'MedievalSharp';
-  src: url('fonts/MedievalSharp-Regular.ttf') format('truetype');
+  src: url('fonts/MedievalSharp-BookOblique.ttf') format('truetype');
 }
-
-body {
-  font-family: 'MedievalSharp', sans-serif;
+h1, h2, h3, p, span, div, button, input,textPath, textarea, label, td, th, a {
+  font-family: inherit;
 }
-
 .start-button {
   position: absolute;
   bottom: 70px;
@@ -204,6 +206,7 @@ h2 {
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 1.7);
 }
 #canvas {
+  font-family: 'MedievalSharp', cursive, sans-serif;
   background-color: black;
   position: relative;
   z-index: 1;
@@ -670,7 +673,7 @@ svg {
       transform: rotate(360deg);
   }
 }
-#rotate {
+/* #rotate {
   display: flex;
   position: fixed;
   top: 0;
@@ -692,7 +695,7 @@ svg {
   width: 100px;
   height: 100px;
   animation: rotate-animation 2s linear infinite;
-}
+} */
 
 #controls {
   position: absolute;

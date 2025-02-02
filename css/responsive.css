@@ -1,0 +1,127 @@
+/* ===== Responsive Images ===== */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.responsive-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 15px;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  button, .control-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px;
+  }
+
+ .audio-icon, .big-screen {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+h2 {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+}
+
+.description {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  padding: 10px;
+}
+
+@media only screen and (max-width: 768px) {
+  #controls {
+    display: flex;
+  }
+
+  #canvas {
+    width: 90%;
+    height: auto;
+  }
+
+  .overlay {
+    width: 90%;
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+ 
+}
+
+@media screen and (max-width: 870px) and (orientation: portrait) {
+  #rotate {
+    font-size: 30px;
+  }
+}
+
+@media screen and (max-width: 800px) and (orientation: portrait) {
+  #rotate {
+    font-size: 30px;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  #controls {
+    display: flex !important;
+    bottom: 20px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  
+  .control-button {
+    width: 40px !important;
+    height: 40px !important;
+    margin: 2px;
+  }
+  
+  .control-label {
+    font-size: 14px;
+  }
+
+  #controls {
+    display: flex;
+  }
+}
+@media (max-width: 600px) {
+ 
+}
+
+@media (min-width: 769px) {
+  #controls {
+    display: none !important;
+  }
+}
+@media (max-width: 520px) {
+  .how-to-play-button {
+    display: none !important;
+  }
+}
+@media (max-width: 480px) {
+  
+  h2 {
+    font-size: 3.2rem;
+  }
+  #canvas {
+    width: 95%;
+    height: auto;
+  }
+  .overlay {
+    width: 95%;
+    height: auto;
+  }
+  
+}
+@media (max-height: 400px) {
+  
+}
