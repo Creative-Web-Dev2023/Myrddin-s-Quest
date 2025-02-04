@@ -82,9 +82,7 @@ class World {
     this.traps.forEach((trap) => {
       trap.world = this;
     });
-    if (this.level.endboss) {
-      this.level.endboss.world = this;
-    }
+  
     this.camera_x = -this.character.x - 190;
   }
 
@@ -156,6 +154,10 @@ class World {
     this.traps.forEach((trap) => {
       trap.draw(this.ctx);
     });
+
+    if (this.level.endboss) {
+        this.level.endboss.drawGuardRange(this.ctx);
+    }
   }
 
   clearCanvas() {

@@ -27,13 +27,13 @@
     <script src="models/environmments/crystal.class.js" defer></script>
     <script src="models/levels/level1.js" defer></script>
     <script src="models/game/endgame.class.js" defer></script> 
-    <script src="models/world.class.js" defer></script> 
     <script src="models/game/keyboard.class.js" defer></script>
     <script src="models/music.js" defer></script>  
-    <script src="js/game.js" defer></script> 
     <script src="models/game/gameLoop.class.js" defer></script>
-    <script src="models/drawer.class.js" defer></script>
     <script src="models/collisionHandler.class.js" defer></script>
+    <script src="models/drawer.class.js" defer></script>
+    <script src="models/world.class.js" defer></script>
+    <script src="js/game.js" defer></script> 
     <script src="models/game/ui.class.js" defer></script> 
 <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
@@ -108,6 +108,10 @@
         </div>
         <div id="description" class="description hidden">
             <h3>How to Play</h3>
+            <div class="scroll-indicators">
+                <img src="img\game_ui\login&pass\arrow2.png" class="scroll-down" alt="Scroll down">
+                <img src="img\game_ui\login&pass\arrow1.png" class="scroll-up" alt="Scroll up">
+            </div>
             <p class="description-text">Use the following keys:</p>
             <table class="table-keys">
                 <tbody>

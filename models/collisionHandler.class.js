@@ -12,6 +12,7 @@ class CollisionHandler {
     this.checkDoorCollision();
     this.checkTraps();
     this.checkThrowableObject();
+    this.checkCrystalCollision();
   }
 
   checkCollision(character, object) {
@@ -148,4 +149,17 @@ class CollisionHandler {
       }, 500); 
     }
   } 
+
+  checkCrystalCollision() {
+    if(this.world.crystal?.isActive && 
+       this.checkCollision(this.world.character, this.world.crystal)) {
+        this.handleCrystalCollection();
+    }
+  }
+
+  handleCrystalCollection() {
+    this.world.crystal.deactivate();
+    this.world.endGame.showVictoryScreen();
+    this.world.gameLoop.running = false;
+  }
 }

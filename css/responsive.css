@@ -1,4 +1,3 @@
-/* ===== Responsive Images ===== */
 img {
   max-width: 100%;
   height: auto;
@@ -18,56 +17,34 @@ img {
     padding: 12px;
   }
 
- .audio-icon, .big-screen {
+  .audio-icon, .big-screen {
     width: 30px;
     height: 30px;
   }
 }
 
-h2 {
-  font-size: clamp(2rem, 5vw, 3.8rem);
-}
-
-.description {
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  padding: 10px;
-}
-
-@media only screen and (max-width: 768px) {
+@media (min-width: 769px) {
   #controls {
-    display: flex;
+    display: none;
   }
 
-  #canvas {
-    width: 90%;
-    height: auto;
+  /* Versteckt die Scroll-Indikatoren ab 769px */
+  .scroll-indicators {
+    display: none !important;
   }
 
-  .overlay {
-    width: 90%;
-    height: auto;
-  }
-}
-
-@media screen and (max-width: 1024px) {
- 
-}
-
-@media screen and (max-width: 870px) and (orientation: portrait) {
-  #rotate {
-    font-size: 30px;
-  }
-}
-
-@media screen and (max-width: 800px) and (orientation: portrait) {
-  #rotate {
-    font-size: 30px;
+  .scroll-indicators img {
+    width: 30px;
+    height: 25px;
+    opacity: 0.8;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
   }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+  .scroll-indicators img:hover {
+    transform: scale(1.2);
+    opacity: 1;
   }
 }
 
@@ -88,40 +65,55 @@ h2 {
   .control-label {
     font-size: 14px;
   }
-
-  #controls {
-    display: flex;
+  .scroll-indicators {
+    display: flex !important;
+    flex-direction: column;
+    gap: 30px;
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
+
 @media (max-width: 600px) {
- 
-}
+  .icon-container {
+    top: 1%;
+    right: 1%;
+    gap: 5px;
+  }
 
-@media (min-width: 769px) {
-  #controls {
-    display: none !important;
+  .audio-icon, 
+  .big-screen {
+    width: 25px;
+    height: 25px;
   }
 }
+
 @media (max-width: 520px) {
   .how-to-play-button {
     display: none !important;
   }
 }
+
 @media (max-width: 480px) {
-  
   h2 {
     font-size: 3.2rem;
   }
+  
   #canvas {
     width: 95%;
     height: auto;
   }
+
   .overlay {
     width: 95%;
     height: auto;
-  }
-  
+  } 
 }
-@media (max-height: 400px) {
-  
+
+@media (max-width: 400px) {
+  .icon-container {
+    flex-direction: column;
+  }
 }

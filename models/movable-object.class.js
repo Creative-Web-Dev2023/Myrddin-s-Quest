@@ -6,6 +6,7 @@ class MovableObject extends DrawableObject {
   energy = 100; 
   lastHit = 0; 
   currentImage = 0;
+  lastFrame = 0;
 
   offset = {
       top: 0,     
@@ -192,6 +193,17 @@ class MovableObject extends DrawableObject {
           this.world.endGame.showYouLostScreen(); 
         }
       }, 3500); 
+    }
+  }
+
+  playAnimation(images) {
+    if (this.isDead()) return;
+    
+    if(this.currentImage % images.length === 0 || Date.now() - this.lastFrame > 100) {
+        let i = this.currentImage % images.length;
+        this.img = this.imageCache[images[i]];
+        this.currentImage++;
+        this.lastFrame = Date.now();
     }
   }
 }
