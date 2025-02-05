@@ -125,7 +125,7 @@ class Character extends MovableObject {
 
   handleMovement() {
     walkingSound.pause();
-    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200) { // Erlaubt Bewegung ein wenig nach dem Endboss
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200) { 
       this.moveRight();
       this.otherDirection = false;
       playWalkingSound();
@@ -159,8 +159,6 @@ class Character extends MovableObject {
       this.isAttacking = false;
     }
   }
-
-
 
   updateCamera() {
     this.world.camera_x = -this.x - 190;
@@ -272,11 +270,7 @@ class Character extends MovableObject {
     const attackRange = 150;
     this.world.enemies.forEach((enemy) => {
       if (
-        (enemy instanceof Knight ||
-          enemy instanceof Snake ||
-          enemy instanceof Endboss) &&
-        !enemy.dead
-      ) {
+        (enemy instanceof Knight || enemy instanceof Snake ||enemy instanceof Endboss) && !enemy.dead ) {
         const distance = Math.sqrt(
           Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
             Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
@@ -287,9 +281,18 @@ class Character extends MovableObject {
       }
     });
   }
+
   draw(ctx) {
     if (this.isVisible) {
       super.draw(ctx);
     }
+  }
+
+  isAttacking() {
+    return this.attackStartTime > Date.now() - 300;
+  }
+  
+  startAttack() {
+    this.attackStartTime = Date.now();
   }
 }

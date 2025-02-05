@@ -550,7 +550,12 @@ body {
       background-position: 0 0;
     }
   }
-  
+  #game-container {
+    position: relative;
+    overflow: hidden;
+    width: 720px; 
+    height: 480px;
+}
   #game-over-container {
     position: fixed;
     top: 0;

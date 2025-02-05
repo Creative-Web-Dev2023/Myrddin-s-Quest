@@ -24,7 +24,7 @@ function generateEnemiesLvl() {
     new Snake(10000, 200, 10), 
     new Snake(11700, 200, 11), 
     new Endboss(11800, 200, 12),
-    new Crystal(13360, 380),
+    new Crystal(13660, 380),
   ];
 }
 

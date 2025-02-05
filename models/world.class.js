@@ -119,6 +119,13 @@ class World {
     if (this.level.endboss) {
       this.endbossHealthBar.setPercentage(this.level.endboss.energy);
     }
+    this.enemies = this.enemies.filter(enemy => {
+      if(enemy.isRemoved) {
+        this.removeEnemyEffects(enemy); 
+        return false;
+      }
+      return true;
+    });
   }
 
   updatePoison() {
@@ -201,5 +208,9 @@ class World {
   flipImageBack(mo) {
     mo.x = mo.x * -1;
     this.ctx.restore();
+  }
+
+  removeEnemyEffects(enemy) {
+    if(enemy.sound) enemy.sound.stop();
   }
 }

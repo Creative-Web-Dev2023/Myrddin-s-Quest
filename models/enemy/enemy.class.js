@@ -2,12 +2,12 @@ class Enemy extends MovableObject {
     static nextId = 1;
     constructor(id) {
         super();
-        this.id = id || Enemy.nextId++; 
+        this.id = id || Enemy.nextId++;
+        this.energy = 100;
         this.dead = false;
         this.isAttacking = false;
-        this.energy = 100;
         this.deathAnimationPlayed = false;
-        this.isRemoved = false; 
+        this.isRemoved = false;
     }
 
     setWorld(world) {
@@ -80,7 +80,7 @@ class Enemy extends MovableObject {
                 character.takeDamage(this.attackDamage);
             }
             this.isAttacking = false;
-        }, 900); 
+        }, 1000); 
     }
 
     checkCollision(character) {

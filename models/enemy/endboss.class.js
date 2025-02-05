@@ -1,13 +1,13 @@
 class Endboss extends Enemy {
   constructor(id) {
     super(id);
-    this.height = 450; // Größere Höhe
+    this.height = 450; 
     this.width = 360; 
     this.y = 50; 
     this.x = 13250;
     this.attackRange = 200; 
     this.attackDamage = 20; 
-    this.speed = 5;
+    this.speed = 0.5;
     this.deadSound = new Audio("audio/troll dead.mp3");
     this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
     this.statusBarEndboss = new EndbossStatusbar(); 
@@ -68,9 +68,11 @@ class Endboss extends Enemy {
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
     this.animateWalking();
-    this.guardRange = { left: 13000, right: 13500 }; // 500px Bereich
+    this.guardRange = { left: 13000, right: 13500 }; 
     this.patrolSpeed = 1.2;
     this.isGuarding = true;
+    this.patrolRange = 100;
+    this.startX = this.x;
   }
 
   setWorld(world) {
@@ -81,54 +83,54 @@ class Endboss extends Enemy {
     this.deadSound.play();
   }
 
-  checkForAttack(character) {
-    const endbossBox = this.getCollisionBox();
-    const characterBox = character.getCollisionBox();
-    const attackBox = {
-      x: endbossBox.x - this.attackRange,
-      y: endbossBox.y,
-      width: this.attackRange * 2,
-      height: endbossBox.height,
-    };
-    const isInAttackRange =
-      attackBox.x < characterBox.x + characterBox.width &&
-      attackBox.x + attackBox.width > characterBox.x &&
-      attackBox.y < characterBox.y + characterBox.height &&
-      attackBox.y + attackBox.height > characterBox.y;
-    if (isInAttackRange && !this.isAttacking) {
-      this.attack(character);
-    }
-  }
-  
-  attack(character) {
-    if(this.isDead()) return;
-    this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
-    const attackBox = {
-        x: this.otherDirection ? this.x - 150 : this.x + this.width,
-        y: this.y + 50,
-        width: 150,
-        height: this.height - 100
-    };
-
-    setTimeout(() => {
-        if(this.checkCollisionWithAttackBox(character, attackBox)) {
-            character.takeDamage(this.attackDamage);
-        }
-        this.isAttacking = false;
-    }, 500);
-}
-
   takeDamage(damage) {
-    if (!this.dead) {
-        this.energy = Math.max(this.energy - damage, 0);
-        this.statusBarEndboss.setPercentage(Math.floor(this.energy / 20) * 20);
-        console.log("Endboss Health:", this.energy);
-        if (this.energy <= 0) {
-            this.die();
-        }
+    if (this.dead || this.isHurt) return; 
+    this.isHurt = true;
+    this.energy = Math.max(0, this.energy - damage);
+    this.statusBarEndboss.setPercentage(this.energy);
+    if (this.energy <= 0) {
+        this.handleDeath();
+    } else {
+        this.playHurtAnimation();
+        setTimeout(() => {
+            this.isHurt = false;
+        }, 500); 
     }
 }
+
+
+  playHurtAnimation() {
+    this.currentAnimation = this.IMAGES_HURT;
+    this.currentImage = 0;
+    clearInterval(this.animationInterval);
+    this.animationInterval = setInterval(() => {
+        if (this.currentImage >= this.IMAGES_HURT.length) {
+            clearInterval(this.animationInterval);
+            if (!this.dead) {
+                this.animateWalking();
+            }
+        } else {
+            this.playAnimation(this.IMAGES_HURT);
+        }
+    }, 100); 
+}
+
+
+  handleDeath() {
+    clearInterval(this.animationInterval);
+    this.dead = true;
+    this.currentAnimation = this.IMAGES_DEAD;
+    this.currentImage = 0;
+    this.animationInterval = setInterval(() => {
+        this.playAnimation(this.currentAnimation);
+    }, 100);
+    
+    setTimeout(() => {
+        this.isVisible = false;
+        this.world.showVictoryScreen();
+        clearInterval(this.animationInterval);
+    }, 2000);
+  }
 
   die() {
     if (!this.dead) {
@@ -149,107 +151,66 @@ class Endboss extends Enemy {
 
   update(character) {
     if (this.isDead()) return;
-    
-    if (this.checkCharacterCollision(character)) {
-        this.handleAttack(character);
-    } else {
-        this.patrol();
-    }
+    this.patrol();
+ 
     this.statusBarEndboss.setPercentage(this.energy); 
   }
 
   patrol() {
-    if (!this.isGuarding || this.isAttacking) return;
-
-    // Sanfte Richtungsänderung
-    if (this.x <= this.guardRange.left) {
+    if (this.x <= this.startX - this.patrolRange) {
         this.otherDirection = false;
-        this.patrolSpeed = Math.abs(this.patrolSpeed);
-    } else if (this.x >= this.guardRange.right) {
-        this.otherDirection = true;
-        this.patrolSpeed = -Math.abs(this.patrolSpeed); 
-    }
-  
-    this.x += this.patrolSpeed;
-
-    if (this.patrolSpeed > 0) {
-        this.otherDirection = false;
-    } else {
+    } else if (this.x >= this.startX + this.patrolRange) {
         this.otherDirection = true;
     }
+    
+    this.x += this.otherDirection ? -this.speed : this.speed;
   }
 
-  checkCharacterCollision(character) {
-    const bossBox = this.getCollisionBox();
-    const charBox = character.getCollisionBox();
-    return this.checkBoxCollision(bossBox, charBox);
-  }
-
-  handleAttack(character) {
-    this.patrolSpeed = 0; 
-    this.attack(character);
-    setTimeout(() => {
-        this.patrolSpeed = 1.5; 
-    }, 2000);
-  }
-
-  moveTowardsCharacter(character) {
-    if(this.isDead()) return;
-    const speed = this.dead ? 0 : 3;
-    if(this.x < character.x) {
-        this.x += speed;
-        this.otherDirection = false;
-    } else {
-        this.x -= speed;
-        this.otherDirection = true;
-    }
-}
   draw(ctx) {
     if (this.img && this.img.complete) {
-        if (this.otherDirection) {
-            ctx.save();
-            ctx.translate(this.x + this.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(this.img, 0, this.y, this.width, this.height);
-            ctx.restore();
-        } else {
-            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-        }
-        this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2; 
-        this.statusBarEndboss.y = this.y - this.statusBarEndboss.height + 20; 
+        this.drawEndboss(ctx);
+        this.updateStatusBarPosition();
         this.statusBarEndboss.setPercentage(this.energy);
         this.statusBarEndboss.draw(ctx);
     }
-    
-    // Debug-Anzeige
-    ctx.fillStyle = 'rgba(0,255,0,0.3)';
-    ctx.fillText(`Pos: ${Math.round(this.x)} | Speed: ${this.patrolSpeed.toFixed(1)}`, this.x - 100, this.y - 20);
   }
+
+  drawEndboss(ctx) {
+    if (this.otherDirection) {
+        ctx.save();
+        ctx.translate(this.x + this.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(this.img, 0, this.y, this.width, this.height);
+        ctx.restore();
+    } else {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+  }
+
+  updateStatusBarPosition() {
+    this.statusBarEndboss.x = this.x + this.width / 2 - this.statusBarEndboss.width / 2;
+    this.statusBarEndboss.y = this.y - this.statusBarEndboss.height + 20;
+  }
+  
     updateEndbossHealth(damage) {
     if (this.world.endboss) {
       this.world.endboss.takeDamage(damage);
     }
   }
 
-  checkCollisionWithAttackBox(character, attackBox) {
-    const charBox = character.getCollisionBox();
-    return this.checkBoxCollision(attackBox, charBox);
-  }
-
-  checkBoxCollision(box1, box2) {
-    return box1.x < box2.x + box2.width &&
-           box1.x + box1.width > box2.x &&
-           box1.y < box2.y + box2.height &&
-           box1.y + box1.height > box2.y;
-  }
-
   animateWalking() {
-    setInterval(() => {
-        if (this.isGuarding && !this.isAttacking && !this.isDead()) {
-            this.playAnimation(this.IMAGES_WALKING);
-            this.currentImage %= this.IMAGES_WALKING.length;
-        }
+    this.animationInterval = setInterval(() => {
+        this.playAnimation(this.IMAGES_WALKING);
     }, 150);
   }
-
+  playAnimation(images) {
+    if (this.currentImage >= images.length) {
+        if (this.currentAnimation === this.IMAGES_HURT) {
+            return; 
+        }
+        this.currentImage = 0;
+    }
+    this.img = this.imageCache[images[this.currentImage]];
+    this.currentImage++;
+}
 }

@@ -1,11 +1,12 @@
 class ThrowableObject extends MovableObject {
   constructor(x, y) {
-    super().loadImage("img/poison/1.png");
+    super();
+    this.isVisible = true;
+    this.loadImage("img/poison/1.png");
     this.x = x;
     this.y = y;
     this.height = 80;
     this.width = 50;
-    this.isVisible = true;
     this.collided = false; 
     this.throw(x, y);
   }
@@ -22,12 +23,28 @@ class ThrowableObject extends MovableObject {
       }
     }, 25);
   }
+
   isColliding(obj) {
     return !this.collided && super.isColliding(obj);
 }
   draw(ctx) {
     if (this.isVisible) { 
       super.draw(ctx);
+    }
+  }
+
+  onCollision() {
+    if (this.hasHit) return;
+    this.hasHit = true;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.applyGravity();
+  }
+
+  update() {
+    super.update();
+    if (this.y > 480) {
+        this.isVisible = false;
     }
   }
 }

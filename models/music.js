@@ -6,7 +6,7 @@ let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
 let level1Sound = new Audio('audio/woodsounds.mp3'); 
-let level2Sound = new Audio('audio/level2_sound.mp3'); // Neuer Hintergrundsound
+let level2Sound = new Audio('audio/level2_sound.mp3'); 
 
 let allSounds = [backgroundMusic, walkingSound, attackSound, throwPoisonBottleSound, jumpSound, level1Sound, level2Sound];
 
@@ -108,8 +108,8 @@ function playCollectPoisonBottleSound() {
 
 function playNewSound() {
     if (musicIsOn) {
-        stopAllSounds(); // Stoppe alle anderen Sounds
+        stopAllSounds();
         level2Sound.play();
-        level2Sound.loop = true; // Schleife den neuen Hintergrundsound
+        level2Sound.loop = true; 
     }
 }

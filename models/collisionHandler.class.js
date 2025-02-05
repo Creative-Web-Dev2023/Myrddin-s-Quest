@@ -51,7 +51,7 @@ class CollisionHandler {
       this.world.enemies.forEach((enemy) => {
         if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
           bottle.collided = true;
-          bottle.isVisible = false;
+          bottle.isVisible = true;
           const damage = 25; 
           const steps = Math.ceil(enemy.energy / 20) - 1;
           enemy.energy = Math.max(steps * 20, 0);
@@ -62,10 +62,6 @@ class CollisionHandler {
         }
       });
     });
-  }
-
-  handleBottleCollision(bottle) {
-    bottle.isVisible = false;
   }
 
   checkCollisionWithKey() {
@@ -141,7 +137,7 @@ class CollisionHandler {
 
   checkThrowableObject() {
     if (this.world.keyboard.D && this.canThrow) {
-      let bottle = new ThrowableObject(this.world.character.x, this.world.character.y); // Verwende die Position des Charakters
+      let bottle = new ThrowableObject(this.world.character.x, this.world.character.y);
       this.world.throwableObjects.push(bottle);
       this.canThrow = false; 
       setTimeout(() => {
@@ -162,4 +158,5 @@ class CollisionHandler {
     this.world.endGame.showVictoryScreen();
     this.world.gameLoop.running = false;
   }
+
 }
