@@ -103,7 +103,7 @@ class Knight extends Enemy {
     }
     
     takeDamage(amount) {
-        if(this.dead) return; // Kein Schaden mehr wenn tot
+        if(this.dead) return; 
         
         const now = Date.now();
         if(now - this.lastHit > 1000) {

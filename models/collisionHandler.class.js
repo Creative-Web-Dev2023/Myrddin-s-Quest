@@ -85,7 +85,7 @@ class CollisionHandler {
       ) {
         this.world.character.jump();
         if (!enemy.isDead()) {
-          enemy.takeDamage(enemy.energy); // Verursacht maximalen Schaden
+          enemy.takeDamage(10);
         }
       } else {
         if (!enemy.isDead()) {

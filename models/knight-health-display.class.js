@@ -18,18 +18,14 @@ class KnightHealthDisplay extends DrawableObject {
     update() {
         if (this.knight) {
             this.energy = this.knight.energy;
-        } else {
-            console.error("Knight ist nicht definiert");
-        }
+        } 
     }
 
     draw(ctx) {
         this.update();  
         let heartDistance = 40;
-        let heartsToShow = Math.floor(this.energy / 10);
-    
         for (let i = 0; i < 3; i++) {
-            let img = (i < heartsToShow) 
+            let img = (this.energy > i * 10) 
                 ? this.imageCache[this.IMAGES_HEARTS[1]]  
                 : this.imageCache[this.IMAGES_HEARTS[0]]; 
             ctx.drawImage(img, this.x + (i * heartDistance), this.y, 30, 30);
