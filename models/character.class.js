@@ -169,6 +169,7 @@ class Character extends MovableObject {
       this.speedY = 33;
       playJumpSound();
     }
+
   }
 
   isMoving() {
@@ -186,22 +187,21 @@ class Character extends MovableObject {
 
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
-      this.energy -= damage;
-      this.lastHit = new Date().getTime();
-      this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(this.IMAGES_HURT);
-      this.updateStatusBar();
-      if (this.energy <= 0) {
-        this.energy = 0;
-        this.die();
-      } else {
-        this.invulnerable = true;
-        setTimeout(() => {
-          this.invulnerable = false;
-        }, 2000);
-      }
+        this.energy -= damage;
+        this.lastHit = new Date().getTime();
+        this.world.characterStatusBar.setPercentage(this.energy);
+        this.playAnimation(this.IMAGES_HURT);
+        if (this.energy <= 0) {
+            this.energy = 0;
+            this.die();
+        } else {
+            this.invulnerable = true;
+            setTimeout(() => {
+                this.invulnerable = false;
+            }, 1000);
+        }
     }
-  }
+}
 
   updateStatusBar() {
     if (this.world && this.world.statusBar) {
@@ -294,5 +294,38 @@ class Character extends MovableObject {
   
   startAttack() {
     this.attackStartTime = Date.now();
+  }
+
+  die() {
+    if (!this.deadAnimationPlayed) {
+        this.deadAnimationPlayed = true;
+        this.currentImage = 0;
+        this.playDeathAnimation();
+        this.scheduleGameOver();
+    }
+  }
+
+  playDeathAnimation() {
+    let deathIndex = 0;
+    const animate = () => {
+        if (deathIndex < this.IMAGES_DEAD.length) {
+            this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
+            deathIndex++;
+            requestAnimationFrame(animate);
+        }
+    }
+    if (this.deathInterval) clearInterval(this.deathInterval);
+    this.deathInterval = requestAnimationFrame(animate);
+  }
+
+  scheduleGameOver() {
+    clearInterval(this.animationInterval);
+    clearTimeout(this.attackTimeout);
+    setTimeout(() => {
+        this.isVisible = false;
+        if (this.world.endGame) {
+            setTimeout(() => this.world.endGame.showYouLostScreen(), 300);
+        }
+    }, this.IMAGES_DEAD.length * 150 + 500); 
   }
 }

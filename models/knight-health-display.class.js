@@ -32,7 +32,6 @@ class KnightHealthDisplay extends DrawableObject {
         }
     }
     
-
     updatePosition(knightX, knightY) {
         this.x = knightX + 195;
         this.y = knightY + 30;  

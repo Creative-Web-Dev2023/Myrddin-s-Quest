@@ -1,7 +1,7 @@
 class CollisionHandler {
   constructor(world) {
     this.world = world;
-    this.canThrow = true; // Cooldown-Flag
+    this.canThrow = true; 
   }
 
   checkCollisions() {

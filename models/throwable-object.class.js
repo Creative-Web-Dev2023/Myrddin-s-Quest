@@ -47,4 +47,9 @@ class ThrowableObject extends MovableObject {
         this.isVisible = false;
     }
   }
+
+  deactivate() {
+    this.isVisible = false;
+    this.collided = true;
+  }
 }

@@ -24,6 +24,7 @@ class World {
   traps = [];
   environments = []; 
   endbossHealthBar;
+  crystal;
 
 
   constructor(canvas, keyboard) {
@@ -43,6 +44,7 @@ class World {
       this.door.world = this;
     }
     this.endbossHealthBar = new EndbossStatusbar();
+    this.crystal = null;
   }
 
   initializeGameObjects() {

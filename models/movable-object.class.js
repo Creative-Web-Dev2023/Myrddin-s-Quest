@@ -122,13 +122,8 @@ class MovableObject extends DrawableObject {
   }
 
   die() {
-    if (!this.deadAnimationPlayed) {
-      this.deadAnimationPlayed = true;
-      this.playAnimation(this.IMAGES_DEAD); 
-      setTimeout(() => {
-        this.isVisible = false; 
-      }, 3000);
-    }
+    // Basisimplementierung leer lassen oder allgemeine Logik
+    this.isVisible = false;
   }
 
   attack(character) {
@@ -153,6 +148,7 @@ class MovableObject extends DrawableObject {
   }
 
   animate() {
+    if (this.deadAnimationPlayed) return;
     this.animationInterval = setInterval(() => {
       if (this.isDead()) { 
         this.handleDeadAnimation(); 
@@ -183,27 +179,32 @@ class MovableObject extends DrawableObject {
   }
 
   handleDeadAnimation() {
-    this.playAnimation(this.IMAGES_DEAD);
-    if (this.currentImage >= this.IMAGES_DEAD.length - 1) { 
-      clearInterval(this.animationInterval); 
-      clearInterval(this.movementInterval); 
-      clearInterval(this.attackAnimationInterval);
-      setTimeout(() => {
-        if (this.world.endGame) { 
-          this.world.endGame.showYouLostScreen(); 
+    let deathIndex = 0;
+    const deathInterval = setInterval(() => {
+        if (deathIndex < this.IMAGES_DEAD.length) {
+            this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
+            deathIndex++;
+        } else {
+            clearInterval(deathInterval); 
+            setTimeout(() => {
+                if (this.world.endGame) { 
+                    this.world.endGame.showYouLostScreen();
+                }
+            }, 2000);
         }
-      }, 3500); 
-    }
-  }
+    }, 150); 
+}
 
-  playAnimation(images) {
-    if (this.isDead()) return;
-    
-    if(this.currentImage % images.length === 0 || Date.now() - this.lastFrame > 100) {
-        let i = this.currentImage % images.length;
-        this.img = this.imageCache[images[i]];
-        this.currentImage++;
-        this.lastFrame = Date.now();
-    }
+
+playAnimation(images) {
+  if(this.currentImage >= images.length) {
+      this.currentImage = 0; 
   }
+  if (this.currentImage % images.length === 0 || Date.now() - this.lastFrame > 100) {
+      let i = this.currentImage % images.length;
+      this.img = this.imageCache[images[i]];
+      this.currentImage++;
+      this.lastFrame = Date.now();
+  }
+}
 }

@@ -103,37 +103,59 @@ class Knight extends Enemy {
     }
     
     takeDamage(amount) {
-        if(this.dead) return; 
-        
+        if (this.dead) return; 
         const now = Date.now();
-        if(now - this.lastHit > 1000) {
+        if (now - this.lastHit > 1000) {
             this.energy = Math.max(0, this.energy - amount);
-            
-            if(this.energy <= 0) {
+            this.lastHit = now;
+    
+            if (this.energy <= 0) {
                 this.die();
             } else {
-                this.lastHit = now;
-                this.playAnimation(this.IMAGES_HURT);
+                this.playHurtAnimation(); 
             }
         }
     }
     
+    playHurtAnimation() {
+        let hurtIndex = 0;
+        const hurtInterval = setInterval(() => {
+            if (hurtIndex < this.IMAGES_HURT.length) {
+                this.img = this.imageCache[this.IMAGES_HURT[hurtIndex]];
+                hurtIndex++;
+            } else {
+                clearInterval(hurtInterval);
+            }
+        }, 150);
+    }
     die() {
+        if (this.dead) return;
         this.dead = true;
+        this.isMoving = false; 
         this.playDeathAnimation();
-        this.remove();
+        setTimeout(() => this.remove(), 1000); 
+    
     }
-
     playDeathAnimation() {
-        if(!this.deathAnimationPlayed) {
-            this.playAnimation(this.IMAGES_DEAD);
-            this.deathAnimationPlayed = true;
-            setTimeout(() => {
-                this.isRemoved = true;
-            }, 2000); 
-        }
+        if (this.deathAnimationPlayed) return;
+        this.deathAnimationPlayed = true;
+        this.currentImage = 0; 
+        this.img = this.imageCache[this.IMAGES_DEAD[0]]; 
+        let deathIndex = 0;
+        const deathInterval = setInterval(() => {
+            if (deathIndex < this.IMAGES_DEAD.length) {
+                this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
+                deathIndex++;
+            } else {
+                clearInterval(deathInterval);
+                setTimeout(() => {
+                    this.isRemoved = true; 
+                }, 1000);
+            }
+        }, 150); 
     }
-  
+    
+
     remove() {
         this.removeEnemy(); 
     }

@@ -98,39 +98,43 @@ class Endboss extends Enemy {
     }
 }
 
+playHurtAnimation() {
+  clearInterval(this.animationInterval);
+  this.currentAnimation = this.IMAGES_HURT;
+  this.currentImage = 0;
 
-  playHurtAnimation() {
-    this.currentAnimation = this.IMAGES_HURT;
-    this.currentImage = 0;
-    clearInterval(this.animationInterval);
-    this.animationInterval = setInterval(() => {
-        if (this.currentImage >= this.IMAGES_HURT.length) {
-            clearInterval(this.animationInterval);
-            if (!this.dead) {
-                this.animateWalking();
-            }
-        } else {
-            this.playAnimation(this.IMAGES_HURT);
-        }
-    }, 100); 
+  this.animationInterval = setInterval(() => {
+      if (this.currentImage < this.IMAGES_HURT.length) {
+          this.img = this.imageCache[this.IMAGES_HURT[this.currentImage]];
+          this.currentImage++;
+      } else {
+          clearInterval(this.animationInterval);
+          this.isHurt = false;
+          this.animateWalking();
+      }
+  }, 100);
 }
 
+handleDeath() {
+  clearInterval(this.animationInterval);
+  this.dead = true;
+  this.currentAnimation = this.IMAGES_DEAD;
+  this.currentImage = 0;
 
-  handleDeath() {
-    clearInterval(this.animationInterval);
-    this.dead = true;
-    this.currentAnimation = this.IMAGES_DEAD;
-    this.currentImage = 0;
-    this.animationInterval = setInterval(() => {
-        this.playAnimation(this.currentAnimation);
-    }, 100);
-    
-    setTimeout(() => {
-        this.isVisible = false;
-        this.world.showVictoryScreen();
-        clearInterval(this.animationInterval);
-    }, 2000);
-  }
+  this.animationInterval = setInterval(() => {
+      if (this.currentImage < this.IMAGES_DEAD.length) {
+          this.img = this.imageCache[this.IMAGES_DEAD[this.currentImage]];
+          this.currentImage++;
+      } else {
+          clearInterval(this.animationInterval);
+          setTimeout(() => {
+              this.isVisible = false;
+              this.world.showVictoryScreen();
+          }, 1000);
+      }
+  }, 150);
+}
+
 
   die() {
     if (!this.dead) {
@@ -151,9 +155,14 @@ class Endboss extends Enemy {
 
   update(character) {
     if (this.isDead()) return;
-    this.patrol();
- 
-    this.statusBarEndboss.setPercentage(this.energy); 
+    
+    if (this.isInAttackRange(character)) {
+        this.playAttackAnimation();
+    } else {
+        this.patrol();
+    }
+    
+    this.statusBarEndboss.setPercentage(this.energy);
   }
 
   patrol() {
@@ -162,7 +171,6 @@ class Endboss extends Enemy {
     } else if (this.x >= this.startX + this.patrolRange) {
         this.otherDirection = true;
     }
-    
     this.x += this.otherDirection ? -this.speed : this.speed;
   }
 
@@ -199,18 +207,38 @@ class Endboss extends Enemy {
   }
 
   animateWalking() {
+    if(this.dead || this.isHurt) return;
+    
+    clearInterval(this.animationInterval);
     this.animationInterval = setInterval(() => {
         this.playAnimation(this.IMAGES_WALKING);
     }, 150);
   }
-  playAnimation(images) {
+
+playAnimation(images) {
     if (this.currentImage >= images.length) {
-        if (this.currentAnimation === this.IMAGES_HURT) {
-            return; 
-        }
-        this.currentImage = 0;
+        this.currentImage = 0; 
     }
     this.img = this.imageCache[images[this.currentImage]];
     this.currentImage++;
 }
+
+playAttackAnimation() {
+    clearInterval(this.animationInterval);
+    this.currentImage = 0;
+    
+    this.animationInterval = setInterval(() => {
+        if (this.currentImage < this.IMAGES_ATTACKING.length) {
+            this.img = this.imageCache[this.IMAGES_ATTACKING[this.currentImage]];
+            this.currentImage++;
+        } else {
+            this.currentImage = 0;
+        }
+    }, 100);
+}
+
+isInAttackRange(character) {
+    return Math.abs(this.x - character.x) < this.attackRange;
+}
+
 }
