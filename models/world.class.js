@@ -22,15 +22,14 @@ class World {
   key;
   snakes = [];
   traps = [];
-  environments = []; 
+  environments = [];
   endbossHealthBar;
   crystal;
-
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
-    this.keyboard = keyboard; 
+    this.keyboard = keyboard;
     this.ui = new UI(canvas);
     this.initializeGameObjects();
     this.environments = generateEnvironmentsLvl();
@@ -57,13 +56,12 @@ class World {
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
-    this.traps = this.level.traps || []; // Initialisiere die Fallen
+    this.traps = this.level.traps || []; 
     this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.door = this.level.door;
-    this.key = Key.initializeKey(); // Initialisiere das Array von Schlüsseln
     this.camera_x = -this.character.x - 190;
     this.endGame = new EndGame(this);
   }
@@ -84,7 +82,7 @@ class World {
     this.traps.forEach((trap) => {
       trap.world = this;
     });
-  
+
     this.camera_x = -this.character.x - 190;
   }
 
@@ -103,11 +101,12 @@ class World {
     }
     this.character.update();
     this.updatePoison();
-  
+
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound();
     }
     if (this.character.energy <= 0 && !this.levelCompleted) {
+     gameState.save(); 
       setTimeout(() => {
         this.endGame.showYouLostScreen();
       }, 200);
@@ -140,25 +139,25 @@ class World {
   }
 
   draw() {
-    this.clearCanvas(); 
+    this.clearCanvas();
     if (this.drawer) {
       this.drawer.draw();
     }
     this.throwableObjects.forEach((obj) => {
       obj.draw(this.ctx);
       if (obj.isColliding(this.level.endboss)) {
-      this.updateEndbossHealth(obj.damage); 
-      this.characterStatusBar.update(this.character.energy); 
-      obj.deactivate();
+        this.updateEndbossHealth(obj.damage);
+        this.characterStatusBar.update(this.character.energy);
+        obj.deactivate();
       }
     });
-    
+
     this.traps.forEach((trap) => {
       trap.draw(this.ctx);
     });
 
     if (this.level.endboss) {
-        this.level.endboss.drawGuardRange(this.ctx);
+      this.level.endboss.drawGuardRange(this.ctx);
     }
   }
 

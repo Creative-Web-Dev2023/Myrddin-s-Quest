@@ -1,10 +1,10 @@
-let isAfterDoor = false; 
+let isAfterDoor = false;
 
 class Character extends MovableObject {
   height = 290;
   width = 520;
   x = 130;
-  y = 150; 
+  y = 150;
   speed = 5;
   invulnerable = false;
   poisonCollected = 0;
@@ -125,7 +125,10 @@ class Character extends MovableObject {
 
   handleMovement() {
     walkingSound.pause();
-    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200) { 
+    if (
+      this.world.keyboard.RIGHT &&
+      this.x < this.world.level.level_end_x + 200
+    ) {
       this.moveRight();
       this.otherDirection = false;
       playWalkingSound();
@@ -142,11 +145,11 @@ class Character extends MovableObject {
 
   moveLeft() {
     if (!this.canMoveLeft && this.x <= 6471) {
-      return; 
+      return;
     }
-    this.x -= this.speed; 
+    this.x -= this.speed;
     if (this.walking_sound && this.walking_sound.paused) {
-      this.walking_sound.play(); 
+      this.walking_sound.play();
     }
   }
 
@@ -169,7 +172,6 @@ class Character extends MovableObject {
       this.speedY = 33;
       playJumpSound();
     }
-
   }
 
   isMoving() {
@@ -187,21 +189,21 @@ class Character extends MovableObject {
 
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
-        this.energy -= damage;
-        this.lastHit = new Date().getTime();
-        this.world.characterStatusBar.setPercentage(this.energy);
-        this.playAnimation(this.IMAGES_HURT);
-        if (this.energy <= 0) {
-            this.energy = 0;
-            this.die();
-        } else {
-            this.invulnerable = true;
-            setTimeout(() => {
-                this.invulnerable = false;
-            }, 1000);
-        }
+      this.energy -= damage;
+      this.lastHit = new Date().getTime();
+      this.world.characterStatusBar.setPercentage(this.energy);
+      this.playAnimation(this.IMAGES_HURT);
+      if (this.energy <= 0) {
+        this.energy = 0;
+        this.die();
+      } else {
+        this.invulnerable = true;
+        setTimeout(() => {
+          this.invulnerable = false;
+        }, 1000);
+      }
     }
-}
+  }
 
   updateStatusBar() {
     if (this.world && this.world.statusBar) {
@@ -221,6 +223,16 @@ class Character extends MovableObject {
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
   }
+  resetState() {
+    this.isDead = false;
+    this.deadAnimationPlayed = false;
+    this.isVisible = true;
+    this.energy = 100;
+    this.invulnerable = false;
+    clearInterval(this.deathInterval);
+    this.deathInterval = null;
+    this.currentImage = 0;
+  }
 
   enterDoor(door) {
     this.isVisible = false;
@@ -229,13 +241,13 @@ class Character extends MovableObject {
     setTimeout(() => {
       this.isVisible = false;
       setTimeout(() => {
-        this.x = 6471; 
-        this.y = 150; 
-        this.world.camera_x = -this.x - 190; 
+        this.x = 6471;
+        this.y = 150;
+        this.world.camera_x = -this.x - 190;
         this.isVisible = true;
-        this.canMoveLeft = false; 
-        isAfterDoor = true; 
-        playNewSound(); 
+        this.canMoveLeft = false;
+        isAfterDoor = true;
+        playNewSound();
       }, 200);
     }, 2000);
   }
@@ -260,8 +272,8 @@ class Character extends MovableObject {
   }
 
   collectKey(key) {
-    if (key && key.isActive) { 
-      key.deactivate(); 
+    if (key && key.isActive) {
+      key.deactivate();
       this.hasKey = true;
     }
   }
@@ -270,7 +282,11 @@ class Character extends MovableObject {
     const attackRange = 150;
     this.world.enemies.forEach((enemy) => {
       if (
-        (enemy instanceof Knight || enemy instanceof Snake ||enemy instanceof Endboss) && !enemy.dead ) {
+        (enemy instanceof Knight ||
+          enemy instanceof Snake ||
+          enemy instanceof Endboss) &&
+        !enemy.dead
+      ) {
         const distance = Math.sqrt(
           Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
             Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
@@ -291,41 +307,35 @@ class Character extends MovableObject {
   isAttacking() {
     return this.attackStartTime > Date.now() - 300;
   }
-  
+
   startAttack() {
     this.attackStartTime = Date.now();
   }
 
   die() {
     if (!this.deadAnimationPlayed) {
+        this.isDead = true;
         this.deadAnimationPlayed = true;
         this.currentImage = 0;
         this.playDeathAnimation();
-        this.scheduleGameOver();
+        setTimeout(() => {
+            this.isVisible = false;
+            this.resetState();
+        }, this.IMAGES_DEAD.length * 150);
     }
   }
 
   playDeathAnimation() {
-    let deathIndex = 0;
-    const animate = () => {
-        if (deathIndex < this.IMAGES_DEAD.length) {
-            this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
-            deathIndex++;
-            requestAnimationFrame(animate);
-        }
-    }
     if (this.deathInterval) clearInterval(this.deathInterval);
-    this.deathInterval = requestAnimationFrame(animate);
-  }
-
-  scheduleGameOver() {
-    clearInterval(this.animationInterval);
-    clearTimeout(this.attackTimeout);
-    setTimeout(() => {
-        this.isVisible = false;
-        if (this.world.endGame) {
-            setTimeout(() => this.world.endGame.showYouLostScreen(), 300);
+    let index = 0;
+    this.deathInterval = setInterval(() => {
+        if (index < this.IMAGES_DEAD.length) {
+            this.img = this.imageCache[this.IMAGES_DEAD[index]];
+            this.currentImage = index % this.IMAGES_DEAD.length;
+            index++;
+        } else {
+            clearInterval(this.deathInterval);
         }
-    }, this.IMAGES_DEAD.length * 150 + 500); 
+    }, 150);
   }
 }

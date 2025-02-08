@@ -1,7 +1,7 @@
 class Crystal extends DrawableObject {
   constructor(x, y) {
     super();
-    this.loadImage('img/game_items/diamond.png');
+    this.loadImage("img/game_items/diamond.png");
     this.x = x;
     this.y = y;
     this.width = 80;
@@ -24,12 +24,14 @@ class Crystal extends DrawableObject {
   }
 
   draw(ctx) {
-    super.draw(ctx); 
-    
+    super.draw(ctx);
+
     if (this.isActive) {
       ctx.save();
       ctx.globalAlpha = this.glowIntensity * 0.3;
-      ctx.filter = `blur(${this.glowIntensity * 5}px) brightness(${1 + this.glowIntensity})`;
+      ctx.filter = `blur(${this.glowIntensity * 5}px) brightness(${
+        1 + this.glowIntensity
+      })`;
       ctx.drawImage(
         this.img,
         this.x - this.glowIntensity * 10,

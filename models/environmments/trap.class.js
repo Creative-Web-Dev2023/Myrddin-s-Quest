@@ -1,7 +1,7 @@
 class Trap extends MovableObject {
   height = 180;
   width = 180;
-  isActive = false; 
+  isActive = false;
   IMAGES_IDLE = [
     "img/obstacles/trap/trap1.png",
     "img/obstacles/trap/trap2.png",
@@ -20,8 +20,6 @@ class Trap extends MovableObject {
     this.animate();
   }
 
- 
-
   animate() {
     setInterval(() => {
       this.playAnimation(this.IMAGES_IDLE);
@@ -29,11 +27,11 @@ class Trap extends MovableObject {
   }
 
   static drawTraps(ctx, traps, camera_x) {
-    traps.forEach(trap => {
-      if (typeof trap.draw === 'function') {
+    traps.forEach((trap) => {
+      if (typeof trap.draw === "function") {
         trap.draw(ctx, camera_x);
       } else {
-        console.error('Das Objekt hat keine gültige draw-Methode:', trap);
+        console.error("Das Objekt hat keine gültige draw-Methode:", trap);
       }
     });
   }

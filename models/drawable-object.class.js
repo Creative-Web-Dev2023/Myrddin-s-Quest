@@ -15,49 +15,57 @@ class DrawableObject {
 
   loadImages(images) {
     if (!images || images.length === 0) {
-        console.error("Fehler: Bilder-Array ist leer oder undefined!");
-        return;
+      console.error("Fehler: Bilder-Array ist leer oder undefined!");
+      return;
     }
     images.forEach((path) => {
-        const img = new Image();
-        img.src = path;
-        this.imageCache[path] = img;
+      const img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
     });
-    this.img = this.imageCache[images[0]] || new Image(); 
+    this.img = this.imageCache[images[0]] || new Image();
   }
 
   playAnimation(images) {
-    if (images && images.length > 0) { 
+    if (images && images.length > 0) {
       let i = this.currentImage % images.length;
       this.img = this.imageCache[images[i]];
       this.currentImage++;
-    } 
+    }
   }
 
   draw(ctx) {
     if (this.img) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    } 
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
   }
 
   drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Knight || this instanceof Endboss || this instanceof Snake || this instanceof Door || this instanceof PoisonObject || this instanceof Key) {
+    if (
+      this instanceof Character ||
+      this instanceof Knight ||
+      this instanceof Endboss ||
+      this instanceof Snake ||
+      this instanceof Door ||
+      this instanceof PoisonObject ||
+      this instanceof Key
+    ) {
       ctx.beginPath();
-      ctx.lineWidth = '4';
+      ctx.lineWidth = "4";
       if (this instanceof Character) {
-        ctx.strokeStyle = 'blue';
+        ctx.strokeStyle = "blue";
       } else if (this instanceof Knight) {
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = "red";
       } else if (this instanceof Endboss) {
-        ctx.strokeStyle = 'yellow';
+        ctx.strokeStyle = "yellow";
       } else if (this instanceof Snake) {
-        ctx.strokeStyle = 'beige';
+        ctx.strokeStyle = "beige";
       } else if (this instanceof Door) {
-        ctx.strokeStyle = 'green';
+        ctx.strokeStyle = "green";
       } else if (this instanceof PoisonObject) {
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = "black";
       } else if (this instanceof Key) {
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = "red";
       }
       ctx.rect(
         this.x + this.offset.left,
@@ -74,7 +82,7 @@ class DrawableObject {
       x: this.x + this.offset.left,
       y: this.y + this.offset.top,
       width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom
+      height: this.height - this.offset.top - this.offset.bottom,
     };
   }
 }

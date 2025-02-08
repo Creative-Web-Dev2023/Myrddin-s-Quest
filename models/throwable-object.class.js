@@ -7,7 +7,7 @@ class ThrowableObject extends MovableObject {
     this.y = y;
     this.height = 80;
     this.width = 50;
-    this.collided = false; 
+    this.collided = false;
     this.throw(x, y);
   }
 
@@ -18,7 +18,7 @@ class ThrowableObject extends MovableObject {
     this.acceleration = 1.5;
     this.applyGravity();
     setInterval(() => {
-      if (this.isVisible) { 
+      if (this.isVisible) {
         this.x += 10;
       }
     }, 25);
@@ -26,9 +26,10 @@ class ThrowableObject extends MovableObject {
 
   isColliding(obj) {
     return !this.collided && super.isColliding(obj);
-}
+  }
+  
   draw(ctx) {
-    if (this.isVisible) { 
+    if (this.isVisible) {
       super.draw(ctx);
     }
   }
@@ -44,7 +45,7 @@ class ThrowableObject extends MovableObject {
   update() {
     super.update();
     if (this.y > 480) {
-        this.isVisible = false;
+      this.isVisible = false;
     }
   }
 

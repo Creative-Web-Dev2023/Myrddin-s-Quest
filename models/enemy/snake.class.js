@@ -26,7 +26,10 @@ class Snake extends Enemy {
       "img/snake/attack/attack 002.png",
       "img/snake/attack/attack 003.png",
     ];
-    this.IMAGES_HURT = ["img/snake/hurt/hurt 000.png", "img/snake/hurt/hurt 001.png"];
+    this.IMAGES_HURT = [
+      "img/snake/hurt/hurt 000.png",
+      "img/snake/hurt/hurt 001.png",
+    ];
     this.IMAGES_DEAD = [
       "img/snake/die/die 000.png",
       "img/snake/die/die 001.png",
@@ -45,45 +48,45 @@ class Snake extends Enemy {
     this.world = world;
   }
 
-checkForAttack(character) {
-  const endbossBox = this.getCollisionBox();
-  const characterBox = character.getCollisionBox();
-  const attackBox = {
-    x: endbossBox.x - this.attackRange,
-    y: endbossBox.y,
-    width: this.attackRange * 2,
-    height: endbossBox.height,
-  };
-  const isInAttackRange =
-    attackBox.x < characterBox.x + characterBox.width &&
-    attackBox.x + attackBox.width > characterBox.x &&
-    attackBox.y < characterBox.y + characterBox.height &&
-    attackBox.y + attackBox.height > characterBox.y;
-  if (isInAttackRange && !this.isAttacking) {
-    this.attack(character);
-  }
-}
-
-attack(character) {
-  if (this.dead || this.isAttacking) return;
-  this.isAttacking = true;
-  this.playAnimation(this.IMAGES_ATTACKING);
-  setTimeout(() => {
-    const characterBox = character.getCollisionBox();
+  checkForAttack(character) {
     const endbossBox = this.getCollisionBox();
-    const isStillInRange =
-      endbossBox.x < characterBox.x + characterBox.width &&
-      endbossBox.x + endbossBox.width > characterBox.x &&
-      endbossBox.y < characterBox.y + characterBox.height &&
-      endbossBox.y + endbossBox.height > characterBox.y;
-    if (isStillInRange) {
-      character.takeDamage(this.attackDamage);
+    const characterBox = character.getCollisionBox();
+    const attackBox = {
+      x: endbossBox.x - this.attackRange,
+      y: endbossBox.y,
+      width: this.attackRange * 2,
+      height: endbossBox.height,
+    };
+    const isInAttackRange =
+      attackBox.x < characterBox.x + characterBox.width &&
+      attackBox.x + attackBox.width > characterBox.x &&
+      attackBox.y < characterBox.y + characterBox.height &&
+      attackBox.y + attackBox.height > characterBox.y;
+    if (isInAttackRange && !this.isAttacking) {
+      this.attack(character);
     }
+  }
+
+  attack(character) {
+    if (this.dead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAnimation(this.IMAGES_ATTACKING);
     setTimeout(() => {
-      this.isAttacking = false;
-    }, 500);
-  }, 400);
-}
+      const characterBox = character.getCollisionBox();
+      const endbossBox = this.getCollisionBox();
+      const isStillInRange =
+        endbossBox.x < characterBox.x + characterBox.width &&
+        endbossBox.x + endbossBox.width > characterBox.x &&
+        endbossBox.y < characterBox.y + characterBox.height &&
+        endbossBox.y + endbossBox.height > characterBox.y;
+      if (isStillInRange) {
+        character.takeDamage(this.attackDamage);
+      }
+      setTimeout(() => {
+        this.isAttacking = false;
+      }, 500);
+    }, 400);
+  }
 
   playAttackAnimation() {
     this.playAnimation(this.IMAGES_ATTACKING);

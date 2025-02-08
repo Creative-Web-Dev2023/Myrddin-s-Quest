@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Myrddin's Quest</title>
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/style.css">
@@ -12,30 +14,30 @@
     <script src="models/levels/level.class.js" defer></script>
     <script src="models/environmments/statusbar.class.js" defer></script>
     <script src="models/throwable-object.class.js" defer></script>
-    <script src="models/environmments/door.class.js" defer></script> 
+    <script src="models/environmments/door.class.js" defer></script>
     <script src="models/character.class.js" defer></script>
     <script src="models/knight-health-display.class.js" defer></script>
     <script src="models/enemy/enemy.class.js" defer></script>
     <script src="models/enemy/knight.class.js" defer></script>
-    <script src="models/environmments/clouds.class.js" defer></script>     
+    <script src="models/environmments/clouds.class.js" defer></script>
     <script src="models/enemy/endboss.class.js" defer></script>
     <script src="models/environmments/background-object.class.js" defer></script>
-    <script src="models/enemy/snake.class.js" defer></script> 
-    <script src="models/environmments/key.class.js" defer></script> 
-    <script src="models/environmments/poison.class.js" defer></script> 
-    <script src="models/environmments/trap.class.js" defer></script> 
+    <script src="models/enemy/snake.class.js" defer></script>
+    <script src="models/environmments/key.class.js" defer></script>
+    <script src="models/environmments/poison.class.js" defer></script>
+    <script src="models/environmments/trap.class.js" defer></script>
     <script src="models/environmments/crystal.class.js" defer></script>
     <script src="models/levels/level1.js" defer></script>
-    <script src="models/game/endgame.class.js" defer></script> 
+    <script src="models/game/endgame.class.js" defer></script>
     <script src="models/game/keyboard.class.js" defer></script>
-    <script src="models/music.js" defer></script>  
+    <script src="models/music.js" defer></script>
     <script src="models/game/gameLoop.class.js" defer></script>
     <script src="models/collisionHandler.class.js" defer></script>
     <script src="models/drawer.class.js" defer></script>
     <script src="models/world.class.js" defer></script>
-    <script src="js/game.js" defer></script> 
-    <script src="models/game/ui.class.js" defer></script> 
-<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+    <script src="js/game.js" defer></script>
+    <script src="models/game/ui.class.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -43,10 +45,12 @@
     <div id="canvas-container" style="position: relative;">
         <canvas id="canvas" width="720" height="480"></canvas>
         <div class="icon-container">
-            <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png" onclick="toggleFullscreen()" alt="Fullscreen">
-            <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png" onclick="musicSwitcher()" alt="Sound Control">
+            <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png"
+                onclick="toggleFullscreen()" alt="Fullscreen">
+            <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png"
+                onclick="musicSwitcher()" alt="Sound Control">
         </div>
-        <div id="controls"  class="mobile-controls">
+        <div id="controls" class="mobile-controls">
             <div class="control-button-container">
                 <img src="img/app_icons/arrow-left.png" id="btn-left" class="control-button" alt="Left">
                 <span class="control-label"></span>
@@ -76,30 +80,27 @@
             <span>A: Attack</span> |
             <span>D: Throw Bottle</span> |
             <span><strong>←</strong>: To the left</span> |
-            <span><strong>→</strong>: To the right</span> 
-            
+            <span><strong>→</strong>: To the right</span>
+
         </p>
     </div>
-    
     <div id="rotate" style="display: flex;">
         <img class="rotate-icon" src="img/game_ui/device-mobile-phone.png" alt="Rotate">
         <p class="rotate-message">Please rotate your device</p>
     </div>
     <div class="overlay">
-        <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character"> 
-
+        <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character">
         <svg viewBox="0 0 850 190" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
             <defs>
                 <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent" />
             </defs>
             <text font-size="clamp(1.5rem, 4vw, 2.5rem)" style="text-shadow: 2px 2px 4px black;">
-                <textPath href="#curve" startOffset="50%" dy="-1.5em" text-anchor="middle" fill="yellow" 
-                          dominant-baseline="middle" style="font-weight: bold;">
+                <textPath href="#curve" startOffset="50%" dy="-1.5em" text-anchor="middle" fill="yellow"
+                    dominant-baseline="middle" style="font-weight: bold;">
                     Embark on an Epic Adventure
                 </textPath>
             </text>
         </svg>
-
         <div class="button-container">
             <a id="startButton" class="game-button start-button" onclick="startGame()"><span>Start Game</span></a>
             <div id="description-container" class="game-button how-to-play-button" onclick="handleDescription()">
@@ -144,12 +145,11 @@
                 Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal.
                 On his way, he must cross dangerous forests guarded by knights, poisonous snakes and dark magic.
             </p>
-            <p class="back-link" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
+            <p class="back-link" onclick="goBack()">← Back to Start</p>
         </div>
         <div id="impressum-container" class="impressum-button" onclick="handleImpressum()">
             <span>Impressum</span>
         </div>
-
         <div id="impressum" class="impressum">
             <h3>Impressum</h3>
             <p>@ Gabriela Ströbl 2024</p>
@@ -159,17 +159,20 @@
             </p>
             <p>Font:Sylfaen</p>
             <p>Images:CraftPix.net</p>
-            <p class="back-link2" onclick="goBack()">← Back to Start</p> <!-- Text-Link statt Button -->
+            <p class="back-link2" onclick="goBack()">← Back to Start</p>
         </div>
     </div>
-
     <div id="game-over-container" style="display: none;">
         <div class="you-lost-image"></div>
         <div class="game-button-container">
             <button id="tryAgain" class="game-button" style="display:none;" onclick="tryAgain()">
                 <img src="img/game_ui/try_again.png" alt="Try Again">
             </button>
+            <button id="quitButton" class="game-button" style="display:none;" onclick="quitGame()">
+                <img src="img/game_ui/quit.png" alt="Quit Game">
+            </button>
         </div>
     </div>
 </body>
+
 </html>

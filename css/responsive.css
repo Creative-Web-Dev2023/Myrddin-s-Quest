@@ -11,13 +11,15 @@ img {
 }
 
 @media (hover: none) and (pointer: coarse) {
-  button, .control-button {
+  button,
+  .control-button {
     min-width: 44px;
     min-height: 44px;
     padding: 12px;
   }
 
-  .audio-icon, .big-screen {
+  .audio-icon,
+  .big-screen {
     width: 30px;
     height: 30px;
   }
@@ -55,13 +57,13 @@ img {
     gap: 10px;
     flex-wrap: nowrap;
   }
-  
+
   .control-button {
     width: 40px !important;
     height: 40px !important;
     margin: 2px;
   }
-  
+
   .control-label {
     font-size: 14px;
   }
@@ -74,6 +76,16 @@ img {
     top: 50%;
     transform: translateY(-50%);
   }
+
+  .you-lost-image {
+    width: 80%;
+    height: 200px;
+    margin-bottom: 30px;
+  }
+  
+  .game-button img {
+    width: 160px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -83,7 +95,7 @@ img {
     gap: 5px;
   }
 
-  .audio-icon, 
+  .audio-icon,
   .big-screen {
     width: 25px;
     height: 25px;
@@ -100,7 +112,7 @@ img {
   h2 {
     font-size: 3.2rem;
   }
-  
+
   #canvas {
     width: 95%;
     height: auto;
@@ -109,11 +121,42 @@ img {
   .overlay {
     width: 95%;
     height: auto;
-  } 
+  }
+
+  .you-lost-image {
+    height: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .game-button img {
+    width: 120px;
+  }
+  
+  .game-button-container {
+    gap: 20px;
+  }
 }
 
 @media (max-width: 400px) {
   .icon-container {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 1200px) {
+  .you-lost-image {
+    width: 500px;
+    height: 250px;
+  }
+}
+
+@media (max-height: 600px) {
+  .you-lost-image {
+    height: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .game-button img {
+    width: 100px;
   }
 }

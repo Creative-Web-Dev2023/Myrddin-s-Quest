@@ -1,7 +1,5 @@
 class EndGame {
-  IMAGES_YOU_LOST = [
-    "img/game_ui/login&pass/game_over.png",
-  ];
+  IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
 
   constructor(world) {
     this.world = world;
@@ -9,20 +7,14 @@ class EndGame {
 
   showYouLostScreen() {
     setTimeout(() => {
-      const gameOverContainer = document.getElementById('game-over-container');
-      gameOverContainer.style.display = 'flex';
-      document.getElementById('tryAgain').style.display = 'block';
-    }, 2500); // Verzögerung von 3500 ms, um sicherzustellen, dass die Dead-Animation abgeschlossen ist
+      const gameOverContainer = document.getElementById("game-over-container");
+      gameOverContainer.style.display = "flex";
+      document.getElementById("tryAgain").style.display = "block";
+      document.getElementById("quitButton").style.display = "block";
+      if (this.world && this.world.gameLoop) {
+        this.world.gameLoop.running = false;
+      }
+    }, 2500);
   }
 
- 
-  showLevelCompletedText() {
-    const levelCompletedContainer = document.getElementById('level-completed-container');
-    levelCompletedContainer.classList.remove('hidden');
-    levelCompletedContainer.classList.add('show');
-    this.stopGame(); // Stoppt das Spiel
-  } 
-  stopGame() {
-    clearInterval(this.world.gameLoopInterval); // Stoppt die Spielschleife
-  }
 }

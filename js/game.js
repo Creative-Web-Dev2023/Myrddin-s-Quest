@@ -6,6 +6,47 @@ let candleImage = new Image();
 let IntervallIDs = [];
 let knightHealthDisplay;
 
+const gameState = {
+  save() {
+    localStorage.setItem('gameState', JSON.stringify({
+      characterX: world.character.x,
+      characterY: world.character.y,
+      characterEnergy: world.character.energy,
+      enemies: world.enemies.map(e => ({
+        type: e.constructor.name,
+        x: e.x,
+        y: e.y,
+        energy: e.energy,
+        dead: e.dead
+      })),
+      levelProgress: world.character.x 
+    }));
+  },
+  
+restore() {
+    const saved = JSON.parse(localStorage.getItem('gameState'));
+    if (!saved) return;
+    world.character.x = saved.characterX;
+    world.character.y = saved.characterY;
+    world.character.energy = saved.characterEnergy;
+    if (world.character.energy <= 0) {
+        world.character.energy = 100;
+    }
+    world.character.deadAnimationPlayed = false;
+    world.character.isVisible = true;
+    world.enemies.forEach((enemy, index) => {
+        if (saved.enemies[index]) {
+            enemy.x = saved.enemies[index].x;
+            enemy.y = saved.enemies[index].y;
+            enemy.energy = saved.enemies[index].energy;
+            enemy.dead = saved.enemies[index].dead;
+            enemy.isVisible = !enemy.dead;
+        }
+    });
+    world.camera_x = saved.levelProgress;
+}
+};
+
 function startGame() {
   document.querySelector(".overlay").style.display = "none";
   document.getElementById("audioSwitcher").classList.remove("hidden");
@@ -70,7 +111,11 @@ function quitGame() {
 }
 
 function tryAgain() {
-  location.reload();
+  gameState.restore();
+  document.getElementById('game-over-container').style.display = 'none';
+  world.characterStatusBar.setPercentage(world.character.energy);
+  world.gameLoop.running = true;
+  world.gameLoop.start();
 }
 
 function toggleFullscreen() {

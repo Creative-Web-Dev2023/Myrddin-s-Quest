@@ -1,35 +1,35 @@
 class StatusBar extends DrawableObject {
   HEALTH = [
-    "img/game_ui/statusbars/statusbar-health/0.png", 
+    "img/game_ui/statusbars/statusbar-health/0.png",
     "img/game_ui/statusbars/statusbar-health/20.png",
     "img/game_ui/statusbars/statusbar-health/40.png",
     "img/game_ui/statusbars/statusbar-health/60.png",
     "img/game_ui/statusbars/statusbar-health/80.png",
-    "img/game_ui/statusbars/statusbar-health/100.png", 
+    "img/game_ui/statusbars/statusbar-health/100.png",
   ];
 
   percentage = 100;
 
   constructor() {
     super();
-    this.loadImages(this.HEALTH); 
-    this.x = 2; 
-    this.y = 10; 
-    this.width = 190; 
-    this.height = 50; 
-    this.setPercentage(100); 
+    this.loadImages(this.HEALTH);
+    this.x = 2;
+    this.y = 10;
+    this.width = 190;
+    this.height = 50;
+    this.setPercentage(100);
   }
 
-  setPercentage(percentage) { 
-    this.percentage = percentage; 
-    let path = this.HEALTH[this.resolveImageIndex()]; 
-    this.img = this.imageCache[path]; 
+  setPercentage(percentage) {
+    this.percentage = percentage;
+    let path = this.HEALTH[this.resolveImageIndex()];
+    this.img = this.imageCache[path];
   }
 
-  resolveImageIndex() { 
-    if (this.percentage >= 100) { 
-      return 5; 
-    } else if (this.percentage >= 80) { 
+  resolveImageIndex() {
+    if (this.percentage >= 100) {
+      return 5;
+    } else if (this.percentage >= 80) {
       return 4;
     } else if (this.percentage >= 60) {
       return 3;
@@ -43,7 +43,7 @@ class StatusBar extends DrawableObject {
   }
 
   setHealth(health) {
-    this.healthElement.style.width = health + "%"; 
+    this.healthElement.style.width = health + "%";
   }
 }
 
@@ -59,12 +59,12 @@ class PoisonStatusBar extends DrawableObject {
 
   constructor() {
     super();
-    this.loadImages(this.IMAGES); 
-    this.x = 2; 
-    this.y = 50; 
+    this.loadImages(this.IMAGES);
+    this.x = 2;
+    this.y = 50;
     this.width = 190;
-    this.height = 50; 
-    this.setPercentage(0); 
+    this.height = 50;
+    this.setPercentage(0);
   }
 
   setPercentage(percentage) {
@@ -82,9 +82,9 @@ class PoisonStatusBar extends DrawableObject {
     return 0;
   }
 
-  increasePercentage(amount) { 
-    this.percentage = Math.min(100, this.percentage + amount); 
-    this.setPercentage(this.percentage); 
+  increasePercentage(amount) {
+    this.percentage = Math.min(100, this.percentage + amount);
+    this.setPercentage(this.percentage);
   }
 }
 class EndbossStatusbar extends DrawableObject {
@@ -96,15 +96,15 @@ class EndbossStatusbar extends DrawableObject {
     "img/game_ui/statusbars/statusbar-endboss/80.png",
     "img/game_ui/statusbars/statusbar-endboss/100.png",
   ];
-  percentage = 100; 
+  percentage = 100;
 
   constructor() {
     super();
     this.loadImages(this.IMAGES);
     this.y = 710;
-    this.width = 170; 
-    this.height = 40; 
-    this.setPercentage(100); 
+    this.width = 170;
+    this.height = 40;
+    this.setPercentage(100);
   }
 
   setPercentage(percentage) {

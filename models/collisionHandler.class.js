@@ -1,14 +1,14 @@
 class CollisionHandler {
   constructor(world) {
     this.world = world;
-    this.canThrow = true; 
+    this.canThrow = true;
   }
 
   checkCollisions() {
     this.checkCollisionWithPoisons();
     this.checkCollisionsWithEnemies();
     this.checkCollisionWithEndboss();
-    this.checkCollisionWithKey(); 
+    this.checkCollisionWithKey();
     this.checkDoorCollision();
     this.checkTraps();
     this.checkThrowableObject();
@@ -43,9 +43,16 @@ class CollisionHandler {
         this.checkEnemyAttack(enemy);
       }
     });
+    if (
+      this.world.endboss &&
+      this.checkCollision(this.world.character, this.world.endboss)
+    ) {
+      this.world.endboss.takeDamageFromCharacter(10);
+    }
+
   }
 
-  checkCollisionWithEndboss() {
+ checkCollisionWithEndboss() {
     this.world.throwableObjects.forEach((bottle) => {
       if (bottle.collided) return;       
       this.world.enemies.forEach((enemy) => {
@@ -69,10 +76,13 @@ class CollisionHandler {
       return;
     }
     this.world.enemies.forEach((enemy, index) => {
-      if (enemy instanceof Key && this.checkCollision(this.world.character, enemy)) { 
-        enemy.deactivate(); 
-        this.world.enemies.splice(index, 1); 
-        this.world.character.collectKey(enemy); 
+      if (
+        enemy instanceof Key &&
+        this.checkCollision(this.world.character, enemy)
+      ) {
+        enemy.deactivate();
+        this.world.enemies.splice(index, 1);
+        this.world.character.collectKey(enemy);
       }
     });
   }
@@ -127,7 +137,9 @@ class CollisionHandler {
         if (this.checkCollision(this.world.character, trap)) {
           trap.isActive = true;
           this.world.character.takeDamage(10);
-          this.world.characterStatusBar.setPercentage(this.world.character.energy);
+          this.world.characterStatusBar.setPercentage(
+            this.world.character.energy
+          );
         } else {
           trap.isActive = false;
         }
@@ -137,19 +149,24 @@ class CollisionHandler {
 
   checkThrowableObject() {
     if (this.world.keyboard.D && this.canThrow) {
-      let bottle = new ThrowableObject(this.world.character.x, this.world.character.y);
+      let bottle = new ThrowableObject(
+        this.world.character.x,
+        this.world.character.y
+      );
       this.world.throwableObjects.push(bottle);
-      this.canThrow = false; 
+      this.canThrow = false;
       setTimeout(() => {
-        this.canThrow = true; 
-      }, 500); 
+        this.canThrow = true;
+      }, 500);
     }
-  } 
+  }
 
   checkCrystalCollision() {
-    if(this.world.crystal?.isActive && 
-       this.checkCollision(this.world.character, this.world.crystal)) {
-        this.handleCrystalCollection();
+    if (
+      this.world.crystal?.isActive &&
+      this.checkCollision(this.world.character, this.world.crystal)
+    ) {
+      this.handleCrystalCollection();
     }
   }
 
@@ -158,5 +175,4 @@ class CollisionHandler {
     this.world.endGame.showVictoryScreen();
     this.world.gameLoop.running = false;
   }
-
 }

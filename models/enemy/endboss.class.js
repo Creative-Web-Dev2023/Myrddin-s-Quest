@@ -84,65 +84,58 @@ class Endboss extends Enemy {
   }
 
   takeDamage(damage) {
-    if (this.dead || this.isHurt) return; 
-    this.isHurt = true;
-    this.energy = Math.max(0, this.energy - damage);
-    this.statusBarEndboss.setPercentage(this.energy);
-    if (this.energy <= 0) {
-        this.handleDeath();
-    } else {
-        this.playHurtAnimation();
-        setTimeout(() => {
-            this.isHurt = false;
-        }, 500); 
+    if (this.isDead) return;
+    this.energy -= damage;
+    this.energy = Math.max(this.energy, 0);
+    if (this.statusBar) {
+      this.statusBar.setPercentage(this.energy, 'endboss');
     }
-}
-
-playHurtAnimation() {
-  clearInterval(this.animationInterval);
-  this.currentAnimation = this.IMAGES_HURT;
-  this.currentImage = 0;
-
-  this.animationInterval = setInterval(() => {
-      if (this.currentImage < this.IMAGES_HURT.length) {
-          this.img = this.imageCache[this.IMAGES_HURT[this.currentImage]];
-          this.currentImage++;
-      } else {
-          clearInterval(this.animationInterval);
-          this.isHurt = false;
-          this.animateWalking();
-      }
-  }, 100);
-}
-
-handleDeath() {
-  clearInterval(this.animationInterval);
-  this.dead = true;
-  this.currentAnimation = this.IMAGES_DEAD;
-  this.currentImage = 0;
-
-  this.animationInterval = setInterval(() => {
-      if (this.currentImage < this.IMAGES_DEAD.length) {
-          this.img = this.imageCache[this.IMAGES_DEAD[this.currentImage]];
-          this.currentImage++;
-      } else {
-          clearInterval(this.animationInterval);
-          setTimeout(() => {
-              this.isVisible = false;
-              this.world.showVictoryScreen();
-          }, 1000);
-      }
-  }, 150);
-}
-
-
-  die() {
-    if (!this.dead) {
-        super.die();
-        this.spawnCrystal();
-        setTimeout(() => this.isVisible = false, 2000);
+    if (this.energy <= 0) {
+      this.die();
+    } else {
+      this.playHurtAnimation();
     }
   }
+
+  playHurtAnimation() {
+    clearInterval(this.animationInterval);
+    this.currentAnimation = this.IMAGES_HURT;
+    this.currentImage = 0;
+    this.animationInterval = setInterval(() => {
+        if (this.currentImage < this.IMAGES_HURT.length) {
+            this.img = this.imageCache[this.IMAGES_HURT[this.currentImage]];
+            this.currentImage++;
+        } else {
+            clearInterval(this.animationInterval);
+            this.animateWalking();
+        }
+    }, 100);
+  }
+   
+  playDeathAnimation() {
+    this.currentImage = 0;
+    this.animationInterval = setInterval(() => {
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.img = this.imageCache[this.IMAGES_DEAD[this.currentImage]];
+            this.currentImage++;
+        } else {
+            clearInterval(this.animationInterval);
+        }
+    }, 150);
+}
+ 
+die() {
+    if (!this.deathAnimationPlayed) {
+        this.deathAnimationPlayed = true;
+        this.dead = true; 
+        clearInterval(this.animationInterval);       
+        this.playDeathAnimation();
+        setTimeout(() => {
+            this.isVisible = false;
+            this.removeEnemy(); 
+        }, this.IMAGES_DEAD.length * 200);
+    }
+}
 
   spawnCrystal() {
     const crystal = new Crystal(
@@ -154,18 +147,21 @@ handleDeath() {
   }
 
   update(character) {
-    if (this.isDead()) return;
-    
+    if (this.dead) return;   
     if (this.isInAttackRange(character)) {
         this.playAttackAnimation();
     } else {
         this.patrol();
-    }
-    
+    }    
     this.statusBarEndboss.setPercentage(this.energy);
   }
 
+ isDead() {
+    return this.energy <= 0;
+  }
+
   patrol() {
+     if (this.dead) return;
     if (this.x <= this.startX - this.patrolRange) {
         this.otherDirection = false;
     } else if (this.x >= this.startX + this.patrolRange) {
@@ -207,8 +203,7 @@ handleDeath() {
   }
 
   animateWalking() {
-    if(this.dead || this.isHurt) return;
-    
+    if(this.dead || this.isHurt) return;    
     clearInterval(this.animationInterval);
     this.animationInterval = setInterval(() => {
         this.playAnimation(this.IMAGES_WALKING);
