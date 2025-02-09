@@ -42,4 +42,10 @@ class Crystal extends DrawableObject {
       ctx.restore();
     }
   }
+   collect() {
+    if (!this.isCollected) {
+      super.collect();
+      this.world.endGame.showWinScreen();
+    }
+  }
 }

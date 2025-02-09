@@ -788,3 +788,44 @@ svg {
   transform: translateY(50%);
   cursor: pointer;
 }
+/* Victory Screen Styles */
+#win-screen {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  padding: 2rem;
+  text-align: center;
+  color: white;
+  border-radius: 10px;
+  z-index: 1000;
+  width: 80%;
+  max-width: 600px;
+}
+
+#win-screen h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+#win-screen p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+#win-screen button {
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#win-screen button:hover {
+  background: #45a049;
+} 

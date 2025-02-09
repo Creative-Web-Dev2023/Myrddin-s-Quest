@@ -5,9 +5,9 @@ class Endboss extends Enemy {
     this.width = 360; 
     this.y = 50; 
     this.x = 13250;
-    this.attackRange = 200; 
+    this.attackRange = 400; 
     this.attackDamage = 20; 
-    this.speed = 0.5;
+    this.speed = 1.5;
     this.deadSound = new Audio("audio/troll dead.mp3");
     this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
     this.statusBarEndboss = new EndbossStatusbar(); 
@@ -69,7 +69,7 @@ class Endboss extends Enemy {
     this.loadImages(this.IMAGES_DEAD);
     this.animateWalking();
     this.guardRange = { left: 13000, right: 13500 }; 
-    this.patrolSpeed = 1.2;
+    this.patrolSpeed = 2;
     this.isGuarding = true;
     this.patrolRange = 100;
     this.startX = this.x;
@@ -85,57 +85,72 @@ class Endboss extends Enemy {
 
   takeDamage(damage) {
     if (this.isDead) return;
+    
+    console.log("Endboss takes damage:", damage);
     this.energy -= damage;
     this.energy = Math.max(this.energy, 0);
-    if (this.statusBar) {
-      this.statusBar.setPercentage(this.energy, 'endboss');
-    }
-    if (this.energy <= 0) {
-      this.die();
+    
+    if (this.energy > 0) {
+        this.playHurtAnimation();
     } else {
-      this.playHurtAnimation();
+        this.die();
     }
+    this.statusBarEndboss.setPercentage(this.energy);
   }
 
   playHurtAnimation() {
+    if (this.dead) return; // Falls Endboss tot ist, keine Hurt-Animation mehr
     clearInterval(this.animationInterval);
-    this.currentAnimation = this.IMAGES_HURT;
     this.currentImage = 0;
     this.animationInterval = setInterval(() => {
         if (this.currentImage < this.IMAGES_HURT.length) {
-            this.img = this.imageCache[this.IMAGES_HURT[this.currentImage]];
+            let imagePath = this.IMAGES_HURT[this.currentImage];
+            console.log("Loading hurt image:", imagePath);
+            this.img = this.imageCache[imagePath];
             this.currentImage++;
         } else {
             clearInterval(this.animationInterval);
-            this.animateWalking();
+            setTimeout(() => {
+                this.animateWalking(); 
+            }, 500); 
         }
-    }, 100);
-  }
+    }, 200);
+}
+
    
-  playDeathAnimation() {
+ playDeathAnimation() {
+    console.log("Starting death animation");
     this.currentImage = 0;
+    clearInterval(this.animationInterval); 
+
     this.animationInterval = setInterval(() => {
         if (this.currentImage < this.IMAGES_DEAD.length) {
-            this.img = this.imageCache[this.IMAGES_DEAD[this.currentImage]];
+            let imagePath = this.IMAGES_DEAD[this.currentImage];
+            console.log("Loading death image:", imagePath);
+            this.img = this.imageCache[imagePath];
             this.currentImage++;
         } else {
             clearInterval(this.animationInterval);
+            setTimeout(() => {
+                this.isVisible = false;
+                console.log("Endboss removed");
+                this.removeEnemy(); 
+            }, 2000);
         }
-    }, 150);
+    }, 250);
 }
+
  
 die() {
     if (!this.deathAnimationPlayed) {
+        console.log("Playing death animation");
         this.deathAnimationPlayed = true;
-        this.dead = true; 
-        clearInterval(this.animationInterval);       
+        this.dead = true;
+        clearInterval(this.animationInterval); // Stoppe alle Animationen
         this.playDeathAnimation();
-        setTimeout(() => {
-            this.isVisible = false;
-            this.removeEnemy(); 
-        }, this.IMAGES_DEAD.length * 200);
     }
 }
+
 
   spawnCrystal() {
     const crystal = new Crystal(
@@ -146,28 +161,28 @@ die() {
     this.world.crystal = crystal;
   }
 
-  update(character) {
-    if (this.dead) return;   
+ update(character) {
+    if (this.dead) return; 
     if (this.isInAttackRange(character)) {
         this.playAttackAnimation();
     } else {
         this.patrol();
-    }    
+    }
     this.statusBarEndboss.setPercentage(this.energy);
-  }
+}
 
  isDead() {
     return this.energy <= 0;
   }
 
   patrol() {
-     if (this.dead) return;
-    if (this.x <= this.startX - this.patrolRange) {
+    if (this.dead) return;  
+    if (this.x <= this.guardRange.left) {
         this.otherDirection = false;
-    } else if (this.x >= this.startX + this.patrolRange) {
+    } else if (this.x >= this.guardRange.right) {
         this.otherDirection = true;
-    }
-    this.x += this.otherDirection ? -this.speed : this.speed;
+    }  
+    this.x += this.otherDirection ? -this.patrolSpeed : this.patrolSpeed;
   }
 
   draw(ctx) {
@@ -211,11 +226,24 @@ die() {
   }
 
 playAnimation(images) {
-    if (this.currentImage >= images.length) {
-        this.currentImage = 0; 
+    if (!images || !Array.isArray(images) || images.length === 0) {
+        console.error("Images array is undefined or empty");
+        return;
     }
-    this.img = this.imageCache[images[this.currentImage]];
+    
+    if (this.currentImage >= images.length) {
+        this.currentImage = 0;
+    }
+
+    let imagePath = images[this.currentImage];
+    if (!this.imageCache[imagePath]) {
+        console.warn("Image not in cache:", imagePath);
+        return;
+    }
+
+    this.img = this.imageCache[imagePath];
     this.currentImage++;
+    console.log("Playing animation frame:", this.currentImage, "of", images.length);
 }
 
 playAttackAnimation() {
@@ -233,7 +261,9 @@ playAttackAnimation() {
 }
 
 isInAttackRange(character) {
-    return Math.abs(this.x - character.x) < this.attackRange;
+    const characterCenter = character.x + character.width/2;
+    const endbossCenter = this.x + this.width/2;
+    return Math.abs(endbossCenter - characterCenter) < this.attackRange;
 }
 
 }

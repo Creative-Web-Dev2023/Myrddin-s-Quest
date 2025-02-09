@@ -6,4 +6,6 @@ class Keyboard {
   JUMP = false;
   ATTACK = false;
   D = false;
+
+  
 }

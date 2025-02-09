@@ -36,23 +36,22 @@ class CollisionHandler {
   }
 
   checkCollisionsWithEnemies() {
-    this.world.enemies.forEach((enemy) => {
-      if (this.checkCollision(this.world.character, enemy)) {
-        this.handleEnemyCollision(enemy);
+    this.world.enemies.forEach(enemy => {
+      if (!(enemy instanceof Enemy) || (enemy.isDead && enemy.isDead())) return;
+      if (enemy instanceof Endboss) {
+        if (this.checkCollision(this.world.character, enemy)) {
+          enemy.takeDamage(20);
+          this.world.character.takeDamage(10);
+        }
       } else {
-        this.checkEnemyAttack(enemy);
+        if (this.checkCollision(this.world.character, enemy)) {
+          this.handleEnemyCollision(enemy);
+        }
       }
     });
-    if (
-      this.world.endboss &&
-      this.checkCollision(this.world.character, this.world.endboss)
-    ) {
-      this.world.endboss.takeDamageFromCharacter(10);
-    }
-
   }
 
- checkCollisionWithEndboss() {
+  checkCollisionWithEndboss() {
     this.world.throwableObjects.forEach((bottle) => {
       if (bottle.collided) return;       
       this.world.enemies.forEach((enemy) => {

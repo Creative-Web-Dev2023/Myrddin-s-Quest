@@ -199,17 +199,21 @@ class MovableObject extends DrawableObject {
   }
 
   playAnimation(images) {
+    if (!images || !Array.isArray(images) || images.length === 0) {
+        console.error("Images array is undefined or empty");
+        return;
+    }
     if (this.currentImage >= images.length) {
-      this.currentImage = 0;
+        this.currentImage = 0;
     }
     if (
-      this.currentImage % images.length === 0 ||
-      Date.now() - this.lastFrame > 100
+        this.currentImage % images.length === 0 ||
+        Date.now() - this.lastFrame > 100
     ) {
-      let i = this.currentImage % images.length;
-      this.img = this.imageCache[images[i]];
-      this.currentImage++;
-      this.lastFrame = Date.now();
+        let i = this.currentImage % images.length;
+        this.img = this.imageCache[images[i]];
+        this.currentImage++;
+        this.lastFrame = Date.now();
     }
   }
 }

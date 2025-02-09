@@ -15,12 +15,12 @@ class Knight extends Enemy {
     this.offset = { top: 120, bottom: 70, left: 210, right: 210 };
     this.healthDisplay = new KnightHealthDisplay(this);
     this.IMAGES_WALKING = [
-      "img/knight/walk/walk 0.png",
-      "img/knight/walk/walk 1.png",
-      "img/knight/walk/walk 2.png",
-      "img/knight/walk/walk 3.png",
-      "img/knight/walk/walk 4.png",
-      "img/knight/walk/walk 5.png",
+      "img/knight/walk/walk0.png",
+      "img/knight/walk/walk1.png",
+      "img/knight/walk/walk2.png",
+      "img/knight/walk/walk3.png",
+      "img/knight/walk/walk4.png",
+      "img/knight/walk/walk5.png",
     ];
     this.IMAGES_ATTACKING = [
       "img/knight/attack/attack 0.png",
@@ -53,8 +53,17 @@ class Knight extends Enemy {
       this.isMoving = true;
       this.animate();
     }, delay);
+    this.play
   }
-
+    animate() {
+       setInterval(() => {
+           if (!this.dead) {
+               this.playAnimation(this.IMAGES_WALKING);
+           } else {
+               this.playAnimation(this.IMAGES_DEAD);
+           }
+       }, 100);
+   }
   handleMovement() {
     if (!this.dead && this.isMoving) {
       this.moveLeft();

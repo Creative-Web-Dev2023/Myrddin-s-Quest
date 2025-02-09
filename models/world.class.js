@@ -25,6 +25,7 @@ class World {
   environments = [];
   endbossHealthBar;
   crystal;
+  endboss = null;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -56,7 +57,7 @@ class World {
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
-    this.traps = this.level.traps || []; 
+    this.traps = this.level.traps || [];
     this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
     this.loadImages(this.IMAGES_YOU_LOST);
@@ -106,12 +107,15 @@ class World {
       playWalkingSound();
     }
     if (this.character.energy <= 0 && !this.levelCompleted) {
-     gameState.save(); 
+      gameState.save();
       setTimeout(() => {
         this.endGame.showYouLostScreen();
       }, 200);
     }
     this.character.handleActions();
+    this.enemies = this.enemies.filter(enemy => 
+      !(enemy instanceof Endboss && enemy.isDead())
+    );
     this.enemies.forEach((enemy) => {
       if (enemy instanceof Endboss || enemy instanceof Snake) {
         enemy.update(this.character);
@@ -151,11 +155,9 @@ class World {
         obj.deactivate();
       }
     });
-
     this.traps.forEach((trap) => {
       trap.draw(this.ctx);
     });
-
     if (this.level.endboss) {
       this.level.endboss.drawGuardRange(this.ctx);
     }
@@ -203,4 +205,5 @@ class World {
     mo.x = mo.x * -1;
     this.ctx.restore();
   }
+  
 }

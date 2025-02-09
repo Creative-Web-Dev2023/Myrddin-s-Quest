@@ -16,5 +16,8 @@ class EndGame {
       }
     }, 2500);
   }
-
+showWinScreen() {
+  document.getElementById('win-screen').style.display = 'block';
+  this.world.gameLoop.stop();
+}
 }
