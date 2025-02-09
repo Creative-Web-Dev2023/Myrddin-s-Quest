@@ -4,7 +4,7 @@ const level1 = new Level(
   generateEnvironmentsLvl(),
   generateBackgroundsLvl(), 
   generatePoisonObjectsLvl(), 
-  generateTrapsLvl() // Initialisiere die Fallen
+  generateTrapsLvl() 
 );
 
 function generateEnemiesLvl() {

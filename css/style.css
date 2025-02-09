@@ -792,17 +792,17 @@ svg {
 #win-screen {
   display: none;
   position: fixed;
-  top: 50%;
+  top: 44%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 1.9);
   padding: 2rem;
   text-align: center;
   color: white;
   border-radius: 10px;
   z-index: 1000;
   width: 80%;
-  max-width: 600px;
+  max-width: 660px;
 }
 
 #win-screen h1 {
@@ -828,4 +828,13 @@ svg {
 
 #win-screen button:hover {
   background: #45a049;
+}
+
+.win-image {
+  width: 300px;
+  margin: 20px auto;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 223, 0, 0.5));
+  border-radius: 15px;
+  border: 3px solid ;
 } 

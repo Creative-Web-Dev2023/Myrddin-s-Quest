@@ -7,5 +7,4 @@ class Keyboard {
   ATTACK = false;
   D = false;
 
-  
 }

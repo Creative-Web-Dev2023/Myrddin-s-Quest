@@ -1,8 +1,18 @@
+/**
+ * Class representing the drawer for the game world.
+ */
 class Drawer {
+  /**
+   * Creates an instance of Drawer.
+   * @param {Object} world - The world object.
+   */
   constructor(world) {
     this.world = world;
   }
 
+  /**
+   * Draws the entire game world.
+   */
   draw() {
     this.world.clearCanvas();
     this.drawBackground();
@@ -20,6 +30,9 @@ class Drawer {
     }
   }
 
+  /**
+   * Draws the background of the game world.
+   */
   drawBackground() {
     this.world.ctx.translate(this.world.camera_x, 0);
     this.world.addObjectsToMap(this.world.backgroundObjects);
@@ -29,6 +42,9 @@ class Drawer {
     this.world.ctx.translate(-this.world.camera_x, 0);
   }
 
+  /**
+   * Draws the status bars in the game world.
+   */
   drawStatusBars() {
     this.world.addToMap(this.world.poisonStatusBar);
     this.world.addToMap(this.world.characterStatusBar);
@@ -42,6 +58,9 @@ class Drawer {
     this.world.addToMap(this.world.character.healthBar);
   }
 
+  /**
+   * Draws the game objects in the game world.
+   */
   drawGameObjects() {
     this.world.ctx.translate(this.world.camera_x, 0);
     this.world.addObjectsToMap(this.world.enemies);
@@ -52,10 +71,13 @@ class Drawer {
     this.world.throwableObjects.forEach((bottle) => {
       bottle.draw(this.world.ctx, this.world.camera_x);
     });
-    this.world.addObjectsToMap(this.world.traps); // Zeichne die Fallen
+    this.world.addObjectsToMap(this.world.traps);
     this.world.ctx.translate(-this.world.camera_x, 0);
   }
 
+  /**
+   * Draws the enemies in the game world.
+   */
   drawEnemies() {
     this.world.enemies.forEach((enemy) => {
       enemy.draw(this.world.ctx);
@@ -65,6 +87,9 @@ class Drawer {
     }
   }
 
+  /**
+   * Draws the character in the game world.
+   */
   drawCharacter() {
     this.world.ctx.translate(this.world.camera_x, 0);
     if (this.world.character.isVisible) {
@@ -78,12 +103,18 @@ class Drawer {
     this.world.ctx.translate(-this.world.camera_x, 0);
   }
 
+  /**
+   * Draws the snakes in the game world.
+   */
   drawSnakes() {
     this.world.snakes.forEach((snake) => {
       snake.draw(this.world.ctx);
     });
   }
 
+  /**
+   * Draws the traps in the game world.
+   */
   drawTraps() {
     this.world.traps.forEach((trap) => {
       trap.draw(this.world.ctx);

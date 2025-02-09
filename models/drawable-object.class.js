@@ -1,3 +1,6 @@
+/**
+ * Class representing a drawable object.
+ */
 class DrawableObject {
   x = 0;
   y = 0;
@@ -6,16 +9,23 @@ class DrawableObject {
   img;
   imageCache = {};
   currentImage = 0;
-  offset = { top: 0, bottom: 0, left: 0, right: 0 }; // Initialize offset
+  offset = { top: 0, bottom: 0, left: 0, right: 0 };
 
+  /**
+   * Loads an image for the object.
+   * @param {string} path - The path to the image.
+   */
   loadImage(path) {
     this.img = new Image();
     this.img.src = path;
   }
 
+  /**
+   * Loads multiple images for the object.
+   * @param {string[]} images - The array of image paths to load.
+   */
   loadImages(images) {
     if (!images || images.length === 0) {
-      console.error("Fehler: Bilder-Array ist leer oder undefined!");
       return;
     }
     images.forEach((path) => {
@@ -26,6 +36,10 @@ class DrawableObject {
     this.img = this.imageCache[images[0]] || new Image();
   }
 
+  /**
+   * Plays an animation for the object.
+   * @param {string[]} images - The array of image paths for the animation.
+   */
   playAnimation(images) {
     if (images && images.length > 0) {
       let i = this.currentImage % images.length;
@@ -34,12 +48,20 @@ class DrawableObject {
     }
   }
 
+  /**
+   * Draws the object on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     if (this.img) {
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
   }
 
+  /**
+   * Draws the collision frame of the object on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   drawFrame(ctx) {
     if (
       this instanceof Character ||
@@ -77,6 +99,10 @@ class DrawableObject {
     }
   }
 
+  /**
+   * Gets the collision box of the object.
+   * @returns {Object} The collision box of the object.
+   */
   getCollisionBox() {
     return {
       x: this.x + this.offset.left,

@@ -1,4 +1,16 @@
+/**
+ * Class representing a background object.
+ * @extends MovableObject
+ */
 class BackgroundObject extends MovableObject {
+  /**
+   * Creates an instance of BackgroundObject.
+   * @param {string} imagePath - The path to the image.
+   * @param {number} x - The x position of the background object.
+   * @param {number} [y=-20] - The y position of the background object.
+   * @param {number} [width=720] - The width of the background object.
+   * @param {number} [height=500] - The height of the background object.
+   */
   constructor(imagePath, x, y = -20, width = 720, height = 500) {
     super();
     this.x = x;
@@ -8,6 +20,10 @@ class BackgroundObject extends MovableObject {
     this.loadImage(imagePath);
   }
 
+  /**
+   * Moves the background object to the left.
+   * @param {number} speed - The speed at which to move the object.
+   */
   move(speed) {
     this.x -= speed;
     if (this.x <= -this.width) {
@@ -15,6 +31,10 @@ class BackgroundObject extends MovableObject {
     }
   }
 
+  /**
+   * Draws the background object on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     const imageProps = {
       candle: { width: 200, height: 320, yOffset: 115 },
@@ -24,7 +44,7 @@ class BackgroundObject extends MovableObject {
     const imgType = Object.keys(imageProps).find((type) =>
       this.img.src.includes(type)
     );
-    
+
     if (imgType) {
       const props = imageProps[imgType];
       ctx.drawImage(

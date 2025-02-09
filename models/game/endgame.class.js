@@ -1,10 +1,20 @@
+/**
+ * Class representing the end game state.
+ */
 class EndGame {
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
 
+  /**
+   * Creates an instance of EndGame.
+   * @param {Object} world - The world object.
+   */
   constructor(world) {
     this.world = world;
   }
 
+  /**
+   * Displays the "You Lost" screen.
+   */
   showYouLostScreen() {
     setTimeout(() => {
       const gameOverContainer = document.getElementById("game-over-container");
@@ -16,8 +26,11 @@ class EndGame {
       }
     }, 2500);
   }
-showWinScreen() {
-  document.getElementById('win-screen').style.display = 'block';
-  this.world.gameLoop.stop();
-}
+
+  /**
+   * Displays the "You Won" screen.
+   */
+  showWinScreen() {
+    document.getElementById("win-screen").style.display = "block";
+  }
 }

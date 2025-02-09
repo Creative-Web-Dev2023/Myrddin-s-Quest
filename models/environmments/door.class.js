@@ -1,3 +1,7 @@
+/**
+ * Class representing a door object.
+ * @extends MovableObject
+ */
 class Door extends MovableObject {
   IMAGE_DOOR = [
     "img/door/door 0.png",
@@ -7,6 +11,12 @@ class Door extends MovableObject {
     "img/door/door 4.png",
   ];
 
+  /**
+   * Creates an instance of Door.
+   * @param {number} x - The x position of the door.
+   * @param {number} y - The y position of the door.
+   * @param {string} id - The id of the door.
+   */
   constructor(x, y, id) {
     super();
     this.id = id;
@@ -21,6 +31,10 @@ class Door extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Loads images into the image cache.
+   * @param {string[]} images - The array of image sources.
+   */
   loadImages(images) {
     images.forEach((src) => {
       const img = new Image();
@@ -29,6 +43,9 @@ class Door extends MovableObject {
     });
   }
 
+  /**
+   * Animates the door by cycling through images.
+   */
   animate() {
     let currentImageIndex = 0;
     setInterval(() => {
@@ -37,11 +54,20 @@ class Door extends MovableObject {
     }, 1000 / 4);
   }
 
+  /**
+   * Draws the door on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     super.draw(ctx);
     this.drawFrame(ctx);
   }
 
+  /**
+   * Checks if the door is colliding with a character.
+   * @param {Character} character - The character to check collision with.
+   * @returns {boolean} True if colliding, false otherwise.
+   */
   isCollidingWithDoor(character) {
     const box1 = this.getCollisionBox();
     const box2 = character.getCollisionBox();
@@ -54,10 +80,17 @@ class Door extends MovableObject {
     return isColliding;
   }
 
+  /**
+   * Allows a character to enter the door.
+   * @param {Character} character - The character entering the door.
+   */
   enterDoor(character) {
     character.enterDoor(this);
   }
 
+  /**
+   * Animates the door opening.
+   */
   animateOpening() {
     let doorOpenFrame = 0;
     const openInterval = setInterval(() => {
@@ -67,6 +100,10 @@ class Door extends MovableObject {
     }, 100);
   }
 
+  /**
+   * Draws the door in the world.
+   * @param {World} world - The world object containing the door.
+   */
   static drawDoor(world) {
     if (world.door) {
       world.door.drawFrame(world.ctx);

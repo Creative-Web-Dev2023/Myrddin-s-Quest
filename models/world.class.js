@@ -10,7 +10,7 @@ class World {
   characterStatusBar;
   characters = [];
   enemies = [];
-  throwableObjects = []; // Entferne die Initialisierung von Flaschen
+  throwableObjects = []; 
   imageCache = {};
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
@@ -25,7 +25,6 @@ class World {
   environments = [];
   endbossHealthBar;
   crystal;
-  endboss = null;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -58,7 +57,7 @@ class World {
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
-    this.enemies = this.level.enemies || [];
+    this.enemies =this.level.enemies.filter((enemy) => !(enemy instanceof Endboss && enemy.dead)   ) || [];
     this.level.objects = this.level.objects || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
@@ -113,9 +112,6 @@ class World {
       }, 200);
     }
     this.character.handleActions();
-    this.enemies = this.enemies.filter(enemy => 
-      !(enemy instanceof Endboss && enemy.isDead())
-    );
     this.enemies.forEach((enemy) => {
       if (enemy instanceof Endboss || enemy instanceof Snake) {
         enemy.update(this.character);
@@ -155,9 +151,11 @@ class World {
         obj.deactivate();
       }
     });
+
     this.traps.forEach((trap) => {
       trap.draw(this.ctx);
     });
+
     if (this.level.endboss) {
       this.level.endboss.drawGuardRange(this.ctx);
     }
@@ -205,5 +203,4 @@ class World {
     mo.x = mo.x * -1;
     this.ctx.restore();
   }
-  
 }

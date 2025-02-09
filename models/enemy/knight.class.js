@@ -55,6 +55,7 @@ class Knight extends Enemy {
     }, delay);
     this.play
   }
+
     animate() {
        setInterval(() => {
            if (!this.dead) {
@@ -64,6 +65,7 @@ class Knight extends Enemy {
            }
        }, 100);
    }
+   
   handleMovement() {
     if (!this.dead && this.isMoving) {
       this.moveLeft();
@@ -80,7 +82,15 @@ class Knight extends Enemy {
   checkForAttack(character) {
     const knightBox = this.getCollisionBox();
     const characterBox = character.getCollisionBox();
-    const attackBox = {
+    const attackBox = this.getAttackBox(knightBox);
+    const isInAttackRange = this.isInAttackRange(attackBox, characterBox);
+    if (isInAttackRange && !this.isAttacking) {
+      this.attack(character);
+    }
+  }
+
+  getAttackBox(knightBox) {
+    return {
       x: this.otherDirection
         ? knightBox.x - this.attackRange
         : knightBox.x + knightBox.width,
@@ -88,14 +98,15 @@ class Knight extends Enemy {
       width: this.attackRange,
       height: knightBox.height,
     };
-    const isInAttackRange =
+  }
+
+  isInAttackRange(attackBox, characterBox) {
+    return (
       attackBox.x < characterBox.x + characterBox.width &&
       attackBox.x + attackBox.width > characterBox.x &&
       attackBox.y < characterBox.y + characterBox.height &&
-      attackBox.y + attackBox.height > characterBox.y;
-    if (isInAttackRange && !this.isAttacking) {
-      this.attack(character);
-    }
+      attackBox.y + attackBox.height > characterBox.y
+    );
   }
 
   update(character) {
@@ -126,7 +137,6 @@ class Knight extends Enemy {
     if (now - this.lastHit > 1000) {
       this.energy = Math.max(0, this.energy - amount);
       this.lastHit = now;
-
       if (this.energy <= 0) {
         this.die();
       } else {
@@ -160,6 +170,10 @@ class Knight extends Enemy {
     this.deathAnimationPlayed = true;
     this.currentImage = 0;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
+    this.animateDeath();
+  }
+
+  animateDeath() {
     let deathIndex = 0;
     const deathInterval = setInterval(() => {
       if (deathIndex < this.IMAGES_DEAD.length) {

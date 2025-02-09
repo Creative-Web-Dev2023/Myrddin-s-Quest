@@ -1,4 +1,13 @@
+/**
+ * Class representing a throwable object.
+ * @extends MovableObject
+ */
 class ThrowableObject extends MovableObject {
+  /**
+   * Creates an instance of ThrowableObject.
+   * @param {number} x - The x position of the throwable object.
+   * @param {number} y - The y position of the throwable object.
+   */
   constructor(x, y) {
     super();
     this.isVisible = true;
@@ -11,6 +20,9 @@ class ThrowableObject extends MovableObject {
     this.throw(x, y);
   }
 
+  /**
+   * Throws the object.
+   */
   throw(x, y) {
     this.x = x;
     this.y = y;
@@ -24,16 +36,28 @@ class ThrowableObject extends MovableObject {
     }, 25);
   }
 
+  /**
+   * Checks if the object is colliding with another object.
+   * @param {Object} obj - The object to check collision with.
+   * @returns {boolean} - True if colliding, false otherwise.
+   */
   isColliding(obj) {
     return !this.collided && super.isColliding(obj);
   }
-  
+
+  /**
+   * Draws the throwable object on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     if (this.isVisible) {
       super.draw(ctx);
     }
   }
 
+  /**
+   * Handles the collision of the object.
+   */
   onCollision() {
     if (this.hasHit) return;
     this.hasHit = true;
@@ -42,6 +66,9 @@ class ThrowableObject extends MovableObject {
     this.applyGravity();
   }
 
+  /**
+   * Updates the state of the object.
+   */
   update() {
     super.update();
     if (this.y > 480) {
@@ -49,6 +76,9 @@ class ThrowableObject extends MovableObject {
     }
   }
 
+  /**
+   * Deactivates the object.
+   */
   deactivate() {
     this.isVisible = false;
     this.collided = true;

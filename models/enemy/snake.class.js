@@ -48,57 +48,58 @@ class Snake extends Enemy {
     this.world = world;
   }
 
-    /** 🔹 Prüfen, ob Charakter in Angriffsreichweite ist */
-    checkForAttack(character) {
-        const snakeBox = this.getCollisionBox();
-        const characterBox = character.getCollisionBox();
-        const attackBox = {
-            x: this.otherDirection ? snakeBox.x - this.attackRange : snakeBox.x + snakeBox.width,
-            y: snakeBox.y,
-            width: this.attackRange * 2,
-            height: snakeBox.height,
-        };
-        const isInAttackRange =
-            attackBox.x < characterBox.x + characterBox.width &&
-            attackBox.x + attackBox.width > characterBox.x &&
-            attackBox.y < characterBox.y + characterBox.height &&
-            attackBox.y + attackBox.height > characterBox.y;
+checkForAttack(character) {
+    const isInAttackRange = this.calculateAttackRange(character);
+    if (isInAttackRange && !this.isAttacking) {
+        this.attack(character);
+    }
+}
 
-        if (isInAttackRange && !this.isAttacking) {
-            this.attack(character);
+calculateAttackRange(character) {
+    const snakeBox = this.getCollisionBox();
+    const characterBox = character.getCollisionBox();
+    const attackBox = {
+        x: this.otherDirection ? snakeBox.x - this.attackRange : snakeBox.x + snakeBox.width,
+        y: snakeBox.y,
+        width: this.attackRange * 2,
+        height: snakeBox.height,
+    };
+    return (
+        attackBox.x < characterBox.x + characterBox.width &&
+        attackBox.x + attackBox.width > characterBox.x &&
+        attackBox.y < characterBox.y + characterBox.height &&
+        attackBox.y + attackBox.height > characterBox.y
+    );
+}
+
+attack(character) {
+    if (this.dead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAnimation(this.IMAGES_ATTACKING);
+    setTimeout(() => {
+        if (this.isInAttackRange(character)) {
+            character.takeDamage(this.attackDamage);
         }
-    }
+    }, 300); 
+    setTimeout(() => {
+        this.isAttacking = false;
+    }, 700); 
+}
 
-    /** 🔹 Angriff ausführen */
-    attack(character) {
-        if (this.dead || this.isAttacking) return;
-        this.isAttacking = true;
-        this.playAnimation(this.IMAGES_ATTACKING);
-        setTimeout(() => {
-            if (this.isInAttackRange(character)) {
-                character.takeDamage(this.attackDamage);
-            }
-            this.isAttacking = false;
-        }, 500);
-    }
 
-    /** 🔹 Bewegung */
     patrol() {
         if (this.dead) return;
         this.x += this.otherDirection ? -this.speed : this.speed;
     }
-
-    /** 🔹 Snake aktualisieren */
+ 
     update(character) {
         this.checkForAttack(character);
     }
 
-    /** 🔹 Schaden nehmen */
     takeDamage(damage) {
         if (this.dead) return;
         this.energy -= damage;
         this.energy = Math.max(0, this.energy);
-
         if (this.energy > 0) {
             this.playAnimation(this.IMAGES_HURT);
         } else {
@@ -106,7 +107,6 @@ class Snake extends Enemy {
         }
     }
 
-    /** 🔹 Stirbt und spielt die Death-Animation */
     die() {
         if (this.dead) return;
         this.dead = true;
@@ -114,7 +114,6 @@ class Snake extends Enemy {
         setTimeout(() => this.remove(), 1000);
     }
 
-    /** 🔹 Entfernen */
     remove() {
         this.removeEnemy();
     }
@@ -126,14 +125,30 @@ class Snake extends Enemy {
             this.imageCache[path] = img;
         });
     }
-
-    animate() {
-        setInterval(() => {
-            if (!this.dead) {
-                this.playAnimation(this.IMAGES_WALKING);
-            } else {
-                this.playAnimation(this.IMAGES_DEAD);
-            }
-        }, 100);
+draw(ctx) {
+    if (this.img && this.img.complete) {
+      if (this.otherDirection) {
+        ctx.save();
+        ctx.translate(this.x + this.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(this.img, 0, this.y, this.width, this.height);
+        ctx.restore();
+      } else {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      }
     }
+  }
+
+animate() {
+    setInterval(() => {
+        if (this.dead) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isAttacking) {
+            this.playAnimation(this.IMAGES_ATTACKING);
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }, 100);
+}
+
 }

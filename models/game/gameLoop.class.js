@@ -1,4 +1,10 @@
-class GameLoop {
+/**
+ * Class representing the game loop.
+ */class GameLoop {
+  /**
+   * Creates an instance of GameLoop.
+   * @param {Object} world - The world object.
+   */
   constructor(world) {
     this.world = world;
     this.world.canvas.addEventListener(
@@ -7,6 +13,9 @@ class GameLoop {
     );
   }
 
+  /**
+   * Starts the game loop.
+   */
   start() {
     const gameLoop = () => {
       this.world.update();
@@ -21,6 +30,10 @@ class GameLoop {
     gameLoop();
   }
 
+  /**
+   * Handles mouse click events on the canvas.
+   * @param {MouseEvent} event - The mouse event.
+   */
   handleMouseClick(event) {
     const rect = this.world.canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;

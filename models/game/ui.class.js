@@ -1,9 +1,19 @@
+/**
+ * Class representing the user interface (UI) for the game.
+ */
 class UI {
+  /**
+   * Creates an instance of UI.
+   * @param {HTMLCanvasElement} canvas - The canvas element.
+   */
   constructor(canvas) {
     this.canvas = canvas;
     this.initializeButtons();
   }
 
+  /**
+   * Initializes the UI buttons.
+   */
   initializeButtons() {
     const buttonWidth = 100;
     const buttonHeight = 40;

@@ -1,4 +1,13 @@
+/**
+ * Class representing a Crystal.
+ * @extends DrawableObject
+ */
 class Crystal extends DrawableObject {
+  /**
+   * Creates an instance of Crystal.
+   * @param {number} x - The x position of the crystal.
+   * @param {number} y - The y position of the crystal.
+   */
   constructor(x, y) {
     super();
     this.loadImage("img/game_items/diamond.png");
@@ -7,11 +16,15 @@ class Crystal extends DrawableObject {
     this.width = 80;
     this.height = 80;
     this.isActive = true;
+    this.isCollected = false;
     this.glowIntensity = 0;
     this.glowDirection = 1;
     this.animateGlow();
   }
 
+  /**
+   * Animates the glow effect of the crystal.
+   */
   animateGlow() {
     setInterval(() => {
       if (this.isActive) {
@@ -23,9 +36,12 @@ class Crystal extends DrawableObject {
     }, 50);
   }
 
+  /**
+   * Draws the crystal on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     super.draw(ctx);
-
     if (this.isActive) {
       ctx.save();
       ctx.globalAlpha = this.glowIntensity * 0.3;
@@ -42,9 +58,21 @@ class Crystal extends DrawableObject {
       ctx.restore();
     }
   }
-   collect() {
+
+  /**
+   * Deactivates the crystal.
+   */
+  deactivate() {
+    this.isActive = false;
+    this.isCollected = true;
+  }
+
+  /**
+   * Collects the crystal and shows the win screen.
+   */
+  collect() {
     if (!this.isCollected) {
-      super.collect();
+      this.deactivate();
       this.world.endGame.showWinScreen();
     }
   }

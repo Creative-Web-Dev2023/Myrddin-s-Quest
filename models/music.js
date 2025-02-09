@@ -18,6 +18,9 @@ let allSounds = [
   level2Sound,
 ];
 
+/**
+ * Toggles the music on and off.
+ */
 function musicSwitcher() {
   const audioIcon = document.getElementById("audioSwitcher");
   musicIsOn = !musicIsOn;
@@ -34,6 +37,9 @@ function musicSwitcher() {
   }
 }
 
+/**
+ * Plays the background music.
+ */
 function playMusic() {
   if (!musicIsOn) {
     backgroundMusic.play();
@@ -42,6 +48,9 @@ function playMusic() {
   }
 }
 
+/**
+ * Stops the background music.
+ */
 function stopMusic() {
   if (musicIsOn) {
     backgroundMusic.pause();
@@ -53,6 +62,9 @@ function stopMusic() {
   }
 }
 
+/**
+ * Stops all sounds.
+ */
 function stopAllSounds() {
   allSounds.forEach((sound) => {
     sound.pause();
@@ -60,6 +72,9 @@ function stopAllSounds() {
   });
 }
 
+/**
+ * Pauses all sounds.
+ */
 function pauseAllSounds() {
   allSounds.forEach((sound) => {
     sound.pause();
@@ -67,6 +82,9 @@ function pauseAllSounds() {
   });
 }
 
+/**
+ * Plays the walking sound.
+ */
 function playWalkingSound() {
   if (musicIsOn && walkingSound.paused) {
     walkingSound.play();
@@ -76,6 +94,9 @@ function playWalkingSound() {
   }
 }
 
+/**
+ * Plays the level 1 background sound.
+ */
 function playLevel1Sound() {
   if (musicIsOn) {
     level1Sound.play();
@@ -83,6 +104,9 @@ function playLevel1Sound() {
   }
 }
 
+/**
+ * Plays the level 2 background sound.
+ */
 function playLevel2Sound() {
   if (musicIsOn) {
     level2Sound.play();
@@ -90,30 +114,45 @@ function playLevel2Sound() {
   }
 }
 
+/**
+ * Plays the attack sound.
+ */
 function playAttackSound() {
   if (musicIsOn && attackSound.paused) {
     attackSound.play();
   }
 }
 
+/**
+ * Plays the poison bottle throw sound.
+ */
 function playPoisonBottleSound() {
   if (musicIsOn && throwPoisonBottleSound.paused) {
     throwPoisonBottleSound.play();
   }
 }
 
+/**
+ * Plays the jump sound.
+ */
 function playJumpSound() {
   if (musicIsOn && jumpSound.paused) {
     jumpSound.play();
   }
 }
 
+/**
+ * Plays the collect poison bottle sound.
+ */
 function playCollectPoisonBottleSound() {
   if (musicIsOn && collectPoisonBottleSound.paused) {
     collectPoisonBottleSound.play();
   }
 }
 
+/**
+ * Plays the new level sound.
+ */
 function playNewSound() {
   if (musicIsOn) {
     stopAllSounds();

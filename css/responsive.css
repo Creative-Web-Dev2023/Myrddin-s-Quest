@@ -86,6 +86,11 @@ img {
   .game-button img {
     width: 160px;
   }
+
+  .win-image {
+    width: 200px;
+    margin: 10px auto;
+  }
 }
 
 @media (max-width: 600px) {
@@ -134,6 +139,11 @@ img {
   
   .game-button-container {
     gap: 20px;
+  }
+
+  .win-image {
+    width: 150px;
+    margin: 5px auto;
   }
 }
 
