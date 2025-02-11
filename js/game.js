@@ -8,52 +8,60 @@ let knightHealthDisplay;
 
 const gameState = {
   save() {
-    localStorage.setItem('gameState', JSON.stringify({
-      characterX: world.character.x,
-      characterY: world.character.y,
-      characterEnergy: world.character.energy,
-      enemies: world.enemies.map(e => ({
-        type: e.constructor.name,
-        x: e.x,
-        y: e.y,
-        energy: e.energy,
-        dead: e.dead
-      })),
-      levelProgress: world.character.x 
-    }));
+    localStorage.setItem(
+      "gameState",
+      JSON.stringify({
+        characterX: world.character.x,
+        characterY: world.character.y,
+        characterEnergy: world.character.energy,
+        enemies: world.enemies.map((e) => ({
+          type: e.constructor.name,
+          x: e.x,
+          y: e.y,
+          energy: e.energy,
+          dead: e.dead,
+        })),
+        levelProgress: world.character.x,
+      })
+    );
   },
-  
-restore() {
-    const saved = JSON.parse(localStorage.getItem('gameState'));
+
+  restore() {
+    const saved = JSON.parse(localStorage.getItem("gameState"));
     if (!saved) return;
     world.character.x = saved.characterX;
     world.character.y = saved.characterY;
     world.character.energy = saved.characterEnergy;
     if (world.character.energy <= 0) {
-        world.character.energy = 100;
+      world.character.energy = 100;
     }
     world.character.deadAnimationPlayed = false;
     world.character.isVisible = true;
-    world.enemies.forEach((enemy, index) => {
-        if (saved.enemies[index]) {
-            enemy.x = saved.enemies[index].x;
-            enemy.y = saved.enemies[index].y;
-            enemy.energy = saved.enemies[index].energy;
-            enemy.dead = saved.enemies[index].dead;
-            enemy.isVisible = !enemy.dead;
-        }
-    });
+   world.enemies.forEach((enemy, index) => {
+     if (saved.enemies[index]) {
+       enemy.x = saved.enemies[index].x;
+       enemy.y = saved.enemies[index].y;
+       enemy.energy = saved.enemies[index].energy;
+       enemy.dead = saved.enemies[index].dead;
+       enemy.isVisible = !enemy.dead;
+       if (enemy instanceof Snake || enemy instanceof Endboss) {
+         enemy.resetPosition();
+       }
+     }
+   });
     world.camera_x = saved.levelProgress;
-}
+  },
 };
 
 function startGame() {
   document.querySelector(".overlay").style.display = "none";
   document.getElementById("audioSwitcher").classList.remove("hidden");
   document.getElementById("bigScreen").classList.remove("hidden");
-  document.getElementById('key-info').classList.add('show');
-  document.addEventListener('DOMContentLoaded', (event) => {});
-  document.getElementById("audioSwitcher").setAttribute("onclick", "musicSwitcher()");
+  document.getElementById("key-info").classList.add("show");
+  document.addEventListener("DOMContentLoaded", (event) => {});
+  document
+    .getElementById("audioSwitcher")
+    .setAttribute("onclick", "musicSwitcher()");
   init();
 }
 
@@ -67,16 +75,24 @@ function init() {
 }
 
 function setupTouchControls() {
-  setupTouchControl('btn-left', 'LEFT');
-  setupTouchControl('btn-right', 'RIGHT');
-  setupTouchControl('btn-jump', 'JUMP');
-  setupTouchControl('btn-attack', 'ATTACK');
-  setupTouchControl('btn-throw', 'D');
+  setupTouchControl("btn-left", "LEFT");
+  setupTouchControl("btn-right", "RIGHT");
+  setupTouchControl("btn-jump", "JUMP");
+  setupTouchControl("btn-attack", "ATTACK");
+  setupTouchControl("btn-throw", "D");
 }
 
 function setupTouchControl(buttonId, key) {
-  document.getElementById(buttonId).addEventListener('touchstart', () => keyboard[key] = true, { passive: true });
-  document.getElementById(buttonId).addEventListener('touchend', () => keyboard[key] = false, { passive: true });
+  document
+    .getElementById(buttonId)
+    .addEventListener("touchstart", () => (keyboard[key] = true), {
+      passive: true,
+    });
+  document
+    .getElementById(buttonId)
+    .addEventListener("touchend", () => (keyboard[key] = false), {
+      passive: true,
+    });
 }
 
 function gameLoop() {
@@ -112,17 +128,20 @@ function quitGame() {
 
 function tryAgain() {
   gameState.restore();
-  document.getElementById('game-over-container').style.display = 'none';
+  document.getElementById("game-over-container").style.display = "none";
+  if (!world.gameLoop.running) {
+    world.gameLoop.running = true;
+    world.gameLoop.start();
+  }
   world.characterStatusBar.setPercentage(world.character.energy);
-  world.gameLoop.running = true;
-  world.gameLoop.start();
+  world.character.resetState();
 }
+
 
 function toggleFullscreen() {
   const canvas = document.getElementById("canvas");
   if (!document.fullscreenElement) {
-    canvas.requestFullscreen().catch(err => {
-    });
+    canvas.requestFullscreen().catch((err) => {});
   } else {
     document.exitFullscreen();
   }
@@ -199,13 +218,13 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function checkOrientation() {
-  const rotateDiv = document.getElementById('rotate');
+  const rotateDiv = document.getElementById("rotate");
 
   if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
-      rotateDiv.style.display = 'flex';
+    rotateDiv.style.display = "flex";
   } else {
-      rotateDiv.style.display = 'none'; 
+    rotateDiv.style.display = "none";
   }
 }
-window.addEventListener('resize', checkOrientation);
-document.addEventListener('DOMContentLoaded', checkOrientation);
+window.addEventListener("resize", checkOrientation);
+document.addEventListener("DOMContentLoaded", checkOrientation);

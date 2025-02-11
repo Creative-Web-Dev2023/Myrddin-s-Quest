@@ -1,9 +1,5 @@
 let isAfterDoor = false;
 
-/**
- * Class representing the main character.
- * @extends MovableObject
- */
 class Character extends MovableObject {
   height = 290;
   width = 520;
@@ -60,7 +56,6 @@ class Character extends MovableObject {
     "img/wizard/jump/jump_008.png",
     "img/wizard/jump/jump_009.png",
   ];
-
   IMAGES_ATTACK = [
     "img/wizard/attack/Attack1.png",
     "img/wizard/attack/Attack2.png",
@@ -70,7 +65,6 @@ class Character extends MovableObject {
     "img/wizard/attack/Attack6.png",
     "img/wizard/attack/Attack7.png",
   ];
-
   IMAGES_DEAD = [
     "img/wizard/die/die_000.png",
     "img/wizard/die/die_001.png",
@@ -96,15 +90,8 @@ class Character extends MovableObject {
     "img/wizard/hurt/hurt_008.png",
     "img/wizard/hurt/hurt_009.png",
   ];
-
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   world = {};
-
-  /**
-   * Creates an instance of Character.
-   * @param {Object} world - The world object.
-   * @param {Object} poisonStatusBar - The poison status bar object.
-   */
   constructor(world, poisonStatusBar) {
     super();
     this.loadImage(this.IMAGES_IDLE[0]);
@@ -127,9 +114,6 @@ class Character extends MovableObject {
     this.canMoveLeft = true;
   }
 
-  /**
-   * Updates the character's state.
-   */
   update() {
     if (!this.isVisible) return;
     if (this.energy > 0) {
@@ -139,9 +123,6 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Handles the character's movement.
-   */
   handleMovement() {
     walkingSound.pause();
     if (
@@ -162,9 +143,6 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Moves the character to the left.
-   */
   moveLeft() {
     if (!this.canMoveLeft && this.x <= 6471) {
       return;
@@ -175,30 +153,20 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Handles the character's actions.
-   */
   handleActions() {
     if (this.world.keyboard.ATTACK) {
       this.isAttacking = true;
       this.playAnimation(this.IMAGES_ATTACK);
       this.attackEnemies();
-      playAttackSound();
     } else {
       this.isAttacking = false;
     }
   }
 
-  /**
-   * Updates the camera position.
-   */
   updateCamera() {
     this.world.camera_x = -this.x - 190;
   }
 
-  /**
-   * Makes the character jump.
-   */
   jump() {
     if (!this.isAboveGround()) {
       this.speedY = 33;
@@ -206,18 +174,10 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Checks if the character is moving.
-   * @returns {boolean} True if the character is moving, false otherwise.
-   */
   isMoving() {
     return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
   }
 
-  /**
-   * Handles the character being hit by an enemy.
-   * @param {Object} enemy - The enemy object.
-   */
   hit(enemy) {
     const distance = Math.abs(this.x - enemy.x);
     if (!this.invulnerable && distance < 100) {
@@ -227,10 +187,6 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Takes damage and updates the character's energy.
-   * @param {number} damage - The amount of damage to take.
-   */
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
       this.energy -= damage;
@@ -249,18 +205,12 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Updates the character's status bar.
-   */
   updateStatusBar() {
     if (this.world && this.world.statusBar) {
       this.world.statusBar.update(this.energy);
     }
   }
 
-  /**
-   * Resets the character's state.
-   */
   reset() {
     this.x = 130;
     this.y = 150;
@@ -274,24 +224,6 @@ class Character extends MovableObject {
     this.animate();
   }
 
-  /**
-   * Resets the character's state after death.
-   */
-  resetState() {
-    this.isDead = false;
-    this.deadAnimationPlayed = false;
-    this.isVisible = true;
-    this.energy = 100;
-    this.invulnerable = false;
-    clearInterval(this.deathInterval);
-    this.deathInterval = null;
-    this.currentImage = 0;
-  }
-
-  /**
-   * Handles the character entering a door.
-   * @param {Object} door - The door object.
-   */
   enterDoor(door) {
     this.isVisible = false;
     this.x = door.x;
@@ -310,9 +242,6 @@ class Character extends MovableObject {
     }, 2000);
   }
 
-  /** Gets the collision box of the character.
-   * @returns {{ x: number; y: number; width: number; height: number; }}
-   */
   getCollisionBox() {
     return {
       x: this.x + this.offset.left,
@@ -321,11 +250,7 @@ class Character extends MovableObject {
       height: this.height - this.offset.top - this.offset.bottom,
     };
   }
-  /**
-   * Collects a poison object.
-   * @param {Object} poison - The poison object.
-   * @param {number} index - The index of the poison object.
-   */
+
   collectPoison(poison, index) {
     if (poison && poison.isActive) {
       poison.deactivate();
@@ -336,10 +261,6 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Collects a key object.
-   * @param {Object} key - The key object.
-   */
   collectKey(key) {
     if (key && key.isActive) {
       key.deactivate();
@@ -347,20 +268,6 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Collects a crystal object and shows the win screen.
-   * @param {Object} crystal - The crystal object.
-   */
-  collectCrystal(crystal) {
-    if (crystal && crystal.isActive) {
-      crystal.deactivate();
-      this.world.endGame.showWinScreen();
-    }
-  }
-
-  /**
-   * Attacks enemies within range.
-   */
   attackEnemies() {
     const attackRange = 150;
     this.world.enemies.forEach((enemy) => {
@@ -381,35 +288,70 @@ class Character extends MovableObject {
     });
   }
 
-  /**
-   * Handles the death of the character.
-   */
-  die() {
-    if (!this.deadAnimationPlayed) {
-      this.isDead = true;
-      this.deadAnimationPlayed = true;
-      this.currentImage = 0;
-      this.playDeathAnimation();
-      debugger;
-      setTimeout(() => {
-        this.isVisible = false;
-        this.resetState();
-      }, this.IMAGES_DEAD.length * 150);
+  draw(ctx) {
+    if (this.isVisible) {
+      super.draw(ctx);
     }
   }
 
-  /** Plays the death animation of the character. */
+  isAttacking() {
+    return this.attackStartTime > Date.now() - 300;
+  }
+
+  startAttack() {
+    this.attackStartTime = Date.now();
+  }
+
+  die() {
+    if (!this.deadAnimationPlayed) {
+      this.deadAnimationPlayed = true;
+      this.currentImage = 0;
+      this.playDeathAnimation();
+      this.scheduleGameOver();
+    }
+  }
+
   playDeathAnimation() {
-    if (this.deathInterval) clearInterval(this.deathInterval);
-    let index = 0;
-    this.deathInterval = setInterval(() => {
-      if (index < this.IMAGES_DEAD.length) {
-        this.img = this.imageCache[this.IMAGES_DEAD[index]];
-        this.currentImage = index % this.IMAGES_DEAD.length;
-        index++;
-      } else {
-        clearInterval(this.deathInterval);
+    let deathIndex = 0;
+    const animate = () => {
+      if (deathIndex < this.IMAGES_DEAD.length) {
+        this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
+        deathIndex++;
+        requestAnimationFrame(animate);
       }
-    }, 350);
+    };
+    if (this.deathInterval) clearInterval(this.deathInterval);
+    this.deathInterval = requestAnimationFrame(animate);
+  }
+
+  scheduleGameOver() {
+    clearInterval(this.animationInterval);
+    clearTimeout(this.attackTimeout);
+    setTimeout(() => {
+      this.isVisible = false;
+      if (this.world.endGame) {
+        setTimeout(() => this.world.endGame.showYouLostScreen(), 300);
+      }
+    }, this.IMAGES_DEAD.length * 150 + 500);
+  }
+
+  resetState() {
+    this.isDead = false;
+    this.deadAnimationPlayed = false;
+    this.isVisible = true;
+    this.energy = 100;
+    this.invulnerable = false;
+    clearInterval(this.deathInterval);
+    this.deathInterval = null;
+    this.currentImage = 0;
+    this.resetEnemies(); // Gegner zurücksetzen
+  }
+
+  resetEnemies() {
+    this.world.enemies.forEach((enemy) => {
+      if (enemy instanceof Snake || enemy instanceof Endboss) {
+        enemy.resetPosition();
+      }
+    });
   }
 }

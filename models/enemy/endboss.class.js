@@ -24,6 +24,8 @@ class Endboss extends Enemy {
     this.patrolLeftLimit = 13150;
     this.patrolRightLimit = 13500;
     this.statusBarEndboss.setPercentage(this.energy);
+    this.initialX = this.x;
+    this.initialY = this.y;
 
     this.IMAGES_WALKING = [
       "img/troll/walk/walk_000.png",
@@ -132,19 +134,8 @@ class Endboss extends Enemy {
     this.deadSound.play();
     setTimeout(() => {
       this.spawnCrystal();
-      this.remove();
+      this.removeEnemy();
     }, this.IMAGES_DEAD.length * 150);
-  }
-
-  /**
-   * Removes the Endboss from the world.
-   */
-  remove() {
-    this.isVisible = false;
-    const index = this.world.enemies.indexOf(this);
-    if (index > -1) {
-      this.world.enemies.splice(index, 1);
-    }
   }
 
   /**
@@ -251,5 +242,12 @@ class Endboss extends Enemy {
    */
   isInAttackRange(character) {
     return Math.abs(this.x - character.x) < this.attackRange;
+  }
+
+  resetPosition() {
+    this.x = this.initialX;
+    this.y = this.initialY;
+    this.dead = false;
+    this.isVisible = true;
   }
 }

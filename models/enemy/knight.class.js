@@ -53,19 +53,18 @@ class Knight extends Enemy {
       this.isMoving = true;
       this.animate();
     }, delay);
-    this.play
   }
 
-    animate() {
-       setInterval(() => {
-           if (!this.dead) {
-               this.playAnimation(this.IMAGES_WALKING);
-           } else {
-               this.playAnimation(this.IMAGES_DEAD);
-           }
-       }, 100);
-   }
-   
+  animate() {
+    setInterval(() => {
+      if (!this.dead) {
+        this.playAnimation(this.IMAGES_WALKING);
+      } else {
+        this.playAnimation(this.IMAGES_DEAD);
+      }
+    }, 100);
+  }
+
   handleMovement() {
     if (!this.dead && this.isMoving) {
       this.moveLeft();
@@ -107,6 +106,26 @@ class Knight extends Enemy {
       attackBox.y < characterBox.y + characterBox.height &&
       attackBox.y + attackBox.height > characterBox.y
     );
+  }
+
+  attack(character) {
+    if (this.dead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAnimation(this.IMAGES_ATTACKING);
+    setTimeout(() => {
+      if (
+        character &&
+        this.isInAttackRange(
+          this.getAttackBox(this.getCollisionBox()),
+          character.getCollisionBox()
+        )
+      ) {
+        character.takeDamage(this.attackDamage);
+      }
+    }, 100);
+    setTimeout(() => {
+      this.isAttacking = false;
+    }, 300);
   }
 
   update(character) {
@@ -164,7 +183,7 @@ class Knight extends Enemy {
     this.playDeathAnimation();
     setTimeout(() => this.remove(), 1000);
   }
-  
+
   playDeathAnimation() {
     if (this.deathAnimationPlayed) return;
     this.deathAnimationPlayed = true;

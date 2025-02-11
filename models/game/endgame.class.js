@@ -26,11 +26,4 @@ class EndGame {
       }
     }, 2500);
   }
-
-  /**
-   * Displays the "You Won" screen.
-   */
-  showWinScreen() {
-    document.getElementById("win-screen").style.display = "block";
-  }
 }

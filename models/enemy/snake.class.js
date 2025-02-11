@@ -13,6 +13,8 @@ class Snake extends Enemy {
     this.attackRange = 50;
     this.speed = 0.5;
     this.otherDirection = true;
+    this.initialX = startX;
+    this.initialY = this.y;
     this.offset = { top: 60, bottom: 60, left: 50, right: 50 };
     this.IMAGES_WALKING = [
       "img/snake/walk/walk0.png",
@@ -26,10 +28,7 @@ class Snake extends Enemy {
       "img/snake/attack/attack2.png",
       "img/snake/attack/attack3.png",
     ];
-    this.IMAGES_HURT = [
-      "img/snake/hurt/hurt0.png",
-      "img/snake/hurt/hurt1.png",
-    ];
+    this.IMAGES_HURT = ["img/snake/hurt/hurt0.png", "img/snake/hurt/hurt1.png"];
     this.IMAGES_DEAD = [
       "img/snake/die/die0.png",
       "img/snake/die/die1.png",
@@ -48,84 +47,85 @@ class Snake extends Enemy {
     this.world = world;
   }
 
-checkForAttack(character) {
+  checkForAttack(character) {
     const isInAttackRange = this.calculateAttackRange(character);
     if (isInAttackRange && !this.isAttacking) {
-        this.attack(character);
+      this.attack(character);
     }
-}
+  }
 
-calculateAttackRange(character) {
+  calculateAttackRange(character) {
     const snakeBox = this.getCollisionBox();
     const characterBox = character.getCollisionBox();
     const attackBox = {
-        x: this.otherDirection ? snakeBox.x - this.attackRange : snakeBox.x + snakeBox.width,
-        y: snakeBox.y,
-        width: this.attackRange * 2,
-        height: snakeBox.height,
+      x: this.otherDirection
+        ? snakeBox.x - this.attackRange
+        : snakeBox.x + snakeBox.width,
+      y: snakeBox.y,
+      width: this.attackRange * 2,
+      height: snakeBox.height,
     };
     return (
-        attackBox.x < characterBox.x + characterBox.width &&
-        attackBox.x + attackBox.width > characterBox.x &&
-        attackBox.y < characterBox.y + characterBox.height &&
-        attackBox.y + attackBox.height > characterBox.y
+      attackBox.x < characterBox.x + characterBox.width &&
+      attackBox.x + attackBox.width > characterBox.x &&
+      attackBox.y < characterBox.y + characterBox.height &&
+      attackBox.y + attackBox.height > characterBox.y
     );
-}
+  }
 
-attack(character) {
+  attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
     this.playAnimation(this.IMAGES_ATTACKING);
     setTimeout(() => {
-        if (this.isInAttackRange(character)) {
-            character.takeDamage(this.attackDamage);
-        }
-    }, 300); 
+      if (this.isInAttackRange(character)) {
+        character.takeDamage(this.attackDamage);
+      }
+    }, 300);
     setTimeout(() => {
-        this.isAttacking = false;
-    }, 700); 
-}
+      this.isAttacking = false;
+    }, 700);
+  }
 
+  patrol() {
+    if (this.dead) return;
+    this.x += this.otherDirection ? -this.speed : this.speed;
+  }
 
-    patrol() {
-        if (this.dead) return;
-        this.x += this.otherDirection ? -this.speed : this.speed;
-    }
- 
-    update(character) {
-        this.checkForAttack(character);
-    }
+  update(character) {
+    this.checkForAttack(character);
+  }
 
-    takeDamage(damage) {
-        if (this.dead) return;
-        this.energy -= damage;
-        this.energy = Math.max(0, this.energy);
-        if (this.energy > 0) {
-            this.playAnimation(this.IMAGES_HURT);
-        } else {
-            this.die();
-        }
+  takeDamage(damage) {
+    if (this.dead) return;
+    this.energy -= damage;
+    this.energy = Math.max(0, this.energy);
+    if (this.energy > 0) {
+      this.playAnimation(this.IMAGES_HURT);
+    } else {
+      this.die();
     }
+  }
 
-    die() {
-        if (this.dead) return;
-        this.dead = true;
-        this.playAnimation(this.IMAGES_DEAD);
-        setTimeout(() => this.remove(), 1000);
-    }
+  die() {
+    if (this.dead) return;
+    this.dead = true;
+    this.playAnimation(this.IMAGES_DEAD);
+    setTimeout(() => this.remove(), 1000);
+  }
 
-    remove() {
-        this.removeEnemy();
-    }
+  remove() {
+    this.removeEnemy();
+  }
 
-    loadImages(imageArray) {
-        imageArray.forEach((path) => {
-            const img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-        });
-    }
-draw(ctx) {
+  loadImages(imageArray) {
+    imageArray.forEach((path) => {
+      const img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
+  }
+  draw(ctx) {
     if (this.img && this.img.complete) {
       if (this.otherDirection) {
         ctx.save();
@@ -139,16 +139,22 @@ draw(ctx) {
     }
   }
 
-animate() {
+  animate() {
     setInterval(() => {
-        if (this.dead) {
-            this.playAnimation(this.IMAGES_DEAD);
-        } else if (this.isAttacking) {
-            this.playAnimation(this.IMAGES_ATTACKING);
-        } else {
-            this.playAnimation(this.IMAGES_WALKING);
-        }
+      if (this.dead) {
+        this.playAnimation(this.IMAGES_DEAD);
+      } else if (this.isAttacking) {
+        this.playAnimation(this.IMAGES_ATTACKING);
+      } else {
+        this.playAnimation(this.IMAGES_WALKING);
+      }
     }, 100);
-}
-
+  }
+  
+  resetPosition() {
+    this.x = this.initialX;
+    this.y = this.initialY;
+    this.dead = false;
+    this.isVisible = true;
+  }
 }

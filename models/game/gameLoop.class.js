@@ -1,15 +1,18 @@
 /**
  * Class representing the game loop.
- */class GameLoop {
+ */
+class GameLoop {
   /**
    * Creates an instance of GameLoop.
    * @param {Object} world - The world object.
    */
   constructor(world) {
     this.world = world;
+    this.running = false;
+    this.animationFrameId = null;
     this.world.canvas.addEventListener(
-      "click",
-      this.handleMouseClick.bind(this)
+        "click",
+        this.handleMouseClick.bind(this)
     );
   }
 
@@ -17,7 +20,11 @@
    * Starts the game loop.
    */
   start() {
+    if (this.running) return;
+    this.running = true;
+
     const gameLoop = () => {
+      if (!this.running) return;
       this.world.update();
       this.world.draw();
       this.world.enemies.forEach((enemy) => {
@@ -25,9 +32,21 @@
           enemy.update(this.world.character);
         }
       });
-      requestAnimationFrame(gameLoop);
+      this.animationFrameId = requestAnimationFrame(gameLoop);
     };
+
     gameLoop();
+  }
+
+  /**
+   * Stops the game loop.
+   */
+  stop() {
+    this.running = false;
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
   }
 
   /**
@@ -40,11 +59,13 @@
     const y = event.clientY - rect.top;
     const ui = this.world.ui;
     if (
-      x >= ui.quitButton.x &&
-      x <= ui.quitButton.x + ui.quitButton.width &&
-      y >= ui.quitButton.y &&
-      y <= ui.quitButton.y + ui.quitButton.height
+        x >= ui.quitButton.x &&
+        x <= ui.quitButton.x + ui.quitButton.width &&
+        y >= ui.quitButton.y &&
+        y <= ui.quitButton.y + ui.quitButton.height
     ) {
+      this.stop();
+      quitGame();
     }
   }
 }
