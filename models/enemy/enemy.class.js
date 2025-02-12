@@ -13,8 +13,6 @@ class Enemy extends MovableObject {
     this.attackRange = 150;
     this.attackDamage = 10;
     this.otherDirection = false;
-    this.initialX = this.x;
-    this.initialY = this.y;
   }
 
   setWorld(world) {
@@ -48,10 +46,5 @@ class Enemy extends MovableObject {
     if (index > -1) {
       this.world.enemies.splice(index, 1);
     }
-  }
-  
-  resetPosition() {
-    this.x = this.initialX;
-    this.y = this.initialY;
   }
 }

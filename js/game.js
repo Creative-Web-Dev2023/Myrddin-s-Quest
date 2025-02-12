@@ -29,6 +29,12 @@ const gameState = {
   restore() {
     const saved = JSON.parse(localStorage.getItem("gameState"));
     if (!saved) return;
+    this.restoreCharacter(saved);
+    this.restoreEnemies(saved);
+    world.camera_x = saved.levelProgress;
+  },
+
+  restoreCharacter(saved) {
     world.character.x = saved.characterX;
     world.character.y = saved.characterY;
     world.character.energy = saved.characterEnergy;
@@ -37,19 +43,18 @@ const gameState = {
     }
     world.character.deadAnimationPlayed = false;
     world.character.isVisible = true;
-   world.enemies.forEach((enemy, index) => {
-     if (saved.enemies[index]) {
-       enemy.x = saved.enemies[index].x;
-       enemy.y = saved.enemies[index].y;
-       enemy.energy = saved.enemies[index].energy;
-       enemy.dead = saved.enemies[index].dead;
-       enemy.isVisible = !enemy.dead;
-       if (enemy instanceof Snake || enemy instanceof Endboss) {
-         enemy.resetPosition();
-       }
-     }
-   });
-    world.camera_x = saved.levelProgress;
+  },
+
+  restoreEnemies(saved) {
+    world.enemies.forEach((enemy, index) => {
+      if (saved.enemies[index]) {
+        enemy.x = saved.enemies[index].x;
+        enemy.y = saved.enemies[index].y;
+        enemy.energy = saved.enemies[index].energy;
+        enemy.dead = saved.enemies[index].dead;
+        enemy.isVisible = !enemy.dead;
+      }
+    });
   },
 };
 
@@ -72,6 +77,8 @@ function init() {
   playLevel1Sound();
   gameLoop();
   setupTouchControls();
+  document.getElementById("tryAgain").addEventListener("click", tryAgain);
+  document.getElementById("quitButton").addEventListener("click", quitGame);
 }
 
 function setupTouchControls() {
@@ -83,14 +90,10 @@ function setupTouchControls() {
 }
 
 function setupTouchControl(buttonId, key) {
-  document
-    .getElementById(buttonId)
-    .addEventListener("touchstart", () => (keyboard[key] = true), {
+  document.getElementById(buttonId).addEventListener("touchstart", () => (keyboard[key] = true), {
       passive: true,
     });
-  document
-    .getElementById(buttonId)
-    .addEventListener("touchend", () => (keyboard[key] = false), {
+  document.getElementById(buttonId) .addEventListener("touchend", () => (keyboard[key] = false), {
       passive: true,
     });
 }
@@ -129,14 +132,13 @@ function quitGame() {
 function tryAgain() {
   gameState.restore();
   document.getElementById("game-over-container").style.display = "none";
+  world.characterStatusBar.setPercentage(world.character.energy);
+  world.character.resetState();
   if (!world.gameLoop.running) {
     world.gameLoop.running = true;
     world.gameLoop.start();
   }
-  world.characterStatusBar.setPercentage(world.character.energy);
-  world.character.resetState();
 }
-
 
 function toggleFullscreen() {
   const canvas = document.getElementById("canvas");
@@ -219,7 +221,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function checkOrientation() {
   const rotateDiv = document.getElementById("rotate");
-
   if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
     rotateDiv.style.display = "flex";
   } else {
