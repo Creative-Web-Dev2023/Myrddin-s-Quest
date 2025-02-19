@@ -52,7 +52,6 @@ class CollisionHandler {
         if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
           bottle.collided = true;
           bottle.isVisible = true;
-          const damage = 25;
           const steps = Math.ceil(enemy.energy / 20) - 1;
           enemy.energy = Math.max(steps * 20, 0);
           enemy.statusBarEndboss.setPercentage(enemy.energy);
@@ -105,9 +104,9 @@ class CollisionHandler {
   }
 
   checkEnemyAttack(enemy) {
-    if (enemy instanceof Snake) {
+    if (enemy instanceof Snake || enemy instanceof Knight) {
       const distance = Math.abs(this.world.character.x - enemy.x);
-      if (distance <= 100 && !enemy.isDead()) {
+      if (distance <= 150 && !enemy.isDead()) {
         enemy.attack(this.world.character);
       }
     }
@@ -155,17 +154,24 @@ class CollisionHandler {
   }
 
   checkCrystalCollision() {
-    if (
-      this.world.crystal?.isActive &&
-      this.checkCollision(this.world.character, this.world.crystal)
-    ) {
-      this.handleCrystalCollection();
+    const crystal = this.world.crystal;
+    if (crystal && this.isColliding(this.world.character, crystal)) {
+      this.handleCrystalCollection(crystal);
     }
   }
 
-  handleCrystalCollection() {
-    this.world.crystal.deactivate();
-    this.world.endGame.showWinScreen();
-    this.world.gameLoop.running = false;
+  handleCrystalCollection(crystal) {
+    this.world.character.collectCrystal(crystal);
+    if (
+      this.world.endGame &&
+      typeof this.world.endGame.showVictoryScreen === "function"
+    ) {
+      this.world.endGame.showVictoryScreen();
+    }
+  }
+
+  isColliding(character, crystal) {
+    this._character = character;
+    return false;
   }
 }

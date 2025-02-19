@@ -73,20 +73,6 @@ class Snake extends Enemy {
     );
   }
 
-  attack(character) {
-    if (this.dead || this.isAttacking) return;
-    this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
-    setTimeout(() => {
-      if (this.isInAttackRange(character)) {
-        character.takeDamage(this.attackDamage);
-      }
-    }, 300);
-    setTimeout(() => {
-      this.isAttacking = false;
-    }, 700);
-  }
-
   patrol() {
     if (this.dead) return;
     this.x += this.otherDirection ? -this.speed : this.speed;
@@ -125,6 +111,8 @@ class Snake extends Enemy {
       this.imageCache[path] = img;
     });
   }
+
+  
   draw(ctx) {
     if (this.img && this.img.complete) {
       if (this.otherDirection) {

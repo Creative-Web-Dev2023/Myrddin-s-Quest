@@ -37,7 +37,6 @@ class World {
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
     this.gameLoop = new GameLoop(this);
-    this.gameLoop.start();
     if (!this.door) {
       this.door = new Door(4500, 150);
       this.door.world = this;
@@ -57,13 +56,13 @@ class World {
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
-    this.traps = this.level.traps || []; // Initialisiere die Fallen
+    this.traps = this.level.traps || []; 
     this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.door = this.level.door;
-    this.key = Key.initializeKey(); // Initialisiere das Array von Schlüsseln
+    this.key = Key.initializeKey(); 
     this.camera_x = -this.character.x - 190;
     this.endGame = new EndGame(this);
   }

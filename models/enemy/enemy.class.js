@@ -30,14 +30,36 @@ class Enemy extends MovableObject {
   update(character) {
     if (this.isDead()) return;
     if (this.isInAttackRange(character)) {
-      this.playAnimation(this.IMAGES_ATTACKING);
+      this.attack(character);
     } else {
       this.patrol();
     }
   }
 
   isInAttackRange(character) {
-    return Math.abs(this.x - character.x) < this.attackRange;
+    const distance = Math.abs(this.x - character.x);
+    return distance < this.attackRange;
+  }
+
+  attack(character) {
+    if (this.dead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAnimation(this.IMAGES_ATTACKING);
+    setTimeout(() => {
+      const characterBox = character.getCollisionBox();
+      const thisBox = this.getCollisionBox();
+      const isStillInRange =
+        thisBox.x < characterBox.x + characterBox.width &&
+        thisBox.x + thisBox.width > characterBox.x &&
+        thisBox.y < characterBox.y + characterBox.height &&
+        thisBox.y + thisBox.height > characterBox.y;
+      if (isStillInRange) {
+        character.takeDamage(this.attackDamage);
+      }
+      setTimeout(() => {
+        this.isAttacking = false;
+      }, 500);
+    }, 400);
   }
 
   removeEnemy() {

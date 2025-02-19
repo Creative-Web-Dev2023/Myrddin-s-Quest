@@ -88,6 +88,13 @@ class MovableObject extends DrawableObject {
    * @returns {boolean} True if the object is dead, false otherwise.
    */
   isDead() {
+    if (
+      typeof gameState !== "undefined" &&
+      typeof world !== "undefined" &&
+      typeof world.character !== "undefined"
+    ) {
+      gameState.save();
+    }
     return this.energy <= 0;
   }
 
@@ -160,32 +167,6 @@ class MovableObject extends DrawableObject {
   die() {
     this.isVisible = false;
   }
-
-  /**
-   * Attacks a character.
-   * @param {Character} character - The character to attack.
-   */
-  attack(character) {
-    if (this.dead || this.isAttacking) return;
-    this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
-    setTimeout(() => {
-      const characterBox = character.getCollisionBox();
-      const thisBox = this.getCollisionBox();
-      const isStillInRange =
-        thisBox.x < characterBox.x + characterBox.width &&
-        thisBox.x + thisBox.width > characterBox.x &&
-        thisBox.y < characterBox.y + characterBox.height &&
-        thisBox.y + thisBox.height > characterBox.y;
-      if (isStillInRange) {
-        character.takeDamage(this.attackDamage);
-      }
-      setTimeout(() => {
-        this.isAttacking = false;
-      }, 500);
-    }, 400);
-  }
-
   /**
    * Animates the object.
    */

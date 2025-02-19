@@ -249,6 +249,8 @@ class Character extends MovableObject {
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom,
     };
+    console.log("Character Collision Box:", box);
+    return box;
   }
 
   collectPoison(poison, index) {
@@ -344,7 +346,7 @@ class Character extends MovableObject {
     clearInterval(this.deathInterval);
     this.deathInterval = null;
     this.currentImage = 0;
-    this.resetEnemies(); // Gegner zurücksetzen
+    this.resetEnemies();
   }
 
   resetEnemies() {

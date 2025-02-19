@@ -97,7 +97,7 @@ class Endboss extends Enemy {
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING, 100);
+    this.playAnimation(this.IMAGES_ATTACKING);
     setTimeout(() => {
       if (this.isInAttackRange(character)) {
         character.takeDamage(this.attackDamage);
@@ -105,7 +105,7 @@ class Endboss extends Enemy {
     }, 300);
     setTimeout(() => {
       this.isAttacking = false;
-    }, 1000);
+    }, 700);
   }
 
   /**

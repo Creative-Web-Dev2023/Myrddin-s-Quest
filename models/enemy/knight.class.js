@@ -23,25 +23,25 @@ class Knight extends Enemy {
       "img/knight/walk/walk5.png",
     ];
     this.IMAGES_ATTACKING = [
-      "img/knight/attack/attack 0.png",
-      "img/knight/attack/attack 1.png",
-      "img/knight/attack/attack 2.png",
-      "img/knight/attack/attack 3.png",
-      "img/knight/attack/attack 4.png",
-      "img/knight/attack/attack 5.png",
-      "img/knight/attack/attack 6.png",
+      "img/knight/attack/attack0.png",
+      "img/knight/attack/attack1.png",
+      "img/knight/attack/attack2.png",
+      "img/knight/attack/attack3.png",
+      "img/knight/attack/attack4.png",
+      "img/knight/attack/attack5.png",
+      "img/knight/attack/attack6.png",
     ];
     this.IMAGES_HURT = [
-      "img/knight/hurt/hurt 0.png",
-      "img/knight/hurt/hurt 1.png",
+      "img/knight/hurt/hurt0.png",
+      "img/knight/hurt/hurt1.png",
     ];
     this.IMAGES_DEAD = [
-      "img/knight/death/death 0.png",
-      "img/knight/death/death 1.png",
-      "img/knight/death/death 2.png",
-      "img/knight/death/death 3.png",
-      "img/knight/death/death 4.png",
-      "img/knight/death/death 5.png",
+      "img/knight/death/death0.png",
+      "img/knight/death/death1.png",
+      "img/knight/death/death2.png",
+      "img/knight/death/death3.png",
+      "img/knight/death/death4.png",
+      "img/knight/death/death5.png",
     ];
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ATTACKING);
@@ -57,35 +57,14 @@ class Knight extends Enemy {
 
   animate() {
     setInterval(() => {
-      if (!this.dead) {
-        this.playAnimation(this.IMAGES_WALKING);
-      } else {
+      if (this.dead) {
         this.playAnimation(this.IMAGES_DEAD);
+      } else if (this.isAttacking) {
+        this.playAnimation(this.IMAGES_ATTACKING);
+      } else {
+        this.playAnimation(this.IMAGES_WALKING);
       }
     }, 100);
-  }
-
-  handleMovement() {
-    if (!this.dead && this.isMoving) {
-      this.moveLeft();
-      this.otherDirection = true;
-      if (
-        this.x <= this.startX - this.moveRange ||
-        this.x >= this.startX + this.moveRange
-      ) {
-        this.otherDirection = !this.otherDirection;
-      }
-    }
-  }
-
-  checkForAttack(character) {
-    const knightBox = this.getCollisionBox();
-    const characterBox = character.getCollisionBox();
-    const attackBox = this.getAttackBox(knightBox);
-    const isInAttackRange = this.isInAttackRange(attackBox, characterBox);
-    if (isInAttackRange && !this.isAttacking) {
-      this.attack(character);
-    }
   }
 
   getAttackBox(knightBox) {
@@ -100,6 +79,9 @@ class Knight extends Enemy {
   }
 
   isInAttackRange(attackBox, characterBox) {
+    if (!characterBox) {
+      return false;
+    }
     return (
       attackBox.x < characterBox.x + characterBox.width &&
       attackBox.x + attackBox.width > characterBox.x &&
@@ -113,6 +95,7 @@ class Knight extends Enemy {
     this.isAttacking = true;
     this.playAnimation(this.IMAGES_ATTACKING);
     setTimeout(() => {
+      this.isAttacking = false;
       if (
         character &&
         this.isInAttackRange(
@@ -121,15 +104,15 @@ class Knight extends Enemy {
         )
       ) {
         character.takeDamage(this.attackDamage);
-      }
-    }, 100);
-    setTimeout(() => {
-      this.isAttacking = false;
-    }, 300);
+      } 
+    }, 800);
   }
 
   update(character) {
-    this.checkForAttack(character);
+    if (!character) {
+      return;
+    }
+    super.update(character);
     this.healthDisplay.updatePosition(this.x, this.y);
     this.healthDisplay.energy = this.energy;
   }

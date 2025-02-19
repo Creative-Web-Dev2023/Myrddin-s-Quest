@@ -8,22 +8,27 @@ let knightHealthDisplay;
 
 const gameState = {
   save() {
-    localStorage.setItem(
-      "gameState",
-      JSON.stringify({
-        characterX: world.character.x,
-        characterY: world.character.y,
-        characterEnergy: world.character.energy,
-        enemies: world.enemies.map((e) => ({
-          type: e.constructor.name,
-          x: e.x,
-          y: e.y,
-          energy: e.energy,
-          dead: e.dead,
-        })),
-        levelProgress: world.character.x,
-      })
-    );
+    if (
+      typeof world !== "undefined" &&
+      typeof world.character !== "undefined"
+    ) {
+      localStorage.setItem(
+        "gameState",
+        JSON.stringify({
+          characterX: world.character.x,
+          characterY: world.character.y,
+          characterEnergy: world.character.energy,
+          enemies: world.enemies.map((e) => ({
+            type: e.constructor.name,
+            x: e.x,
+            y: e.y,
+            energy: e.energy,
+            dead: e.dead,
+          })),
+          levelProgress: world.character.x,
+        })
+      );
+    }
   },
 
   restore() {
@@ -37,23 +42,39 @@ const gameState = {
   restoreCharacter(saved) {
     world.character.x = saved.characterX;
     world.character.y = saved.characterY;
-    world.character.energy = saved.characterEnergy;
-    if (world.character.energy <= 0) {
-      world.character.energy = 100;
-    }
+    world.character.energy = 100;
     world.character.deadAnimationPlayed = false;
     world.character.isVisible = true;
+    world.character.invincible = true;
+    setTimeout(() => {
+      world.character.invincible = false;
+    }, 3000);
   },
 
   restoreEnemies(saved) {
-    world.enemies.forEach((enemy, index) => {
-      if (saved.enemies[index]) {
-        enemy.x = saved.enemies[index].x;
-        enemy.y = saved.enemies[index].y;
-        enemy.energy = saved.enemies[index].energy;
-        enemy.dead = saved.enemies[index].dead;
-        enemy.isVisible = !enemy.dead;
+    world.enemies = saved.enemies.map((data) => {
+      let enemy = world.enemies.find((e) => e.x === data.x && e.y === data.y);
+      if (!enemy) {
+        if (data.type === "Endboss") {
+          enemy = new Endboss();
+        } else if (data.type === "Knight") {
+          enemy = new Knight();
+        } else if (data.type === "Snake") {
+          enemy = new Snake();
+        } else {
+          enemy = new Enemy();
+        }
       }
+      enemy.x = data.x;
+      enemy.y = data.y;
+      enemy.energy = data.energy;
+      enemy.dead = data.dead;
+      enemy.isVisible = !data.dead;
+      enemy.canAttack = false;
+      setTimeout(() => {
+        enemy.canAttack = true;
+      }, 3000);
+      return enemy;
     });
   },
 };
@@ -90,10 +111,14 @@ function setupTouchControls() {
 }
 
 function setupTouchControl(buttonId, key) {
-  document.getElementById(buttonId).addEventListener("touchstart", () => (keyboard[key] = true), {
+  document
+    .getElementById(buttonId)
+    .addEventListener("touchstart", () => (keyboard[key] = true), {
       passive: true,
     });
-  document.getElementById(buttonId) .addEventListener("touchend", () => (keyboard[key] = false), {
+  document
+    .getElementById(buttonId)
+    .addEventListener("touchend", () => (keyboard[key] = false), {
       passive: true,
     });
 }
@@ -101,7 +126,7 @@ function setupTouchControl(buttonId, key) {
 function gameLoop() {
   world.update();
   world.draw();
-  requestAnimationFrame(gameLoop);
+  world.gameLoop.loopID = requestAnimationFrame(gameLoop);
 }
 
 function handleDescription() {
@@ -130,14 +155,21 @@ function quitGame() {
 }
 
 function tryAgain() {
-  gameState.restore();
-  document.getElementById("game-over-container").style.display = "none";
-  world.characterStatusBar.setPercentage(world.character.energy);
-  world.character.resetState();
-  if (!world.gameLoop.running) {
-    world.gameLoop.running = true;
-    world.gameLoop.start();
+  if (world.gameLoop.running) {
+
+    world.gameLoop.stop();
   }
+
+  setTimeout(() => {
+    gameState.restore();
+    document.getElementById("game-over-container").style.display = "none";
+    world.characterStatusBar.setPercentage(world.character.energy);
+    world.character.resetState();
+    if (!world.gameLoop.running) {
+    
+      world.gameLoop.start();
+    } 
+  }, 100);
 }
 
 function toggleFullscreen() {
@@ -221,6 +253,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function checkOrientation() {
   const rotateDiv = document.getElementById("rotate");
+
   if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
     rotateDiv.style.display = "flex";
   } else {
