@@ -270,6 +270,11 @@ class Character extends MovableObject {
     }
   }
 
+  collectCrystal(crystal) {
+    console.log("Character sammelt den Kristall:", crystal);
+    // ...hier Code zum Beenden des Spiels oder Weiterverarbeiten...
+  }
+
   attackEnemies() {
     const attackRange = 150;
     this.world.enemies.forEach((enemy) => {
