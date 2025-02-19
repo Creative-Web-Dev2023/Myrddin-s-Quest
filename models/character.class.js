@@ -125,10 +125,7 @@ class Character extends MovableObject {
 
   handleMovement() {
     walkingSound.pause();
-    if (
-      this.world.keyboard.RIGHT &&
-      this.x < this.world.level.level_end_x + 200
-    ) {
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200) {
       this.moveRight();
       this.otherDirection = false;
       playWalkingSound();
@@ -249,7 +246,7 @@ class Character extends MovableObject {
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom,
     };
-    console.log("Character Collision Box:", box);
+
     return box;
   }
 
@@ -268,11 +265,6 @@ class Character extends MovableObject {
       key.deactivate();
       this.hasKey = true;
     }
-  }
-
-  collectCrystal(crystal) {
-    console.log("Character sammelt den Kristall:", crystal);
-    // ...hier Code zum Beenden des Spiels oder Weiterverarbeiten...
   }
 
   attackEnemies() {

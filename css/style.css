@@ -686,7 +686,7 @@ svg {
     transform: translateY(0);
   }
 }
-#rotate {
+/* #rotate {
   display: flex;
   position: fixed;
   top: 0;
@@ -708,7 +708,7 @@ svg {
   width: 100px;
   height: 100px;
   animation: rotate-animation 2s linear infinite;
-}
+} */
 
 #controls {
   position: absolute;

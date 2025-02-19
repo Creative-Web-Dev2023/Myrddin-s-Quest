@@ -17,23 +17,17 @@
     * Starts the game loop.
     */
    start() {
-     if (this.running) {
-       console.log("Game Loop läuft bereits mit Loop-ID:", this.loopID);
+     if (this.running) {      
        return;
      }
-
-     console.log("Game Loop startet...");
      this.running = true;
-
      const gameLoop = () => {
        if (!this.running) {
-         console.log("Game Loop gestoppt!");
          if (this.loopID) {
            cancelAnimationFrame(this.loopID);
          }
          return;
        }
-
        this.world.update();
        this.world.draw();
        this.world.enemies.forEach((enemy) => {
@@ -41,12 +35,9 @@
            enemy.update(this.world.character);
          }
        });
-
        this.loopID = requestAnimationFrame(gameLoop);
      };
-
      this.loopID = requestAnimationFrame(gameLoop);
-     console.log("Neue Loop-ID gesetzt:", this.loopID);
    }
 
    /**

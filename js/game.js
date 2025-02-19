@@ -97,7 +97,7 @@ function init() {
   world = new World(canvas, keyboard);
   playLevel1Sound();
   gameLoop();
-  setupTouchControls();
+  setupTouchControls(); // Stellen Sie sicher, dass diese Methode aufgerufen wird
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
 }
@@ -111,16 +111,15 @@ function setupTouchControls() {
 }
 
 function setupTouchControl(buttonId, key) {
-  document
-    .getElementById(buttonId)
-    .addEventListener("touchstart", () => (keyboard[key] = true), {
-      passive: true,
-    });
-  document
-    .getElementById(buttonId)
-    .addEventListener("touchend", () => (keyboard[key] = false), {
-      passive: true,
-    });
+  const button = document.getElementById(buttonId);
+  if (button) {
+    button.addEventListener("touchstart", () => {
+      keyboard[key] = true;
+    }, { passive: true });
+    button.addEventListener("touchend", () => {
+      keyboard[key] = false;
+    }, { passive: true });
+  } 
 }
 
 function gameLoop() {
@@ -156,19 +155,16 @@ function quitGame() {
 
 function tryAgain() {
   if (world.gameLoop.running) {
-
     world.gameLoop.stop();
   }
-
   setTimeout(() => {
     gameState.restore();
     document.getElementById("game-over-container").style.display = "none";
     world.characterStatusBar.setPercentage(world.character.energy);
     world.character.resetState();
     if (!world.gameLoop.running) {
-    
       world.gameLoop.start();
-    } 
+    }
   }, 100);
 }
 
