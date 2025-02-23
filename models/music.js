@@ -7,6 +7,7 @@ let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
 let level1Sound = new Audio("audio/woodsounds.mp3");
 let level2Sound = new Audio("audio/level2_sound.mp3");
+let snakeAttackSound = new Audio("audio/snake.mp3");
 
 let allSounds = [
   backgroundMusic,
@@ -16,6 +17,7 @@ let allSounds = [
   jumpSound,
   level1Sound,
   level2Sound,
+  snakeAttackSound, // Fügen Sie den Schlangensound zur Liste hinzu
 ];
 
 /**
@@ -158,5 +160,14 @@ function playNewSound() {
     stopAllSounds();
     level2Sound.play();
     level2Sound.loop = true;
+  }
+}
+
+/**
+ * Plays the snake attack sound.
+ */
+function playSnakeAttackSound() {
+  if (musicIsOn && snakeAttackSound.paused) {
+    snakeAttackSound.play();
   }
 }

@@ -10,7 +10,7 @@ class World {
   characterStatusBar;
   characters = [];
   enemies = [];
-  throwableObjects = []; // Entferne die Initialisierung von Flaschen
+  throwableObjects = []; 
   imageCache = {};
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
@@ -63,7 +63,7 @@ class World {
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.door = this.level.door;
     this.key = Key.initializeKey(); 
-    this.camera_x = -this.character.x - 190;
+    this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
   }
 

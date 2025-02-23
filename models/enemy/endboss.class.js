@@ -97,7 +97,7 @@ class Endboss extends Enemy {
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
+    this.playAnimation(this.IMAGES_ATTACKING, 100);
     setTimeout(() => {
       if (this.isInAttackRange(character)) {
         character.takeDamage(this.attackDamage);
@@ -105,7 +105,7 @@ class Endboss extends Enemy {
     }, 300);
     setTimeout(() => {
       this.isAttacking = false;
-    }, 700);
+    }, 1000);
   }
 
   /**
@@ -134,16 +134,14 @@ class Endboss extends Enemy {
     this.deadSound.play();
     setTimeout(() => {
       this.spawnCrystal();
-      if (this.world && this.world.character) {
-        this.world.character.collectCrystal(this.world.crystal);
-        if (
-          this.world.endGame &&
-          typeof this.world.endGame.showWinScreen === "function"
-        ) {
-          this.world.endGame.showWinScreen();
-        }
-      }
       this.removeEnemy();
+      this.world.character.collectCrystal(this.world.crystal);
+      if (
+        this.world.endGame &&
+        typeof this.world.endGame.showWinScreen === "function"
+      ) {
+        this.world.endGame.showWinScreen();
+      }
     }, this.IMAGES_DEAD.length * 150);
   }
 
@@ -151,12 +149,14 @@ class Endboss extends Enemy {
    * Spawns a crystal at the Endboss's position.
    */
   spawnCrystal() {
-    const crystal = new Crystal(
-      this.x + this.width / 2 - 40,
-      this.y + this.height / 2 - 40
-    );
-    this.world.level.objects.push(crystal);
-    this.world.crystal = crystal;
+    if (this.world && this.world.level) {
+      const crystal = new Crystal(
+        this.x + this.width / 2 - 40,
+        this.y + this.height / 2 - 40
+      );
+      this.world.level.objects.push(crystal);
+      this.world.crystal = crystal;
+    }
   }
 
   /**

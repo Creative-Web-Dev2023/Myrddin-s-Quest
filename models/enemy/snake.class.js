@@ -112,7 +112,6 @@ class Snake extends Enemy {
     });
   }
 
-  
   draw(ctx) {
     if (this.img && this.img.complete) {
       if (this.otherDirection) {
@@ -138,11 +137,41 @@ class Snake extends Enemy {
       }
     }, 100);
   }
-  
+
   resetPosition() {
     this.x = this.initialX;
     this.y = this.initialY;
     this.dead = false;
     this.isVisible = true;
+  }
+
+  getAttackBox(snakeBox) {
+    return {
+      x: this.otherDirection
+        ? snakeBox.x - this.attackRange
+        : snakeBox.x + snakeBox.width,
+      y: snakeBox.y,
+      width: this.attackRange,
+      height: snakeBox.height,
+    };
+  }
+
+  attack(character) {
+    if (this.dead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAnimation(this.IMAGES_ATTACKING);
+    playSnakeAttackSound();
+    setTimeout(() => {
+      this.isAttacking = false;
+      if (
+        character &&
+        this.isInAttackRange(
+          this.getAttackBox(this.getCollisionBox()),
+          character.getCollisionBox()
+        )
+      ) {
+        character.takeDamage(this.attackDamage);
+      }
+    }, 800);
   }
 }

@@ -3,6 +3,7 @@
  */
 function adjustCanvasSize() {
   const canvas = document.getElementById("canvas");
+  const container = document.getElementById("canvas-container");
   const aspectRatio = 16 / 9;
   if (window.innerWidth / aspectRatio < window.innerHeight) {
     canvas.style.width = "95vw";
@@ -11,7 +12,11 @@ function adjustCanvasSize() {
     canvas.style.height = "95vh";
     canvas.style.width = `${95 * aspectRatio}vh`;
   }
+  container.style.height = canvas.style.height;
+  matchGameOverSizeToCanvas();
 }
+window.addEventListener("resize", adjustCanvasSize);
+document.addEventListener("DOMContentLoaded", adjustCanvasSize);
 
 adjustCanvasSize();
 
@@ -24,6 +29,18 @@ function detectTouchDevice() {
   document.body.classList.toggle("touch-device", isTouch);
   document.body.classList.toggle("desktop-device", !isTouch);
   return isTouch;
+}
+
+/**
+ * Sets up touch controls for the game.
+ */
+function setupTouchControls() {
+  const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  document.body.classList.toggle("touch-device", isTouch);
+  document.body.classList.toggle("desktop-device", !isTouch);
+  if (isTouch) {
+    document.getElementById("controls").style.display = "flex";
+  }
 }
 
 /**
@@ -55,3 +72,23 @@ document.addEventListener("DOMContentLoaded", () => {
   checkOrientation();
   adjustCanvasSize();
 });
+
+/**
+ * Adjusts the control buttons for touch devices.
+ */
+function matchGameOverSizeToCanvas() {
+  const canvas = document.getElementById("canvas");
+  const gameOver = document.getElementById("game-over-container");
+  const winScreen = document.getElementById("win-screen");
+
+  if (canvas && gameOver && winScreen) {
+    gameOver.style.width = canvas.style.width;
+    gameOver.style.height = canvas.style.height;
+
+    winScreen.style.width = canvas.style.width;
+    winScreen.style.height = canvas.style.height;
+  }
+}
+
+window.addEventListener("resize", matchGameOverSizeToCanvas);
+document.addEventListener("DOMContentLoaded", matchGameOverSizeToCanvas);

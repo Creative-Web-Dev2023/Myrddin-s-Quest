@@ -52,8 +52,7 @@ class CollisionHandler {
         if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
           bottle.collided = true;
           bottle.isVisible = true;
-          const steps = Math.ceil(enemy.energy / 20) - 1;
-          enemy.energy = Math.max(steps * 20, 0);
+          enemy.takeDamage(25); // Jeder Treffer verursacht 25 Schaden
           enemy.statusBarEndboss.setPercentage(enemy.energy);
           if (enemy.energy <= 0) {
             enemy.die();
@@ -80,7 +79,11 @@ class CollisionHandler {
   }
 
   handleEnemyCollision(enemy) {
-    if (enemy instanceof Snake || enemy instanceof Knight) {
+    if (
+      enemy instanceof Snake ||
+      enemy instanceof Knight ||
+      enemy instanceof Endboss
+    ) {
       if (
         this.world.character.isAboveGround() &&
         this.world.character.speedY > 0
@@ -104,7 +107,11 @@ class CollisionHandler {
   }
 
   checkEnemyAttack(enemy) {
-    if (enemy instanceof Snake || enemy instanceof Knight) {
+    if (
+      enemy instanceof Snake ||
+      enemy instanceof Knight ||
+      enemy instanceof Endboss
+    ) {
       const distance = Math.abs(this.world.character.x - enemy.x);
       if (distance <= 150 && !enemy.isDead()) {
         enemy.attack(this.world.character);
@@ -140,12 +147,12 @@ class CollisionHandler {
   }
 
   checkThrowableObject() {
-    if (this.world.keyboard.D && this.canThrow) {
-      let bottle = new ThrowableObject(
-        this.world.character.x,
-        this.world.character.y
-      );
-      this.world.throwableObjects.push(bottle);
+    if (
+      this.world.keyboard.D &&
+      this.canThrow &&
+      this.world.character.poisonCollected > 0
+    ) {
+      this.world.character.throwPoisonBottle();
       this.canThrow = false;
       setTimeout(() => {
         this.canThrow = true;
@@ -164,9 +171,9 @@ class CollisionHandler {
     this.world.character.collectCrystal(crystal);
     if (
       this.world.endGame &&
-      typeof this.world.endGame.showVictoryScreen === "function"
+      typeof this.world.endGame.showWinScreen === "function"
     ) {
-      this.world.endGame.showVictoryScreen();
+      this.world.endGame.showWinScreen();
     }
   }
 

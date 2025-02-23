@@ -97,7 +97,7 @@ function init() {
   world = new World(canvas, keyboard);
   playLevel1Sound();
   gameLoop();
-  setupTouchControls(); // Stellen Sie sicher, dass diese Methode aufgerufen wird
+  setupTouchControls(); 
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
 }
@@ -113,18 +113,27 @@ function setupTouchControls() {
 function setupTouchControl(buttonId, key) {
   const button = document.getElementById(buttonId);
   if (button) {
-    button.addEventListener("touchstart", () => {
-      keyboard[key] = true;
-    }, { passive: true });
-    button.addEventListener("touchend", () => {
-      keyboard[key] = false;
-    }, { passive: true });
-  } 
+    button.addEventListener(
+      "touchstart",
+      () => {
+        keyboard[key] = true;
+      },
+      { passive: true }
+    );
+    button.addEventListener(
+      "touchend",
+      () => {
+        keyboard[key] = false;
+      },
+      { passive: true }
+    );
+  }
 }
 
 function gameLoop() {
   world.update();
   world.draw();
+  world.collisionHandler.checkThrowableObject(); 
   world.gameLoop.loopID = requestAnimationFrame(gameLoop);
 }
 

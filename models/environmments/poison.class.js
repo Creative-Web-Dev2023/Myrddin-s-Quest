@@ -30,10 +30,6 @@ class PoisonObject extends DrawableObject {
       new PoisonObject(3200, 400, 50, 50),
       new PoisonObject(4000, 300, 50, 50),
       new PoisonObject(6400, 200, 50, 50),
-      new PoisonObject(6900, 400, 50, 50),
-      new PoisonObject(7400, 300, 50, 50),
-      new PoisonObject(8200, 200, 50, 50),
-      new PoisonObject(8800, 400, 50, 50),
     ];
 
     return poisons;
