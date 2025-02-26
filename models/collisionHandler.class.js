@@ -1,9 +1,19 @@
+/**
+ * Class representing the collision handler.
+ */
 class CollisionHandler {
+  /**
+   * Creates an instance of CollisionHandler.
+   * @param {Object} world - The game world.
+   */
   constructor(world) {
     this.world = world;
     this.canThrow = true;
   }
 
+  /**
+   * Checks all collisions in the game.
+   */
   checkCollisions() {
     this.checkCollisionWithPoisons();
     this.checkCollisionsWithEnemies();
@@ -15,6 +25,12 @@ class CollisionHandler {
     this.checkCrystalCollision();
   }
 
+  /**
+   * Checks if two objects are colliding.
+   * @param {MovableObject} character - The character object.
+   * @param {MovableObject} object - The other object.
+   * @returns {boolean} True if the objects are colliding, false otherwise.
+   */
   checkCollision(character, object) {
     if (!character || !object) return false;
     const charBox = character.getCollisionBox();
@@ -27,6 +43,9 @@ class CollisionHandler {
     );
   }
 
+  /**
+   * Checks collisions with poisons.
+   */
   checkCollisionWithPoisons() {
     this.world.poisonsArray.forEach((poison, index) => {
       if (this.checkCollision(this.world.character, poison)) {
@@ -35,6 +54,9 @@ class CollisionHandler {
     });
   }
 
+  /**
+   * Checks collisions with enemies.
+   */
   checkCollisionsWithEnemies() {
     this.world.enemies.forEach((enemy) => {
       if (this.checkCollision(this.world.character, enemy)) {
@@ -45,6 +67,9 @@ class CollisionHandler {
     });
   }
 
+  /**
+   * Checks collisions with the endboss.
+   */
   checkCollisionWithEndboss() {
     this.world.throwableObjects.forEach((bottle) => {
       if (bottle.collided) return;
@@ -52,7 +77,9 @@ class CollisionHandler {
         if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
           bottle.collided = true;
           bottle.isVisible = true;
-          enemy.takeDamage(25); // Jeder Treffer verursacht 25 Schaden
+          const damage = 25;
+          const steps = Math.ceil(enemy.energy / 20) - 1;
+          enemy.energy = Math.max(steps * 20, 0);
           enemy.statusBarEndboss.setPercentage(enemy.energy);
           if (enemy.energy <= 0) {
             enemy.die();
@@ -62,6 +89,9 @@ class CollisionHandler {
     });
   }
 
+  /**
+   * Checks collisions with the key.
+   */
   checkCollisionWithKey() {
     if (!this.world.character || !this.world.enemies) {
       return;
@@ -78,12 +108,12 @@ class CollisionHandler {
     });
   }
 
+  /**
+   * Handles collisions with enemies.
+   * @param {MovableObject} enemy - The enemy object.
+   */
   handleEnemyCollision(enemy) {
-    if (
-      enemy instanceof Snake ||
-      enemy instanceof Knight ||
-      enemy instanceof Endboss
-    ) {
+    if (enemy instanceof Snake || enemy instanceof Knight) {
       if (
         this.world.character.isAboveGround() &&
         this.world.character.speedY > 0
@@ -106,12 +136,12 @@ class CollisionHandler {
     }
   }
 
+  /**
+   * Checks if the enemy can attack the character.
+   * @param {MovableObject} enemy - The enemy object.
+   */
   checkEnemyAttack(enemy) {
-    if (
-      enemy instanceof Snake ||
-      enemy instanceof Knight ||
-      enemy instanceof Endboss
-    ) {
+    if (enemy instanceof Snake || enemy instanceof Knight) {
       const distance = Math.abs(this.world.character.x - enemy.x);
       if (distance <= 150 && !enemy.isDead()) {
         enemy.attack(this.world.character);
@@ -119,6 +149,9 @@ class CollisionHandler {
     }
   }
 
+  /**
+   * Checks collisions with the door.
+   */
   checkDoorCollision() {
     const character = this.world.character;
     const door = this.world.door;
@@ -130,6 +163,9 @@ class CollisionHandler {
     }
   }
 
+  /**
+   * Checks collisions with traps.
+   */
   checkTraps() {
     if (this.world.traps) {
       this.world.traps.forEach((trap) => {
@@ -146,6 +182,9 @@ class CollisionHandler {
     }
   }
 
+  /**
+   * Checks if the character can throw a throwable object.
+   */
   checkThrowableObject() {
     if (
       this.world.keyboard.D &&
@@ -160,6 +199,9 @@ class CollisionHandler {
     }
   }
 
+  /**
+   * Checks collisions with the crystal.
+   */
   checkCrystalCollision() {
     const crystal = this.world.crystal;
     if (crystal && this.isColliding(this.world.character, crystal)) {
@@ -167,6 +209,10 @@ class CollisionHandler {
     }
   }
 
+  /**
+   * Handles the collection of the crystal.
+   * @param {MovableObject} crystal - The crystal object.
+   */
   handleCrystalCollection(crystal) {
     this.world.character.collectCrystal(crystal);
     if (
@@ -177,6 +223,12 @@ class CollisionHandler {
     }
   }
 
+  /**
+   * Checks if the character is colliding with the crystal.
+   * @param {MovableObject} character - The character object.
+   * @param {MovableObject} crystal - The crystal object.
+   * @returns {boolean} True if the character is colliding with the crystal, false otherwise.
+   */
   isColliding(character, crystal) {
     this._character = character;
     return false;

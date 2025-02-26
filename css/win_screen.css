@@ -1,70 +1,101 @@
 #win-screen {
   display: none;
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.9);
-  padding: 2rem;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(23, 26, 35, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   text-align: center;
-  color: white;
-  border-radius: 10px;
   z-index: 1000;
-  width: 80%;
-  max-width: 660px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-#win-screen h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+#win-screen.show {
+  display: flex !important;
 }
 
-#win-screen p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+/* Inhalt bleibt immer mittig */
+.win-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
 }
 
-#win-screen button {
-  padding: 12px 25px;
-  font-size: 1.1rem;
+/* 🖼 Das Bild bleibt groß genug */
+.win-image {
+  width: 40vw;
+  max-width: 500px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* 🟢 Der Button bleibt groß */
+.win-screen-button {
+  padding: 18px 35px;
+  font-size: 1.8rem;  /* Behalte große Schriftgröße */
   background: #4caf50;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
+  width: 250px;  /* Behalte große Button-Breite */
 }
 
-#win-screen button:hover {
+.win-screen-button:hover {
   background: #45a049;
+  transform: scale(1.05);
 }
 
-.win-image {
-  width: 300px;
-  margin: 20px auto;
-  animation: float 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(255, 223, 0, 0.5));
-  border-radius: 15px;
-  border: 3px solid;
+/* 📝 Behalte große Überschrift */
+#win-screen h1 {
+  font-size: 3rem; 
+  margin-bottom: 1rem;
+  color: deepskyblue;
 }
 
+#win-screen p {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: aquamarine;
+}
+
+/* 📌 WICHTIG: Kein spezielles Styling für 1024px nötig! */
 @media (max-width: 768px) {
   .win-image {
-    width: 200px;
-    margin: 10px auto;
+    width: 60vw;
+  }
+
+  #win-screen h1 {
+    font-size: 2.5rem;
+  }
+
+  .win-screen-button {
+    font-size: 1.5rem;
+    width: 220px;
   }
 }
 
 @media (max-width: 480px) {
   .win-image {
-    width: 150px;
-    margin: 5px auto;
+    width: 70vw;
   }
-}
 
-@media (max-width: 375px) and (max-height: 667px) {
-  .win-image {
-    width: 120px;
-    margin: 5px auto;
+  #win-screen h1 {
+    font-size: 2rem;
+  }
+
+  .win-screen-button {
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    width: 200px;
   }
 }

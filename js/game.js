@@ -8,27 +8,22 @@ let knightHealthDisplay;
 
 const gameState = {
   save() {
-    if (
-      typeof world !== "undefined" &&
-      typeof world.character !== "undefined"
-    ) {
-      localStorage.setItem(
-        "gameState",
-        JSON.stringify({
-          characterX: world.character.x,
-          characterY: world.character.y,
-          characterEnergy: world.character.energy,
-          enemies: world.enemies.map((e) => ({
-            type: e.constructor.name,
-            x: e.x,
-            y: e.y,
-            energy: e.energy,
-            dead: e.dead,
-          })),
-          levelProgress: world.character.x,
-        })
-      );
-    }
+    localStorage.setItem(
+      "gameState",
+      JSON.stringify({
+        characterX: world.character.x,
+        characterY: world.character.y,
+        characterEnergy: world.character.energy,
+        enemies: world.enemies.map((e) => ({
+          type: e.constructor.name,
+          x: e.x,
+          y: e.y,
+          energy: e.energy,
+          dead: e.dead,
+        })),
+        levelProgress: world.character.x,
+      })
+    );
   },
 
   restore() {
@@ -97,7 +92,7 @@ function init() {
   world = new World(canvas, keyboard);
   playLevel1Sound();
   gameLoop();
-  setupTouchControls(); 
+  setupTouchControls();
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
 }
@@ -111,29 +106,21 @@ function setupTouchControls() {
 }
 
 function setupTouchControl(buttonId, key) {
-  const button = document.getElementById(buttonId);
-  if (button) {
-    button.addEventListener(
-      "touchstart",
-      () => {
-        keyboard[key] = true;
-      },
-      { passive: true }
-    );
-    button.addEventListener(
-      "touchend",
-      () => {
-        keyboard[key] = false;
-      },
-      { passive: true }
-    );
-  }
+  document
+    .getElementById(buttonId)
+    .addEventListener("touchstart", () => (keyboard[key] = true), {
+      passive: true,
+    });
+  document
+    .getElementById(buttonId)
+    .addEventListener("touchend", () => (keyboard[key] = false), {
+      passive: true,
+    });
 }
 
 function gameLoop() {
   world.update();
   world.draw();
-  world.collisionHandler.checkThrowableObject(); 
   world.gameLoop.loopID = requestAnimationFrame(gameLoop);
 }
 
@@ -163,16 +150,29 @@ function quitGame() {
 }
 
 function tryAgain() {
+  console.log("Try Again gedrückt!");
+
+  // Falls ein Game-Loop läuft, sicher stoppen
   if (world.gameLoop.running) {
+    console.log("Alten Game Loop stoppen, Loop-ID:", world.gameLoop.loopID);
     world.gameLoop.stop();
   }
+
   setTimeout(() => {
+    console.log("Starte Neustart...");
+
     gameState.restore();
     document.getElementById("game-over-container").style.display = "none";
+
     world.characterStatusBar.setPercentage(world.character.energy);
     world.character.resetState();
+
+    // Jetzt sicherstellen, dass der Game-Loop nur EINMAL startet
     if (!world.gameLoop.running) {
+      console.log("Game Loop wird NEU gestartet!");
       world.gameLoop.start();
+    } else {
+      console.log("Game Loop läuft bereits!");
     }
   }, 100);
 }

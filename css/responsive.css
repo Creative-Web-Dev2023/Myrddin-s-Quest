@@ -29,8 +29,6 @@ img {
   #controls {
     display: none;
   }
-
-  /* Versteckt die Scroll-Indikatoren ab 769px */
   .scroll-indicators {
     display: none !important;
   }
@@ -87,10 +85,6 @@ img {
     width: 160px;
   }
 
-  .win-image {
-    width: 200px;
-    margin: 10px auto;
-  }
 }
 
 @media (max-width: 600px) {
@@ -139,11 +133,6 @@ img {
   
   .game-button-container {
     gap: 20px;
-  }
-
-  .win-image {
-    width: 150px;
-    margin: 5px auto;
   }
 }
 

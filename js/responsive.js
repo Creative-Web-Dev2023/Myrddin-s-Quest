@@ -84,9 +84,6 @@ function matchGameOverSizeToCanvas() {
   if (canvas && gameOver && winScreen) {
     gameOver.style.width = canvas.style.width;
     gameOver.style.height = canvas.style.height;
-
-    winScreen.style.width = canvas.style.width;
-    winScreen.style.height = canvas.style.height;
   }
 }
 
