@@ -6,7 +6,6 @@
   width: 100%;
   height: 100%;
   background: rgba(23, 26, 35, 0.9);
-  display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -20,7 +19,6 @@
   display: flex !important;
 }
 
-/* Inhalt bleibt immer mittig */
 .win-content {
   display: flex;
   flex-direction: column;
@@ -29,7 +27,6 @@
   min-height: 60vh;
 }
 
-/* 🖼 Das Bild bleibt groß genug */
 .win-image {
   width: 40vw;
   max-width: 500px;
@@ -37,17 +34,16 @@
   margin-bottom: 20px;
 }
 
-/* 🟢 Der Button bleibt groß */
 .win-screen-button {
   padding: 18px 35px;
-  font-size: 1.8rem;  /* Behalte große Schriftgröße */
+  font-size: 1.8rem;  
   background: #4caf50;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
-  width: 250px;  /* Behalte große Button-Breite */
+  width: 250px;  
 }
 
 .win-screen-button:hover {
@@ -55,7 +51,6 @@
   transform: scale(1.05);
 }
 
-/* 📝 Behalte große Überschrift */
 #win-screen h1 {
   font-size: 3rem; 
   margin-bottom: 1rem;
@@ -68,7 +63,6 @@
   color: aquamarine;
 }
 
-/* 📌 WICHTIG: Kein spezielles Styling für 1024px nötig! */
 @media (max-width: 768px) {
   .win-image {
     width: 60vw;
