@@ -126,7 +126,9 @@ class Character extends MovableObject {
 
   handleMovement() {
     walkingSound.pause();
-    if (  this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200
+    if (
+      this.world.keyboard.RIGHT &&
+      this.x < this.world.level.level_end_x + 200
     ) {
       this.moveRight();
       this.otherDirection = false;
@@ -142,6 +144,9 @@ class Character extends MovableObject {
     }
   }
 
+/**
+   * Moves the character to the left.
+   */
   moveLeft() {
     if (!this.canMoveLeft && this.x <= 6471) {
       return;
@@ -152,6 +157,9 @@ class Character extends MovableObject {
     }
   }
 
+/**
+   * Handles the character's actions based on keyboard input.
+   */
   handleActions() {
     if (this.world.keyboard.ATTACK) {
       this.isAttacking = true;
@@ -159,22 +167,6 @@ class Character extends MovableObject {
       this.attackEnemies();
     } else {
       this.isAttacking = false;
-    }
-    if (this.world.keyboard.D) {
-      this.throwPoisonBottle();
-    }
-  }
-
-  /**
-   * Wirft eine Giftflasche.
-   */
-  throwPoisonBottle() {
-    if (this.poisonCollected > 0) {
-      let poison = new ThrowableObject(this.x, this.y);
-      this.world.throwableObjects.push(poison);
-      this.poisonCollected--;
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-      playPoisonBottleSound;
     }
   }
 
@@ -239,6 +231,10 @@ class Character extends MovableObject {
     this.animate();
   }
 
+/**
+   * Handles the character entering a door.
+   * @param {Object} door - The door the character is entering.
+   */
   enterDoor(door) {
     this.isVisible = false;
     this.x = door.x;

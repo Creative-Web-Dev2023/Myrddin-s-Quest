@@ -36,8 +36,14 @@ class EndGame {
     document.getElementById("game-over-container").style.display = "none";
     document.getElementById("win-screen").style.display = "none";
     this.world.initializeGameObjects();
-    this.world.character.poisonStatusBar.setPercentage(100); 
-    startGameLoop();
+   this.world.door = new Door(4500, 80);
+    this.world.character.reset();
+    this.world.character.poisonStatusBar.setPercentage(100);
+    if (this.world.level.endboss && this.world.level.endboss.energy <= 0) {
+      this.winScreen();
+    } else {
+      startGameLoop();
+    }
   }
 
   /**
@@ -46,7 +52,6 @@ class EndGame {
   resumeGame() {
     let savedState = JSON.parse(localStorage.getItem("gameState"));
     if (!savedState) return console.warn("🚫 Kein Speicherstand!");
-
     this.clearAllIntervals();
     document.getElementById("game-over-container").style.display = "none";
     Object.assign(this.world.character, savedState);

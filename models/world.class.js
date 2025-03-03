@@ -58,9 +58,12 @@ class World {
     this.traps = this.level.traps || [];
     this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
+    if (!this.door) {
+      this.door = new Door(4500, 80);
+  }
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
-    this.door = this.level.door;
+    // this.door = this.level.door;
     this.key = Key.initializeKey();
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
@@ -94,11 +97,7 @@ class World {
     });
   }
 
-  update() {
-      if (!this.character) { console.error("🚨 FEHLER: Kein Charakter im Update-Loop!");
-        return;
-      }
-     
+  update() {   
     if (this.levelCompleted || this.character.energy <= 0) return;
     if (this.collisionHandler) {
       this.collisionHandler.checkCollisions();
@@ -210,9 +209,4 @@ class World {
     mo.x = mo.x * -1;
     this.ctx.restore();
   }
-
-
-resetGameWorld() {
- console.log("Welt wird zurückgesetzt!")
-}
 }

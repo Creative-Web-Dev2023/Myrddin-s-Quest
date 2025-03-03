@@ -1,6 +1,0 @@
-{
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "liveServer.settings.port": 5507
-  }

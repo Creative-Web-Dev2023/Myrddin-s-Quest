@@ -164,6 +164,13 @@ class CollisionHandler {
   }
 
   /**
+   * Resets the collision handler state.
+   */
+  resetCollisionState() {
+    this.canThrow = true;
+  }
+
+  /**
    * Checks collisions with traps.
    */
   checkTraps() {
