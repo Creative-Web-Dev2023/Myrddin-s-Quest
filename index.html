@@ -33,7 +33,6 @@
     <script src="models/game/endgame.class.js" defer></script>
     <script src="models/game/keyboard.class.js" defer></script>
     <script src="models/music.js" defer></script>
-    <script src="models/game/gameLoop.class.js" defer></script>
     <script src="models/collisionHandler.class.js" defer></script>
     <script src="models/drawer.class.js" defer></script>
     <script src="models/world.class.js" defer></script>
@@ -83,7 +82,6 @@
             <span>D: Throw Bottle</span> |
             <span><strong>←</strong>: To the left</span> |
             <span><strong>→</strong>: To the right</span>
-
         </p>
     </div>
     <div id="rotate" style="display: flex;">
@@ -183,6 +181,11 @@
             <button class="win-screen-button" onclick="location.reload()">Play Again</button>
         </div>
     </div>
+    <script>
+        document.getElementById('tryAgain').addEventListener('click', () => {
+            world.endGame.resumeGame();
+        });
+    </script>
 </body>
 
 </html>

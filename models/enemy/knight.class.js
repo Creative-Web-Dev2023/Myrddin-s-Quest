@@ -49,6 +49,7 @@ class Knight extends Enemy {
     this.loadImages(this.IMAGES_DEAD);
     this.loadImage(this.IMAGES_WALKING[0]);
     this.lastHit = 0;
+    this.intervalIDs = [];
     setTimeout(() => {
       this.isMoving = true;
       this.animate();
@@ -56,7 +57,7 @@ class Knight extends Enemy {
   }
 
   animate() {
-    setInterval(() => {
+    this.setCustomInterval(() => {
       if (this.dead) {
         this.playAnimation(this.IMAGES_DEAD);
       } else if (this.isAttacking) {
@@ -104,7 +105,7 @@ class Knight extends Enemy {
         )
       ) {
         character.takeDamage(this.attackDamage);
-      } 
+      }
     }, 800);
   }
 

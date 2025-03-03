@@ -34,12 +34,13 @@ class Drawer {
    * Draws the background of the game world.
    */
   drawBackground() {
+    this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0);
     this.world.addObjectsToMap(this.world.backgroundObjects);
     if (Array.isArray(this.world.level.clouds)) {
       this.world.addObjectsToMap(this.world.level.clouds);
     }
-    this.world.ctx.translate(-this.world.camera_x, 0);
+    this.world.ctx.restore();
   }
 
   /**
@@ -48,12 +49,9 @@ class Drawer {
   drawStatusBars() {
     this.world.addToMap(this.world.poisonStatusBar);
     this.world.addToMap(this.world.characterStatusBar);
-    if (this.world.currentLevelIndex === 1 && this.world.level.endboss) {
-      this.world.endbossHealthBar.x = this.world.level.endboss.x;
-      this.world.endbossHealthBar.y = this.world.level.endboss.y - 50;
-      const healthPercentage = (this.world.level.endboss.energy / 100) * 100;
-      this.world.endbossHealthBar.setPercentage(healthPercentage);
-      this.world.addToMap(this.world.endbossHealthBar);
+    if (this.world.level.endboss) {
+      this.world.level.endboss.updateStatusBarPosition();
+      this.world.addToMap(this.world.level.endboss.statusBarEndboss);
     }
     this.world.addToMap(this.world.character.healthBar);
   }
@@ -62,6 +60,7 @@ class Drawer {
    * Draws the game objects in the game world.
    */
   drawGameObjects() {
+    this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0);
     this.world.addObjectsToMap(this.world.enemies);
     this.world.addObjectsToMap(this.world.poisonsArray);
@@ -72,7 +71,7 @@ class Drawer {
       bottle.draw(this.world.ctx, this.world.camera_x);
     });
     this.world.addObjectsToMap(this.world.traps);
-    this.world.ctx.translate(-this.world.camera_x, 0);
+    this.world.ctx.restore();
   }
 
   /**
@@ -91,6 +90,7 @@ class Drawer {
    * Draws the character in the game world.
    */
   drawCharacter() {
+    this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0);
     if (this.world.character.isVisible) {
       this.world.addToMap(this.world.character);
@@ -100,7 +100,7 @@ class Drawer {
         character.draw(this.world.ctx);
       }
     });
-    this.world.ctx.translate(-this.world.camera_x, 0);
+    this.world.ctx.restore();
   }
 
   /**

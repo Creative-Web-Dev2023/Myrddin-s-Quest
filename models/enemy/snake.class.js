@@ -40,7 +40,9 @@ class Snake extends Enemy {
     this.loadImages(this.IMAGES_ATTACKING);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-    this.animate();
+    this.intervalIDs = [];
+    this.startMovement();
+    this.startAnimation();
   }
 
   setWorld(world) {

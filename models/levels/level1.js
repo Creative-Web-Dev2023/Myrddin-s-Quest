@@ -1,11 +1,14 @@
+const level1 = initLevel();
 
-const level1 = new Level(
-  generateEnemiesLvl(),
-  generateEnvironmentsLvl(),
-  generateBackgroundsLvl(), 
-  generatePoisonObjectsLvl(), 
-  generateTrapsLvl() 
-);
+function initLevel() {
+  return new Level(
+    generateEnemiesLvl(),
+    generateEnvironmentsLvl(),
+    generateBackgroundsLvl(),
+    generatePoisonObjectsLvl(),
+    generateTrapsLvl()
+  );
+}
 
 function generateEnemiesLvl() {
   return [
@@ -15,12 +18,12 @@ function generateEnemiesLvl() {
     new Knight(8000, 2700, 4),
     new Knight(10000, 3300, 5),
     new Knight(12000, 3900, 6),
-    new Key(4400, 130, 13), 
-    new Snake(7000, 200, 7), 
+    new Key(4400, 130, 13),
+    new Snake(7000, 200, 7),
     new Snake(8300, 200, 8),
-    new Snake(9500, 200, 9), 
+    new Snake(9500, 200, 9),
     new Snake(10700, 200, 10),
-    new Snake(11700, 200, 11), 
+    new Snake(11700, 200, 11),
     new Endboss(11800, 200, 12),
     new Crystal(13660, 380),
   ];
@@ -28,10 +31,10 @@ function generateEnemiesLvl() {
 
 function generateEnvironmentsLvl() {
   return [
-    new Cloud(0, 50), 
+    new Cloud(0, 50),
     new Cloud(500, 100),
     new Cloud(1000, 150),
-    new Door(4500, 80), 
+    new Door(4500, 80),
     new Cloud(8000, 50),
     new Cloud(10500, 100),
     new Cloud(12000, 150),
@@ -40,50 +43,50 @@ function generateEnvironmentsLvl() {
 
 function generateBackgroundsLvl() {
   return [
-    new BackgroundObject("img/game_backgrounds/4/7.png", -719), 
-    new BackgroundObject("img/game_backgrounds/4/6.png", -719), 
-    new BackgroundObject("img/game_backgrounds/4/4.png", -719, 0), 
-    new BackgroundObject("img/game_backgrounds/3/3.png", -719, 100), 
-    new BackgroundObject("img/game_backgrounds/3/2.png", -719), 
-    new BackgroundObject("img/game_items/candle.png", -685, 50, 10, 30), 
-    new BackgroundObject("img/game_backgrounds/4/1.png", -719), 
-    new BackgroundObject("img/game_backgrounds/4/7.png", 0), 
-    new BackgroundObject("img/game_backgrounds/4/6.png", 0), 
-    new BackgroundObject("img/game_backgrounds/4/4.png", 0, 0), 
-    new BackgroundObject("img/game_backgrounds/3/3.png", 0, 100), 
-    new BackgroundObject("img/game_backgrounds/3/2.png", 0), 
-    new BackgroundObject("img/game_items/candle.png", 150, 50, 10, 30), 
-    new BackgroundObject("img/game_backgrounds/4/1.png", 0), 
-    new BackgroundObject("img/game_backgrounds/4/7.png", 719), 
-    new BackgroundObject("img/game_backgrounds/4/6.png", 719), 
-    new BackgroundObject("img/game_backgrounds/4/4.png", 719, 0), 
-    new BackgroundObject("img/game_backgrounds/3/3.png", 719, 100), 
-    new BackgroundObject("img/game_backgrounds/3/2.png", 719), 
-    new BackgroundObject("img/game_items/candle.png", 740, 50, 10, 30), 
-    new BackgroundObject("img/skull/scull 000.png", 950, 50, 10, 30), 
-    new BackgroundObject("img/game_backgrounds/4/1.png", 719), 
-    new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 2), 
-    new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 2), 
-    new BackgroundObject("img/game_backgrounds/4/4.png", 719 * 2, 0), 
+    new BackgroundObject("img/game_backgrounds/4/7.png", -719),
+    new BackgroundObject("img/game_backgrounds/4/6.png", -719),
+    new BackgroundObject("img/game_backgrounds/4/4.png", -719, 0),
+    new BackgroundObject("img/game_backgrounds/3/3.png", -719, 100),
+    new BackgroundObject("img/game_backgrounds/3/2.png", -719),
+    new BackgroundObject("img/game_items/candle.png", -685, 50, 10, 30),
+    new BackgroundObject("img/game_backgrounds/4/1.png", -719),
+    new BackgroundObject("img/game_backgrounds/4/7.png", 0),
+    new BackgroundObject("img/game_backgrounds/4/6.png", 0),
+    new BackgroundObject("img/game_backgrounds/4/4.png", 0, 0),
+    new BackgroundObject("img/game_backgrounds/3/3.png", 0, 100),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 0),
+    new BackgroundObject("img/game_items/candle.png", 150, 50, 10, 30),
+    new BackgroundObject("img/game_backgrounds/4/1.png", 0),
+    new BackgroundObject("img/game_backgrounds/4/7.png", 719),
+    new BackgroundObject("img/game_backgrounds/4/6.png", 719),
+    new BackgroundObject("img/game_backgrounds/4/4.png", 719, 0),
+    new BackgroundObject("img/game_backgrounds/3/3.png", 719, 100),
+    new BackgroundObject("img/game_backgrounds/3/2.png", 719),
+    new BackgroundObject("img/game_items/candle.png", 740, 50, 10, 30),
+    new BackgroundObject("img/skull/scull 000.png", 950, 50, 10, 30),
+    new BackgroundObject("img/game_backgrounds/4/1.png", 719),
+    new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 2),
+    new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 2),
+    new BackgroundObject("img/game_backgrounds/4/4.png", 719 * 2, 0),
     new BackgroundObject("img/game_backgrounds/3/3.png", 719 * 2, 100),
-    new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 2), 
-    new BackgroundObject("img/game_items/candle.png", 1400, 50, 10, 30), 
-    new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 2), 
-    new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 3), 
+    new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 2),
+    new BackgroundObject("img/game_items/candle.png", 1400, 50, 10, 30),
+    new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 2),
+    new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 3),
     new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 3),
     new BackgroundObject("img/game_backgrounds/4/4.png", 719 * 3, 0),
     new BackgroundObject("img/game_backgrounds/3/3.png", 719 * 3, 100),
     new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 3),
-    new BackgroundObject("img/game_items/candle.png", 2200, 50, 10, 30), 
-    new BackgroundObject("img/skull/scull 000.png", 2400, 50, 10, 30), 
-    new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 3), 
+    new BackgroundObject("img/game_items/candle.png", 2200, 50, 10, 30),
+    new BackgroundObject("img/skull/scull 000.png", 2400, 50, 10, 30),
+    new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 3),
     new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 4),
     new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 4),
     new BackgroundObject("img/game_backgrounds/4/4.png", 719 * 4, 0),
     new BackgroundObject("img/game_backgrounds/3/3.png", 719 * 4, 100),
     new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 4),
     new BackgroundObject("img/game_items/candle.png", 3000, 50, 10, 30),
-    new BackgroundObject("img/skull/scull 000.png", 3200, 50, 10, 30), 
+    new BackgroundObject("img/skull/scull 000.png", 3200, 50, 10, 30),
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 4),
     new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 5),
     new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 5),
@@ -91,7 +94,7 @@ function generateBackgroundsLvl() {
     new BackgroundObject("img/game_backgrounds/3/3.png", 719 * 5, 100),
     new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 5),
     new BackgroundObject("img/game_items/candle.png", 3700, 50, 10, 30),
-    new BackgroundObject("img/skull/scull 000.png", 3900, 50, 10, 30), 
+    new BackgroundObject("img/skull/scull 000.png", 3900, 50, 10, 30),
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 5),
     new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 6),
     new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 6),
@@ -99,7 +102,7 @@ function generateBackgroundsLvl() {
     new BackgroundObject("img/game_backgrounds/3/3.png", 719 * 6, 100),
     new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 6),
     new BackgroundObject("img/game_items/candle.png", 4400, 50, 10, 30),
-    new BackgroundObject("img/skull/scull 000.png", 4600, 50, 10, 30), 
+    new BackgroundObject("img/skull/scull 000.png", 4600, 50, 10, 30),
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 6),
     new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 7),
     new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 7),
@@ -107,7 +110,7 @@ function generateBackgroundsLvl() {
     new BackgroundObject("img/game_backgrounds/3/3.png", 719 * 7, 100),
     new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 7),
     new BackgroundObject("img/game_items/candle.png", 5100, 50, 10, 30),
-    new BackgroundObject("img/skull/scull 000.png", 5300, 50, 10, 30), 
+    new BackgroundObject("img/skull/scull 000.png", 5300, 50, 10, 30),
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 7),
     new BackgroundObject("img/game_backgrounds/4/7.png", 719 * 8),
     new BackgroundObject("img/game_backgrounds/4/6.png", 719 * 8),
@@ -115,7 +118,7 @@ function generateBackgroundsLvl() {
     new BackgroundObject("img/game_backgrounds/3/3.png", 719 * 8, 100),
     new BackgroundObject("img/game_backgrounds/3/2.png", 719 * 8),
     new BackgroundObject("img/game_items/candle.png", 5800, 50, 10, 30),
-    new BackgroundObject("img/skull/scull 000.png", 6000, 50, 10, 30), 
+    new BackgroundObject("img/skull/scull 000.png", 6000, 50, 10, 30),
     new BackgroundObject("img/game_backgrounds/4/1.png", 719 * 8),
     new BackgroundObject("img/game_backgrounds/3/2.png", 6471),
     new BackgroundObject("img/game_backgrounds/3/2.png", 7190),
@@ -140,14 +143,10 @@ function generatePoisonObjectsLvl() {
 
 function generateTrapsLvl() {
   return [
-    new Trap(7500, 330), 
-    new Trap(8600, 330), 
-    new Trap(9900, 330), 
-    new Trap(11000, 330), 
+    new Trap(7500, 330),
+    new Trap(8600, 330),
+    new Trap(9900, 330),
+    new Trap(11000, 330),
     new Trap(11700, 330),
   ];
 }
-
-
-
-

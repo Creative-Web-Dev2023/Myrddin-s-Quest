@@ -13,6 +13,7 @@ class Enemy extends MovableObject {
     this.attackRange = 150;
     this.attackDamage = 10;
     this.otherDirection = false;
+    this.intervalIDs = [];
   }
 
   setWorld(world) {
@@ -68,5 +69,58 @@ class Enemy extends MovableObject {
     if (index > -1) {
       this.world.enemies.splice(index, 1);
     }
+  }
+
+  /**
+   * Checks if the enemy is dead.
+   * @returns {boolean} True if the enemy is dead, false otherwise.
+   */
+  isDead() {
+    return this.energy <= 0;
+  }
+
+  /** Fügt Intervalle hinzu, damit sie gestoppt werden können */
+  setCustomInterval(fn, interval) {
+    const id = setInterval(fn, interval);
+    this.intervalIDs.push(id);
+  }
+
+  /** Stoppt alle gesetzten Intervalle */
+  stopAllIntervals() {
+    this.intervalIDs.forEach((id) => clearInterval(id));
+    this.intervalIDs = [];
+  }
+
+  /** Startet die Bewegung */
+  startMovement() {
+    this.setCustomInterval(() => {
+      if (!this.isDead()) {
+        this.x += this.otherDirection ? -this.speed : this.speed;
+      }
+    }, 50);
+  }
+
+  /** Startet die Animation */
+  startAnimation() {
+    this.setCustomInterval(() => {
+      if (this.isDead()) {
+        this.playAnimation(this.IMAGES_DEAD);
+      } else if (this.isAttacking) {
+        this.playAnimation(this.IMAGES_ATTACKING);
+      } else if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT);
+      } else {
+        this.playAnimation(this.IMAGES_WALKING);
+      }
+    }, 100);
+  }
+
+  restart() {
+    this.stopAllIntervals();
+    this.x = this.initialX;
+    this.y = this.initialY;
+    this.energy = 100;
+    this.startMovement();
+    this.startAnimation();
   }
 }

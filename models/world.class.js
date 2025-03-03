@@ -10,7 +10,7 @@ class World {
   characterStatusBar;
   characters = [];
   enemies = [];
-  throwableObjects = []; 
+  throwableObjects = [];
   imageCache = {};
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   quitButton;
@@ -36,14 +36,13 @@ class World {
     this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
-    this.gameLoop = new GameLoop(this);
     if (!this.door) {
       this.door = new Door(4500, 150);
       this.door.world = this;
     }
     this.endbossHealthBar = new EndbossStatusbar();
     this.crystal = null;
-    this.endGame = new EndGame();
+    this.endGame = new EndGame(this);
   }
 
   initializeGameObjects() {
@@ -52,17 +51,17 @@ class World {
     this.poisonStatusBar = new PoisonStatusBar();
     this.characterStatusBar = new StatusBar();
     this.character = new Character(this, this.poisonStatusBar);
-    this.character.world.keyboard = this.keyboard;
+    this.character.world = this; // Sicherstellen, dass der Charakter der Welt zugewiesen ist
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
-    this.traps = this.level.traps || []; 
+    this.traps = this.level.traps || [];
     this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.door = this.level.door;
-    this.key = Key.initializeKey(); 
+    this.key = Key.initializeKey();
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
   }
@@ -96,6 +95,10 @@ class World {
   }
 
   update() {
+      if (!this.character) { console.error("🚨 FEHLER: Kein Charakter im Update-Loop!");
+        return;
+      }
+     
     if (this.levelCompleted || this.character.energy <= 0) return;
     if (this.collisionHandler) {
       this.collisionHandler.checkCollisions();
@@ -140,6 +143,10 @@ class World {
 
   draw() {
     this.clearCanvas();
+
+  if (!this.character) {
+    console.error("🚨 FEHLER: Kein Charakter vorhanden in draw()!");
+  }
     if (this.drawer) {
       this.drawer.draw();
     }
@@ -203,4 +210,9 @@ class World {
     mo.x = mo.x * -1;
     this.ctx.restore();
   }
+
+
+resetGameWorld() {
+ console.log("Welt wird zurückgesetzt!")
+}
 }

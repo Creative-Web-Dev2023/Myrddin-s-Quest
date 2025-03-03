@@ -92,6 +92,7 @@ class Character extends MovableObject {
   ];
   IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
   world = {};
+
   constructor(world, poisonStatusBar) {
     super();
     this.loadImage(this.IMAGES_IDLE[0]);
@@ -125,9 +126,7 @@ class Character extends MovableObject {
 
   handleMovement() {
     walkingSound.pause();
-    if (
-      this.world.keyboard.RIGHT &&
-      this.x < this.world.level.level_end_x + 200
+    if (  this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200
     ) {
       this.moveRight();
       this.otherDirection = false;
@@ -160,6 +159,22 @@ class Character extends MovableObject {
       this.attackEnemies();
     } else {
       this.isAttacking = false;
+    }
+    if (this.world.keyboard.D) {
+      this.throwPoisonBottle();
+    }
+  }
+
+  /**
+   * Wirft eine Giftflasche.
+   */
+  throwPoisonBottle() {
+    if (this.poisonCollected > 0) {
+      let poison = new ThrowableObject(this.x, this.y);
+      this.world.throwableObjects.push(poison);
+      this.poisonCollected--;
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+      playPoisonBottleSound;
     }
   }
 
@@ -243,13 +258,12 @@ class Character extends MovableObject {
   }
 
   getCollisionBox() {
-    return {
+    const box = {
       x: this.x + this.offset.left,
       y: this.y + this.offset.top,
       width: this.width - this.offset.left - this.offset.right,
       height: this.height - this.offset.top - this.offset.bottom,
     };
-    console.log("Character Collision Box:", box);
     return box;
   }
 
@@ -270,10 +284,6 @@ class Character extends MovableObject {
     }
   }
 
-  collectCrystal(crystal) {
-    console.log("Character sammelt den Kristall:", crystal);
-  }
-
   attackEnemies() {
     const attackRange = 150;
     this.world.enemies.forEach((enemy) => {
@@ -288,7 +298,7 @@ class Character extends MovableObject {
             Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
         );
         if (distance <= attackRange) {
-          enemy.takeDamage(10); 
+          enemy.takeDamage(10);
         }
       }
     });
@@ -306,16 +316,6 @@ class Character extends MovableObject {
 
   startAttack() {
     this.attackStartTime = Date.now();
-  }
-
-  throwPoisonBottle() {
-    if (this.poisonCollected > 0) {
-      let bottle = new ThrowableObject(this.x, this.y);
-      this.world.throwableObjects.push(bottle);
-      this.poisonCollected -= 1;
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-      playPoisonBottleSound();
-    }
   }
 
   die() {

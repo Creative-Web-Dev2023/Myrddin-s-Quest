@@ -4,75 +4,9 @@ let keyboard = new Keyboard();
 let world;
 let candleImage = new Image();
 let IntervallIDs = [];
+let gameLoopInterval;
 let knightHealthDisplay;
-
-const gameState = {
-  save() {
-    localStorage.setItem(
-      "gameState",
-      JSON.stringify({
-        characterX: world.character.x,
-        characterY: world.character.y,
-        characterEnergy: world.character.energy,
-        enemies: world.enemies.map((e) => ({
-          type: e.constructor.name,
-          x: e.x,
-          y: e.y,
-          energy: e.energy,
-          dead: e.dead,
-        })),
-        levelProgress: world.character.x,
-      })
-    );
-  },
-
-  restore() {
-    const saved = JSON.parse(localStorage.getItem("gameState"));
-    if (!saved) return;
-    this.restoreCharacter(saved);
-    this.restoreEnemies(saved);
-    world.camera_x = saved.levelProgress;
-  },
-
-  restoreCharacter(saved) {
-    world.character.x = saved.characterX;
-    world.character.y = saved.characterY;
-    world.character.energy = 100;
-    world.character.deadAnimationPlayed = false;
-    world.character.isVisible = true;
-    world.character.invincible = true;
-    setTimeout(() => {
-      world.character.invincible = false;
-    }, 3000);
-  },
-
-  restoreEnemies(saved) {
-    world.enemies = saved.enemies.map((data) => {
-      let enemy = world.enemies.find((e) => e.x === data.x && e.y === data.y);
-      if (!enemy) {
-        if (data.type === "Endboss") {
-          enemy = new Endboss();
-        } else if (data.type === "Knight") {
-          enemy = new Knight();
-        } else if (data.type === "Snake") {
-          enemy = new Snake();
-        } else {
-          enemy = new Enemy();
-        }
-      }
-      enemy.x = data.x;
-      enemy.y = data.y;
-      enemy.energy = data.energy;
-      enemy.dead = data.dead;
-      enemy.isVisible = !data.dead;
-      enemy.canAttack = false;
-      setTimeout(() => {
-        enemy.canAttack = true;
-      }, 3000);
-      return enemy;
-    });
-  },
-};
+let endGame;
 
 function startGame() {
   document.querySelector(".overlay").style.display = "none";
@@ -80,9 +14,7 @@ function startGame() {
   document.getElementById("bigScreen").classList.remove("hidden");
   document.getElementById("key-info").classList.add("show");
   document.addEventListener("DOMContentLoaded", (event) => {});
-  document
-    .getElementById("audioSwitcher")
-    .setAttribute("onclick", "musicSwitcher()");
+  initLevel();
   init();
 }
 
@@ -90,11 +22,25 @@ function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   world = new World(canvas, keyboard);
+  endGame = new EndGame(world);
   playLevel1Sound();
-  gameLoop();
   setupTouchControls();
-  document.getElementById("tryAgain").addEventListener("click", tryAgain);
+  startGameLoop();
+
+  document.getElementById("tryAgain").addEventListener("click", () => {
+    endGame.resumeGame();
+  });
+
   document.getElementById("quitButton").addEventListener("click", quitGame);
+}
+
+function startGameLoop() {
+  if (!world) return;
+  clearInterval(gameLoopInterval);
+  gameLoopInterval = setInterval(() => {
+    world.update();
+    world.draw();
+  }, 1000 / 60);
 }
 
 function setupTouchControls() {
@@ -116,12 +62,6 @@ function setupTouchControl(buttonId, key) {
     .addEventListener("touchend", () => (keyboard[key] = false), {
       passive: true,
     });
-}
-
-function gameLoop() {
-  world.update();
-  world.draw();
-  world.gameLoop.loopID = requestAnimationFrame(gameLoop);
 }
 
 function handleDescription() {
@@ -150,31 +90,8 @@ function quitGame() {
 }
 
 function tryAgain() {
-  console.log("Try Again gedrückt!");
-
-  // Falls ein Game-Loop läuft, sicher stoppen
-  if (world.gameLoop.running) {
-    console.log("Alten Game Loop stoppen, Loop-ID:", world.gameLoop.loopID);
-    world.gameLoop.stop();
-  }
-
-  setTimeout(() => {
-    console.log("Starte Neustart...");
-
-    gameState.restore();
-    document.getElementById("game-over-container").style.display = "none";
-
-    world.characterStatusBar.setPercentage(world.character.energy);
-    world.character.resetState();
-
-    // Jetzt sicherstellen, dass der Game-Loop nur EINMAL startet
-    if (!world.gameLoop.running) {
-      console.log("Game Loop wird NEU gestartet!");
-      world.gameLoop.start();
-    } else {
-      console.log("Game Loop läuft bereits!");
-    }
-  }, 100);
+  endGame.restartGame();
+  startGameLoop();
 }
 
 function toggleFullscreen() {
