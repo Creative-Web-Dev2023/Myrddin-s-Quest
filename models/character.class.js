@@ -190,9 +190,10 @@ class Character extends MovableObject {
     if (!this.invulnerable && distance < 100) {
       this.takeDamage(5);
       this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(this.IMAGES_HURT); 
     }
   }
+  
 
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
@@ -227,8 +228,18 @@ class Character extends MovableObject {
     this.poisonStatusBar.setPercentage(0);
     this.CharacterHealthBar = new StatusBar();
     this.CharacterHealthBar.setPercentage(this.energy);
+    this.deadAnimationPlayed = false;
+    this.currentImage = 0;
+    this.isAttacking = false;
+    this.invulnerable = false;
+    this.isHurt = false;
+    this.isDead = false;
     this.playAnimation(this.IMAGES_IDLE);
     this.animate();
+    if (this.world) {
+      this.world.resetCamera();
+      this.resetEnemies();
+    }
   }
 
 /**
@@ -253,16 +264,6 @@ class Character extends MovableObject {
     }, 2000);
   }
 
-  getCollisionBox() {
-    const box = {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom,
-    };
-    return box;
-  }
-
   collectPoison(poison, index) {
     if (poison && poison.isActive) {
       poison.deactivate();
@@ -284,10 +285,7 @@ class Character extends MovableObject {
     const attackRange = 150;
     this.world.enemies.forEach((enemy) => {
       if (
-        (enemy instanceof Knight ||
-          enemy instanceof Snake ||
-          enemy instanceof Endboss) &&
-        !enemy.dead
+        (enemy instanceof Knight ||enemy instanceof Snake ||enemy instanceof Endboss) &&!enemy.dead
       ) {
         const distance = Math.sqrt(
           Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
@@ -329,11 +327,10 @@ class Character extends MovableObject {
       if (deathIndex < this.IMAGES_DEAD.length) {
         this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
         deathIndex++;
-        requestAnimationFrame(animate);
+        setTimeout(() => requestAnimationFrame(animate), 150);
       }
     };
-    if (this.deathInterval) clearInterval(this.deathInterval);
-    this.deathInterval = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
   }
 
   scheduleGameOver() {
@@ -347,18 +344,7 @@ class Character extends MovableObject {
     }, this.IMAGES_DEAD.length * 150 + 500);
   }
 
-  resetState() {
-    this.isDead = false;
-    this.deadAnimationPlayed = false;
-    this.isVisible = true;
-    this.energy = 100;
-    this.invulnerable = false;
-    clearInterval(this.deathInterval);
-    this.deathInterval = null;
-    this.currentImage = 0;
-    this.resetEnemies();
-  }
-
+  
   resetEnemies() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Snake || enemy instanceof Endboss) {
@@ -366,4 +352,16 @@ class Character extends MovableObject {
       }
     });
   }
+
+  throwPoisonBottle() {
+    if (this.poisonCollected > 0) {
+      const poisonBottle = new ThrowableObject(this.x, this.y);
+      this.world.throwableObjects.push(poisonBottle);
+      this.poisonCollected--;
+      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+    } else {
+      alert("Keine Giftflaschen verfügbar! Kämpfe weiter mit Angriffen.");
+    }
+  }
+
 }

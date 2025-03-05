@@ -136,6 +136,9 @@ class Endboss extends Enemy {
       this.spawnCrystal();
       this.removeEnemy();
     }, this.IMAGES_DEAD.length * 150);
+    if (this.world && this.world.endGame) {
+      this.world.endGame.showYouWinScreen();
+    }
   }
 
   /**

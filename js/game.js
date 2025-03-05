@@ -7,8 +7,15 @@ let IntervallIDs = [];
 let gameLoopInterval;
 let knightHealthDisplay;
 let endGame;
+let activeIntervals = [];
+
+function stopAllIntervals() {
+  activeIntervals.forEach(clearInterval);
+  activeIntervals = [];
+}
 
 function startGame() {
+  localStorage.setItem("deaths", JSON.stringify(0));
   document.querySelector(".overlay").style.display = "none";
   document.getElementById("audioSwitcher").classList.remove("hidden");
   document.getElementById("bigScreen").classList.remove("hidden");
@@ -25,22 +32,25 @@ function init() {
   endGame = new EndGame(world);
   playLevel1Sound();
   setupTouchControls();
+  if (!Array.isArray(activeIntervals)) {
+    activeIntervals = [];
+  }
   startGameLoop();
-
   document.getElementById("tryAgain").addEventListener("click", () => {
     endGame.resumeGame();
   });
-
   document.getElementById("quitButton").addEventListener("click", quitGame);
 }
 
 function startGameLoop() {
   if (!world) return;
-  clearInterval(gameLoopInterval);
-  gameLoopInterval = setInterval(() => {
+  stopAllIntervals();
+  function gameLoop() {
     world.update();
     world.draw();
-  }, 1000 / 60);
+    requestAnimationFrame(gameLoop);
+  }
+  requestAnimationFrame(gameLoop);
 }
 
 function setupTouchControls() {
@@ -90,8 +100,11 @@ function quitGame() {
 }
 
 function tryAgain() {
-  endGame.restartGame();
-  startGameLoop();
+  stopAllIntervals();
+  endGame.resumeGame();
+  setTimeout(() => {
+    startGameLoop();
+  }, 100);
 }
 
 function toggleFullscreen() {

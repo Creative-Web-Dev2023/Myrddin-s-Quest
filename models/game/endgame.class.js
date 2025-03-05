@@ -1,3 +1,6 @@
+let gameRestarted = false;
+let isDead = false;
+
 /**
  * Klasse zur Verwaltung des Endzustands des Spiels.
  */
@@ -36,26 +39,28 @@ class EndGame {
     document.getElementById("game-over-container").style.display = "none";
     document.getElementById("win-screen").style.display = "none";
     this.world.initializeGameObjects();
-   this.world.door = new Door(4500, 80);
+    this.world.resetCamera(); 
     this.world.character.reset();
-    this.world.character.poisonStatusBar.setPercentage(100);
-    if (this.world.level.endboss && this.world.level.endboss.energy <= 0) {
-      this.winScreen();
-    } else {
-      startGameLoop();
-    }
+    this.world.character.isVisible = true;
+    isDead = false;
+    startGameLoop();
   }
 
   /**
    * Setzt das Spiel an der Stelle fort, an der der Spieler gestorben ist.
    */
   resumeGame() {
-    let savedState = JSON.parse(localStorage.getItem("gameState"));
-    if (!savedState) return console.warn("🚫 Kein Speicherstand!");
+    const savedState = JSON.parse(localStorage.getItem("gameState"));
+    if (!savedState) {
+      console.warn("Kein gespeicherter Zustand, Starten nicht möglich!");
+      return;
+    }
     this.clearAllIntervals();
     document.getElementById("game-over-container").style.display = "none";
     Object.assign(this.world.character, savedState);
     this.world.camera_x = -savedState.x + 190;
+    this.world.character.isVisible = true;
+    isDead = false; 
     startGameLoop();
     this.world.draw();
   }
@@ -64,10 +69,16 @@ class EndGame {
    * Speichert den aktuellen Spielzustand.
    */
   saveGameState() {
+    let deaths = localStorage.getItem("deaths")
+      ? JSON.parse(localStorage.getItem("deaths"))
+      : 0;
+    deaths++;
+    localStorage.setItem("deaths", JSON.stringify(deaths));
     this.lastState = {
       x: this.world.character.x,
       y: this.world.character.y,
       energy: 100,
+      deaths: deaths,
     };
     localStorage.setItem("gameState", JSON.stringify(this.lastState));
   }
@@ -81,9 +92,30 @@ class EndGame {
   }
 
   /**
-   * Zeigt den „You Lost“-Screen an.
+   * Zeigt den "You Lost" Screen an.
    */
   showYouLostScreen() {
     this.gameOver();
+  }
+
+  checkDeathCondition() {
+    if (this.world.character.energy <= 0 && !isDead) {
+      this.incrementDeaths();
+      isDead = true;
+      this.gameOver();
+    }
+  }
+
+  incrementDeaths() {
+    let deaths = localStorage.getItem("deaths")
+      ? JSON.parse(localStorage.getItem("deaths"))
+      : 0;
+    deaths++;
+    localStorage.setItem("deaths", JSON.stringify(deaths));
+  }
+
+  showYouWinScreen() {
+    this.clearAllIntervals();
+    document.getElementById("win-screen").style.display = "block";
   }
 }
