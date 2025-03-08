@@ -4,25 +4,19 @@
 function adjustCanvasSize() {
   const canvas = document.getElementById("canvas");
   const container = document.getElementById("canvas-container");
-  const aspectRatio = 3 / 2; 
-  let newWidth = window.innerWidth * 0.98;
-  let newHeight = newWidth / aspectRatio; 
-
-  if (newHeight > window.innerHeight * 0.98) {
-    newHeight = window.innerHeight * 0.98;
-    newWidth = newHeight * aspectRatio;
+  const aspectRatio = 16 / 9;
+  if (window.innerWidth / aspectRatio < window.innerHeight) {
+    canvas.style.width = "95vw";
+    canvas.style.height = `${95 / aspectRatio}vw`;
+  } else {
+    canvas.style.height = "95vh";
+    canvas.style.width = `${95 * aspectRatio}vh`;
   }
-  canvas.style.width = `${newWidth}px`;
-  canvas.style.height = `${newHeight}px`;
-  container.style.width = `${newWidth}px`;
-  container.style.height = `${newHeight}px`;
-
+  container.style.height = canvas.style.height;
   matchGameOverSizeToCanvas();
 }
-
 window.addEventListener("resize", adjustCanvasSize);
 document.addEventListener("DOMContentLoaded", adjustCanvasSize);
-
 
 adjustCanvasSize();
 

@@ -58,9 +58,7 @@ function stopMusic() {
     backgroundMusic.pause();
     backgroundMusic.currentTime = 0;
     musicIsOn = false;
-    pauseAllSounds();
-    walkingSound.pause();
-    walkingSound.currentTime = 0;
+    stopAllSounds();
   }
 }
 
@@ -69,8 +67,10 @@ function stopMusic() {
  */
 function stopAllSounds() {
   allSounds.forEach((sound) => {
-    sound.pause();
-    sound.currentTime = 0;
+    if (!sound.paused) {
+      sound.pause();
+      sound.currentTime = 0;
+    }
   });
 }
 
@@ -90,39 +90,31 @@ function pauseAllSounds() {
 function playWalkingSound() {
   if (musicIsOn && walkingSound.paused) {
     walkingSound.play();
-  } else if (!musicIsOn) {
-    walkingSound.pause();
-    walkingSound.currentTime = 0;
+    walkingSound.onended = () => {
+      walkingSound.currentTime = 0;
+    };
   }
 }
 
 /**
  * Plays the level 1 background sound.
  */
-function playLevel1Sound() {
-  if (musicIsOn) {
-    level1Sound.play();
-    level1Sound.loop = true;
-  }
+async function playLevel1Sound() {
+  await playSoundAsync(level1Sound);
 }
 
 /**
  * Plays the level 2 background sound.
  */
-function playLevel2Sound() {
-  if (musicIsOn) {
-    level2Sound.play();
-    level2Sound.loop = true;
-  }
+async function playLevel2Sound() {
+  await playSoundAsync(level2Sound);
 }
 
 /**
  * Plays the attack sound.
  */
-function playAttackSound() {
-  if (musicIsOn && attackSound.paused) {
-    attackSound.play();
-  }
+async function playAttackSound() {
+  await playSoundAsync(attackSound);
 }
 
 /**
@@ -169,5 +161,15 @@ function playNewSound() {
 function playSnakeAttackSound() {
   if (musicIsOn && snakeAttackSound.paused) {
     snakeAttackSound.play();
+  }
+}
+
+async function playSoundAsync(sound) {
+  try {
+    if (musicIsOn && sound.paused) {
+      await sound.play();
+    }
+  } catch (error) {
+    console.error('Error playing sound:', error);
   }
 }

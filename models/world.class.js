@@ -143,6 +143,7 @@ class World {
     }
     if (this.character.isVisible) {
       this.character.update();
+      this.character.playAnimation(this.character.IMAGES_IDLE); // Beispiel für die Verwendung der playAnimation-Methode
     }
     this.updatePoison();
     if (this.character.isMoving() && musicIsOn) {

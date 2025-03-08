@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Myrddin's Quest</title>
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/style.css">
@@ -30,7 +29,7 @@
     <script src="models/environmments/trap.class.js" defer></script>
     <script src="models/environmments/crystal.class.js" defer></script>
     <script src="models/levels/level1.js" defer></script>
-    <script src="models/game/endgame.class.js" defer></script>
+    <script src="js/endgame.class.js" defer></script>
     <script src="models/game/keyboard.class.js" defer></script>
     <script src="models/music.js" defer></script>
     <script src="models/collisionHandler.class.js" defer></script>
@@ -88,13 +87,13 @@
         <img class="rotate-icon" src="img/game_ui/device-mobile-phone.png" alt="Rotate">
         <p class="rotate-message">Please rotate your device</p>
     </div>
-    <div class="overlay">
+    <div class="overlay" width="780" height="480">
         <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character">
         <svg viewBox="0 0 850 190" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
             <defs>
                 <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent" />
             </defs>
-            <text font-size="clamp(1.5rem, 4vw, 2.5rem)" style="text-shadow: 2px 2px 4px black;">
+            <text font-size="clamp(2rem, 5vw, 3rem)" style="text-shadow: 2px 2px 4px black;">
                 <textPath href="#curve" startOffset="50%" dy="-1.5em" text-anchor="middle" fill="yellow"
                     dominant-baseline="middle" style="font-weight: bold;">
                     Embark on an Epic Adventure

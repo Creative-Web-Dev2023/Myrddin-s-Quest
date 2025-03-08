@@ -49,6 +49,9 @@ img {
 }
 
 @media (max-width: 768px) {
+  #canvas {
+    width: 95vw;
+  }
   #controls {
     display: flex !important;
     bottom: 20px;
@@ -80,11 +83,16 @@ img {
     height: 200px;
     margin-bottom: 30px;
   }
-  
+
   .game-button img {
     width: 160px;
   }
-
+  .impressum-button,
+  .span {
+    left: -17px;
+    position: relative;
+    margin-top: 10px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -101,36 +109,25 @@ img {
   }
 }
 
-@media (max-width: 520px) {
-  .how-to-play-button {
-    display: none !important;
-  }
-}
-
 @media (max-width: 480px) {
   h2 {
     font-size: 3.2rem;
   }
 
   #canvas {
-    width: 95%;
-    height: auto;
-  }
-
-  .overlay {
-    width: 95%;
-    height: auto;
+ 
+    margin-top: 452px;
   }
 
   .you-lost-image {
     height: 150px;
     margin-bottom: 20px;
   }
-  
+
   .game-button img {
     width: 120px;
   }
-  
+
   .game-button-container {
     gap: 20px;
   }
@@ -139,6 +136,50 @@ img {
 @media (max-width: 400px) {
   .icon-container {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 375px) and (max-height: 667px) {
+  /* #canvas {
+    width: 95%;
+    height: auto;
+  } */
+
+  .overlay {
+    width: 90%;
+    height: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 20px;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    bottom: 20px;
+  }
+
+  .start-button,
+  .how-to-play-button,
+  .impressum-button {
+    width: 70px;
+    height: 25px;
+    font-size: 12px;
+    bottom: 10px;
+  }
+
+  .start-button {
+    left: 10px;
+  }
+
+  .how-to-play-button {
+    right: 10px;
+  }
+
+  .impressum-button {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 40px;
   }
 }
 
@@ -154,8 +195,14 @@ img {
     height: 150px;
     margin-bottom: 20px;
   }
-  
+
   .game-button img {
     width: 100px;
+  }
+}
+
+@media (max-width: 394px) and (max-height: 423px) {
+  #canvas {
+    margin-top: 10px;
   }
 }
