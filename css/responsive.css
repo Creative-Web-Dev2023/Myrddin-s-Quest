@@ -1,4 +1,4 @@
-img {
+/* img {
   max-width: 100%;
   height: auto;
 }
@@ -41,4 +41,52 @@ img {
     max-width: 100%;
   }
 
+} */
+/* Allgemeine responsive Einstellungen */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.responsive-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 15px;
+}
+
+/* Anpassungen für kleine Bildschirme */
+@media (max-width: 768px) {
+  #canvas-container {
+    max-width: 90%;
+  }
+
+  .start-button, .how-to-play-button {
+    width: 100px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .how-to-play-button {
+    right: 100px;
+  }
+}
+
+/* Anpassungen für sehr kleine Bildschirme */
+@media (max-width: 480px) {
+  #canvas-container {
+    max-width: 100%;
+  }
+}
+
+/* Spezifische Anpassungen für Smartphones */
+@media (max-width: 375px) {
+  .start-button {
+    position: relative;
+    bottom: 20px;
+  }
+  
+  .how-to-play-button {
+    margin-right: 10px;
+  }
 }

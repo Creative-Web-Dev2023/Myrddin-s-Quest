@@ -3,6 +3,7 @@
  * @extends Enemy
  */
 class Endboss extends Enemy {
+  hadFirstContact = false;
   /**
    * Creates an instance of Endboss.
    * @param {number} id - The ID of the Endboss.
@@ -130,7 +131,8 @@ class Endboss extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
-    this.playAnimation(this.IMAGES_DEAD, 150);
+    this.deadAnimationPlayed = false; // Setze deadAnimationPlayed auf false
+    this.playDeathAnimation();
     this.deadSound.play();
     setTimeout(() => {
       this.spawnCrystal();
@@ -139,6 +141,19 @@ class Endboss extends Enemy {
     if (this.world && this.world.endGame) {
       this.world.endGame.showYouWinScreen();
     }
+  }
+
+  playDeathAnimation() {
+    let deathIndex = 0;
+    const deathInterval = setInterval(() => {
+      if (deathIndex < this.IMAGES_DEAD.length) {
+        this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
+        deathIndex++;
+      } else {
+        clearInterval(deathInterval);
+        this.deadAnimationPlayed = true; // Setze deadAnimationPlayed auf true
+      }
+    }, 150);
   }
 
   /**
@@ -163,7 +178,7 @@ class Endboss extends Enemy {
     } else if (this.x >= this.patrolRightLimit) {
       this.otherDirection = true;
     }
-    this.x += this.otherDirection ? -this.speed : this.speed;
+    this.x += this.otherDirection ? -this.speed : this.speed;// Ändere die Richtung des Endbosses
   }
 
   /**
@@ -221,19 +236,21 @@ class Endboss extends Enemy {
     this.statusBarEndboss.y = this.y - 40;
   }
 
-  /**
-   * Animates the Endboss.
-   */
   animate() {
-    this.setCustomInterval(() => {
-      if (this.dead) {
-        this.playAnimation(this.IMAGES_DEAD, 250);
+    let i = 0;
+    setInterval(() => {
+      if (this.dead && !this.deadAnimationPlayed) {
+        this.playDeathAnimation();
       } else if (this.isAttacking) {
         this.playAnimation(this.IMAGES_ATTACKING, 100);
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT, 250);
       } else {
         this.playAnimation(this.IMAGES_WALKING, 150);
+      }
+      i++;
+      if (this.x >= 13250 && this.x <= 13500) {
+        this.hadFirstContact = true;
       }
     }, 100);
   }

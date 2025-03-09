@@ -3,24 +3,17 @@
  * @extends DrawableObject
  */
 class MovableObject extends DrawableObject {
-  drawRectangle = true;
   speed = 0.15;
   speedY = 0;
   acceleration = 2.5;
   energy = 100;
   lastHit = 0;
-  currentImage = 0;
-  lastFrame = 0;
-
-  offset = {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  };
+  isVisible = true;
+  animationIntervals = [];
+  offset = { top: 0, bottom: 0, left: 0, right: 0 };
 
   /**
-   * Applies gravity to the object.
+   * 🔹 Wendet die Gravitation auf das Objekt an
    */
   applyGravity() {
     this.gravityInterval = setInterval(() => {
@@ -33,23 +26,34 @@ class MovableObject extends DrawableObject {
     }, 1000 / 25);
   }
 
-  /**
-   * Checks if the object is above the ground.
-   * @returns {boolean} True if the object is above the ground, false otherwise.
-   */
-  isAboveGround() {
-    if (this instanceof ThrowableObject) {
-      return true;
-    } else {
-      return this.y < 150;
+  // 🔹 Bewegung
+  moveRight() {
+    this.x += this.speed;
+    this.playWalkingSound();
+  }
+
+  moveLeft() {
+    this.x -= this.speed;
+    this.playWalkingSound();
+  }
+
+  jump() {
+    if (this.isAboveGround()) return;
+    this.speedY = 30;
+    playJumpSound();
+  }
+
+  playWalkingSound() {
+    if (this.walking_sound && this.walking_sound.paused) {
+      this.walking_sound.play();
     }
   }
 
-  /**
-   * Checks if the object is colliding with another object.
-   * @param {MovableObject} mo - The other movable object.
-   * @returns {boolean} True if the objects are colliding, false otherwise.
-   */
+  // 🔹 Kollisionen & Zustand
+  isAboveGround() {
+    return this instanceof ThrowableObject || this.y < 150;
+  }
+
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false;
     return (
@@ -60,10 +64,6 @@ class MovableObject extends DrawableObject {
     );
   }
 
-  /**
-   * Gets the collision box of the object.
-   * @returns {Object} The collision box of the object.
-   */
   getCollisionBox() {
     return {
       x: this.x + this.offset.left,
@@ -73,185 +73,80 @@ class MovableObject extends DrawableObject {
     };
   }
 
-  /**
-   * Checks if the object is hurt.
-   * @returns {boolean} True if the object is hurt, false otherwise.
-   */
   isHurt() {
-    let timepassed = new Date().getTime() - this.lastHit;
-    timepassed = timepassed / 1000;
-    return timepassed < 5;
+    return (new Date().getTime() - this.lastHit) / 1000 < 5;
   }
 
-  /**
-   * Checks if the object is dead.
-   * @returns {boolean} True if the object is dead, false otherwise.
-   */
   isDead() {
-    if (
-      typeof gameStateSave !== "undefined" &&
-      typeof world !== "undefined" &&
-      typeof world.character !== "undefined"
-    ) {
-      gameStateSave();
-    }
     return this.energy <= 0;
   }
 
-  /**
-   * Loads images for the object.
-   * @param {string[]} images - The array of image paths to load.
-   */
-  loadImages(images) {
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      return;
-    }
-    this.imageCache = this.imageCache || {};
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  }
-
-  /**
-   * Moves the object to the right.
-   */
-  moveRight() {
-    this.x += this.speed;
-    if (this.walking_sound && this.walking_sound.paused) {
-      this.walking_sound.play();
-    }
-  }
-
-  /**
-   * Moves the object to the left.
-   */
-  moveLeft() {
-    this.x -= this.speed;
-    if (this.walking_sound && this.walking_sound.paused) {
-      this.walking_sound.play();
-    }
-  }
-
-  /**
-   * Makes the object jump.
-   */
-  jump() {
-    this.speedY = 30;
-  }
-
-  /**
-   * Takes damage and updates the object's energy.
-   * @param {number} damage - The amount of damage to take.
-   */
   takeDamage(damage) {
-    if (this.energy > 0 && !this.invulnerable) {
-      this.energy -= damage;
-      this.playAnimation(this.IMAGES_HURT);
-      if (this.energy <= 0) {
-        this.energy = 0;
-        this.die();
-      } else {
-        this.invulnerable = true;
-        setTimeout(() => {
-          this.invulnerable = false;
-        }, 2000);
-      }
+    if (this.energy <= 0 || this.invulnerable) return;
+
+    this.energy -= damage;
+    this.playAnimation(this.IMAGES_HURT);
+
+    if (this.energy <= 0) {
+      this.energy = 0;
+      this.die();
+    } else {
+      this.invulnerable = true;
+      setTimeout(() => (this.invulnerable = false), 2000);
     }
   }
 
-  /**
-   * Handles the death of the object.
-   */
   die() {
-    this.isVisible = false;
-  }
-  /**
-   * Animates the object.
-   */
-  animate() {
     if (this.deadAnimationPlayed) return;
-    this.animationInterval = setInterval(() => {
-      if (typeof this.isDead === "function" && this.isDead()) {
-        this.handleDeadAnimation();
-      } else if (this.world && this.world.board && this.world.keyboard.ATTACK) {
-        this.playAnimationWithSound(this.IMAGES_ATTACK, attackSound);
+
+    this.deadAnimationPlayed = true;
+    this.playDeathAnimation();
+  }
+
+  animate() {
+    this.stopAllAnimations();
+
+    let interval = setInterval(() => {
+      if (this.isDead()) {
+        this.playDeathAnimation();
+        clearInterval(interval);
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       } else if (this.isAboveGround()) {
         this.playAnimation(this.IMAGES_JUMPING);
-      } else if (
-        this.world &&
-        this.world.keyboard &&
-        (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)
-      ) {
-        this.playAnimationWithSound(this.IMAGES_WALKING, walkingSound);
       } else {
         this.playAnimation(this.IMAGES_IDLE);
       }
     }, 100);
+
+    this.animationIntervals.push(interval);
   }
 
-  /**
-   * Plays an animation with sound for the object.
-   * @param {string[]} images - The array of image paths for the animation.
-   * @param {HTMLAudioElement} sound - The sound to play with the animation.
-   */
-  playAnimationWithSound(images, sound) {
-    this.playAnimation(images);
-    if (musicIsOn) {
-      if (sound.paused) {
-        sound.play();
-      }
-    } else {
-      sound.pause();
-      sound.currentTime = 0;
-    }
+  stopAllAnimations() {
+    this.animationIntervals.forEach(clearInterval);
+    this.animationIntervals = [];
   }
 
-  /**
-   * Handles the dead animation for the object.
-   */
-  handleDeadAnimation() {
+  playAnimation(images) {
+    if (!images || !Array.isArray(images) || images.length === 0) return;
+    let i = this.currentImage % images.length;
+    this.img = this.imageCache[images[i]];
+    this.currentImage++;
+    this.lastFrame = Date.now();
+  }
+
+  playDeathAnimation() {
+    this.stopAllAnimations();
     let deathIndex = 0;
-    const deathInterval = setInterval(() => {
+    let deathInterval = setInterval(() => {
       if (deathIndex < this.IMAGES_DEAD.length) {
         this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
         deathIndex++;
       } else {
         clearInterval(deathInterval);
-        setTimeout(() => {
-          this.isVisible = false;
-          setTimeout(() => {
-            if (this.world.endGame) {
-              this.world.endGame.showYouWonScreen();
-            }
-          }, 2000);
-        }, 1000);
+        this.isVisible = false;
       }
     }, 150);
-  }
-
-  /**
-   * Plays an animation for the object.
-   * @param {string[]} images - The array of image paths for the animation.
-   */
-  playAnimation(images) {
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      return;
-    }
-    if (this.currentImage >= images.length) {
-      this.currentImage = 0;
-    }
-    if (
-      this.currentImage % images.length === 0 ||
-      Date.now() - this.lastFrame > 100
-    ) {
-      let i = this.currentImage % images.length;
-      this.img = this.imageCache[images[i]];
-      this.currentImage++;
-      this.lastFrame = Date.now();
-    }
+    this.animationIntervals.push(deathInterval);
   }
 }

@@ -3,129 +3,73 @@ let isAfterDoor = false;
 class Character extends MovableObject {
   height = 290;
   width = 520;
-  x = 130;
-  y = 150;
   speed = 5;
   invulnerable = false;
   poisonCollected = 0;
-  poisonStatusBar;
   deadAnimationPlayed = false;
   hasKey = false;
   isVisible = true;
-  offset = {
-    top: 50,
-    bottom: 10,
-    left: 210,
-    right: 200,
+  animationIntervals = [];
+  offset = { top: 50, bottom: 10, left: 210, right: 200 };
+  IMAGES = {
+    IDLE: this.loadImageArray("img/wizard/idle/idle_", 10),
+    WALKING: this.loadImageArray("img/wizard/walk/walk_", 9),
+    JUMPING: this.loadImageArray("img/wizard/jump/jump_", 9),
+    ATTACK: this.loadImageArray("img/wizard/attack/Attack_", 7),
+    DEAD: this.loadImageArray("img/wizard/die/die_", 9),
+    HURT: this.loadImageArray("img/wizard/hurt/hurt_", 9),
+    YOU_LOST: ["img/game_ui/login&pass/game_over.png"],
   };
-
-  IMAGES_IDLE = [
-    "img/wizard/idle/idle_000.png",
-    "img/wizard/idle/idle_001.png",
-    "img/wizard/idle/idle_002.png",
-    "img/wizard/idle/idle_003.png",
-    "img/wizard/idle/idle_004.png",
-    "img/wizard/idle/idle_005.png",
-    "img/wizard/idle/idle_006.png",
-    "img/wizard/idle/idle_007.png",
-    "img/wizard/idle/idle_008.png",
-    "img/wizard/idle/idle_009.png",
-  ];
-
-  IMAGES_WALKING = [
-    "img/wizard/walk/walk_001.png",
-    "img/wizard/walk/walk_002.png",
-    "img/wizard/walk/walk_003.png",
-    "img/wizard/walk/walk_004.png",
-    "img/wizard/walk/walk_005.png",
-    "img/wizard/walk/walk_006.png",
-    "img/wizard/walk/walk_007.png",
-    "img/wizard/walk/walk_008.png",
-    "img/wizard/walk/walk_009.png",
-  ];
-
-  IMAGES_JUMPING = [
-    "img/wizard/jump/jump_000.png",
-    "img/wizard/jump/jump_001.png",
-    "img/wizard/jump/jump_002.png",
-    "img/wizard/jump/jump_003.png",
-    "img/wizard/jump/jump_004.png",
-    "img/wizard/jump/jump_005.png",
-    "img/wizard/jump/jump_006.png",
-    "img/wizard/jump/jump_007.png",
-    "img/wizard/jump/jump_008.png",
-    "img/wizard/jump/jump_009.png",
-  ];
-  IMAGES_ATTACK = [
-    "img/wizard/attack/Attack1.png",
-    "img/wizard/attack/Attack2.png",
-    "img/wizard/attack/Attack3.png",
-    "img/wizard/attack/Attack4.png",
-    "img/wizard/attack/Attack5.png",
-    "img/wizard/attack/Attack6.png",
-    "img/wizard/attack/Attack7.png",
-  ];
-  IMAGES_DEAD = [
-    "img/wizard/die/die_000.png",
-    "img/wizard/die/die_001.png",
-    "img/wizard/die/die_002.png",
-    "img/wizard/die/die_003.png",
-    "img/wizard/die/die_004.png",
-    "img/wizard/die/die_005.png",
-    "img/wizard/die/die_006.png",
-    "img/wizard/die/die_007.png",
-    "img/wizard/die/die_008.png",
-    "img/wizard/die/die_009.png",
-  ];
-
-  IMAGES_HURT = [
-    "img/wizard/hurt/hurt_000.png",
-    "img/wizard/hurt/hurt_001.png",
-    "img/wizard/hurt/hurt_002.png",
-    "img/wizard/hurt/hurt_003.png",
-    "img/wizard/hurt/hurt_004.png",
-    "img/wizard/hurt/hurt_005.png",
-    "img/wizard/hurt/hurt_006.png",
-    "img/wizard/hurt/hurt_007.png",
-    "img/wizard/hurt/hurt_008.png",
-    "img/wizard/hurt/hurt_009.png",
-  ];
-  IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
-  world = {};
 
   constructor(world, poisonStatusBar) {
     super();
-    this.loadImage(this.IMAGES_IDLE[0]);
-    this.loadImages(this.IMAGES_IDLE);
-    this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_JUMPING);
-    this.loadImages(this.IMAGES_DEAD);
-    this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_ATTACK);
-    this.world = world || {};
+    this.world = world;
+    this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
+    this.initCharacter();
+  }
+
+  /**
+   * 🔹 Initialisiert den Charakter
+   */
+  initCharacter() {
+    this.loadImage(this.IMAGES.IDLE[0]);
+    this.loadAllImages();
     this.applyGravity();
     this.energy = 100;
-    this.playAnimation(this.IMAGES_IDLE);
-    this.animate();
-    this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
     this.poisonStatusBar.setPercentage(0);
     this.statusBar = new StatusBar();
-    this.loadImages(this.IMAGES_YOU_LOST);
     this.world.camera_x = -this.x - 190;
     this.canMoveLeft = true;
+    this.animate();
+  }
+
+  /**
+   * 🔹 Lädt alle Bilder in den Cache
+   */
+  loadAllImages() {
+    Object.values(this.IMAGES).forEach((imgArray) => this.loadImages(imgArray));
+  }
+
+  /**
+   * 🔹 Lädt Bildarrays automatisch
+   */
+  loadImageArray(path, count) {
+    let images = [];
+    for (let i = 0; i < count; i++) {
+      let index = i.toString().padStart(3, "0");
+      images.push(`${path}${index}.png`);
+    }
+    return images;
   }
 
   update() {
-    if (!this.isVisible) return;
-    if (this.energy > 0) {
-      this.handleMovement();
-      this.handleActions();
-      this.updateCamera();
-    }
+    if (!this.isVisible || this.energy <= 0) return;
+    this.handleMovement();
+    this.handleActions();
+    this.updateCamera();
   }
 
   handleMovement() {
-    walkingSound.pause();
     if (
       this.world.keyboard.RIGHT &&
       this.x < this.world.level.level_end_x + 200
@@ -134,7 +78,7 @@ class Character extends MovableObject {
       this.otherDirection = false;
       playWalkingSound();
     }
-    if (this.world.keyboard.LEFT && this.x > 0) {
+    if (this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft()) {
       this.moveLeft();
       this.otherDirection = true;
       playWalkingSound();
@@ -144,34 +88,28 @@ class Character extends MovableObject {
     }
   }
 
-/**
-   * Moves the character to the left.
-   */
-  moveLeft() {
-    if (!this.canMoveLeft && this.x <= 6471) {
-      return;
-    }
-    this.x -= this.speed;
-    if (this.walking_sound && this.walking_sound.paused) {
-      this.walking_sound.play();
-    }
-  }
-
-/**
-   * Handles the character's actions based on keyboard input.
-   */
   handleActions() {
-    if (this.world.keyboard.ATTACK) {
-      this.isAttacking = true;
-      this.playAnimation(this.IMAGES_ATTACK);
+    this.isAttacking = this.world.keyboard.ATTACK;
+    if (this.isAttacking) {
+      this.playAnimation(this.IMAGES.ATTACK);
       this.attackEnemies();
-    } else {
-      this.isAttacking = false;
     }
   }
 
-  updateCamera() {
-    this.world.camera_x = -this.x - 190;
+  attackEnemies() {
+    this.world.enemies.forEach((enemy) => {
+      if (
+        (enemy instanceof Knight ||
+          enemy instanceof Snake ||
+          enemy instanceof Endboss) &&
+        !enemy.dead
+      ) {
+        const distance = Math.abs(this.x - enemy.x);
+        if (distance < 150) {
+          enemy.takeDamage(10);
+        }
+      }
+    });
   }
 
   jump() {
@@ -181,68 +119,106 @@ class Character extends MovableObject {
     }
   }
 
-  isMoving() {
-    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+  updateCamera() {
+    this.world.camera_x = -this.x - 190;
   }
-
-  hit(enemy) {
-    const distance = Math.abs(this.x - enemy.x);
-    if (!this.invulnerable && distance < 100) {
-      this.takeDamage(5);
-      this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(this.IMAGES_HURT); 
-    }
-  }
-  
 
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
       this.energy -= damage;
-      this.lastHit = new Date().getTime();
       this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(this.IMAGES.HURT);
+
       if (this.energy <= 0) {
-        this.energy = 0;
         this.die();
       } else {
         this.invulnerable = true;
-        setTimeout(() => {
-          this.invulnerable = false;
-        }, 1000);
+        setTimeout(() => (this.invulnerable = false), 1000);
       }
     }
   }
 
-  updateStatusBar() {
-    if (this.world && this.world.statusBar) {
-      this.world.statusBar.update(this.energy);
+  die() {
+    if (!this.deadAnimationPlayed) {
+      this.deadAnimationPlayed = true;
+      this.playDeathAnimation();
+      this.scheduleGameOver();
     }
+  }
+
+  playDeathAnimation() {
+    this.stopAllAnimations();
+    let deathIndex = 0;
+
+    let deathInterval = setInterval(() => {
+      if (deathIndex < this.IMAGES.DEAD.length) {
+        this.img = this.imageCache[this.IMAGES.DEAD[deathIndex]];
+        deathIndex++;
+      } else {
+        clearInterval(deathInterval);
+        this.isVisible = false;
+        this.world.endGame?.showYouLostScreen();
+      }
+    }, 150);
+    this.animationIntervals.push(deathInterval);
+  }
+
+  scheduleGameOver() {
+    setTimeout(() => {
+      this.isVisible = false;
+      this.world.endGame?.showYouLostScreen();
+    }, this.IMAGES.DEAD.length * 150 + 500);
+  }
+
+  animate() {
+    this.stopAllAnimations();
+    let interval = setInterval(() => {
+      if (this.isDead() && !this.deadAnimationPlayed) {
+        this.playDeathAnimation();
+      } else if (this.isHurt()) {
+        this.playAnimation(this.IMAGES.HURT);
+      } else if (this.isAttacking) {
+        this.playAnimation(this.IMAGES.ATTACK);
+      } else if (this.isAboveGround()) {
+        this.playAnimation(this.IMAGES.JUMPING);
+      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+        this.playAnimation(this.IMAGES.WALKING);
+      } else {
+        this.playAnimation(this.IMAGES.IDLE);
+      }
+    }, 100);
+    this.animationIntervals.push(interval);
+  }
+
+  stopAllAnimations() {
+    this.animationIntervals.forEach(clearInterval);
+    this.animationIntervals = [];
   }
 
   reset() {
-    this.x = 130;
-    this.y = 150;
-    this.isVisible = true;
-    this.energy = 100;
-    this.poisonCollected = 0;
+    this.stopAllAnimations();
+    Object.assign(this, {
+      x: 130,
+      y: 150,
+      isVisible: true,
+      energy: 100,
+      poisonCollected: 0,
+      deadAnimationPlayed: false,
+      isAttacking: false,
+      invulnerable: false,
+      currentImage: 0,
+    });
+
     this.poisonStatusBar.setPercentage(0);
-    this.CharacterHealthBar = new StatusBar();
-    this.CharacterHealthBar.setPercentage(this.energy);
-    this.deadAnimationPlayed = false;
-    this.currentImage = 0;
-    this.isAttacking = false;
-    this.invulnerable = false;
-    this.isHurt = false;
-    this.isDead = false;
-    this.playAnimation(this.IMAGES_IDLE);
+    this.playAnimation(this.IMAGES.IDLE);
     this.animate();
-    if (this.world) {
-      this.world.resetCamera();
-      this.resetEnemies();
-    }
+    this.applyGravity();
   }
 
-/**
+  resetEnemies() {
+    this.world.enemies.forEach((enemy) => enemy.resetPosition?.());
+  }
+  /**
    * Handles the character entering a door.
    * @param {Object} door - The door the character is entering.
    */
@@ -257,11 +233,18 @@ class Character extends MovableObject {
         this.y = 150;
         this.world.camera_x = -this.x - 190;
         this.isVisible = true;
-        this.canMoveLeft = false;
-        isAfterDoor = true;
+        isAfterDoor = true; // Setze isAfterDoor auf true, nachdem der Charakter durch die Tür gegangen ist
         playNewSound();
       }, 200);
     }, 2000);
+  }
+
+  canMoveLeft() {
+    return !isAfterDoor; // Verhindere das Bewegen nach links, wenn der Charakter durch die Tür gegangen ist
+  }
+
+  isMoving() {
+    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
   }
 
   collectPoison(poison, index) {
@@ -281,76 +264,13 @@ class Character extends MovableObject {
     }
   }
 
-  attackEnemies() {
-    const attackRange = 150;
-    this.world.enemies.forEach((enemy) => {
-      if (
-        (enemy instanceof Knight ||enemy instanceof Snake ||enemy instanceof Endboss) &&!enemy.dead
-      ) {
-        const distance = Math.sqrt(
-          Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
-            Math.pow(this.y + this.height / 2 - (enemy.y + enemy.height / 2), 2)
-        );
-        if (distance <= attackRange) {
-          enemy.takeDamage(10);
-        }
-      }
-    });
-  }
-
-  draw(ctx) {
-    if (this.isVisible) {
-      super.draw(ctx);
+  hit(enemy) {
+    const distance = Math.abs(this.x - enemy.x);
+    if (!this.invulnerable && distance < 100) {
+      this.takeDamage(5);
+      this.world.characterStatusBar.setPercentage(this.energy);
+      this.playAnimation(this.IMAGES.HURT);
     }
-  }
-
-  isAttacking() {
-    return this.attackStartTime > Date.now() - 300;
-  }
-
-  startAttack() {
-    this.attackStartTime = Date.now();
-  }
-
-  die() {
-    if (!this.deadAnimationPlayed) {
-      this.deadAnimationPlayed = true;
-      this.currentImage = 0;
-      this.playDeathAnimation();
-      this.scheduleGameOver();
-    }
-  }
-
-  playDeathAnimation() {
-    let deathIndex = 0;
-    const animate = () => {
-      if (deathIndex < this.IMAGES_DEAD.length) {
-        this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
-        deathIndex++;
-        setTimeout(() => requestAnimationFrame(animate), 150);
-      }
-    };
-    requestAnimationFrame(animate);
-  }
-
-  scheduleGameOver() {
-    clearInterval(this.animationInterval);
-    clearTimeout(this.attackTimeout);
-    setTimeout(() => {
-      this.isVisible = false;
-      if (this.world.endGame) {
-        setTimeout(() => this.world.endGame.showYouLostScreen(), 300);
-      }
-    }, this.IMAGES_DEAD.length * 150 + 500);
-  }
-
-  
-  resetEnemies() {
-    this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Snake || enemy instanceof Endboss) {
-        enemy.resetPosition();
-      }
-    });
   }
 
   throwPoisonBottle() {
@@ -363,5 +283,4 @@ class Character extends MovableObject {
       alert("Keine Giftflaschen verfügbar! Kämpfe weiter mit Angriffen.");
     }
   }
-
 }

@@ -60,7 +60,6 @@ class Door extends MovableObject {
    */
   draw(ctx) {
     super.draw(ctx);
-    this.drawFrame(ctx);
   }
 
   /**
@@ -106,7 +105,6 @@ class Door extends MovableObject {
    */
   static drawDoor(world) {
     if (world.door) {
-      world.door.drawFrame(world.ctx);
     }
   }
 }

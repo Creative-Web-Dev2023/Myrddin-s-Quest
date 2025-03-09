@@ -1,4 +1,4 @@
-// Passt die Canvas-Größe an das Fenster an
+
 function resizeCanvas() {
   const canvas = document.getElementById("canvas");
   const container = document.getElementById("canvas-container");
@@ -23,7 +23,7 @@ function checkTouchDevice() {
   return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 }
 
-// Zeigt die Steuerungselemente für Touch-Geräte an
+
 function setupTouchControls() {
   const controls = document.getElementById("controls");
   if (checkTouchDevice()) {
@@ -39,7 +39,6 @@ function initResponsive() {
   setupTouchControls();
 }
 
-// Event-Listener für Fenstergröße anpassen
 window.addEventListener("resize", resizeCanvas);
 window.addEventListener("resize", setupTouchControls);
 document.addEventListener("DOMContentLoaded", initResponsive);

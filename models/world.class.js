@@ -147,6 +147,7 @@ class World {
     }
     this.updatePoison();
     if (this.character.isMoving() && musicIsOn) {
+     
       playWalkingSound();
     }
     if (this.character.energy <= 0 && !this.levelCompleted && !isDead) {
@@ -276,7 +277,7 @@ class World {
     }
     if (mo && mo.isActive !== false) {
       mo.draw(this.ctx);
-      mo.drawFrame(this.ctx);
+      
     }
     if (mo && mo.otherDirection) {
       this.flipImageBack(mo);

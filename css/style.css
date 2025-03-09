@@ -12,7 +12,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 2vw;
   line-height: 1.5;
 }
 
@@ -122,15 +122,17 @@ h2 {
   color: rgb(217, 217, 180);
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 1.7);
 }
+
 #canvas-container {
   position: relative;
   width: 100%;
   max-width: 720px; 
   aspect-ratio: 3 / 2; 
 }
+
 #canvas {
-  background-color: black;
   z-index: 1;
+  background-color:black;
   border: 8px solid #96633f;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   border-radius: 15px;
@@ -337,6 +339,7 @@ svg {
   z-index: 3;
   width: 100%;
   height: auto;
+  max-width: 850px; 
 }
 .how-to-play-button {
   position: absolute;
