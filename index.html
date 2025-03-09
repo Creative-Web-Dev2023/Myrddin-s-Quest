@@ -30,13 +30,13 @@
     <script src="models/environmments/crystal.class.js" defer></script>
     <script src="models/levels/level1.js" defer></script>
     <script src="js/endgame.class.js" defer></script>
-    <script src="models/game/keyboard.class.js" defer></script>
+    <script src="models/keyboard.class.js" defer></script>
     <script src="models/music.js" defer></script>
     <script src="models/collisionHandler.class.js" defer></script>
     <script src="models/drawer.class.js" defer></script>
     <script src="models/world.class.js" defer></script>
     <script src="js/game.js" defer></script>
-    <script src="models/game/ui.class.js" defer></script>
+    <script src="models/ui.class.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
 </head>
 
@@ -72,6 +72,80 @@
                 <span class="control-label">D</span>
             </div>
         </div>
+        <div class="overlay" width="780" height="480">
+            <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character">
+            <svg viewBox="0 0 850 190" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent" />
+                </defs>
+                <text font-size="clamp(2rem, 5vw, 3rem)" style="text-shadow: 2px 2px 4px black;">
+                    <textPath href="#curve" startOffset="50%" dy="-1.5em" text-anchor="middle" fill="yellow"
+                        dominant-baseline="middle" style="font-weight: bold;">
+                        Embark on an Epic Adventure
+                    </textPath>
+                </text>
+            </svg>
+            <div class="button-container">
+                <a id="startButton" class="game-button start-button" onclick="startGame()"><span>Start Game</span></a>
+                <div id="description-container" class="game-button how-to-play-button" onclick="handleDescription()">
+                    <span>How to Play</span>
+                </div>
+            </div>
+            <div id="description" class="description hidden">
+                <h3>How to Play</h3>
+                <div class="scroll-indicators">
+                    <img src="img\game_ui\login&pass\arrow2.png" class="scroll-down" alt="Scroll down">
+                    <img src="img\game_ui\login&pass\arrow1.png" class="scroll-up" alt="Scroll up">
+                </div>
+                <p class="description-text">Use the following keys:</p>
+                <table class="table-keys">
+                    <tbody>
+                        <tr>
+                            <td class="key">Right Arrow</td>
+                            <td class="action">Move right</td>
+                        </tr>
+                        <tr>
+                            <td class="key">Left Arrow</td>
+                            <td class="action">Move left</td>
+                        </tr>
+                        <tr>
+                            <td class="key">W</td>
+                            <td class="action">Jump</td>
+                        </tr>
+                        <tr>
+                            <td class="key">A</td>
+                            <td class="action">Attack with the Sword</td>
+                        </tr>
+                        <tr>
+                            <td class="key">D</td>
+                            <td class="action">Throw Bottle</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="description-text">
+                    The powerful wizard Myrddin lives in a magical land that is threatened by dark forces.
+                    An evil troll boss has stolen the source of the land's magic - a powerful crystal that sustains all
+                    life.
+                    Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal.
+                    On his way, he must cross dangerous forests guarded by knights, poisonous snakes and dark magic.
+                </p>
+                <p class="back-link" onclick="goBack()">← Back to Start</p>
+            </div>
+            <div id="impressum-container" class="impressum-button" onclick="handleImpressum()">
+                <span>Impressum</span>
+            </div>
+            <div id="impressum" class="impressum">
+                <h3>Impressum</h3>
+                <p>@ Gabriela Ströbl 2024</p>
+                <p>Gabriela Ströbl<br>
+                    Enzianstr.15a<br>
+                    85247 Schwabhausen<br>
+                </p>
+                <p>Font:Sylfaen</p>
+                <p>Images:CraftPix.net</p>
+                <p class="back-link2" onclick="goBack()">← Back to Start</p>
+            </div>
+        </div>
     </div>
     <div id="key-info" style="text-align: center; margin-top: 20px;">
         <p><strong>Control buttons:</strong></p>
@@ -86,80 +160,6 @@
     <div id="rotate" style="display: flex;">
         <img class="rotate-icon" src="img/game_ui/device-mobile-phone.png" alt="Rotate">
         <p class="rotate-message">Please rotate your device</p>
-    </div>
-    <div class="overlay" width="780" height="480">
-        <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character">
-        <svg viewBox="0 0 850 190" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
-            <defs>
-                <path id="curve" d="M 0 150 Q 425 0 850 150" fill="transparent" />
-            </defs>
-            <text font-size="clamp(2rem, 5vw, 3rem)" style="text-shadow: 2px 2px 4px black;">
-                <textPath href="#curve" startOffset="50%" dy="-1.5em" text-anchor="middle" fill="yellow"
-                    dominant-baseline="middle" style="font-weight: bold;">
-                    Embark on an Epic Adventure
-                </textPath>
-            </text>
-        </svg>
-        <div class="button-container">
-            <a id="startButton" class="game-button start-button" onclick="startGame()"><span>Start Game</span></a>
-            <div id="description-container" class="game-button how-to-play-button" onclick="handleDescription()">
-                <span>How to Play</span>
-            </div>
-        </div>
-        <div id="description" class="description hidden">
-            <h3>How to Play</h3>
-            <div class="scroll-indicators">
-                <img src="img\game_ui\login&pass\arrow2.png" class="scroll-down" alt="Scroll down">
-                <img src="img\game_ui\login&pass\arrow1.png" class="scroll-up" alt="Scroll up">
-            </div>
-            <p class="description-text">Use the following keys:</p>
-            <table class="table-keys">
-                <tbody>
-                    <tr>
-                        <td class="key">Right Arrow</td>
-                        <td class="action">Move right</td>
-                    </tr>
-                    <tr>
-                        <td class="key">Left Arrow</td>
-                        <td class="action">Move left</td>
-                    </tr>
-                    <tr>
-                        <td class="key">W</td>
-                        <td class="action">Jump</td>
-                    </tr>
-                    <tr>
-                        <td class="key">A</td>
-                        <td class="action">Attack with the Sword</td>
-                    </tr>
-                    <tr>
-                        <td class="key">D</td>
-                        <td class="action">Throw Bottle</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p class="description-text">
-                The powerful wizard Myrddin lives in a magical land that is threatened by dark forces.
-                An evil troll boss has stolen the source of the land's magic - a powerful crystal that sustains all
-                life.
-                Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal.
-                On his way, he must cross dangerous forests guarded by knights, poisonous snakes and dark magic.
-            </p>
-            <p class="back-link" onclick="goBack()">← Back to Start</p>
-        </div>
-        <div id="impressum-container" class="impressum-button" onclick="handleImpressum()">
-            <span>Impressum</span>
-        </div>
-        <div id="impressum" class="impressum">
-            <h3>Impressum</h3>
-            <p>@ Gabriela Ströbl 2024</p>
-            <p>Gabriela Ströbl<br>
-                Enzianstr.15a<br>
-                85247 Schwabhausen<br>
-            </p>
-            <p>Font:Sylfaen</p>
-            <p>Images:CraftPix.net</p>
-            <p class="back-link2" onclick="goBack()">← Back to Start</p>
-        </div>
     </div>
     <div id="game-over-container" style="display: none;">
         <div class="you-lost-image"></div>

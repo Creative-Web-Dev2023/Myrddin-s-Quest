@@ -18,12 +18,6 @@
   gap: 30px;
 }
 
-.game-button {
-  background: none;
-  border: none;
-  padding: 0;
-}
-
 .game-button img {
   width: 180px;
   height: auto;

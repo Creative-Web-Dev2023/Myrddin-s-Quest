@@ -122,17 +122,21 @@ h2 {
   color: rgb(217, 217, 180);
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 1.7);
 }
+#canvas-container {
+  position: relative;
+  width: 100%;
+  max-width: 720px; 
+  aspect-ratio: 3 / 2; 
+}
 #canvas {
   background-color: black;
-  position: relative;
   z-index: 1;
   border: 8px solid #96633f;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   border-radius: 15px;
-  overflow: hidden;
   width: 100%;
-  max-width: 720px;
-  aspect-ratio: 3 / 2;
+  height: auto;
+  display: block;
 }
 
 #canvas::before,
@@ -273,13 +277,11 @@ h3 {
   color: rgb(178, 216, 28);
 }
 .overlay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 720px;
-  height: auto;
+  height: 100%;
   aspect-ratio: 3 / 2;
   background-image: url("../img/game_ui/login&pass/loghin_pass_fullwindow.png"),
     url("../img/game_backgrounds/wood.png");
@@ -315,6 +317,10 @@ h3 {
   width: 649px;
   height: auto;
   animation: float 3s ease-in-out infinite;
+}
+.overlay img {
+  max-width: 100%;
+  height: auto;
 }
 .how-to-play-img {
   position: absolute;

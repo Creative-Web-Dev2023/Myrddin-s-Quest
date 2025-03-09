@@ -2,7 +2,6 @@ img {
   max-width: 100%;
   height: auto;
 }
-
 .responsive-container {
   display: flex;
   flex-wrap: wrap;
@@ -10,199 +9,36 @@ img {
   padding: 15px;
 }
 
-@media (hover: none) and (pointer: coarse) {
-  button,
-  .control-button {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 12px;
+@media (max-width: 375px) {
+  
+  .start-button {
+    position: relative; 
+    bottom: 20px; 
   }
-
-  .audio-icon,
-  .big-screen {
-    width: 30px;
-    height: 30px;
+  .how-to-play-button {
+    margin-right: 10px;
   }
 }
-
-@media (min-width: 769px) {
-  #controls {
-    display: none;
-  }
-  .scroll-indicators {
-    display: none !important;
-  }
-
-  .scroll-indicators img {
-    width: 30px;
-    height: 25px;
-    opacity: 0.8;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-  }
-
-  .scroll-indicators img:hover {
-    transform: scale(1.2);
-    opacity: 1;
-  }
-}
-
 @media (max-width: 768px) {
-  #canvas {
-    width: 95vw;
-  }
-  #controls {
-    display: flex !important;
-    bottom: 20px;
-    gap: 10px;
-    flex-wrap: nowrap;
-  }
-
-  .control-button {
-    width: 40px !important;
-    height: 40px !important;
-    margin: 2px;
-  }
-
-  .control-label {
-    font-size: 14px;
-  }
-  .scroll-indicators {
-    display: flex !important;
-    flex-direction: column;
-    gap: 30px;
-    position: fixed;
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  .you-lost-image {
-    width: 80%;
-    height: 200px;
-    margin-bottom: 30px;
-  }
-
-  .game-button img {
-    width: 160px;
-  }
-  .impressum-button,
-  .span {
-    left: -17px;
-    position: relative;
-    margin-top: 10px;
-  }
-}
-
-@media (max-width: 600px) {
-  .icon-container {
-    top: 1%;
-    right: 1%;
-    gap: 5px;
-  }
-
-  .audio-icon,
-  .big-screen {
-    width: 25px;
-    height: 25px;
-  }
-}
-
-@media (max-width: 480px) {
-  h2 {
-    font-size: 3.2rem;
-  }
-
-  #canvas {
- 
-    margin-top: 452px;
-  }
-
-  .you-lost-image {
-    height: 150px;
-    margin-bottom: 20px;
-  }
-
-  .game-button img {
-    width: 120px;
-  }
-
-  .game-button-container {
-    gap: 20px;
-  }
-}
-
-@media (max-width: 400px) {
-  .icon-container {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 375px) and (max-height: 667px) {
-  /* #canvas {
-    width: 95%;
-    height: auto;
-  } */
-
-  .overlay {
-    width: 90%;
-    height: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 20px;
-  }
-
-  svg {
-    width: 100%;
-    height: auto;
-    bottom: 20px;
-  }
-
-  .start-button,
-  .how-to-play-button,
-  .impressum-button {
-    width: 70px;
-    height: 25px;
-    font-size: 12px;
-    bottom: 10px;
+  #canvas-container {
+    max-width: 90%;
   }
 
   .start-button {
-    left: 10px;
-  }
-
-  .how-to-play-button {
-    right: 10px;
-  }
-
-  .impressum-button {
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 40px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .you-lost-image {
-    width: 500px;
-    height: 250px;
-  }
-}
-
-@media (max-height: 600px) {
-  .you-lost-image {
-    height: 150px;
-    margin-bottom: 20px;
-  }
-
-  .game-button img {
     width: 100px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  .how-to-play-button {
+    width: 100px;
+    height: 40px;
+    font-size: 18px;
+    right: 100px;
   }
 }
-
-@media (max-width: 394px) and (max-height: 423px) {
-  #canvas {
-    margin-top: 10px;
+@media (max-width: 480px) {
+  #canvas-container {
+    max-width: 100%;
   }
+
 }

@@ -144,7 +144,7 @@ class Character extends MovableObject {
     }
   }
 
-  /**
+/**
    * Moves the character to the left.
    */
   moveLeft() {
@@ -157,7 +157,7 @@ class Character extends MovableObject {
     }
   }
 
-  /**
+/**
    * Handles the character's actions based on keyboard input.
    */
   handleActions() {
@@ -190,9 +190,10 @@ class Character extends MovableObject {
     if (!this.invulnerable && distance < 100) {
       this.takeDamage(5);
       this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(this.IMAGES_HURT); 
     }
   }
+  
 
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
@@ -233,16 +234,15 @@ class Character extends MovableObject {
     this.invulnerable = false;
     this.isHurt = false;
     this.isDead = false;
-    clearInterval(this.animationInterval);
-    this.animate();
     this.playAnimation(this.IMAGES_IDLE);
+    this.animate();
     if (this.world) {
       this.world.resetCamera();
       this.resetEnemies();
     }
   }
 
-  /**
+/**
    * Handles the character entering a door.
    * @param {Object} door - The door the character is entering.
    */
@@ -285,10 +285,7 @@ class Character extends MovableObject {
     const attackRange = 150;
     this.world.enemies.forEach((enemy) => {
       if (
-        (enemy instanceof Knight ||
-          enemy instanceof Snake ||
-          enemy instanceof Endboss) &&
-        !enemy.dead
+        (enemy instanceof Knight ||enemy instanceof Snake ||enemy instanceof Endboss) &&!enemy.dead
       ) {
         const distance = Math.sqrt(
           Math.pow(this.x + this.width / 2 - (enemy.x + enemy.width / 2), 2) +
@@ -328,10 +325,7 @@ class Character extends MovableObject {
     let deathIndex = 0;
     const animate = () => {
       if (deathIndex < this.IMAGES_DEAD.length) {
-        this.img =
-          this.imageCache[
-            this.IMAGES_DEAD[deathIndex % this.IMAGES_DEAD.length]
-          ];
+        this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
         deathIndex++;
         setTimeout(() => requestAnimationFrame(animate), 150);
       }
@@ -350,6 +344,7 @@ class Character extends MovableObject {
     }, this.IMAGES_DEAD.length * 150 + 500);
   }
 
+  
   resetEnemies() {
     this.world.enemies.forEach((enemy) => {
       if (enemy instanceof Snake || enemy instanceof Endboss) {
@@ -368,4 +363,5 @@ class Character extends MovableObject {
       alert("Keine Giftflaschen verfügbar! Kämpfe weiter mit Angriffen.");
     }
   }
+
 }

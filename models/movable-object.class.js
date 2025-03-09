@@ -89,11 +89,11 @@ class MovableObject extends DrawableObject {
    */
   isDead() {
     if (
-      typeof gameState !== "undefined" &&
+      typeof gameStateSave !== "undefined" &&
       typeof world !== "undefined" &&
       typeof world.character !== "undefined"
     ) {
-      gameState.save();
+      gameStateSave();
     }
     return this.energy <= 0;
   }
@@ -222,10 +222,13 @@ class MovableObject extends DrawableObject {
       } else {
         clearInterval(deathInterval);
         setTimeout(() => {
-          if (this.world.endGame) {
-            this.world.endGame.showYouLostScreen();
-          }
-        }, 2000);
+          this.isVisible = false;
+          setTimeout(() => {
+            if (this.world.endGame) {
+              this.world.endGame.showYouWonScreen();
+            }
+          }, 2000);
+        }, 1000);
       }
     }, 150);
   }
