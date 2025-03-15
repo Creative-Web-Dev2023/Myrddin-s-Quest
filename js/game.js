@@ -4,24 +4,86 @@ let keyboard = new Keyboard();
 let world;
 let candleImage = new Image();
 let IntervallIDs = [];
-let gameLoopInterval;
 let knightHealthDisplay;
-let endGame;
-let activeIntervals = [];
 
-function stopAllIntervals() {
-  activeIntervals.forEach(clearInterval);
-  activeIntervals = [];
-}
+const gameState = {
+  save() {
+    localStorage.setItem(
+      "gameState",
+      JSON.stringify({
+        characterX: world.character.x,
+        characterY: world.character.y,
+        characterEnergy: world.character.energy,
+        enemies: world.enemies.map((e) => ({
+          type: e.constructor.name,
+          x: e.x,
+          y: e.y,
+          energy: e.energy,
+          dead: e.dead,
+        })),
+        levelProgress: world.character.x,
+      })
+    );
+  },
+
+  restore() {
+    const saved = JSON.parse(localStorage.getItem("gameState"));
+    if (!saved) return;
+    this.restoreCharacter(saved);
+    this.restoreEnemies(saved);
+    world.camera_x = saved.levelProgress;
+  },
+
+  restoreCharacter(saved) {
+    world.character.x = saved.characterX;
+    world.character.y = saved.characterY;
+    world.character.energy = 100;
+    world.character.deadAnimationPlayed = false;
+    world.character.isVisible = true;
+    world.character.invincible = true;
+    setTimeout(() => {
+      world.character.invincible = false;
+    }, 3000);
+  },
+
+  restoreEnemies(saved) {
+    if (!saved.enemies) return;
+    world.enemies = saved.enemies.map((data) => {
+      let enemy = world.enemies.find((e) => e.x === data.x && e.y === data.y);
+      if (!enemy) {
+        if (data.type === "Endboss") {
+          enemy = new Endboss();
+        } else if (data.type === "Knight") {
+          enemy = new Knight();
+        } else if (data.type === "Snake") {
+          enemy = new Snake();
+        } else {
+          enemy = new Enemy();
+        }
+      }
+      enemy.x = data.x;
+      enemy.y = data.y;
+      enemy.energy = data.energy;
+      enemy.dead = data.dead;
+      enemy.isVisible = !data.dead;
+      enemy.canAttack = false;
+      setTimeout(() => {
+        enemy.canAttack = true;
+      }, 3000);
+      return enemy;
+    });
+  },
+};
 
 function startGame() {
-  localStorage.setItem("deaths", JSON.stringify(0));
   document.querySelector(".overlay").style.display = "none";
   document.getElementById("audioSwitcher").classList.remove("hidden");
   document.getElementById("bigScreen").classList.remove("hidden");
   document.getElementById("key-info").classList.add("show");
   document.addEventListener("DOMContentLoaded", (event) => {});
-  initLevel();
+  document
+    .getElementById("audioSwitcher")
+    .setAttribute("onclick", "musicSwitcher()");
   init();
 }
 
@@ -29,28 +91,11 @@ function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   world = new World(canvas, keyboard);
-  endGame = new EndGame(world);
   playLevel1Sound();
-  setupTouchControls();
-  if (!Array.isArray(activeIntervals)) {
-    activeIntervals = [];
-  }
   startGameLoop();
-  document.getElementById("tryAgain").addEventListener("click", () => {
-    endGame.resumeGame();
-  });
+  setupTouchControls();
+  document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
-}
-
-function startGameLoop() {
-  if (!world) return;
-  stopAllIntervals();
-  function gameLoop() {
-    world.update();
-    world.draw();
-    requestAnimationFrame(gameLoop);
-  }
-  requestAnimationFrame(gameLoop);
 }
 
 function setupTouchControls() {
@@ -72,6 +117,16 @@ function setupTouchControl(buttonId, key) {
     .addEventListener("touchend", () => (keyboard[key] = false), {
       passive: true,
     });
+}
+
+function startGameLoop() {
+  gameLoop();
+}
+
+function gameLoop() {
+  world.update();
+  world.draw();
+  world.loopID = requestAnimationFrame(gameLoop); // Korrigiere die Zuweisung der loopID
 }
 
 function handleDescription() {
@@ -100,14 +155,18 @@ function quitGame() {
 }
 
 function tryAgain() {
-  stopAllIntervals();
-  let deaths = JSON.parse(localStorage.getItem("deaths")) || 0;
-  deaths += 1;
-  localStorage.setItem("deaths", JSON.stringify(deaths));
-  endGame.resumeGame();
+  IntervallIDs.forEach(clearInterval);
+  IntervallIDs = [];
   setTimeout(() => {
-    startGameLoop();
+      world.endGame.resumeGame();  
   }, 100);
+}
+
+
+
+function clearAllIntervals() {
+  IntervallIDs.forEach(clearInterval);
+  IntervallIDs = [];
 }
 
 function toggleFullscreen() {
@@ -200,23 +259,3 @@ function checkOrientation() {
 }
 window.addEventListener("resize", checkOrientation);
 document.addEventListener("DOMContentLoaded", checkOrientation);
-
-function gameStateSave() {
-  localStorage.setItem(
-    "gameState",
-    JSON.stringify({
-      characterX: world.character.x,
-      characterY: world.character.y,
-      characterEnergy: world.character.energy,
-      enemies: world.enemies.map((e) => ({
-        type: e.constructor.name,
-        x: e.x,
-        y: e.y,
-        energy: e.energy,
-        dead: e.dead,
-      })),
-      levelProgress: world.character.x,
-      deaths: JSON.parse(localStorage.getItem("deaths")) || 0,
-    })
-  );
-}

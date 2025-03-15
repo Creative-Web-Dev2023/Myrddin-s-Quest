@@ -102,8 +102,11 @@ class Snake extends Enemy {
     setTimeout(() => this.remove(), 1000);
   }
 
+  /**
+   * Entfernt die Schlange aus der Welt.
+   */
   remove() {
-    this.removeEnemy();
+    this.removeEnemy(); 
   }
 
   loadImages(imageArray) {

@@ -1,67 +1,15 @@
-/* img {
-  max-width: 100%;
-  height: auto;
-}
-.responsive-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding: 15px;
-}
-
-@media (max-width: 375px) {
-  
-  .start-button {
-    position: relative; 
-    bottom: 20px; 
-  }
-  .how-to-play-button {
-    margin-right: 10px;
-  }
-}
-@media (max-width: 768px) {
-  #canvas-container {
-    max-width: 90%;
-  }
-
-  .start-button {
-    width: 100px;
-    height: 40px;
-    margin-right: 10px;
-  }
-  .how-to-play-button {
-    width: 100px;
-    height: 40px;
-    font-size: 18px;
-    right: 100px;
-  }
-}
-@media (max-width: 480px) {
-  #canvas-container {
-    max-width: 100%;
-  }
-
-} */
-/* Allgemeine responsive Einstellungen */
 img {
   max-width: 100%;
   height: auto;
 }
 
-.responsive-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding: 15px;
-}
-
-/* Anpassungen für kleine Bildschirme */
 @media (max-width: 768px) {
   #canvas-container {
     max-width: 90%;
   }
 
-  .start-button, .how-to-play-button {
+  .start-button,
+  .how-to-play-button {
     width: 100px;
     height: 40px;
     font-size: 18px;
@@ -72,21 +20,37 @@ img {
   }
 }
 
-/* Anpassungen für sehr kleine Bildschirme */
-@media (max-width: 480px) {
-  #canvas-container {
-    max-width: 100%;
+@media (max-width: 375px) and (max-height: 667px) {
+  h2 {
+    font-size: 10px;
+    z-index: 10;
+    display: block;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: textGlow 2s ease-in-out infinite;
   }
-}
 
-/* Spezifische Anpassungen für Smartphones */
-@media (max-width: 375px) {
   .start-button {
     position: relative;
     bottom: 20px;
   }
-  
+
   .how-to-play-button {
     margin-right: 10px;
+  }
+}
+
+@keyframes textGlow {
+  0% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00f, 0 0 20px #00f,
+      0 0 25px #00f, 0 0 30px #00f, 0 0 35px #00f;
+  }
+  100% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00f, 0 0 40px #00f,
+      0 0 50px #00f, 0 0 60px #00f, 0 0 70px #00f;
   }
 }

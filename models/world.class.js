@@ -306,5 +306,7 @@ class World {
 
   resetCamera() {
     this.camera_x = -this.character.x + 190;
-  }
+    console.log("📷 Kamera neu gesetzt auf:", this.camera_x); // Debug-Ausgabe
+}
+
 }

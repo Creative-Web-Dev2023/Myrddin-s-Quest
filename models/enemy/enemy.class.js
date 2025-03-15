@@ -63,8 +63,11 @@ class Enemy extends MovableObject {
     }, 400);
   }
 
+  /**
+   * Entfernt den Feind aus der Welt.
+   */
   removeEnemy() {
-    this.dead = true;
+    if (!this.world || !this.world.enemies) return; // Überprüfe, ob world und enemies definiert sind
     const index = this.world.enemies.indexOf(this);
     if (index > -1) {
       this.world.enemies.splice(index, 1);

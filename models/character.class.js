@@ -26,6 +26,7 @@ class Character extends MovableObject {
     this.world = world;
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
     this.initCharacter();
+    this.canMoveLeftFlag = true;
   }
 
   /**
@@ -39,7 +40,7 @@ class Character extends MovableObject {
     this.poisonStatusBar.setPercentage(0);
     this.statusBar = new StatusBar();
     this.world.camera_x = -this.x - 190;
-    this.canMoveLeft = true;
+    this.canMoveLeftFlag = true;
     this.animate();
   }
 
@@ -107,6 +108,9 @@ class Character extends MovableObject {
         const distance = Math.abs(this.x - enemy.x);
         if (distance < 150) {
           enemy.takeDamage(10);
+          if (enemy instanceof Endboss && enemy.energy <= 0) {
+            enemy.die();
+          }
         }
       }
     });
@@ -233,14 +237,17 @@ class Character extends MovableObject {
         this.y = 150;
         this.world.camera_x = -this.x - 190;
         this.isVisible = true;
-        isAfterDoor = true; // Setze isAfterDoor auf true, nachdem der Charakter durch die Tür gegangen ist
+        this.canMoveLeftFlag = false; //
+        setTimeout(() => {
+          this.canMoveLeftFlag = true;
+        }, 2000);
         playNewSound();
       }, 200);
     }, 2000);
   }
 
   canMoveLeft() {
-    return !isAfterDoor; // Verhindere das Bewegen nach links, wenn der Charakter durch die Tür gegangen ist
+    return this.canMoveLeftFlag;
   }
 
   isMoving() {

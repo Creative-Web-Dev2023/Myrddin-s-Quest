@@ -3,7 +3,6 @@
  * @extends Enemy
  */
 class Endboss extends Enemy {
-  hadFirstContact = false;
   /**
    * Creates an instance of Endboss.
    * @param {number} id - The ID of the Endboss.
@@ -131,8 +130,7 @@ class Endboss extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
-    this.deadAnimationPlayed = false; // Setze deadAnimationPlayed auf false
-    this.playDeathAnimation();
+    this.playAnimation(this.IMAGES_DEAD, 150);
     this.deadSound.play();
     setTimeout(() => {
       this.spawnCrystal();
@@ -143,23 +141,11 @@ class Endboss extends Enemy {
     }
   }
 
-  playDeathAnimation() {
-    let deathIndex = 0;
-    const deathInterval = setInterval(() => {
-      if (deathIndex < this.IMAGES_DEAD.length) {
-        this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
-        deathIndex++;
-      } else {
-        clearInterval(deathInterval);
-        this.deadAnimationPlayed = true; // Setze deadAnimationPlayed auf true
-      }
-    }, 150);
-  }
-
   /**
    * Spawns a crystal at the Endboss's position.
    */
   spawnCrystal() {
+    if (!this.world || !this.world.level) return; // Überprüfe, ob world und level definiert sind
     const crystal = new Crystal(
       this.x + this.width / 2 - 40,
       this.y + this.height / 2 - 40
@@ -178,7 +164,7 @@ class Endboss extends Enemy {
     } else if (this.x >= this.patrolRightLimit) {
       this.otherDirection = true;
     }
-    this.x += this.otherDirection ? -this.speed : this.speed;// Ändere die Richtung des Endbosses
+    this.x += this.otherDirection ? -this.speed : this.speed;
   }
 
   /**
