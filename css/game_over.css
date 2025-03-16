@@ -11,7 +11,11 @@
   flex-direction: column;
   z-index: 1000;
 }
-
+.game-button {
+  background: none;
+  border: none;
+  padding: 0;
+}
 .game-button-container {
   display: flex;
   flex-direction: column;
@@ -19,7 +23,6 @@
 }
 
 .game-button img {
-  width: 180px;
   height: auto;
   transition: transform 0.3s ease;
 }

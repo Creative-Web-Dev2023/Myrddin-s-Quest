@@ -1,7 +1,3 @@
-img {
-  max-width: 100%;
-  height: auto;
-}
 
 @media (max-width: 768px) {
   #canvas-container {
@@ -9,33 +5,26 @@ img {
     height: 80vh;
   }
 
-  canvas {
+  #canvas {
     width: 100%;
     height: auto;
   }
-
   .overlay {
     width: 100%;
-    height: 100vh;
+    height: 100%;
+    aspect-ratio: 3 / 2;
+    background-size: contain, cover;
   }
-  svg textPath {
-    font-size: 2vw;
-    position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
+  
+  .button {
+    font-size: 14px; 
+    padding: 8px 12px;
     width: 80%;
-    height: auto;
-  }
-  .button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
+}
+ 
   .game-button {
-    width: 80%;
-    font-size: 3vw;
+    width: 24% !important;
+    font-size: 3vw !important;
   }
 
   #impressum-container {
@@ -43,13 +32,91 @@ img {
   }
 }
 
-@keyframes textGlow {
-  0% {
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00f, 0 0 20px #00f,
-      0 0 25px #00f, 0 0 30px #00f, 0 0 35px #00f;
+@media screen and (max-width: 375px) {
+  h2 {
+    font-size: 1.5rem; 
+    top: 10px; 
   }
-  100% {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00f, 0 0 40px #00f,
-      0 0 50px #00f, 0 0 60px #00f, 0 0 70px #00f;
+  #canvas-container {
+    width:95%;
+    padding: 5px; 
+    margin-top: 40px; 
+  }
+  canvas {
+    width: 100%;
+    height: auto;
+    max-height: 80vh; 
+  }
+  .overlay {
+    width: 95%;
+    height: auto;
+    padding: 2px;
+    margin: auto;
+  }
+  .overlay-character {
+    width: 40%;
+    height: auto;
+    bottom: 20%;
+    left: -20%;
+  }
+  .overlay img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .button {
+    font-size: 12px; 
+    padding: 6px 10px;
+    width: 90%; 
+}
+.start-button, .how-to-play-button {
+  position: absolute;
+  bottom: 20px;
+  width: 90px; 
+  height: 35px; 
+  font-size: 14px; 
+}
+
+  .start-button span, .how-to-play-button span {
+    top: -14px; 
+    font-size: 14px;
+  }
+}
+
+
+@media screen and (max-width: 320px) {
+  #canvas-container {
+    width: 90%;
+    margin-top: 60px;
+  }
+  .overlay{
+    width: 90%;
+  }
+  .overlay-character {
+    width: 35%;
+  }
+  .start-button, .how-to-play-button {
+    width: 80px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+}
+@media screen and (max-height: 667px) {
+  #canvas-container {
+    margin-top: 50px; 
+  }
+  #canvas {
+    max-height: 80vh; 
+  }
+  .overlay {
+    max-height: 80vh;
+  }
+  h2 {
+    top: 5px; 
+  }
+  .start-button,
+  .how-to-play-button {
+    bottom: 50px;
   }
 }

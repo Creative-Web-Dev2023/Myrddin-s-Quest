@@ -43,7 +43,7 @@ class EndGame {
     this.world.character.reset();
     this.world.character.isVisible = true;
     isDead = false;
-    startGameLoop();
+    gameLoop();
   }
 
   /**
@@ -59,8 +59,9 @@ class EndGame {
     this.clearAllIntervals();
     document.getElementById("game-over-container").style.display = "none";
     this.restoreCharacterState(parsedState);
+    this.world.character.applyGravity();
     this.restoreEnemiesState(parsedState.enemies);
-    this.world.crystal = new Crystal(6471 + 260, 150 + 150); // Stelle sicher, dass der Kristall wieder erscheint
+    this.restoreCrystal(); 
     gameLoop();
     this.world.draw();
   }
@@ -68,7 +69,8 @@ class EndGame {
   restoreCharacterState(parsedState) {
     this.world.character.x = parsedState.x || 130;
     this.world.character.y = parsedState.y || 150;
-    this.world.character.energy = parsedState.energy > 0 ? parsedState.energy : 100;
+    this.world.character.energy =
+      parsedState.energy > 0 ? parsedState.energy : 100;
     this.world.camera_x = -this.world.character.x + 190;
     this.world.character.isVisible = true;
     isDead = false;
@@ -80,26 +82,29 @@ class EndGame {
   restoreEnemiesState(enemies) {
     this.world.enemies = enemies.map((data) => {
       let enemy;
-      switch (data.type) {
-        case "Endboss":
-          enemy = new Endboss();
-          break;
-        case "Knight":
-          enemy = new Knight();
-          break;
-        case "Snake":
-          enemy = new Snake();
-          break;
-        default:
-          enemy = new Enemy();
+      if (data.type === "Endboss") {
+        enemy = new Endboss();
+      } else if (data.type === "Knight") {
+        enemy = new Knight();
+      } else if (data.type === "Snake") {
+        enemy = new Snake();
+      } else {
+        enemy = new Enemy();
       }
       enemy.x = data.x;
       enemy.y = data.y;
-      enemy.energy = data.energy || 30;
-      enemy.dead = data.dead || false;
-      enemy.setWorld(this.world);
+      enemy.energy = data.energy ? data.energy : 30; 
+      enemy.dead = data.dead ? data.dead : false;  
+      enemy.setWorld(this.world); 
+      if (enemy.statusBarEndboss) {
+        enemy.statusBarEndboss.setPercentage(enemy.energy);
+      }
       return enemy;
     });
+  }
+  
+  restoreCrystal() {
+    this.world.crystal = new Crystal(6471 + 260, 150 + 150);
   }
 
   /**
@@ -135,7 +140,7 @@ class EndGame {
    */
   showYouLostScreen() {
     this.gameOver();
-    muteAllSounds(); 
+    muteAllSounds();
   }
 
   checkDeathCondition() {

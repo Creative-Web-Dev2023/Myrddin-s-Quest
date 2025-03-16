@@ -211,6 +211,7 @@ class Character extends MovableObject {
       isAttacking: false,
       invulnerable: false,
       currentImage: 0,
+      speedY: 0, // Stelle sicher, dass die Sprunggeschwindigkeit zurückgesetzt wird
     });
 
     this.poisonStatusBar.setPercentage(0);

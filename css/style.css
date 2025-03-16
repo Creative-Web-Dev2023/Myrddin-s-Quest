@@ -25,31 +25,35 @@ body {
   font-family: "MedievalSharp";
   src: url("../fonts/MedievalSharp-BookOblique.ttf") format("truetype");
 }
-
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5vw;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
 .start-button {
   position: absolute;
-  bottom: 70px;
-  left: 117px;
-  width: 140px;
-  height: 50px;
-  background: #41431e;
+  bottom: 68px;
+  left: 100px;
+  width: 115px;
+  height: 32px;
   text-transform: uppercase;
-  font-size: 25px;
   text-align: center;
   letter-spacing: 0.1em;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.2);
   transition: 0.5s;
-  -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
   margin-top: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .start-button span {
   position: absolute;
-  bottom: 40px;
-  left: 40px;
+  bottom: 68px;
+  left: 11px;
   display: block;
   top: -19px;
   left: 1px;
@@ -63,34 +67,6 @@ body {
 
 .start-button:hover span {
   color: rgba(255, 255, 255, 1);
-}
-
-.start-button span::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  z-index: 10;
-}
-
-.start-button:hover::before,
-.start-button:hover::after {
-  opacity: 1;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-  100% {
-    transform: translateY(0);
-  }
 }
 
 @keyframes rotate {
@@ -118,26 +94,30 @@ body {
 }
 
 h2 {
-  position: relative;
-  top: 50%;
-  left: 15%;
+  position: absolute;
+  top: 10px;
+  left: 50%;
   transform: translateX(-50%);
-  font-size: 30px;
-  z-index: 1;
-  color: rgb(235, 242, 235);
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  z-index: 1000;
+  color: rgb(74, 78, 81);
+  width: 100%;
+  margin: 0;
   text-align: center;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 10px 0;
   animation: textGlow 2s ease-in-out infinite;
 }
 
 @keyframes textGlow {
   0% {
-    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px rgb(0, 128, 255), 0 0 20px rgb(162, 0, 255),
-      0 0 25px rgb(0, 94, 255), 0 0 30px rgb(0, 110, 255), 0 0 35px #00f;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px rgb(0, 128, 255),
+      0 0 20px rgb(162, 0, 255), 0 0 25px rgb(0, 94, 255),
+      0 0 30px rgb(0, 110, 255), 0 0 35px #00f;
   }
   100% {
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px rgb(0, 136, 255), 0 0 40px rgb(0, 195, 255),
-      0 0 50px rgb(0, 153, 255), 0 0 60px rgb(0, 128, 255), 0 0 70px rgb(0, 179, 255);
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px rgb(0, 136, 255),
+      0 0 40px rgb(0, 195, 255), 0 0 50px rgb(0, 153, 255),
+      0 0 60px rgb(0, 128, 255), 0 0 70px rgb(0, 179, 255);
   }
 }
 
@@ -146,10 +126,13 @@ h2 {
   width: 100%;
   max-width: 720px;
   aspect-ratio: 3 / 2;
+  height: auto;
+  margin-top: 104px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 #canvas {
   background-color: black;
-  z-index: 1;
   border: 8px solid #96633f;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   border-radius: 15px;
@@ -314,7 +297,6 @@ h3 {
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  padding: 5px;
 }
 
 .overlay-text {
@@ -331,49 +313,32 @@ h3 {
 
 .overlay-character {
   position: absolute;
-  bottom: 133px;
-  left: -146px;
-  width: 649px;
-  height: auto;
-  animation: float 3s ease-in-out infinite;
+  bottom: 30%;
+  width: 60%;
 }
-.overlay img {
+
+.overlay .tryAgain-img {
   max-width: 100%;
   height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
-.how-to-play-img {
-  position: absolute;
-  bottom: 141px;
-  left: 589px;
-  width: 154px;
-  height: auto;
-  animation: pulse 2s infinite;
-}
-svg {
-  position: absolute;
-  bottom: 344px;
-  right: 54px;
-  z-index: 3;
-  width: 100%;
-  height: auto;
-}
+
 .how-to-play-button {
   position: absolute;
   bottom: 68px;
-  right: 117px;
-  width: 140px;
-  height: 50px;
-  background: #41431e;
+  right: 100px;
+  width: 115px;
+  height: 32px;
   text-transform: uppercase;
-  font-size: 25px;
-  text-align: center;
   letter-spacing: 0.1em;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.2);
   transition: 0.5s;
   -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
   margin-top: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 .how-to-play-button span {
@@ -411,35 +376,6 @@ svg {
   opacity: 1;
 }
 
-#game-container {
-  position: relative;
-  overflow: hidden;
-  width: 720px;
-  height: 480px;
-}
-
-.game-button-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.game-button {
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.game-button img {
-  width: 180px;
-  height: auto;
-  transition: transform 0.3s ease;
-}
-
-.game-button:hover img {
-  transform: scale(1.1);
-}
-
 .you-lost-image {
   background-image: url("../img/game_ui/login&pass/game_over.png");
   background-size: contain;
@@ -448,18 +384,6 @@ svg {
   width: 600px;
   height: 300px;
   margin-bottom: 50px;
-}
-
-@keyframes colorShift {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-  50% {
-    filter: hue-rotate(180deg);
-  }
-  100% {
-    filter: hue-rotate(360deg);
-  }
 }
 
 #key-info {
@@ -511,29 +435,15 @@ svg {
     transform: translateY(0);
   }
 }
-/* #rotate {
-  display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 20px;
-  text-align: center;
-  font-size: 24px;
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
 
-.rotate-icon {
-  width: 100px;
-  height: 100px;
-  animation: rotate-animation 2s linear infinite;
-} */
+.embark-image {
+  position: absolute;
+  bottom: 344px;
+  right: 54px;
+  width: 100%;
+  max-width: 400px;
+  z-index: 3;
+}
 
 #controls {
   position: absolute;
