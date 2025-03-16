@@ -58,23 +58,40 @@ class EndGame {
     const parsedState = JSON.parse(savedState);
     this.clearAllIntervals();
     document.getElementById("game-over-container").style.display = "none";
+    this.restoreCharacterState(parsedState);
+    this.restoreEnemiesState(parsedState.enemies);
+    this.world.crystal = new Crystal(6471 + 260, 150 + 150); // Stelle sicher, dass der Kristall wieder erscheint
+    gameLoop();
+    this.world.draw();
+  }
+
+  restoreCharacterState(parsedState) {
     this.world.character.x = parsedState.x || 130;
     this.world.character.y = parsedState.y || 150;
-    this.world.character.energy =
-      parsedState.energy > 0 ? parsedState.energy : 100;
+    this.world.character.energy = parsedState.energy > 0 ? parsedState.energy : 100;
     this.world.camera_x = -this.world.character.x + 190;
     this.world.character.isVisible = true;
     isDead = false;
-    this.world.enemies = parsedState.enemies.map((data) => {
+    this.world.character.playAnimation(this.world.character.IMAGES.IDLE);
+    this.world.character.animate();
+    this.world.character.applyGravity();
+  }
+
+  restoreEnemiesState(enemies) {
+    this.world.enemies = enemies.map((data) => {
       let enemy;
-      if (data.type === "Endboss") {
-        enemy = new Endboss();
-      } else if (data.type === "Knight") {
-        enemy = new Knight();
-      } else if (data.type === "Snake") {
-        enemy = new Snake();
-      } else {
-        enemy = new Enemy();
+      switch (data.type) {
+        case "Endboss":
+          enemy = new Endboss();
+          break;
+        case "Knight":
+          enemy = new Knight();
+          break;
+        case "Snake":
+          enemy = new Snake();
+          break;
+        default:
+          enemy = new Enemy();
       }
       enemy.x = data.x;
       enemy.y = data.y;
@@ -83,24 +100,13 @@ class EndGame {
       enemy.setWorld(this.world);
       return enemy;
     });
-    this.world.character.playAnimation(this.world.character.IMAGES.IDLE);
-    this.world.character.animate();
-    this.world.character.applyGravity();
-    this.world.crystal = new Crystal(6471 + 260, 150 + 150); // Stelle sicher, dass der Kristall wieder erscheint
-    startGameLoop();
-    this.world.draw();
   }
 
   /**
    * Speichert den aktuellen Spielzustand.
    */
   saveGameState() {
-    let deaths = localStorage.getItem("deaths")
-      ? JSON.parse(localStorage.getItem("deaths"))
-      : 0;
-    deaths++;
-    localStorage.setItem("deaths", JSON.stringify(deaths));
-    let savedEnemies = this.world.enemies.map((enemy) => ({
+    const savedEnemies = this.world.enemies.map((enemy) => ({
       type: enemy.constructor.name,
       x: enemy.x,
       y: enemy.y,
@@ -111,7 +117,6 @@ class EndGame {
       x: this.world.character.x,
       y: this.world.character.y,
       energy: this.world.character.energy,
-      deaths: deaths,
       enemies: savedEnemies,
     };
     localStorage.setItem("gameState", JSON.stringify(this.lastState));

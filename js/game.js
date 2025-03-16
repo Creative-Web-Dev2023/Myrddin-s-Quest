@@ -2,9 +2,7 @@ let canvas;
 let ctx;
 let keyboard = new Keyboard();
 let world;
-let candleImage = new Image();
 let IntervallIDs = [];
-let knightHealthDisplay;
 
 const gameState = {
   save() {
@@ -35,43 +33,25 @@ const gameState = {
   },
 
   restoreCharacter(saved) {
-    world.character.x = saved.characterX;
-    world.character.y = saved.characterY;
-    world.character.energy = 100;
-    world.character.deadAnimationPlayed = false;
-    world.character.isVisible = true;
-    world.character.invincible = true;
-    setTimeout(() => {
-      world.character.invincible = false;
-    }, 3000);
+    Object.assign(world.character, {
+      x: saved.characterX,
+      y: saved.characterY,
+      energy: 100,
+      deadAnimationPlayed: false,
+      isVisible: true,
+      invincible: true,
+    });
+    setTimeout(() => (world.character.invincible = false), 3000);
   },
 
   restoreEnemies(saved) {
-    if (!saved.enemies) return;
-    world.enemies = saved.enemies.map((data) => {
-      let enemy = world.enemies.find((e) => e.x === data.x && e.y === data.y);
-      if (!enemy) {
-        if (data.type === "Endboss") {
-          enemy = new Endboss();
-        } else if (data.type === "Knight") {
-          enemy = new Knight();
-        } else if (data.type === "Snake") {
-          enemy = new Snake();
-        } else {
-          enemy = new Enemy();
-        }
-      }
-      enemy.x = data.x;
-      enemy.y = data.y;
-      enemy.energy = data.energy;
-      enemy.dead = data.dead;
-      enemy.isVisible = !data.dead;
-      enemy.canAttack = false;
-      setTimeout(() => {
-        enemy.canAttack = true;
-      }, 3000);
-      return enemy;
-    });
+    world.enemies =
+      saved.enemies?.map((data) => {
+        let enemy = new (window[data.type] || Enemy)();
+        Object.assign(enemy, data, { isVisible: !data.dead, canAttack: false });
+        setTimeout(() => (enemy.canAttack = true), 3000);
+        return enemy;
+      }) || [];
   },
 };
 
@@ -80,10 +60,7 @@ function startGame() {
   document.getElementById("audioSwitcher").classList.remove("hidden");
   document.getElementById("bigScreen").classList.remove("hidden");
   document.getElementById("key-info").classList.add("show");
-  document.addEventListener("DOMContentLoaded", (event) => {});
-  document
-    .getElementById("audioSwitcher")
-    .setAttribute("onclick", "musicSwitcher()");
+  document.getElementById("audioSwitcher").onclick = musicSwitcher;
   init();
 }
 
@@ -91,54 +68,87 @@ function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   world = new World(canvas, keyboard);
-  playLevel1Sound();
-  startGameLoop();
+  gameLoop();
   setupTouchControls();
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
-}
-
-function setupTouchControls() {
-  setupTouchControl("btn-left", "LEFT");
-  setupTouchControl("btn-right", "RIGHT");
-  setupTouchControl("btn-jump", "JUMP");
-  setupTouchControl("btn-attack", "ATTACK");
-  setupTouchControl("btn-throw", "D");
-}
-
-function setupTouchControl(buttonId, key) {
-  document
-    .getElementById(buttonId)
-    .addEventListener("touchstart", () => (keyboard[key] = true), {
-      passive: true,
-    });
-  document
-    .getElementById(buttonId)
-    .addEventListener("touchend", () => (keyboard[key] = false), {
-      passive: true,
-    });
-}
-
-function startGameLoop() {
-  gameLoop();
+  updateResponsive();
 }
 
 function gameLoop() {
   world.update();
   world.draw();
-  world.loopID = requestAnimationFrame(gameLoop); // Korrigiere die Zuweisung der loopID
+  world.loopID = requestAnimationFrame(gameLoop);
+}
+
+function tryAgain() {
+  clearAllIntervals();
+  setTimeout(() => world.endGame.resumeGame(), 100);
+}
+
+function clearAllIntervals() {
+  IntervallIDs.forEach(clearInterval);
+  IntervallIDs = [];
+}
+
+function quitGame() {
+  location.reload();
+}
+
+function toggleFullscreen() {
+  const container = document.getElementById("canvas-container");
+  if (!document.fullscreenElement) {
+    container.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function updateResponsive() {
+  document.getElementById("controls").style.display = checkTouchDevice()
+    ? "flex"
+    : "none";
+}
+
+function checkTouchDevice() {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+}
+
+function setupTouchControls() {
+  const controls = document.getElementById("controls");
+  if (checkTouchDevice()) {
+    controls.style.display = "flex";
+    setupTouchControl("btn-left", "LEFT");
+    setupTouchControl("btn-right", "RIGHT");
+    setupTouchControl("btn-jump", "JUMP");
+    setupTouchControl("btn-attack", "ATTACK");
+    setupTouchControl("btn-throw", "D");
+  } else {
+    controls.style.display = "none";
+  }
+}
+
+function setupTouchControl(buttonId, key) {
+  const button = document.getElementById(buttonId);
+  if (!button) return;
+  button.addEventListener("touchstart", () => (keyboard[key] = true), {
+    passive: true,
+  });
+  button.addEventListener("touchend", () => (keyboard[key] = false), {
+    passive: true,
+  });
+}
+
+function handleImpressum() {
+  let impressum = document.getElementById("impressum");
+  impressum.classList.toggle("hidden");
+  impressum.classList.toggle("show");
 }
 
 function handleDescription() {
   let description = document.getElementById("description");
-  console.log(description);
-  if (description.classList.contains("hidden")) {
-    description.classList.remove("hidden");
-    description.classList.add("show");
-  } else {
-    description.classList.remove("show");
-    description.classList.add("hidden");
-  }
+  description.classList.toggle("hidden");
+  description.classList.toggle("show");
 }
 
 function goBack() {
@@ -150,112 +160,8 @@ function goBack() {
   impressum.classList.remove("show");
 }
 
-function quitGame() {
-  location.reload();
-}
-
-function tryAgain() {
-  IntervallIDs.forEach(clearInterval);
-  IntervallIDs = [];
-  setTimeout(() => {
-      world.endGame.resumeGame();  
-  }, 100);
-}
-
-
-
-function clearAllIntervals() {
-  IntervallIDs.forEach(clearInterval);
-  IntervallIDs = [];
-}
-
-function toggleFullscreen() {
-  const canvas = document.getElementById("canvas");
-  if (!document.fullscreenElement) {
-    canvas.requestFullscreen().catch((err) => {});
-  } else {
-    document.exitFullscreen();
-  }
-}
-
-window.addEventListener("keydown", (e) => {
-  if (e.keyCode == 39) {
-    keyboard.RIGHT = true;
-  }
-  if (e.keyCode == 37) {
-    keyboard.LEFT = true;
-  }
-  if (e.keyCode == 38) {
-    keyboard.UP = true;
-  }
-  if (e.keyCode == 40) {
-    keyboard.DOWN = true;
-  }
-  if (e.keyCode == 87) {
-    keyboard.JUMP = true;
-  }
-  if (e.code === "KeyA") {
-    keyboard.ATTACK = true;
-  }
-  if (e.keyCode === 68) {
-    keyboard.D = true;
-  }
+window.addEventListener("resize", updateResponsive);
+document.addEventListener("DOMContentLoaded", () => {
+  init();
+  setTimeout(updateResponsive, 100);
 });
-
-window.addEventListener("keyup", (e) => {
-  if (e.keyCode == 39) {
-    keyboard.RIGHT = false;
-  }
-  if (e.keyCode == 37) {
-    keyboard.LEFT = false;
-  }
-  if (e.keyCode == 38) {
-    keyboard.UP = false;
-  }
-  if (e.keyCode == 40) {
-    keyboard.DOWN = false;
-  }
-  if (e.keyCode == 87) {
-    keyboard.JUMP = false;
-  }
-  if (e.code === "KeyA") {
-    keyboard.ATTACK = false;
-  }
-  if (e.keyCode === 68) {
-    keyboard.D = false;
-  }
-});
-
-window.addEventListener("DOMContentLoaded", () => {
-  const startButton = document.getElementById("startButton");
-  if (startButton) {
-    startButton.addEventListener("click", startGame);
-  }
-});
-
-function handleImpressum() {
-  let impressum = document.getElementById("impressum");
-  impressum.classList.toggle("hidden");
-  impressum.classList.toggle("show");
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  const bigScreenButton = document.getElementById("bigScreen");
-  if (bigScreenButton) {
-    bigScreenButton.addEventListener("click", () => {
-      toggleFullscreen();
-    });
-  }
-});
-
-function checkOrientation() {
-  const rotateDiv = document.getElementById("rotate");
-
-  if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
-    rotateDiv.style.display = "flex";
-  } else {
-    rotateDiv.style.display = "none";
-  }
-}
-window.addEventListener("resize", checkOrientation);
-document.addEventListener("DOMContentLoaded", checkOrientation);

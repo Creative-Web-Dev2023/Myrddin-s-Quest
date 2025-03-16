@@ -99,8 +99,13 @@ function playWalkingSound() {
 /**
  * Plays the level 1 background sound.
  */
-async function playLevel1Sound() {
-  await playSoundAsync(level1Sound);
+function playLevel1Sound() {
+  if (musicIsOn) {
+    level1Sound.loop = true;
+    level1Sound.play().catch((error) => {
+      console.error("Failed to play audio:", error);
+    });
+  }
 }
 
 /**
@@ -170,6 +175,6 @@ async function playSoundAsync(sound) {
       await sound.play();
     }
   } catch (error) {
-    console.error('Error playing sound:', error);
+    console.error("Error playing sound:", error);
   }
 }
