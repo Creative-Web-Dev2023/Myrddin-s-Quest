@@ -17,7 +17,7 @@ let allSounds = [
   jumpSound,
   level1Sound,
   level2Sound,
-  snakeAttackSound, // Fügen Sie den Schlangensound zur Liste hinzu
+  snakeAttackSound, 
 ];
 
 /**

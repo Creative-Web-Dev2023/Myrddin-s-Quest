@@ -70,9 +70,57 @@ function init() {
   world = new World(canvas, keyboard);
   gameLoop();
   setupTouchControls();
+  setupKeyboardControls();
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
-  updateResponsive();
+}
+
+function setupKeyboardControls() {
+  window.addEventListener("keydown", (e) => {
+    switch (e.key) {
+      case "ArrowLeft":
+        keyboard.LEFT = true;
+        break;
+      case "ArrowRight":
+        keyboard.RIGHT = true;
+        break;
+      case "w":
+      case "W":
+        keyboard.JUMP = true;
+        break;
+      case "a":
+      case "A":
+        keyboard.ATTACK = true;
+        break;
+      case "d":
+      case "D":
+        keyboard.D = true;
+        break;
+    }
+  });
+
+  window.addEventListener("keyup", (e) => {
+    switch (e.key) {
+      case "ArrowLeft":
+        keyboard.LEFT = false;
+        break;
+      case "ArrowRight":
+        keyboard.RIGHT = false;
+        break;
+      case "w":
+      case "W":
+        keyboard.JUMP = false;
+        break;
+      case "a":
+      case "A":
+        keyboard.ATTACK = false;
+        break;
+      case "d":
+      case "D":
+        keyboard.D = false;
+        break;
+    }
+  });
 }
 
 function gameLoop() {
@@ -85,6 +133,7 @@ function tryAgain() {
   clearAllIntervals();
   setTimeout(() => world.endGame.resumeGame(), 100);
 }
+
 
 function clearAllIntervals() {
   IntervallIDs.forEach(clearInterval);
@@ -104,39 +153,24 @@ function toggleFullscreen() {
   }
 }
 
-function updateResponsive() {
-  document.getElementById("controls").style.display = checkTouchDevice()
+function setupTouchControls() {
+  const isTouchDevice =
+    "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  document.getElementById("controls").style.display = isTouchDevice
     ? "flex"
     : "none";
-}
 
-function checkTouchDevice() {
-  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
-}
-
-function setupTouchControls() {
-  const controls = document.getElementById("controls");
-  if (checkTouchDevice()) {
-    controls.style.display = "flex";
-    setupTouchControl("btn-left", "LEFT");
-    setupTouchControl("btn-right", "RIGHT");
-    setupTouchControl("btn-jump", "JUMP");
-    setupTouchControl("btn-attack", "ATTACK");
-    setupTouchControl("btn-throw", "D");
-  } else {
-    controls.style.display = "none";
+  if (isTouchDevice) {
+    ["btn-left", "btn-right", "btn-jump", "btn-attack", "btn-throw"].forEach((id) => {
+        const button = document.getElementById(id);
+        if (button) {
+          const key = id.toUpperCase().replace("BTN-", "");
+          button.addEventListener("touchstart", () => (keyboard[key] = true));
+          button.addEventListener("touchend", () => (keyboard[key] = false));
+        }
+      }
+    );
   }
-}
-
-function setupTouchControl(buttonId, key) {
-  const button = document.getElementById(buttonId);
-  if (!button) return;
-  button.addEventListener("touchstart", () => (keyboard[key] = true), {
-    passive: true,
-  });
-  button.addEventListener("touchend", () => (keyboard[key] = false), {
-    passive: true,
-  });
 }
 
 function handleImpressum() {
@@ -146,9 +180,13 @@ function handleImpressum() {
 }
 
 function handleDescription() {
-  let description = document.getElementById("description");
+  const description = document.getElementById("description");
+  const impressumContainer = document.getElementById("impressum-container");
   description.classList.toggle("hidden");
   description.classList.toggle("show");
+  impressumContainer.style.display = description.classList.contains("show")
+    ? "none"
+    : "block";
 }
 
 function goBack() {
@@ -160,8 +198,6 @@ function goBack() {
   impressum.classList.remove("show");
 }
 
-window.addEventListener("resize", updateResponsive);
 document.addEventListener("DOMContentLoaded", () => {
   init();
-  setTimeout(updateResponsive, 100);
 });
