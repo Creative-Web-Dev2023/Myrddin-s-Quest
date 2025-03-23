@@ -75,13 +75,19 @@ class MovableObject extends DrawableObject {
    */
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false;
-    return (
-      this.x + this.width > mo.x &&
-      this.x < mo.x + mo.width &&
-      this.y + this.height > mo.y &&
-      this.y < mo.y + mo.height
+    const colliding = (
+        this.x + this.width > mo.x &&
+        this.x < mo.x + mo.width &&
+        this.y + this.height > mo.y &&
+        this.y < mo.y + mo.height
     );
-  }
+
+    if (colliding) {
+        console.log("Kollision erkannt mit:", mo.constructor.name);
+    }
+    
+    return colliding;
+}
 
   /**
    * Gets the collision box of the object.
@@ -101,7 +107,7 @@ class MovableObject extends DrawableObject {
    * @returns {boolean} True if the object is hurt, false otherwise.
    */
   isHurt() {
-    return (new Date().getTime() - this.lastHit) / 1000 < 5;
+    return (Date.now() - this.lastHit) / 1000 < 5;
   }
 
   /**
@@ -118,10 +124,8 @@ class MovableObject extends DrawableObject {
    */
   takeDamage(damage) {
     if (this.energy <= 0 || this.invulnerable) return;
-
     this.energy -= damage;
     this.playAnimation(this.IMAGES_HURT);
-
     if (this.energy <= 0) {
       this.energy = 0;
       this.die();
@@ -136,7 +140,6 @@ class MovableObject extends DrawableObject {
    */
   die() {
     if (this.deadAnimationPlayed) return;
-
     this.deadAnimationPlayed = true;
     this.playDeathAnimation();
   }
@@ -187,16 +190,20 @@ class MovableObject extends DrawableObject {
    */
   playDeathAnimation() {
     this.stopAllAnimations();
-    let deathIndex = 0;
-    let deathInterval = setInterval(() => {
-      if (deathIndex < this.IMAGES_DEAD.length) {
-        this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
-        deathIndex++;
-      } else {
-        clearInterval(deathInterval);
-        this.isVisible = false;
-      }
-    }, 150);
-    this.animationIntervals.push(deathInterval);
+    let deathImages = this.IMAGES?.DEAD || this.IMAGES_DEAD;
+    if (!deathImages || deathImages.length === 0) {
+      return;
   }
+  let deathIndex = 0;
+  let deathInterval = setInterval(() => {
+      if (deathIndex < deathImages.length) {
+          this.img = this.imageCache[deathImages[deathIndex]];
+          deathIndex++;
+      } else {
+          clearInterval(deathInterval);
+          this.isVisible = false;
+      }
+  }, 150);
+  this.animationIntervals.push(deathInterval);
+}
 }

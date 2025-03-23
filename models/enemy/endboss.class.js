@@ -101,6 +101,7 @@ class Endboss extends Enemy {
     setTimeout(() => {
       if (this.isInAttackRange(character)) {
         character.takeDamage(this.attackDamage);
+        this.takeDamage(character.attackDamage);
       }
     }, 300);
     setTimeout(() => {
@@ -114,11 +115,13 @@ class Endboss extends Enemy {
    */
   takeDamage(damage) {
     if (this.dead) return;
+
     this.energy -= damage;
     this.energy = Math.max(0, this.energy);
     this.statusBarEndboss.setPercentage(this.energy);
+
     if (this.energy > 0) {
-      this.playAnimation(this.IMAGES_HURT, 150);
+      this.playAnimation(this.IMAGES_HURT);
     } else {
       this.die();
     }

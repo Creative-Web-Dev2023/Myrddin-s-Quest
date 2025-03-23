@@ -103,6 +103,11 @@ class Snake extends Enemy {
    */
   patrol() {
     if (this.dead) return;
+    if (this.x <= this.startX - this.moveRange) {
+      this.otherDirection = false;
+    } else if (this.x >= this.startX + this.moveRange) {
+      this.otherDirection = true;
+    }
     this.x += this.otherDirection ? -this.speed : this.speed;
   }
 

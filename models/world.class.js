@@ -143,11 +143,10 @@ class World {
     }
     if (this.character.isVisible) {
       this.character.update();
-      this.character.playAnimation(this.character.IMAGES_IDLE); // Beispiel für die Verwendung der playAnimation-Methode
+      this.character.playAnimation(this.character.IMAGES_IDLE);
     }
     this.updatePoison();
     if (this.character.isMoving() && musicIsOn) {
-     
       playWalkingSound();
     }
     if (this.character.energy <= 0 && !this.levelCompleted && !isDead) {
@@ -157,6 +156,13 @@ class World {
     if (this.level.endboss) {
       this.endbossHealthBar.setPercentage(this.level.endboss.energy);
     }
+  }
+
+  /**
+   * Zeichnet die Welt.
+   */
+  draw() {
+    this.drawer.draw();
   }
 
   /**
@@ -198,51 +204,6 @@ class World {
   }
 
   /**
-   * Zeichnet die Welt.
-   */
-  draw() {
-    this.clearCanvas();
-    if (this.drawer) {
-      this.drawer.draw();
-    }
-    this.drawThrowableObjects();
-    this.drawTraps();
-    this.drawEndbossGuardRange();
-  }
-
-  /**
-   * Zeichnet die werfbaren Objekte.
-   */
-  drawThrowableObjects() {
-    this.throwableObjects.forEach((obj) => {
-      obj.draw(this.ctx);
-      if (obj.isColliding(this.level.endboss)) {
-        this.updateEndbossHealth(obj.damage);
-        this.characterStatusBar.update(this.character.energy);
-        obj.deactivate();
-      }
-    });
-  }
-
-  /**
-   * Zeichnet die Fallen.
-   */
-  drawTraps() {
-    this.traps.forEach((trap) => {
-      trap.draw(this.ctx);
-    });
-  }
-
-  /**
-   * Zeichnet den Wachbereich des Endbosses.
-   */
-  drawEndbossGuardRange() {
-    if (this.level.endboss) {
-      this.level.endboss.drawGuardRange(this.ctx);
-    }
-  }
-
-  /**
    * Löscht das Canvas.
    */
   clearCanvas() {
@@ -277,7 +238,6 @@ class World {
     }
     if (mo && mo.isActive !== false) {
       mo.draw(this.ctx);
-      
     }
     if (mo && mo.otherDirection) {
       this.flipImageBack(mo);
@@ -306,7 +266,5 @@ class World {
 
   resetCamera() {
     this.camera_x = -this.character.x + 190;
-    console.log("📷 Kamera neu gesetzt auf:", this.camera_x); // Debug-Ausgabe
-}
-
+  }
 }

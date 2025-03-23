@@ -13,6 +13,7 @@ class Character extends MovableObject {
   deadAnimationPlayed = false;
   hasKey = false;
   isVisible = true;
+  attackDamage = 10; // Angriffsschaden des Charakters
   animationIntervals = [];
   offset = { top: 50, bottom: 10, left: 210, right: 200 };
   IMAGES = {
@@ -69,8 +70,8 @@ class Character extends MovableObject {
   loadImageArray(path, count) {
     let images = [];
     for (let i = 0; i < count; i++) {
-      let index = i.toString().padStart(3, "0");
-      images.push(`${path}${index}.png`);
+      let number = i.toString().padStart(3, "0");
+      images.push(`${path}${number}.png`);
     }
     return images;
   }
@@ -80,6 +81,9 @@ class Character extends MovableObject {
    */
   update() {
     if (!this.isVisible || this.energy <= 0) return;
+    if (this.energy <= 0 && !this.deadAnimationPlayed) {
+      this.die();
+    }
     this.handleMovement();
     this.handleActions();
     this.updateCamera();
@@ -123,17 +127,17 @@ class Character extends MovableObject {
    */
   attackEnemies() {
     this.world.enemies.forEach((enemy) => {
-      if (
-        (enemy instanceof Knight ||
-          enemy instanceof Snake ||
-          enemy instanceof Endboss) &&
-        !enemy.dead
-      ) {
-        const distance = Math.abs(this.x - enemy.x);
-        if (distance < 150) {
-          enemy.takeDamage(10);
-          if (enemy instanceof Endboss && enemy.energy <= 0) {
-            enemy.die();
+      if (enemy instanceof Knight || enemy instanceof Snake ||enemy instanceof Endboss) {
+      if (!enemy.dead) {
+          const distance = Math.abs(this.x - enemy.x);
+          if (distance < 150) {
+            enemy.takeDamage(10);
+            if (enemy instanceof Endboss) {
+              enemy.statusBarEndboss.setPercentage(enemy.energy);
+              if (enemy.energy <= 0) {
+                enemy.die();
+              }
+            }
           }
         }
       }
@@ -164,6 +168,7 @@ class Character extends MovableObject {
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
       this.energy -= damage;
+      this.lastHit = Date.now();
       this.world.characterStatusBar.setPercentage(this.energy);
       this.playAnimation(this.IMAGES.HURT);
 
@@ -182,8 +187,12 @@ class Character extends MovableObject {
   die() {
     if (!this.deadAnimationPlayed) {
       this.deadAnimationPlayed = true;
+      this.isVisible = true;
       this.playDeathAnimation();
-      this.scheduleGameOver();
+      setTimeout(() => {
+        this.isVisible = false;
+        this.scheduleGameOver();
+      }, this.IMAGES.DEAD.length * 150 + 500);
     }
   }
 
@@ -191,19 +200,30 @@ class Character extends MovableObject {
    * Plays the death animation.
    */
   playDeathAnimation() {
-    this.stopAllAnimations();
+    if (this.deadAnimationPlayed) return;
+    this.deadAnimationPlayed = true;
+    this.currentImage = 0;
+    this.img = this.imageCache[this.IMAGES.DEAD[0]];
+    this.animateDeath();
+  }
+
+  /**
+   * Animates the death of the character.
+   */
+  animateDeath() {
     let deathIndex = 0;
-    let deathInterval = setInterval(() => {
+    const deathInterval = setInterval(() => {
       if (deathIndex < this.IMAGES.DEAD.length) {
         this.img = this.imageCache[this.IMAGES.DEAD[deathIndex]];
         deathIndex++;
       } else {
         clearInterval(deathInterval);
-        this.isVisible = false;
-        this.world.endGame?.showYouLostScreen();
+        setTimeout(() => {
+          this.isVisible = false;
+          this.scheduleGameOver();
+        }, 1000);
       }
     }, 150);
-    this.animationIntervals.push(deathInterval);
   }
 
   /**
@@ -223,7 +243,7 @@ class Character extends MovableObject {
     this.stopAllAnimations();
     let interval = setInterval(() => {
       if (this.isDead() && !this.deadAnimationPlayed) {
-        this.playDeathAnimation();
+        this.die();
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES.HURT);
       } else if (this.isAttacking) {
@@ -263,7 +283,6 @@ class Character extends MovableObject {
       invulnerable: false,
       currentImage: 0,
     });
-
     this.poisonStatusBar.setPercentage(0);
     this.playAnimation(this.IMAGES.IDLE);
     this.animate();
@@ -366,7 +385,7 @@ class Character extends MovableObject {
       this.poisonCollected--;
       this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
     } else {
-      alert("Keine Giftflaschen verfügbar! Kämpfe weiter mit Angriffen.");
+      alert("No poison bottle available,you can attack the Endboss!");
     }
   }
 }

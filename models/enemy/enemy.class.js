@@ -111,6 +111,34 @@ class Enemy extends MovableObject {
   }
 
   /**
+   * Checks if the enemy is hurt.
+   * @returns {boolean} True if the enemy is hurt, false otherwise.
+   */
+  takeDamage(damage) {
+    if (this.dead) return;
+    this.energy -= damage;
+    this.energy = Math.max(0, this.energy);
+    this.statusBarEndboss?.setPercentage(this.energy); 
+    if (this.energy > 0) {
+      this.playAnimation(this.IMAGES_HURT);
+    } else { 
+      this.die();
+    }
+  }
+
+  /**
+   * Makes the enemy take damage.
+   */
+  isColliding(mo) {
+    if (!(mo instanceof DrawableObject)) return false;
+    const colliding =
+      this.x + this.width > mo.x &&
+      this.x < mo.x + mo.width &&
+      this.y + this.height > mo.y &&
+      this.y < mo.y + mo.height;
+  }
+
+  /**
    * Adds intervals so they can be stopped later.
    * @param {Function} fn - The function to execute.
    * @param {number} interval - The interval time in milliseconds.

@@ -120,4 +120,27 @@ class Drawer {
       trap.draw(this.world.ctx);
     });
   }
+
+  /**
+   * Draws the throwable objects.
+   */
+  drawThrowableObjects() {
+    this.world.throwableObjects.forEach((obj) => {
+      obj.draw(this.world.ctx);
+      if (obj.isColliding(this.world.level.endboss)) {
+        this.world.updateEndbossHealth(obj.damage);
+        this.world.characterStatusBar.update(this.world.character.energy);
+        obj.deactivate();
+      }
+    });
+  }
+
+  /**
+   * Draws the guard range of the endboss.
+   */
+  drawEndbossGuardRange() {
+    if (this.world.level.endboss) {
+      this.world.level.endboss.drawGuardRange(this.world.ctx);
+    }
+  }
 }
