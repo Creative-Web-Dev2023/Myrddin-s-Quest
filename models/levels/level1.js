@@ -1,5 +1,13 @@
+/**
+ * Initializes and returns the first level.
+ * @returns {Level} The initialized level.
+ */
 const level1 = initLevel();
 
+/**
+ * Initializes the level by generating enemies, environments, backgrounds, poison objects, and traps.
+ * @returns {Level} The initialized level.
+ */
 function initLevel() {
   return new Level(
     generateEnemiesLvl(),
@@ -10,6 +18,10 @@ function initLevel() {
   );
 }
 
+/**
+ * Generates the enemies for the level.
+ * @returns {Array} An array of enemies.
+ */
 function generateEnemiesLvl() {
   return [
     new Knight(0, 900, 1),
@@ -29,6 +41,10 @@ function generateEnemiesLvl() {
   ];
 }
 
+/**
+ * Generates the environment objects for the level.
+ * @returns {Array} An array of environment objects.
+ */
 function generateEnvironmentsLvl() {
   return [
     new Cloud(0, 50),
@@ -41,6 +57,10 @@ function generateEnvironmentsLvl() {
   ];
 }
 
+/**
+ * Generates the background objects for the level.
+ * @returns {Array} An array of background objects.
+ */
 function generateBackgroundsLvl() {
   return [
     new BackgroundObject("img/game_backgrounds/4/7.png", -719),
@@ -137,10 +157,18 @@ function generateBackgroundsLvl() {
   ];
 }
 
+/**
+ * Generates the poison objects for the level.
+ * @returns {Array} An array of poison objects.
+ */
 function generatePoisonObjectsLvl() {
   return [];
 }
 
+/**
+ * Generates the traps for the level.
+ * @returns {Array} An array of traps.
+ */
 function generateTrapsLvl() {
   return [
     new Trap(7500, 330),

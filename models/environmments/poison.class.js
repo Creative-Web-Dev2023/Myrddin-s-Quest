@@ -1,3 +1,7 @@
+/**
+ * Class representing a Poison object.
+ * @extends DrawableObject
+ */
 class PoisonObject extends DrawableObject {
   IMAGES_POISON = [
     "img/poison/1.png",
@@ -12,6 +16,13 @@ class PoisonObject extends DrawableObject {
 
   isActive = true;
 
+  /**
+   * Creates an instance of PoisonObject.
+   * @param {number} x - The x position of the poison object.
+   * @param {number} y - The y position of the poison object.
+   * @param {number} width - The width of the poison object.
+   * @param {number} height - The height of the poison object.
+   */
   constructor(x, y, width, height) {
     super();
     this.x = x;
@@ -22,6 +33,10 @@ class PoisonObject extends DrawableObject {
     this.animate();
   }
 
+  /**
+   * Initializes poison objects.
+   * @returns {Array} An array of initialized poison objects.
+   */
   static initializePoisons() {
     const poisons = [
       new PoisonObject(800, 400, 50, 50),
@@ -35,11 +50,19 @@ class PoisonObject extends DrawableObject {
     return poisons;
   }
 
+  /**
+   * Deactivates the poison object.
+   */
   deactivate() {
     this.isActive = false;
     this.x = -1000;
   }
 
+  /**
+   * Draws the poison objects on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   * @param {number} camera_x - The x position of the camera.
+   */
   drawPoisons(ctx, camera_x) {
     if (this.isActive && this.img) {
       ctx.drawImage(
@@ -52,6 +75,9 @@ class PoisonObject extends DrawableObject {
     }
   }
 
+  /**
+   * Animates the poison object.
+   */
   animate() {
     setInterval(() => {
       this.playAnimation(this.IMAGES_POISON);

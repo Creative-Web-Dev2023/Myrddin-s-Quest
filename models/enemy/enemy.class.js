@@ -1,6 +1,14 @@
+/**
+ * Class representing a generic enemy.
+ * @extends MovableObject
+ */
 class Enemy extends MovableObject {
   static nextId = 1;
 
+  /**
+   * Creates an instance of Enemy.
+   * @param {number} [id] - The ID of the enemy.
+   */
   constructor(id) {
     super();
     this.id = id || Enemy.nextId++;
@@ -16,6 +24,10 @@ class Enemy extends MovableObject {
     this.intervalIDs = [];
   }
 
+  /**
+   * Sets the world for the enemy.
+   * @param {Object} world - The world object.
+   */
   setWorld(world) {
     this.world = world;
     if (!world.enemies.includes(this)) {
@@ -23,11 +35,18 @@ class Enemy extends MovableObject {
     }
   }
 
+  /**
+   * Patrols the area by moving left or right.
+   */
   patrol() {
     if (this.dead) return;
     this.x += this.otherDirection ? -this.speed : this.speed;
   }
 
+  /**
+   * Updates the enemy's state.
+   * @param {Character} character - The character to interact with.
+   */
   update(character) {
     if (this.isDead()) return;
     if (this.isInAttackRange(character)) {
@@ -37,11 +56,20 @@ class Enemy extends MovableObject {
     }
   }
 
+  /**
+   * Checks if the character is in attack range.
+   * @param {Character} character - The character to check.
+   * @returns {boolean} True if the character is in attack range, false otherwise.
+   */
   isInAttackRange(character) {
     const distance = Math.abs(this.x - character.x);
     return distance < this.attackRange;
   }
 
+  /**
+   * Attacks the character if in range.
+   * @param {Character} character - The character to attack.
+   */
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
@@ -64,10 +92,10 @@ class Enemy extends MovableObject {
   }
 
   /**
-   * Entfernt den Feind aus der Welt.
+   * Removes the enemy from the world.
    */
   removeEnemy() {
-    if (!this.world || !this.world.enemies) return; // Überprüfe, ob world und enemies definiert sind
+    if (!this.world || !this.world.enemies) return;
     const index = this.world.enemies.indexOf(this);
     if (index > -1) {
       this.world.enemies.splice(index, 1);
@@ -82,19 +110,27 @@ class Enemy extends MovableObject {
     return this.energy <= 0;
   }
 
-  /** Fügt Intervalle hinzu, damit sie gestoppt werden können */
+  /**
+   * Adds intervals so they can be stopped later.
+   * @param {Function} fn - The function to execute.
+   * @param {number} interval - The interval time in milliseconds.
+   */
   setCustomInterval(fn, interval) {
     const id = setInterval(fn, interval);
     this.intervalIDs.push(id);
   }
 
-  /** Stoppt alle gesetzten Intervalle */
+  /**
+   * Stops all set intervals.
+   */
   stopAllIntervals() {
     this.intervalIDs.forEach((id) => clearInterval(id));
     this.intervalIDs = [];
   }
 
-  /** Startet die Bewegung */
+  /**
+   * Starts the movement of the enemy.
+   */
   startMovement() {
     this.setCustomInterval(() => {
       if (!this.isDead()) {
@@ -103,7 +139,9 @@ class Enemy extends MovableObject {
     }, 50);
   }
 
-  /** Startet die Animation */
+  /**
+   * Starts the animation of the enemy.
+   */
   startAnimation() {
     this.setCustomInterval(() => {
       if (this.isDead()) {
@@ -118,6 +156,9 @@ class Enemy extends MovableObject {
     }, 100);
   }
 
+  /**
+   * Restarts the enemy's state.
+   */
   restart() {
     this.stopAllIntervals();
     this.x = this.initialX;

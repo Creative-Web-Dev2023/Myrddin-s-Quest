@@ -1,4 +1,15 @@
+/**
+ * Class representing a Knight enemy.
+ * @extends Enemy
+ */
 class Knight extends Enemy {
+  /**
+   * Creates an instance of Knight.
+   * @param {number} [delay=0] - The delay before the knight starts moving.
+   * @param {number} [startX=800] - The starting x position of the knight.
+   * @param {number} [moveRange=100] - The range within which the knight can move.
+   * @param {number} [id] - The ID of the knight.
+   */
   constructor(delay = 0, startX = 800, moveRange = 100, id) {
     super(id);
     this.x = startX;
@@ -56,6 +67,9 @@ class Knight extends Enemy {
     }, delay);
   }
 
+  /**
+   * Animates the knight.
+   */
   animate() {
     this.setCustomInterval(() => {
       if (this.dead) {
@@ -68,6 +82,11 @@ class Knight extends Enemy {
     }, 100);
   }
 
+  /**
+   * Gets the attack box of the knight.
+   * @param {Object} knightBox - The collision box of the knight.
+   * @returns {Object} The attack box of the knight.
+   */
   getAttackBox(knightBox) {
     return {
       x: this.otherDirection
@@ -79,6 +98,12 @@ class Knight extends Enemy {
     };
   }
 
+  /**
+   * Checks if the character is in attack range.
+   * @param {Object} attackBox - The attack box of the knight.
+   * @param {Object} characterBox - The collision box of the character.
+   * @returns {boolean} True if the character is in attack range, false otherwise.
+   */
   isInAttackRange(attackBox, characterBox) {
     if (!characterBox) {
       return false;
@@ -91,6 +116,10 @@ class Knight extends Enemy {
     );
   }
 
+  /**
+   * Attacks the character if in range.
+   * @param {Character} character - The character to attack.
+   */
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
@@ -109,6 +138,10 @@ class Knight extends Enemy {
     }, 800);
   }
 
+  /**
+   * Updates the knight's state.
+   * @param {Character} character - The character to interact with.
+   */
   update(character) {
     if (!character) {
       return;
@@ -118,12 +151,20 @@ class Knight extends Enemy {
     this.healthDisplay.energy = this.energy;
   }
 
+  /**
+   * Draws the knight on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     super.draw(ctx);
     this.healthDisplay.updatePosition(this.x, this.y);
     this.healthDisplay.draw(ctx);
   }
 
+  /**
+   * Handles the knight being hit.
+   * @param {number} damage - The amount of damage to take.
+   */
   hit(damage) {
     this.takeDamage(damage);
     if (this.isDead()) {
@@ -134,6 +175,10 @@ class Knight extends Enemy {
     }
   }
 
+  /**
+   * Makes the knight take damage.
+   * @param {number} amount - The amount of damage to take.
+   */
   takeDamage(amount) {
     if (this.dead) return;
     const now = Date.now();
@@ -148,6 +193,9 @@ class Knight extends Enemy {
     }
   }
 
+  /**
+   * Plays the hurt animation.
+   */
   playHurtAnimation() {
     let hurtIndex = 0;
     const hurtInterval = setInterval(() => {
@@ -160,6 +208,9 @@ class Knight extends Enemy {
     }, 150);
   }
 
+  /**
+   * Handles the knight's death.
+   */
   die() {
     if (this.dead) return;
     this.dead = true;
@@ -168,6 +219,9 @@ class Knight extends Enemy {
     setTimeout(() => this.remove(), 1000);
   }
 
+  /**
+   * Plays the death animation.
+   */
   playDeathAnimation() {
     if (this.deathAnimationPlayed) return;
     this.deathAnimationPlayed = true;
@@ -176,6 +230,9 @@ class Knight extends Enemy {
     this.animateDeath();
   }
 
+  /**
+   * Animates the death of the knight.
+   */
   animateDeath() {
     let deathIndex = 0;
     const deathInterval = setInterval(() => {
@@ -191,6 +248,9 @@ class Knight extends Enemy {
     }, 150);
   }
 
+  /**
+   * Removes the knight from the world.
+   */
   remove() {
     this.removeEnemy();
   }

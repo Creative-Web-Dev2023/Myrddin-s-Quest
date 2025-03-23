@@ -145,7 +145,7 @@ class Endboss extends Enemy {
    * Spawns a crystal at the Endboss's position.
    */
   spawnCrystal() {
-    if (!this.world || !this.world.level) return; // Überprüfe, ob world und level definiert sind
+    if (!this.world || !this.world.level) return;
     const crystal = new Crystal(
       this.x + this.width / 2 - 40,
       this.y + this.height / 2 - 40
@@ -222,6 +222,9 @@ class Endboss extends Enemy {
     this.statusBarEndboss.y = this.y - 40;
   }
 
+  /**
+   * Animates the Endboss.
+   */
   animate() {
     let i = 0;
     setInterval(() => {
@@ -250,6 +253,9 @@ class Endboss extends Enemy {
     return Math.abs(this.x - character.x) < this.attackRange;
   }
 
+  /**
+   * Resets the position of the Endboss.
+   */
   resetPosition() {
     this.x = this.initialX;
     this.y = this.initialY;

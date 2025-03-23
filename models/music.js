@@ -17,7 +17,7 @@ let allSounds = [
   jumpSound,
   level1Sound,
   level2Sound,
-  snakeAttackSound, 
+  snakeAttackSound,
 ];
 
 /**
@@ -169,6 +169,10 @@ function playSnakeAttackSound() {
   }
 }
 
+/**
+ * Plays a sound asynchronously.
+ * @param {HTMLAudioElement} sound - The sound to play.
+ */
 async function playSoundAsync(sound) {
   try {
     if (musicIsOn && sound.paused) {

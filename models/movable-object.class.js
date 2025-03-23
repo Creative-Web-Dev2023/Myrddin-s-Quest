@@ -13,7 +13,7 @@ class MovableObject extends DrawableObject {
   offset = { top: 0, bottom: 0, left: 0, right: 0 };
 
   /**
-   * 🔹 Wendet die Gravitation auf das Objekt an
+   * Applies gravity to the object.
    */
   applyGravity() {
     this.gravityInterval = setInterval(() => {
@@ -26,34 +26,53 @@ class MovableObject extends DrawableObject {
     }, 1000 / 25);
   }
 
-  // 🔹 Bewegung
+  /**
+   * Moves the object to the right.
+   */
   moveRight() {
     this.x += this.speed;
     this.playWalkingSound();
   }
 
+  /**
+   * Moves the object to the left.
+   */
   moveLeft() {
     this.x -= this.speed;
     this.playWalkingSound();
   }
 
+  /**
+   * Makes the object jump.
+   */
   jump() {
     if (this.isAboveGround()) return;
     this.speedY = 30;
     playJumpSound();
   }
 
+  /**
+   * Plays the walking sound.
+   */
   playWalkingSound() {
     if (this.walking_sound && this.walking_sound.paused) {
       this.walking_sound.play();
     }
   }
 
-  // 🔹 Kollisionen & Zustand
+  /**
+   * Checks if the object is above the ground.
+   * @returns {boolean} True if the object is above the ground, false otherwise.
+   */
   isAboveGround() {
     return this instanceof ThrowableObject || this.y < 150;
   }
 
+  /**
+   * Checks if the object is colliding with another movable object.
+   * @param {MovableObject} mo - The other movable object.
+   * @returns {boolean} True if the objects are colliding, false otherwise.
+   */
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false;
     return (
@@ -64,6 +83,10 @@ class MovableObject extends DrawableObject {
     );
   }
 
+  /**
+   * Gets the collision box of the object.
+   * @returns {Object} The collision box of the object.
+   */
   getCollisionBox() {
     return {
       x: this.x + this.offset.left,
@@ -73,14 +96,26 @@ class MovableObject extends DrawableObject {
     };
   }
 
+  /**
+   * Checks if the object is hurt.
+   * @returns {boolean} True if the object is hurt, false otherwise.
+   */
   isHurt() {
     return (new Date().getTime() - this.lastHit) / 1000 < 5;
   }
 
+  /**
+   * Checks if the object is dead.
+   * @returns {boolean} True if the object is dead, false otherwise.
+   */
   isDead() {
     return this.energy <= 0;
   }
 
+  /**
+   * Makes the object take damage.
+   * @param {number} damage - The amount of damage to take.
+   */
   takeDamage(damage) {
     if (this.energy <= 0 || this.invulnerable) return;
 
@@ -96,6 +131,9 @@ class MovableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Handles the object's death.
+   */
   die() {
     if (this.deadAnimationPlayed) return;
 
@@ -103,9 +141,11 @@ class MovableObject extends DrawableObject {
     this.playDeathAnimation();
   }
 
+  /**
+   * Animates the object.
+   */
   animate() {
     this.stopAllAnimations();
-
     let interval = setInterval(() => {
       if (this.isDead()) {
         this.playDeathAnimation();
@@ -122,11 +162,18 @@ class MovableObject extends DrawableObject {
     this.animationIntervals.push(interval);
   }
 
+  /**
+   * Stops all animations.
+   */
   stopAllAnimations() {
     this.animationIntervals.forEach(clearInterval);
     this.animationIntervals = [];
   }
 
+  /**
+   * Plays an animation.
+   * @param {Array} images - The array of images for the animation.
+   */
   playAnimation(images) {
     if (!images || !Array.isArray(images) || images.length === 0) return;
     let i = this.currentImage % images.length;
@@ -135,6 +182,9 @@ class MovableObject extends DrawableObject {
     this.lastFrame = Date.now();
   }
 
+  /**
+   * Plays the death animation.
+   */
   playDeathAnimation() {
     this.stopAllAnimations();
     let deathIndex = 0;

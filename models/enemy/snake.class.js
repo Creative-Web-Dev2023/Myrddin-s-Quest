@@ -1,4 +1,14 @@
+/**
+ * Class representing a Snake enemy.
+ * @extends Enemy
+ */
 class Snake extends Enemy {
+  /**
+   * Creates an instance of Snake.
+   * @param {number} [startX=400] - The starting x position of the snake.
+   * @param {number} [moveRange=100] - The range within which the snake can move.
+   * @param {number} [id] - The ID of the snake.
+   */
   constructor(startX = 400, moveRange = 100, id) {
     super(id);
     this.x = startX;
@@ -45,10 +55,18 @@ class Snake extends Enemy {
     this.startAnimation();
   }
 
+  /**
+   * Sets the world for the snake.
+   * @param {Object} world - The world object.
+   */
   setWorld(world) {
     this.world = world;
   }
 
+  /**
+   * Checks if the character is in attack range and attacks if possible.
+   * @param {Character} character - The character to check.
+   */
   checkForAttack(character) {
     const isInAttackRange = this.calculateAttackRange(character);
     if (isInAttackRange && !this.isAttacking) {
@@ -56,6 +74,11 @@ class Snake extends Enemy {
     }
   }
 
+  /**
+   * Calculates if the character is in attack range.
+   * @param {Character} character - The character to check.
+   * @returns {boolean} True if the character is in attack range, false otherwise.
+   */
   calculateAttackRange(character) {
     const snakeBox = this.getCollisionBox();
     const characterBox = character.getCollisionBox();
@@ -75,15 +98,26 @@ class Snake extends Enemy {
     );
   }
 
+  /**
+   * Patrols the area by moving left or right.
+   */
   patrol() {
     if (this.dead) return;
     this.x += this.otherDirection ? -this.speed : this.speed;
   }
 
+  /**
+   * Updates the snake's state.
+   * @param {Character} character - The character to interact with.
+   */
   update(character) {
     this.checkForAttack(character);
   }
 
+  /**
+   * Makes the snake take damage.
+   * @param {number} damage - The amount of damage to take.
+   */
   takeDamage(damage) {
     if (this.dead) return;
     this.energy -= damage;
@@ -95,6 +129,9 @@ class Snake extends Enemy {
     }
   }
 
+  /**
+   * Handles the snake's death.
+   */
   die() {
     if (this.dead) return;
     this.dead = true;
@@ -103,12 +140,16 @@ class Snake extends Enemy {
   }
 
   /**
-   * Entfernt die Schlange aus der Welt.
+   * Removes the snake from the world.
    */
   remove() {
-    this.removeEnemy(); 
+    this.removeEnemy();
   }
 
+  /**
+   * Loads images into the cache.
+   * @param {Array} imageArray - The array of image paths.
+   */
   loadImages(imageArray) {
     imageArray.forEach((path) => {
       const img = new Image();
@@ -117,6 +158,10 @@ class Snake extends Enemy {
     });
   }
 
+  /**
+   * Draws the snake on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     if (this.img && this.img.complete) {
       if (this.otherDirection) {
@@ -131,6 +176,9 @@ class Snake extends Enemy {
     }
   }
 
+  /**
+   * Animates the snake.
+   */
   animate() {
     setInterval(() => {
       if (this.dead) {
@@ -143,6 +191,9 @@ class Snake extends Enemy {
     }, 100);
   }
 
+  /**
+   * Resets the position of the snake.
+   */
   resetPosition() {
     this.x = this.initialX;
     this.y = this.initialY;
@@ -150,6 +201,11 @@ class Snake extends Enemy {
     this.isVisible = true;
   }
 
+  /**
+   * Gets the attack box of the snake.
+   * @param {Object} snakeBox - The collision box of the snake.
+   * @returns {Object} The attack box of the snake.
+   */
   getAttackBox(snakeBox) {
     return {
       x: this.otherDirection
@@ -161,6 +217,10 @@ class Snake extends Enemy {
     };
   }
 
+  /**
+   * Attacks the character if in range.
+   * @param {Character} character - The character to attack.
+   */
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;

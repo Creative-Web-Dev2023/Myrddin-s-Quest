@@ -1,5 +1,9 @@
 let isAfterDoor = false;
 
+/**
+ * Class representing the character.
+ * @extends MovableObject
+ */
 class Character extends MovableObject {
   height = 290;
   width = 520;
@@ -21,6 +25,11 @@ class Character extends MovableObject {
     YOU_LOST: ["img/game_ui/login&pass/game_over.png"],
   };
 
+  /**
+   * Creates an instance of Character.
+   * @param {Object} world - The world object.
+   * @param {Object} poisonStatusBar - The poison status bar object.
+   */
   constructor(world, poisonStatusBar) {
     super();
     this.world = world;
@@ -30,7 +39,7 @@ class Character extends MovableObject {
   }
 
   /**
-   * 🔹 Initialisiert den Charakter
+   * Initializes the character.
    */
   initCharacter() {
     this.loadImage(this.IMAGES.IDLE[0]);
@@ -45,14 +54,17 @@ class Character extends MovableObject {
   }
 
   /**
-   * 🔹 Lädt alle Bilder in den Cache
+   * Loads all images into the cache.
    */
   loadAllImages() {
     Object.values(this.IMAGES).forEach((imgArray) => this.loadImages(imgArray));
   }
 
   /**
-   * 🔹 Lädt Bildarrays automatisch
+   * Loads image arrays automatically.
+   * @param {string} path - The path to the images.
+   * @param {number} count - The number of images.
+   * @returns {Array} The array of image paths.
    */
   loadImageArray(path, count) {
     let images = [];
@@ -63,6 +75,9 @@ class Character extends MovableObject {
     return images;
   }
 
+  /**
+   * Updates the character's state.
+   */
   update() {
     if (!this.isVisible || this.energy <= 0) return;
     this.handleMovement();
@@ -70,6 +85,9 @@ class Character extends MovableObject {
     this.updateCamera();
   }
 
+  /**
+   * Handles the character's movement.
+   */
   handleMovement() {
     if (
       this.world.keyboard.RIGHT &&
@@ -89,6 +107,9 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Handles the character's actions.
+   */
   handleActions() {
     this.isAttacking = this.world.keyboard.ATTACK;
     if (this.isAttacking) {
@@ -97,6 +118,9 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Attacks enemies within range.
+   */
   attackEnemies() {
     this.world.enemies.forEach((enemy) => {
       if (
@@ -116,6 +140,9 @@ class Character extends MovableObject {
     });
   }
 
+  /**
+   * Makes the character jump.
+   */
   jump() {
     if (!this.isAboveGround()) {
       this.speedY = 33;
@@ -123,10 +150,17 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Updates the camera position.
+   */
   updateCamera() {
     this.world.camera_x = -this.x - 190;
   }
 
+  /**
+   * Makes the character take damage.
+   * @param {number} damage - The amount of damage to take.
+   */
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
       this.energy -= damage;
@@ -142,6 +176,9 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Handles the character's death.
+   */
   die() {
     if (!this.deadAnimationPlayed) {
       this.deadAnimationPlayed = true;
@@ -150,10 +187,12 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Plays the death animation.
+   */
   playDeathAnimation() {
     this.stopAllAnimations();
     let deathIndex = 0;
-
     let deathInterval = setInterval(() => {
       if (deathIndex < this.IMAGES.DEAD.length) {
         this.img = this.imageCache[this.IMAGES.DEAD[deathIndex]];
@@ -167,6 +206,9 @@ class Character extends MovableObject {
     this.animationIntervals.push(deathInterval);
   }
 
+  /**
+   * Schedules the game over screen.
+   */
   scheduleGameOver() {
     setTimeout(() => {
       this.isVisible = false;
@@ -174,6 +216,9 @@ class Character extends MovableObject {
     }, this.IMAGES.DEAD.length * 150 + 500);
   }
 
+  /**
+   * Animates the character.
+   */
   animate() {
     this.stopAllAnimations();
     let interval = setInterval(() => {
@@ -194,11 +239,17 @@ class Character extends MovableObject {
     this.animationIntervals.push(interval);
   }
 
+  /**
+   * Stops all animations.
+   */
   stopAllAnimations() {
     this.animationIntervals.forEach(clearInterval);
     this.animationIntervals = [];
   }
 
+  /**
+   * Resets the character's state.
+   */
   reset() {
     this.stopAllAnimations();
     Object.assign(this, {
@@ -219,9 +270,13 @@ class Character extends MovableObject {
     this.applyGravity();
   }
 
+  /**
+   * Resets the positions of all enemies.
+   */
   resetEnemies() {
     this.world.enemies.forEach((enemy) => enemy.resetPosition?.());
   }
+
   /**
    * Handles the character entering a door.
    * @param {Object} door - The door the character is entering.
@@ -237,7 +292,7 @@ class Character extends MovableObject {
         this.y = 150;
         this.world.camera_x = -this.x - 190;
         this.isVisible = true;
-        this.canMoveLeftFlag = false; //
+        this.canMoveLeftFlag = false;
         setTimeout(() => {
           this.canMoveLeftFlag = true;
         }, 2000);
@@ -246,14 +301,27 @@ class Character extends MovableObject {
     }, 2000);
   }
 
+  /**
+   * Checks if the character can move left.
+   * @returns {boolean} True if the character can move left, false otherwise.
+   */
   canMoveLeft() {
     return this.canMoveLeftFlag;
   }
 
+  /**
+   * Checks if the character is moving.
+   * @returns {boolean} True if the character is moving, false otherwise.
+   */
   isMoving() {
     return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
   }
 
+  /**
+   * Collects a poison bottle.
+   * @param {Object} poison - The poison object.
+   * @param {number} index - The index of the poison in the array.
+   */
   collectPoison(poison, index) {
     if (poison && poison.isActive) {
       poison.deactivate();
@@ -264,6 +332,10 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Collects a key.
+   * @param {Object} key - The key object.
+   */
   collectKey(key) {
     if (key && key.isActive) {
       key.deactivate();
@@ -271,6 +343,10 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Handles the character hitting an enemy.
+   * @param {Object} enemy - The enemy object.
+   */
   hit(enemy) {
     const distance = Math.abs(this.x - enemy.x);
     if (!this.invulnerable && distance < 100) {
@@ -280,6 +356,9 @@ class Character extends MovableObject {
     }
   }
 
+  /**
+   * Throws a poison bottle.
+   */
   throwPoisonBottle() {
     if (this.poisonCollected > 0) {
       const poisonBottle = new ThrowableObject(this.x, this.y);
