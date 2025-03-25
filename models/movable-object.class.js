@@ -12,6 +12,11 @@ class MovableObject extends DrawableObject {
   animationIntervals = [];
   offset = { top: 0, bottom: 0, left: 0, right: 0 };
 
+  constructor() {
+    super();
+    this.deadAnimationPlayed = false; 
+  }
+
   /**
    * Applies gravity to the object.
    */
@@ -75,19 +80,18 @@ class MovableObject extends DrawableObject {
    */
   isColliding(mo) {
     if (!(mo instanceof MovableObject)) return false;
-    const colliding = (
-        this.x + this.width > mo.x &&
-        this.x < mo.x + mo.width &&
-        this.y + this.height > mo.y &&
-        this.y < mo.y + mo.height
-    );
+    const colliding =
+      this.x + this.width > mo.x &&
+      this.x < mo.x + mo.width &&
+      this.y + this.height > mo.y &&
+      this.y < mo.y + mo.height;
 
     if (colliding) {
-        console.log("Kollision erkannt mit:", mo.constructor.name);
+      console.log("Kollision erkannt mit:", mo.constructor.name);
     }
-    
+
     return colliding;
-}
+  }
 
   /**
    * Gets the collision box of the object.
@@ -193,17 +197,17 @@ class MovableObject extends DrawableObject {
     let deathImages = this.IMAGES?.DEAD || this.IMAGES_DEAD;
     if (!deathImages || deathImages.length === 0) {
       return;
-  }
-  let deathIndex = 0;
-  let deathInterval = setInterval(() => {
+    }
+    let deathIndex = 0;
+    let deathInterval = setInterval(() => {
       if (deathIndex < deathImages.length) {
-          this.img = this.imageCache[deathImages[deathIndex]];
-          deathIndex++;
+        this.img = this.imageCache[deathImages[deathIndex]];
+        deathIndex++;
       } else {
-          clearInterval(deathInterval);
-          this.isVisible = false;
+        clearInterval(deathInterval);
+        this.isVisible = false;
       }
-  }, 150);
-  this.animationIntervals.push(deathInterval);
-}
+    }, 150);
+    this.animationIntervals.push(deathInterval);
+  }
 }

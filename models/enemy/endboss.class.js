@@ -9,6 +9,7 @@ class Endboss extends Enemy {
    */
   constructor(id) {
     super(id);
+    this.deadAnimationPlayed = false; // Initialisierung der Eigenschaft
     this.height = 450;
     this.width = 360;
     this.y = 50;

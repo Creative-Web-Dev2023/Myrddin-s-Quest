@@ -127,8 +127,12 @@ class Character extends MovableObject {
    */
   attackEnemies() {
     this.world.enemies.forEach((enemy) => {
-      if (enemy instanceof Knight || enemy instanceof Snake ||enemy instanceof Endboss) {
-      if (!enemy.dead) {
+      if (
+        enemy instanceof Knight ||
+        enemy instanceof Snake ||
+        enemy instanceof Endboss
+      ) {
+        if (!enemy.dead) {
           const distance = Math.abs(this.x - enemy.x);
           if (distance < 150) {
             enemy.takeDamage(10);
@@ -171,8 +175,8 @@ class Character extends MovableObject {
       this.lastHit = Date.now();
       this.world.characterStatusBar.setPercentage(this.energy);
       this.playAnimation(this.IMAGES.HURT);
-
       if (this.energy <= 0) {
+        this.playDeathAnimation(this.IMAGES.DEAD);
         this.die();
       } else {
         this.invulnerable = true;
@@ -191,8 +195,8 @@ class Character extends MovableObject {
       this.playDeathAnimation();
       setTimeout(() => {
         this.isVisible = false;
-        this.scheduleGameOver();
-      }, this.IMAGES.DEAD.length * 150 + 500);
+        this.world.endGame.showYouLostScreen();
+      }, this.IMAGES.DEAD.length * 150);
     }
   }
 
@@ -233,7 +237,7 @@ class Character extends MovableObject {
     setTimeout(() => {
       this.isVisible = false;
       this.world.endGame?.showYouLostScreen();
-    }, this.IMAGES.DEAD.length * 150 + 500);
+    }, this.IMAGES.DEAD.length * 150 + 1000);
   }
 
   /**
@@ -244,7 +248,7 @@ class Character extends MovableObject {
     let interval = setInterval(() => {
       if (this.isDead() && !this.deadAnimationPlayed) {
         this.die();
-      } else if (this.isHurt()) {
+      } else if (this.isHurt() && this.energy >= 1) {
         this.playAnimation(this.IMAGES.HURT);
       } else if (this.isAttacking) {
         this.playAnimation(this.IMAGES.ATTACK);
@@ -252,7 +256,7 @@ class Character extends MovableObject {
         this.playAnimation(this.IMAGES.JUMPING);
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.playAnimation(this.IMAGES.WALKING);
-      } else {
+      } else if (this.energy >= 1) {
         this.playAnimation(this.IMAGES.IDLE);
       }
     }, 100);
@@ -278,7 +282,7 @@ class Character extends MovableObject {
       isVisible: true,
       energy: 100,
       poisonCollected: 0,
-      deadAnimationPlayed: false,
+      deadAnimationPlayed: false, // Zurücksetzen der Dead-Animation
       isAttacking: false,
       invulnerable: false,
       currentImage: 0,

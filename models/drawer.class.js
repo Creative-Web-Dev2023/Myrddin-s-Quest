@@ -25,9 +25,9 @@ class Drawer {
     if (this.world.door) {
       this.world.door.draw(this.world.ctx);
     }
-    if (this.world.character.energy <= 0) {
-      this.world.endGame.showYouLostScreen();
-    }
+    // if (this.world.character.energy <= 0) {
+    //   this.world.endGame.showYouLostScreen();
+    // }
   }
 
   /**

@@ -38,12 +38,14 @@ class EndGame {
     this.clearAllIntervals();
     document.getElementById("game-over-container").style.display = "none";
     document.getElementById("win-screen").style.display = "none";
-    this.world.initializeGameObjects();
-    this.world.resetCamera();
-    this.world.character.reset();
-    this.world.character.isVisible = true;
-    isDead = false;
-    gameLoop();
+    setTimeout(() => {
+      this.world.initializeGameObjects();
+      this.world.resetCamera();
+      this.world.character.reset(); // Charakter zurücksetzen
+      this.world.character.isVisible = true;
+      isDead = false;
+      gameLoop(); // Spielschleife neu starten
+    }, this.world.character.IMAGES.DEAD.length * 150); // Verzögerung basierend auf der Animationsdauer
   }
 
   /**
@@ -152,8 +154,8 @@ class EndGame {
    * Displays the "You Lost" screen.
    */
   showYouLostScreen() {
-    this.gameOver();
     muteAllSounds();
+      document.getElementById("game-over-container").style.display = "flex";  
   }
 
   /**

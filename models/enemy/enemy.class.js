@@ -11,6 +11,7 @@ class Enemy extends MovableObject {
    */
   constructor(id) {
     super();
+    this.deadAnimationPlayed = false; 
     this.id = id || Enemy.nextId++;
     this.energy = 100;
     this.dead = false;
@@ -118,10 +119,10 @@ class Enemy extends MovableObject {
     if (this.dead) return;
     this.energy -= damage;
     this.energy = Math.max(0, this.energy);
-    this.statusBarEndboss?.setPercentage(this.energy); 
+    this.statusBarEndboss?.setPercentage(this.energy);
     if (this.energy > 0) {
       this.playAnimation(this.IMAGES_HURT);
-    } else { 
+    } else {
       this.die();
     }
   }
