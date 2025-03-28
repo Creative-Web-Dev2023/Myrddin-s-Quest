@@ -178,7 +178,7 @@ function gameLoop() {
  */
 function tryAgain() {
   clearAllIntervals();
-  setTimeout(() => world.endGame.resumeGame(), 100);
+  setTimeout(() => world.endGame.resumeGame(), 100); 
 }
 
 /**

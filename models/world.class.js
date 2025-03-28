@@ -84,6 +84,8 @@ class World {
     this.characterStatusBar = new StatusBar();
     this.character = new Character(this, this.poisonStatusBar);
     this.character.world = this;
+    this.character.x = 130; 
+    this.character.y = 150; 
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
@@ -148,9 +150,6 @@ class World {
     this.updatePoison();
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound();
-    }
-    if (this.character.energy <= 0 && !this.levelCompleted && !isDead) {
-      this.endGame.checkDeathCondition();
     }
     this.updateEnemies();
     if (this.level.endboss) {
@@ -266,5 +265,51 @@ class World {
 
   resetCamera() {
     this.camera_x = -this.character.x + 190;
+  }
+
+  /**
+   * Setzt alle Feinde auf ihre ursprünglichen Positionen zurück.
+   */
+  resetEnemies() {
+    this.enemies.forEach((enemy) => {
+      if (enemy.resetPosition) {
+        enemy.resetPosition();
+      }
+    });
+  }
+
+  /**
+   * Stellt die Feinde aus dem gespeicherten Zustand wieder her.
+   * @param {Array} enemies - Die gespeicherten Feind-Daten.
+   */
+  restoreEnemies(enemies) {
+    this.enemies = enemies.map((data) => {
+      const enemy = new (window[data.type] || Enemy)();
+      Object.assign(enemy, data);
+      return enemy;
+    });
+  }
+
+  /**
+   * Setzt alle Objekte auf ihre ursprünglichen Positionen zurück.
+   */
+  resetObjects() {
+    this.objects.forEach((obj) => {
+      if (obj.resetPosition) {
+        obj.resetPosition();
+      }
+    });
+  }
+
+  /**
+   * Stellt die Objekte aus dem gespeicherten Zustand wieder her.
+   * @param {Array} objects - Die gespeicherten Objekt-Daten.
+   */
+  restoreObjects(objects) {
+    this.objects = objects.map((data) => {
+      const obj = new GameObject(); 
+      Object.assign(obj, data);
+      return obj;
+    });
   }
 }
