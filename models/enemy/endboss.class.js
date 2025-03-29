@@ -134,15 +134,17 @@ class Endboss extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
-    this.playAnimation(this.IMAGES_DEAD, 150);
+    this.playAnimation(this.IMAGES_DEAD, 200); 
     this.deadSound.play();
     setTimeout(() => {
       this.spawnCrystal();
       this.removeEnemy();
-    }, this.IMAGES_DEAD.length * 150);
-    if (this.world && this.world.endGame) {
-      this.world.endGame.showYouWinScreen();
-    }
+      setTimeout(() => {
+      if (this.world && this.world.endGame) {
+        this.world.endGame.showYouWinScreen(); 
+      }
+    }, 1000);
+    }, this.IMAGES_DEAD.length * 200);
   }
 
   /**

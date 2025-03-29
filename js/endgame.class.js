@@ -47,8 +47,8 @@ class EndGame {
       x: 130,
       y: 150,
     };
-    this.world.character.resetPosition(lastPosition); 
-    this.world.camera_x = -this.world.character.x - 190; 
+    this.world.character.resetPosition(lastPosition);
+    this.world.camera_x = -this.world.character.x - 190;
     this.hideGameOverScreen();
     this.world.character.applyGravity();
     gameLoop();
@@ -61,6 +61,7 @@ class EndGame {
     document.getElementById("game-over-container").style.display = "flex";
     muteAllSounds();
   }
+
   /**
    * Displays the "You Win" screen.
    */
@@ -77,6 +78,15 @@ class EndGame {
       this.intervalIDs.forEach(clearInterval);
       this.intervalIDs = [];
     }
+  }
+
+  /**
+   * Schedules the "You Lost" screen to be shown after a delay.
+   */
+  scheduleShowYouLostScreen() {
+    setTimeout(() => {
+      this.showYouLostScreen();
+    }, 500); 
   }
 }
 

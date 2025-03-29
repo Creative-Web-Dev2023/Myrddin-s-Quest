@@ -170,7 +170,6 @@ h2 {
   position: absolute;
   top: 8%;
   right: 3%;
-  width: 30px;
   cursor: pointer;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.5);
@@ -181,8 +180,7 @@ h2 {
 .big-screen {
   position: absolute;
   top: 8%;
-  right: 9%;
-  width: 30px;
+  right: 11%;
   cursor: pointer;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.5);
@@ -468,7 +466,7 @@ h3 {
 
 #controls {
   position: absolute;
-  bottom: 10px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
   display: none;
@@ -482,15 +480,29 @@ h3 {
 }
 
 .control-button {
-  width: 50px;
-  height: 50px;
-  margin: 5px;
+  width: 43px;
+  height: 29px;
+  margin: 3px;
+  border: 2px solid #96633f;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  color: white;
+  font-family: "MedievalSharp", sans-serif;
+  font-size: 14px;
+  text-align: center;
+  line-height: 29px;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  margin-top: 100px; 
+}
+
+.control-button:hover {
+  transform: scale(1.1);
+  background-color: #96633f;
 }
 
 .control-label {
   font-size: 20px;
   color: rgb(24, 23, 23);
-  margin-top: 5px;
   font-family: "MedievalSharp", sans-serif;
   font-weight: bold;
 }
@@ -509,23 +521,6 @@ h3 {
 #controls #btn-attack,
 #controls #btn-throw {
   cursor: pointer;
-}
-
-.icon-container {
-  position: absolute;
-  top: 2%;
-  right: 2%;
-  display: flex;
-  gap: 10px;
-  z-index: 1000;
-}
-
-.audio-icon,
-.big-screen {
-  position: static !important;
-  width: 30px;
-  height: 30px;
-  margin: 0;
 }
 .scroll-indicators {
   display: none;

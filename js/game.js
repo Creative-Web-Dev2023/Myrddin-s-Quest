@@ -116,51 +116,39 @@ function init() {
  */
 function setupKeyboardControls() {
   window.addEventListener("keydown", (e) => {
-    switch (e.key) {
-      case "ArrowLeft":
-        keyboard.LEFT = true;
-        break;
-      case "ArrowRight":
-        keyboard.RIGHT = true;
-        break;
-      case "w":
-      case "W":
-        keyboard.JUMP = true;
-        break;
-      case "a":
-      case "A":
-        keyboard.ATTACK = true;
-        break;
-      case "d":
-      case "D":
-        if (!keyboard.D) {
-          keyboard.D = true;
-          world.character.throwPoisonBottle();
-        }
-        break;
+    if (e.key === "ArrowLeft") {
+      keyboard.LEFT = true;
+    }
+    if (e.key === "ArrowRight") {
+      keyboard.RIGHT = true;
+    }
+    if (e.key.toLowerCase() === "w") {
+      keyboard.JUMP = true;
+    }
+    if (e.key.toLowerCase() === "a") {
+      keyboard.ATTACK = true; 
+    }
+    if (e.key.toLowerCase() === "d" && !keyboard.D) {
+      keyboard.D = true;
+      world.character.throwPoisonBottle(); 
     }
   });
 
   window.addEventListener("keyup", (e) => {
-    switch (e.key) {
-      case "ArrowLeft":
-        keyboard.LEFT = false;
-        break;
-      case "ArrowRight":
-        keyboard.RIGHT = false;
-        break;
-      case "w":
-      case "W":
-        keyboard.JUMP = false;
-        break;
-      case "a":
-      case "A":
-        keyboard.ATTACK = false;
-        break;
-      case "d":
-      case "D":
-        keyboard.D = false;
-        break;
+    if (e.key === "ArrowLeft") {
+      keyboard.LEFT = false;
+    }
+    if (e.key === "ArrowRight") {
+      keyboard.RIGHT = false;
+    }
+    if (e.key.toLowerCase() === "w") {
+      keyboard.JUMP = false;
+    }
+    if (e.key.toLowerCase() === "a") {
+      keyboard.ATTACK = false;
+    }
+    if (e.key.toLowerCase() === "d") {
+      keyboard.D = false;
     }
   });
 }

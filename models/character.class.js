@@ -192,30 +192,18 @@ class Character extends MovableObject {
     if (!this.deadAnimationPlayed) {
       this.saveLastPosition();
       this.deadAnimationPlayed = true;
-      this.isVisible = true;
-      this.playDeathAnimation();
-      setTimeout(() => {
-        this.isVisible = false;
-        this.world.endGame.showYouLostScreen();
-      }, this.IMAGES.DEAD.length * 150);
+      this.isVisible = true; 
+      this.playDeathAnimation(() => {
+        this.isVisible = false; 
+        this.world.endGame.showYouLostScreen(); 
+      });
     }
   }
 
   /**
    * Plays the death animation.
    */
-  playDeathAnimation() {
-    if (this.deadAnimationPlayed) return;
-    this.deadAnimationPlayed = true;
-    this.currentImage = 0;
-    this.img = this.imageCache[this.IMAGES.DEAD[0]];
-    this.animateDeath();
-  }
-
-  /**
-   * Animates the death of the character.
-   */
-  animateDeath() {
+  playDeathAnimation(callback) {
     let deathIndex = 0;
     const deathInterval = setInterval(() => {
       if (deathIndex < this.IMAGES.DEAD.length) {
@@ -223,22 +211,9 @@ class Character extends MovableObject {
         deathIndex++;
       } else {
         clearInterval(deathInterval);
-        setTimeout(() => {
-          this.isVisible = false;
-          this.scheduleGameOver();
-        }, 1000);
+        if (callback) callback(); 
       }
     }, 150);
-  }
-
-  /**
-   * Schedules the game over screen.
-   */
-  scheduleGameOver() {
-    setTimeout(() => {
-      this.isVisible = false;
-      this.world.endGame?.showYouLostScreen();
-    }, this.IMAGES.DEAD.length * 150 + 1000);
   }
 
   /**
@@ -393,7 +368,6 @@ class Character extends MovableObject {
     }
   }
 
-
   /**
    * Resets the character's position to the last saved location or a default position.
    * @param {Object} [position] - Optional: The position object with x and y coordinates.
@@ -404,7 +378,7 @@ class Character extends MovableObject {
     this.y = resetPos.y;
     this.energy = 100;
     this.isVisible = true;
-    this.deadAnimationPlayed = false; 
+    this.deadAnimationPlayed = false;
     this.invulnerable = false;
     this.playAnimation(this.IMAGES.IDLE);
     this.applyGravity();

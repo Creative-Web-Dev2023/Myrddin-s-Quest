@@ -1,3 +1,23 @@
+@media screen and (max-width: 1366px) {
+  .audio-icon,
+  .big-screen {
+    width: 45px;
+    height: 45px;
+    top: 4%;
+    right: 4%;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .audio-icon,
+  .big-screen {
+    width: 40px;
+    height: 40px;
+    top: 5%;
+    right: 5%;
+  }
+}
+
 @media screen and (max-width: 768px) {
   #canvas-container {
     width: 100vw;
@@ -30,13 +50,13 @@
   .overlay .how-to-play-button {
     width: 70px !important;
     height: 28px !important;
-     margin-left: -30px !important;
-    margin-right: -30px; 
-   } 
-  
+    margin-left: -30px !important;
+    margin-right: -30px;
+  }
+
   .overlay .how-to-play-button {
     margin-left: 10px !important;
-  } 
+  }
 
   #impressum-container {
     position: absolute;
@@ -51,6 +71,31 @@
     bottom: 50% !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
+  }
+
+  .icon-container {
+    top: 5%;
+    right: 5%;
+    gap: 5px;
+  }
+
+  .icon-container img {
+    width: 25px;
+    height: 25px;
+  }
+
+  .audio-icon {
+    top: 5%;
+    right: 15%;
+    width: 30px;
+    height: 30px;
+  }
+
+  .big-screen {
+    top: 5%;
+    right: 5%;
+    width: 30px;
+    height: 30px;
   }
 }
 
@@ -91,7 +136,7 @@
     padding: 6px 10px;
     width: 90%;
   }
-  
+
   .how-to-play-button {
     position: absolute;
     bottom: 20px;
@@ -121,6 +166,31 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 1rem;
+  }
+
+  .icon-container {
+    top: 3%;
+    right: 3%;
+    gap: 3px;
+  }
+
+  .icon-container img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .audio-icon {
+    top: 5%;
+    right: 18%; /* Noch weiter nach links verschoben */
+    width: 25px;
+    height: 25px;
+  }
+
+  .big-screen {
+    top: 5%;
+    right: 8%; /* Noch weiter nach rechts verschoben */
+    width: 25px;
+    height: 25px;
   }
 }
 
