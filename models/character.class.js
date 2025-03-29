@@ -1,4 +1,5 @@
 let isAfterDoor = false;
+
 /**
  * Class representing the character.
  * @extends MovableObject
@@ -12,7 +13,7 @@ class Character extends MovableObject {
   deadAnimationPlayed = false;
   hasKey = false;
   isVisible = true;
-  attackDamage = 10;
+  attackDamage = 10; // Angriffsschaden des Charakters
   animationIntervals = [];
   offset = { top: 50, bottom: 10, left: 210, right: 200 };
   IMAGES = {
@@ -50,9 +51,7 @@ class Character extends MovableObject {
     this.statusBar = new StatusBar();
     this.world.camera_x = -this.x - 190;
     this.canMoveLeftFlag = true;
-    this.isVisible = true;
     this.animate();
-    setTimeout(() => this.applyGravity(), 100);
   }
 
   /**
@@ -83,8 +82,8 @@ class Character extends MovableObject {
   update() {
     if (!this.isVisible || this.energy <= 0) return;
     if (this.energy <= 0 && !this.deadAnimationPlayed) {
+      console.log("Charakter stirbt, rufe die() auf."); // Debugging-Log
       this.die();
-      console.log("isVisible:", this.world.character.isVisible);
     }
     this.handleMovement();
     this.handleActions();
@@ -178,7 +177,6 @@ class Character extends MovableObject {
       this.world.characterStatusBar.setPercentage(this.energy);
       this.playAnimation(this.IMAGES.HURT);
       if (this.energy <= 0) {
-        this.playDeathAnimation(this.IMAGES.DEAD);
         this.die();
       } else {
         this.invulnerable = true;
@@ -188,33 +186,70 @@ class Character extends MovableObject {
   }
 
   /**
-   * Handles the death of the character, including animation and game over logic.
+   * Handles the character's death.
    */
-  handleDeath() {
+  die() {
+    if (!this.deadAnimationPlayed) {
+      this.saveLastPosition();
+      this.deadAnimationPlayed = true;
+      this.isVisible = true;
+      this.playDeathAnimation();
+      setTimeout(() => {
+        this.isVisible = false;
+        this.world.endGame.showYouLostScreen();
+      }, this.IMAGES.DEAD.length * 150);
+    }
+  }
+
+  /**
+   * Plays the death animation.
+   */
+  playDeathAnimation() {
     if (this.deadAnimationPlayed) return;
     this.deadAnimationPlayed = true;
+    this.currentImage = 0;
+    this.img = this.imageCache[this.IMAGES.DEAD[0]];
+    this.animateDeath();
+  }
+
+  /**
+   * Animates the death of the character.
+   */
+  animateDeath() {
     let deathIndex = 0;
-    this.isVisible = false;
-    this.world.endGame.showYouLostScreen();
     const deathInterval = setInterval(() => {
       if (deathIndex < this.IMAGES.DEAD.length) {
         this.img = this.imageCache[this.IMAGES.DEAD[deathIndex]];
         deathIndex++;
       } else {
         clearInterval(deathInterval);
+        setTimeout(() => {
+          this.isVisible = false;
+          this.scheduleGameOver();
+        }, 1000);
       }
     }, 150);
   }
 
   /**
-   * Animates the character based on its current state.
+   * Schedules the game over screen.
+   */
+  scheduleGameOver() {
+    setTimeout(() => {
+      this.isVisible = false;
+      this.world.endGame?.showYouLostScreen();
+    }, this.IMAGES.DEAD.length * 150 + 1000);
+  }
+
+  /**
+   * Animates the character.
    */
   animate() {
     this.stopAllAnimations();
     let interval = setInterval(() => {
-      if (this.energy <= 0 && !this.deadAnimationPlayed) {
-        this.handleDeath();
-      } else if (this.isHurt() && this.energy > 0) {
+      if (this.isDead() && !this.deadAnimationPlayed) {
+        this.die();
+      } else if (this.isHurt() && this.energy >= 1) {
         this.playAnimation(this.IMAGES.HURT);
       } else if (this.isAttacking) {
         this.playAnimation(this.IMAGES.ATTACK);
@@ -222,11 +257,19 @@ class Character extends MovableObject {
         this.playAnimation(this.IMAGES.JUMPING);
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.playAnimation(this.IMAGES.WALKING);
-      } else {
+      } else if (this.energy >= 1) {
         this.playAnimation(this.IMAGES.IDLE);
       }
     }, 100);
     this.animationIntervals.push(interval);
+  }
+
+  /**
+   * Stops all animations.
+   */
+  stopAllAnimations() {
+    this.animationIntervals.forEach(clearInterval);
+    this.animationIntervals = [];
   }
 
   /**
@@ -237,19 +280,16 @@ class Character extends MovableObject {
     Object.assign(this, {
       x: 130,
       y: 150,
-      speedY: 20,
       isVisible: true,
       energy: 100,
-      poisonCollected: 0,
       deadAnimationPlayed: false,
       isAttacking: false,
       invulnerable: false,
       currentImage: 0,
     });
-    this.poisonStatusBar.setPercentage(0);
-    this.loadAllImages();
-    this.playAnimation(this.IMAGES.IDLE); 
-    this.animate(); 
+    this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+    this.playAnimation(this.IMAGES.IDLE);
+    this.animate();
     this.applyGravity();
   }
 
@@ -353,38 +393,27 @@ class Character extends MovableObject {
     }
   }
 
+
+  /**
+   * Resets the character's position to the last saved location or a default position.
+   * @param {Object} [position] - Optional: The position object with x and y coordinates.
+   */
+  resetPosition(position) {
+    const resetPos = position || this.lastPosition || { x: 130, y: 150 };
+    this.x = resetPos.x;
+    this.y = resetPos.y;
+    this.energy = 100;
+    this.isVisible = true;
+    this.deadAnimationPlayed = false; 
+    this.invulnerable = false;
+    this.playAnimation(this.IMAGES.IDLE);
+    this.applyGravity();
+  }
+
   /**
    * Speichert die aktuelle Position des Charakters.
    */
   saveLastPosition() {
     this.lastPosition = { x: this.x, y: this.y };
-  }
-
-  /**
-   * Setzt den Charakter auf eine spezifische Position zurück.
-   * Wenn keine Position angegeben wird, wird die Startposition verwendet.
-   * @param {Object} [position] - Die Position mit x- und y-Werten.
-   */
-  resetPosition(position = { x: 130, y: 150 }) {
-    if (
-      !position ||
-      typeof position.x === "undefined" ||
-      typeof position.y === "undefined"
-    ) {
-      console.error("Invalid position object:", position);
-      return;
-    }
-    Object.assign(this, {
-      x: position.x,
-      y: position.y,
-      energy: position.energy || 100,
-      isVisible: true,
-      deadAnimationPlayed: false,
-      poisonCollected: 0,
-      invulnerable: false,
-    });
-    this.poisonStatusBar.setPercentage(0);
-    this.playAnimation(this.IMAGES.IDLE);
-    this.applyGravity();
   }
 }

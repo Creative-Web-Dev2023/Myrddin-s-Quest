@@ -133,7 +133,10 @@ function setupKeyboardControls() {
         break;
       case "d":
       case "D":
-        keyboard.D = true;
+        if (!keyboard.D) {
+          keyboard.D = true;
+          world.character.throwPoisonBottle();
+        }
         break;
     }
   });
@@ -178,7 +181,7 @@ function gameLoop() {
  */
 function tryAgain() {
   clearAllIntervals();
-  setTimeout(() => world.endGame.resumeGame(), 100); 
+  setTimeout(() => world.endGame.resumeGame(), 100);
 }
 
 /**

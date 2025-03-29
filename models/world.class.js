@@ -84,8 +84,8 @@ class World {
     this.characterStatusBar = new StatusBar();
     this.character = new Character(this, this.poisonStatusBar);
     this.character.world = this;
-    this.character.x = 130; 
-    this.character.y = 150; 
+    this.character.x = 130;
+    this.character.y = 150;
     this.poisonsArray = PoisonObject.initializePoisons();
     this.environments = generateEnvironmentsLvl();
     this.backgroundObjects = this.level.backgroundObjects || [];
@@ -294,6 +294,10 @@ class World {
    * Setzt alle Objekte auf ihre ursprünglichen Positionen zurück.
    */
   resetObjects() {
+    if (!this.objects || !Array.isArray(this.objects)) {
+      console.warn("Keine Objekte zum Zurücksetzen vorhanden."); // Debugging-Log
+      return;
+    }
     this.objects.forEach((obj) => {
       if (obj.resetPosition) {
         obj.resetPosition();
@@ -307,7 +311,7 @@ class World {
    */
   restoreObjects(objects) {
     this.objects = objects.map((data) => {
-      const obj = new GameObject(); 
+      const obj = new GameObject();
       Object.assign(obj, data);
       return obj;
     });

@@ -27,7 +27,11 @@ class EndGame {
    * Startet das Spiel neu und setzt den Charakter, die Feinde und Objekte zurück.
    */
   restartGame() {
-    this.world.character.reset(); // Charakter vollständig zurücksetzen
+    if (!this.world.character) {
+      return;
+    }
+
+    this.world.character.reset();
     this.world.resetEnemies();
     this.world.resetObjects();
     this.hideGameOverScreen();
@@ -43,7 +47,8 @@ class EndGame {
       x: 130,
       y: 150,
     };
-    this.world.character.resetPosition(lastPosition);
+    this.world.character.resetPosition(lastPosition); 
+    this.world.camera_x = -this.world.character.x - 190; 
     this.hideGameOverScreen();
     this.world.character.applyGravity();
     gameLoop();
