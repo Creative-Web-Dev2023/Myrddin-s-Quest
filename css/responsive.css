@@ -1,11 +1,28 @@
-@media screen and (max-width: 1366px) {
+
+
+@media screen and (min-width: 1367px) {
   .audio-icon,
   .big-screen {
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
+    top: 3%;
+    right: 3%;
+  }
+}
+
+@media screen and (max-width: 1366px) {
+  .audio-icon{
+    width: 3vw;
+    height:3vw;
     top: 4%;
     right: 4%;
   }
+  .big-screen{
+    width: 3vw;
+    height:3vw;
+    top: 4%;
+    right: 10%;
+  } 
 }
 
 @media screen and (max-width: 1024px) {
@@ -43,19 +60,12 @@
 
   .game-button {
     width: 24% !important;
-    font-size: 3vw !important;
   }
 
   .overlay .start-button,
   .overlay .how-to-play-button {
     width: 70px !important;
-    height: 28px !important;
-    margin-left: -30px !important;
     margin-right: -30px;
-  }
-
-  .overlay .how-to-play-button {
-    margin-left: 10px !important;
   }
 
   #impressum-container {
@@ -98,7 +108,57 @@
     height: 30px;
   }
 }
+@media screen and (max-height: 667px) {
+  #canvas-container {
+    margin-top: 50px;
+  }
+  #canvas {
+    max-height: 80vh;
+  }
+  .overlay {
+    max-height: 80vh;
+  }
+  h2 {
+    top: 5px;
+  }
+  .start-button,
+  .how-to-play-button {
+    bottom: 50px;
+  }
 
+  .start-button span,
+  .how-to-play-button span {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .overlay .start-button,
+  .overlay .how-to-play-button {
+    width: 60px !important;
+    height: 20px !important;
+    font-size: 8px !important;
+    margin-right: 10px !important;
+  }
+
+  .overlay .how-to-play-button {
+    margin-left: 10px !important;
+  }
+
+  .overlay-character {
+    bottom: 50% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  #impressum-container {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+  }
+}
 @media screen and (max-width: 375px) {
   h2 {
     font-size: 1.5rem;
@@ -233,57 +293,5 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.8rem;
-  }
-}
-
-@media screen and (max-height: 667px) {
-  #canvas-container {
-    margin-top: 50px;
-  }
-  #canvas {
-    max-height: 80vh;
-  }
-  .overlay {
-    max-height: 80vh;
-  }
-  h2 {
-    top: 5px;
-  }
-  .start-button,
-  .how-to-play-button {
-    bottom: 50px;
-  }
-
-  .start-button span,
-  .how-to-play-button span {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .overlay .start-button,
-  .overlay .how-to-play-button {
-    width: 60px !important;
-    height: 20px !important;
-    font-size: 8px !important;
-    margin-right: 10px !important;
-  }
-
-  .overlay .how-to-play-button {
-    margin-left: 10px !important;
-  }
-
-  .overlay-character {
-    bottom: 50% !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-  }
-
-  #impressum-container {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1rem;
   }
 }
