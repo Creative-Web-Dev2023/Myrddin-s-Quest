@@ -102,55 +102,11 @@ function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   world = new World(canvas, keyboard);
+  keyboard.setupControls(world);
+  keyboard.setupTouchControls();
   gameLoop();
-  setupTouchControls();
-  setupKeyboardControls();
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
-}
-
-/**
- * Sets up keyboard controls for the game.
- * This function adds event listeners for `keydown` and `keyup` events on the window object.
- * It updates the `keyboard` object properties based on the key pressed or released.
- */
-function setupKeyboardControls() {
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") {
-      keyboard.LEFT = true;
-    }
-    if (e.key === "ArrowRight") {
-      keyboard.RIGHT = true;
-    }
-    if (e.key.toLowerCase() === "w") {
-      keyboard.JUMP = true;
-    }
-    if (e.key.toLowerCase() === "a") {
-      keyboard.ATTACK = true; 
-    }
-    if (e.key.toLowerCase() === "d" && !keyboard.D) {
-      keyboard.D = true;
-      world.character.throwPoisonBottle(); 
-    }
-  });
-
-  window.addEventListener("keyup", (e) => {
-    if (e.key === "ArrowLeft") {
-      keyboard.LEFT = false;
-    }
-    if (e.key === "ArrowRight") {
-      keyboard.RIGHT = false;
-    }
-    if (e.key.toLowerCase() === "w") {
-      keyboard.JUMP = false;
-    }
-    if (e.key.toLowerCase() === "a") {
-      keyboard.ATTACK = false;
-    }
-    if (e.key.toLowerCase() === "d") {
-      keyboard.D = false;
-    }
-  });
 }
 
 /**
@@ -202,32 +158,6 @@ function toggleFullscreen() {
 }
 
 /**
- * Sets up touch controls for the game.
- * This function checks if the device supports touch input and displays the controls accordingly.
- * It adds event listeners for touchstart and touchend events on the control buttons.
- */
-function setupTouchControls() {
-  const isTouchDevice =
-    "ontouchstart" in window || navigator.maxTouchPoints > 0;
-  document.getElementById("controls").style.display = isTouchDevice
-    ? "flex"
-    : "none";
-
-  if (isTouchDevice) {
-    ["btn-left", "btn-right", "btn-jump", "btn-attack", "btn-throw"].forEach(
-      (id) => {
-        const button = document.getElementById(id);
-        if (button) {
-          const key = id.toUpperCase().replace("BTN-", "");
-          button.addEventListener("touchstart", () => (keyboard[key] = true));
-          button.addEventListener("touchend", () => (keyboard[key] = false));
-        }
-      }
-    );
-  }
-}
-
-/**
  * Toggles the visibility of the impressum section.
  */
 function handleImpressum() {
@@ -262,8 +192,26 @@ function goBack() {
 }
 
 /**
+ * Checks the device orientation and shows/hides the "rotate device" message.
+ */
+function checkOrientation() {
+  const rotateMessage = document.getElementById("rotate"); 
+  if (!rotateMessage) {
+    return; 
+  }
+  if (window.matchMedia("(orientation: landscape)").matches) {
+    rotateMessage.style.display = "none"; 
+  } else {
+    rotateMessage.style.display = "flex"; 
+  }
+}
+window.addEventListener("orientationchange", checkOrientation);
+
+
+/**
  * Initializes the game when the DOM content is loaded.
  */
 document.addEventListener("DOMContentLoaded", () => {
   init();
+  checkOrientation();
 });

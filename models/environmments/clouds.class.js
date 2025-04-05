@@ -4,7 +4,7 @@
  */
 class Cloud extends MovableObject {
   height = 200;
-  width = 600;
+  width = 300;
   speed = 0.2;
 
   /**
@@ -12,7 +12,7 @@ class Cloud extends MovableObject {
    * @param {number} initialX - The initial x position of the cloud.
    */
   constructor(initialX = Math.random() * 2600) {
-    super().loadImage("img/clouds/full.png");
+    super().loadImage("img/clouds/2.png");
     this.x = initialX;
     this.y = Math.random() * 50;
     this.animate();
@@ -64,5 +64,24 @@ class Clouds {
       cloud.x = index * spacing + Math.random() * spacing;
       cloud.y = Math.random() * 50;
     });
+  }
+
+  /**
+   * Continuously adds new clouds during the game.
+   * @param {number} interval - The interval in milliseconds to add new clouds.
+   */
+  startGeneratingClouds(interval = 5000) {
+    setInterval(() => {
+      const newCloud = new Cloud(2600 + Math.random() * 500);
+      this.clouds.push(newCloud);
+    }, interval);
+  }
+
+  /**
+   * Updates all clouds by moving them and removing those that are out of bounds.
+   */
+  updateClouds() {
+    this.clouds = this.clouds.filter((cloud) => cloud.x + cloud.width > 0);
+    this.clouds.forEach((cloud) => cloud.moveLeft());
   }
 }

@@ -76,4 +76,14 @@ class Crystal extends DrawableObject {
       this.world.endGame.showWinScreen();
     }
   }
+
+  /**
+   * Removes the crystal after the final boss is defeated.
+   */
+  removeAfterBossDeath() {
+    this.isActive = false;
+    this.isCollected = true;
+    this.x = -100; // Move the crystal off-screen
+    this.y = -100;
+  }
 }

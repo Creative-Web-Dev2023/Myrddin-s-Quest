@@ -440,7 +440,7 @@ h3 {
   z-index: 3;
 }
 
-/* #rotate {
+#rotate {
   display: flex;
   position: fixed;
   top: 0;
@@ -462,7 +462,7 @@ h3 {
   width: 100px;
   height: 100px;
   animation: rotate-animation 2s linear infinite;
-} */
+}
 
 #controls {
   position: absolute;
@@ -492,7 +492,7 @@ h3 {
   text-align: center;
   line-height: 29px;
   transition: transform 0.2s ease, background-color 0.3s ease;
-  margin-top: 100px; 
+  margin-top: 100px;
 }
 
 .control-button:hover {
@@ -540,3 +540,4 @@ h3 {
   transform: translateY(50%);
   cursor: pointer;
 }
+

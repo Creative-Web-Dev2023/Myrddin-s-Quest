@@ -1,5 +1,5 @@
 let isAfterDoor = false;
-
+let hasPassedDoor = false;
 /**
  * Class representing the character.
  * @extends MovableObject
@@ -13,14 +13,14 @@ class Character extends MovableObject {
   deadAnimationPlayed = false;
   hasKey = false;
   isVisible = true;
-  attackDamage = 10; // Angriffsschaden des Charakters
+  attackDamage = 10;
   animationIntervals = [];
   offset = { top: 50, bottom: 10, left: 210, right: 200 };
   IMAGES = {
     IDLE: this.loadImageArray("img/wizard/idle/idle_", 10),
     WALKING: this.loadImageArray("img/wizard/walk/walk_", 9),
     JUMPING: this.loadImageArray("img/wizard/jump/jump_", 9),
-    ATTACK: this.loadImageArray("img/wizard/attack/Attack_", 7),
+    ATTACK: this.loadImageArray("img/wizard/attack/attack_", 7),
     DEAD: this.loadImageArray("img/wizard/die/die_", 9),
     HURT: this.loadImageArray("img/wizard/hurt/hurt_", 9),
     YOU_LOST: ["img/game_ui/login&pass/game_over.png"],
@@ -28,8 +28,6 @@ class Character extends MovableObject {
 
   /**
    * Creates an instance of Character.
-   * @param {Object} world - The world object.
-   * @param {Object} poisonStatusBar - The poison status bar object.
    */
   constructor(world, poisonStatusBar) {
     super();
@@ -63,9 +61,6 @@ class Character extends MovableObject {
 
   /**
    * Loads image arrays automatically.
-   * @param {string} path - The path to the images.
-   * @param {number} count - The number of images.
-   * @returns {Array} The array of image paths.
    */
   loadImageArray(path, count) {
     let images = [];
@@ -82,7 +77,6 @@ class Character extends MovableObject {
   update() {
     if (!this.isVisible || this.energy <= 0) return;
     if (this.energy <= 0 && !this.deadAnimationPlayed) {
-      console.log("Charakter stirbt, rufe die() auf."); // Debugging-Log
       this.die();
     }
     this.handleMovement();
@@ -168,7 +162,6 @@ class Character extends MovableObject {
 
   /**
    * Makes the character take damage.
-   * @param {number} damage - The amount of damage to take.
    */
   takeDamage(damage) {
     if (this.energy > 0 && !this.invulnerable) {
@@ -192,10 +185,10 @@ class Character extends MovableObject {
     if (!this.deadAnimationPlayed) {
       this.saveLastPosition();
       this.deadAnimationPlayed = true;
-      this.isVisible = true; 
+      this.isVisible = true;
       this.playDeathAnimation(() => {
-        this.isVisible = false; 
-        this.world.endGame.showYouLostScreen(); 
+        this.isVisible = false;
+        this.world.endGame.showYouLostScreen();
       });
     }
   }
@@ -211,7 +204,7 @@ class Character extends MovableObject {
         deathIndex++;
       } else {
         clearInterval(deathInterval);
-        if (callback) callback(); 
+        if (callback) callback();
       }
     }, 150);
   }
@@ -261,7 +254,10 @@ class Character extends MovableObject {
       isAttacking: false,
       invulnerable: false,
       currentImage: 0,
+      speedY: 0,
+      acceleration: 2.5,
     });
+    this.poisonCollected = 5;
     this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
     this.playAnimation(this.IMAGES.IDLE);
     this.animate();
@@ -277,9 +273,9 @@ class Character extends MovableObject {
 
   /**
    * Handles the character entering a door.
-   * @param {Object} door - The door the character is entering.
    */
   enterDoor(door) {
+    if (hasPassedDoor) return;
     this.isVisible = false;
     this.x = door.x;
     this.y = door.y;
@@ -290,9 +286,10 @@ class Character extends MovableObject {
         this.y = 150;
         this.world.camera_x = -this.x - 190;
         this.isVisible = true;
-        this.canMoveLeftFlag = false;
+        isAfterDoor = true;
+        hasPassedDoor = true;
         setTimeout(() => {
-          this.canMoveLeftFlag = true;
+          isAfterDoor = false;
         }, 2000);
         playNewSound();
       }, 200);
@@ -301,15 +298,14 @@ class Character extends MovableObject {
 
   /**
    * Checks if the character can move left.
-   * @returns {boolean} True if the character can move left, false otherwise.
    */
   canMoveLeft() {
-    return this.canMoveLeftFlag;
+    if (hasPassedDoor && this.x < 6471) return false;
+    return this.canMoveLeftFlag && !isAfterDoor;
   }
 
   /**
    * Checks if the character is moving.
-   * @returns {boolean} True if the character is moving, false otherwise.
    */
   isMoving() {
     return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
@@ -317,8 +313,6 @@ class Character extends MovableObject {
 
   /**
    * Collects a poison bottle.
-   * @param {Object} poison - The poison object.
-   * @param {number} index - The index of the poison in the array.
    */
   collectPoison(poison, index) {
     if (poison && poison.isActive) {
@@ -332,7 +326,6 @@ class Character extends MovableObject {
 
   /**
    * Collects a key.
-   * @param {Object} key - The key object.
    */
   collectKey(key) {
     if (key && key.isActive) {
@@ -343,7 +336,6 @@ class Character extends MovableObject {
 
   /**
    * Handles the character hitting an enemy.
-   * @param {Object} enemy - The enemy object.
    */
   hit(enemy) {
     const distance = Math.abs(this.x - enemy.x);
@@ -358,19 +350,17 @@ class Character extends MovableObject {
    * Throws a poison bottle.
    */
   throwPoisonBottle() {
-    if (this.poisonCollected > 0) {
-      const poisonBottle = new ThrowableObject(this.x, this.y);
-      this.world.throwableObjects.push(poisonBottle);
-      this.poisonCollected--;
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-    } else {
-      alert("No poison bottle available,you can attack the Endboss!");
+    if (this.poisonCollected === 0) {
+      return;
     }
+    this.poisonCollected--;
+    this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+    const poisonBottle = new ThrowableObject(this.x, this.y);
+    this.world.throwableObjects.push(poisonBottle);
   }
 
   /**
    * Resets the character's position to the last saved location or a default position.
-   * @param {Object} [position] - Optional: The position object with x and y coordinates.
    */
   resetPosition(position) {
     const resetPos = position || this.lastPosition || { x: 130, y: 150 };

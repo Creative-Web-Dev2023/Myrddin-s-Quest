@@ -252,8 +252,6 @@ class Endboss extends Enemy {
 
   /**
    * Checks if the character is in attack range.
-   * @param {Character} character - The character to check.
-   * @returns {boolean} True if the character is in attack range, false otherwise.
    */
   isInAttackRange(character) {
     return Math.abs(this.x - character.x) < this.attackRange;

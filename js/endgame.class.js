@@ -30,10 +30,9 @@ class EndGame {
     if (!this.world.character) {
       return;
     }
-
-    this.world.character.reset();
     this.world.resetEnemies();
     this.world.resetObjects();
+    this.world.character.reset();
     this.hideGameOverScreen();
     this.world.character.applyGravity();
     gameLoop();

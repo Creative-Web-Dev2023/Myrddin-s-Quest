@@ -1,11 +1,13 @@
-let backgroundMusic = new Audio("audio/woodsounds.mp3");
+let backgroundMusic = new Audio(
+  "audio/woodsounds.mp3?v=" + new Date().getTime()
+);
 let walkingSound = new Audio("audio/walking.mp3");
 let attackSound = new Audio("audio/wizard_attack.mp3");
 let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
 let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
 let musicIsOn = false;
-let level1Sound = new Audio("audio/woodsounds.mp3");
+let level1Sound = new Audio("audio/woodsounds.mp3?v=" + new Date().getTime());
 let level2Sound = new Audio("audio/level2_sound.mp3");
 let snakeAttackSound = new Audio("audio/snake.mp3");
 
@@ -103,7 +105,7 @@ function playLevel1Sound() {
   if (musicIsOn) {
     level1Sound.loop = true;
     level1Sound.play().catch((error) => {
-      console.error("Failed to play audio:", error);
+      console.error("Failed to play level 1 sound:", error);
     });
   }
 }
