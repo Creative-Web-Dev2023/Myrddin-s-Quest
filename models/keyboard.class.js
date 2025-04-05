@@ -52,24 +52,30 @@ class Keyboard {
    * Sets up touch controls for the game.
    * This function checks if the device supports touch input and displays the controls accordingly.
    */
-  setupTouchControls() {
-    const isTouchDevice =
-      "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    document.getElementById("controls").style.display = isTouchDevice
-      ? "flex"
-      : "none";
-
-    if (isTouchDevice) {
-      ["btn-left", "btn-right", "btn-jump", "btn-attack", "btn-throw"].forEach(
-        (id) => {
-          const button = document.getElementById(id);
-          if (button) {
-            const key = id.toUpperCase().replace("BTN-", "");
-            button.addEventListener("touchstart", () => (this[key] = true));
-            button.addEventListener("touchend", () => (this[key] = false));
-          }
+  setupTouchControls(world) {
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    document.getElementById("controls").style.display = isTouch ? "flex" : "none";
+    if (!isTouch) return;
+    const buttons = {
+      "btn-left": "LEFT",
+      "btn-right": "RIGHT",
+      "btn-jump": "JUMP",
+      "btn-attack": "ATTACK",
+      "btn-throw": "THROW"
+    };
+    for (const [id, key] of Object.entries(buttons)) {
+      const btn = document.getElementById(id);
+      if (!btn) continue;
+      btn.addEventListener("touchstart", () => {
+        this[key] = true;
+        if (id === "btn-throw") {
+          world.character.throwPoisonBottle();
         }
-      );
+      }); 
+      btn.addEventListener("touchend", () => {
+        this[key] = false;
+      });
     }
   }
+  
 }

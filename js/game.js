@@ -102,8 +102,11 @@ function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   world = new World(canvas, keyboard);
+
+  // Übergib die `world`-Instanz an die Touch-Steuerung
   keyboard.setupControls(world);
-  keyboard.setupTouchControls();
+  keyboard.setupTouchControls(world);
+
   gameLoop();
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
@@ -195,18 +198,17 @@ function goBack() {
  * Checks the device orientation and shows/hides the "rotate device" message.
  */
 function checkOrientation() {
-  const rotateMessage = document.getElementById("rotate"); 
+  const rotateMessage = document.getElementById("rotate");
   if (!rotateMessage) {
-    return; 
+    return;
   }
   if (window.matchMedia("(orientation: landscape)").matches) {
-    rotateMessage.style.display = "none"; 
+    rotateMessage.style.display = "none";
   } else {
-    rotateMessage.style.display = "flex"; 
+    rotateMessage.style.display = "flex";
   }
 }
 window.addEventListener("orientationchange", checkOrientation);
-
 
 /**
  * Initializes the game when the DOM content is loaded.
