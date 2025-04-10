@@ -1,6 +1,6 @@
 html,
 body {
-  overflow: hidden;
+  overflow: auto;
 }
 
 body {
@@ -16,7 +16,6 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  overflow: hidden;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -53,6 +52,7 @@ body {
   text-decoration: none;
   transition: 0.5s;
   margin-top: 20px;
+  
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
@@ -198,21 +198,26 @@ h2 {
 
 .description {
   position: absolute;
-  top: 78px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  background: linear-gradient(135deg, #4e6a76, #2c3e50);
-  border-radius: 10px;
-  color: rgb(202, 189, 49);
-  padding: clamp(10px, 2vw, 20px);
-  display: none;
-  scrollbar-width: thin;
-  scrollbar-color: #4e6a76 orange;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  max-width: 75vh;
+  background: url("../img/game_ui/oldpaper_texture.jpg"); 
+  background-size: cover;
+  background-repeat: no-repeat;
+  border: 3px solid #c7a93c;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  padding: clamp(16px, 3vw, 32px);
+  z-index: 1100;
   overflow-y: auto;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  line-height: 1.6;
+  font-family: "MedievalSharp", serif;
+  text-shadow: 1px 1px 2px #000;
+  display: none;
 }
+
 
 #impressum-container {
   position: absolute;
@@ -257,8 +262,19 @@ h2 {
   display: block;
 }
 .table-keys {
-  width: 30%;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
+
+.table-keys td {
+  padding: 10px;
+  color: #938222;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  text-shadow: 1px 1px 1px black;
+}
+
 h3 {
   text-align: center;
   color: rgb(214, 158, 36);
@@ -266,17 +282,19 @@ h3 {
 }
 .back-link {
   cursor: pointer;
-  color: rgba(11, 11, 179, 0.813);
-  text-decoration: underline;
-  margin-top: 20px;
-  font-size: 24px;
-  text-align: center;
+  color: #201db2;
+  text-decoration: none;
+  font-size: 1.3rem;
+  margin-top: 30px;
   display: block;
+  text-align: center;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+.back-link:hover {
+  color: #b2a3ae;
 }
 
-.back-link:hover {
-  color: rgb(150, 150, 222);
-}
 .back-link2 {
   cursor: pointer;
   color: rgb(188, 194, 178);
@@ -296,7 +314,7 @@ h3 {
   width: 100%;
   height: 100%;
   aspect-ratio: 3 / 2;
-  background-image: url("../img/game_ui/login&pass/loghin_pass_fullwindow.png"),
+  background-image: url("../img/game_ui/login&pass/loghin_pass_fullwindow1.png"),
     url("../img/game_backgrounds/wood.png");
   background-repeat: no-repeat, repeat;
   background-size: cover, cover;
@@ -305,9 +323,9 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
   z-index: 1000;
+ 
 }
 
 .overlay-text {
@@ -440,7 +458,7 @@ h3 {
   z-index: 3;
 }
 
-#rotate {
+/* #rotate {
   display: flex;
   position: fixed;
   top: 0;
@@ -462,11 +480,11 @@ h3 {
   width: 100px;
   height: 100px;
   animation: rotate-animation 2s linear infinite;
-}
+} */
 
 #controls {
   position: absolute;
-  bottom: -10px;
+  bottom: 6px;
   left: 50%;
   transform: translateX(-50%);
   display: none;
@@ -498,13 +516,6 @@ h3 {
 .control-button:hover {
   transform: scale(1.1);
   background-color: #96633f;
-}
-
-.control-label {
-  font-size: 20px;
-  color: rgb(24, 23, 23);
-  font-family: "MedievalSharp", sans-serif;
-  font-weight: bold;
 }
 
 #btn-left,

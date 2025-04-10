@@ -17,7 +17,7 @@ class Keyboard {
       if (e.key === "ArrowRight") {
         this.RIGHT = true;
       }
-      if (e.key.toLowerCase() === "w") {
+      if (e.key === "ArrowUp") {
         this.JUMP = true;
       }
       if (e.key.toLowerCase() === "a") {
@@ -36,7 +36,7 @@ class Keyboard {
       if (e.key === "ArrowRight") {
         this.RIGHT = false;
       }
-      if (e.key.toLowerCase() === "w") {
+      if (e.key === "ArrowUp") {
         this.JUMP = false;
       }
       if (e.key.toLowerCase() === "a") {

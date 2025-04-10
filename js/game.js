@@ -180,6 +180,11 @@ function handleDescription() {
   impressumContainer.style.display = description.classList.contains("show")
     ? "none"
     : "block";
+  if (description.classList.contains("show")) {
+    document.body.style.overflow = "auto";
+  } else {
+    document.body.style.overflow = "hidden";
+  }
 }
 
 /**
@@ -188,11 +193,15 @@ function handleDescription() {
 function goBack() {
   let description = document.getElementById("description");
   let impressum = document.getElementById("impressum");
+  let impressumContainer = document.getElementById("impressum-container");
   description.classList.add("hidden");
   description.classList.remove("show");
   impressum.classList.add("hidden");
   impressum.classList.remove("show");
+  impressumContainer.style.display = "block";
+  document.body.style.overflow = "hidden";
 }
+
 
 /**
  * Checks the device orientation and shows/hides the "rotate device" message.

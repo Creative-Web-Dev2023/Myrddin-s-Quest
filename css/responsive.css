@@ -35,8 +35,8 @@
 
 @media screen and (max-width: 768px) {
   #canvas-container {
-    width: 100vw; /* Breite bleibt bei 100% des Viewports */
-    height: auto; /* Höhe wird dynamisch über JS gesetzt */
+    width: 100vw;
+    height: auto; 
   }
 
   #canvas {
@@ -65,7 +65,11 @@
     width: 70px !important;
     margin-right: -30px;
   }
-
+  .description {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
   #impressum-container {
     position: absolute;
     bottom: 10px;
