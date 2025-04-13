@@ -80,7 +80,7 @@ class Knight extends Enemy {
       }
     }, 100);
   }
-  
+
   /**
    * Gets the attack box of the knight.
    * @param {Object} knightBox - The collision box of the knight.
@@ -180,15 +180,12 @@ class Knight extends Enemy {
    */
   takeDamage(amount) {
     if (this.dead) return;
-    const now = Date.now();
-    if (now - this.lastHit > 1000) {
-      this.energy = Math.max(0, this.energy - amount);
-      this.lastHit = now;
-      if (this.energy <= 0) {
-        this.die();
-      } else {
-        this.playHurtAnimation();
-      }
+    this.energy = Math.max(0, this.energy - amount);
+    this.lastHit = Date.now();
+    playEnemyHitSound();
+    this.playHurtAnimation();    
+    if (this.energy <= 0) {
+      this.die();
     }
   }
 
@@ -196,6 +193,7 @@ class Knight extends Enemy {
    * Plays the hurt animation.
    */
   playHurtAnimation() {
+    this.stopAllIntervals(); 
     let hurtIndex = 0;
     const hurtInterval = setInterval(() => {
       if (hurtIndex < this.IMAGES_HURT.length) {
@@ -203,8 +201,18 @@ class Knight extends Enemy {
         hurtIndex++;
       } else {
         clearInterval(hurtInterval);
+        this.startNormalAnimation(); //
       }
     }, 150);
+    this.intervalIDs.push(hurtInterval); 
+  }
+  /**
+   * Starts the normal animation after being hurt.
+   */
+  startNormalAnimation() {
+    if (!this.dead) {
+      this.animate(); 
+    }
   }
 
   /**
@@ -218,7 +226,6 @@ class Knight extends Enemy {
     this.playDeathAnimation();
     setTimeout(() => this.remove(), this.IMAGES_DEAD.length * 300 + 500);
   }
-  
 
   /**
    * Plays the death animation.
@@ -231,13 +238,13 @@ class Knight extends Enemy {
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
     this.animateDeath();
   }
- /**
- * Stoppt alle laufenden Intervalle des Ritters.
- */
-clearAllIntervals() {
-  this.intervalIDs.forEach(clearInterval);
-  this.intervalIDs = [];
-}
+  /**
+   * Stoppt alle laufenden Intervalle des Ritters.
+   */
+  clearAllIntervals() {
+    this.intervalIDs.forEach(clearInterval);
+    this.intervalIDs = [];
+  }
 
   /**
    * Animates the death of the knight.
@@ -254,7 +261,7 @@ clearAllIntervals() {
           this.isRemoved = true;
         }, 1000);
       }
-    },400);
+    }, 400);
   }
 
   /**

@@ -10,6 +10,7 @@ let musicIsOn = false;
 let level1Sound = new Audio("audio/woodsounds.mp3?v=" + new Date().getTime());
 let level2Sound = new Audio("audio/level2_sound.mp3");
 let snakeAttackSound = new Audio("audio/snake.mp3");
+let enemyHitSound = new Audio("audio/knight-hurt.mp3");
 
 let allSounds = [
   backgroundMusic,
@@ -20,6 +21,7 @@ let allSounds = [
   level1Sound,
   level2Sound,
   snakeAttackSound,
+  enemyHitSound,
 ];
 
 /**
@@ -166,7 +168,22 @@ function playNewSound() {
     level2Sound.loop = true;
   }
 }
-
+/**
+ * Plays the enemy hit sound.
+ */
+function playEnemyHitSound() {
+  if (musicIsOn) {
+    if (enemyHitSound.readyState >= 2) {
+      // Überprüfen, ob der Sound geladen ist
+      enemyHitSound.currentTime = 0;
+      enemyHitSound.play().catch((error) => {
+        console.error("Failed to play enemy hit sound:", error);
+      });
+    } else {
+      console.warn("Enemy hit sound is not ready to play.");
+    }
+  }
+}
 /**
  * Plays the snake attack sound.
  */

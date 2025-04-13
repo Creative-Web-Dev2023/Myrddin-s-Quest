@@ -116,10 +116,17 @@ class Enemy extends MovableObject {
    * @returns {boolean} True if the enemy is hurt, false otherwise.
    */
   takeDamage(damage) {
-    if (this.dead) return;
+    if (this.energy <= 0 || this.invulnerable) return;
+    try {
+      playEnemyHitSound();
+    } catch (e) {
+      console.error("Sound error:", e);
+    }
     this.energy -= damage;
-    this.energy = Math.max(0, this.energy);
-    this.statusBarEndboss?.setPercentage(this.energy);
+    this.energy = Math.max(0, this.energy); 
+    if (this.statusBar) {
+      this.statusBar.setPercentage(this.energy); 
+    }
     if (this.energy > 0) {
       this.playAnimation(this.IMAGES_HURT);
     } else {

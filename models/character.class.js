@@ -15,7 +15,7 @@ class Character extends MovableObject {
   isVisible = true;
   attackDamage = 10;
   animationIntervals = [];
-  offset = { top: 50, bottom: 10, left: 210, right: 200 };
+  offset = { top: 50, bottom: 10, left: 160, right: 200 };
   IMAGES = {
     IDLE: this.loadImageArray("img/wizard/idle/idle_", 10),
     WALKING: this.loadImageArray("img/wizard/walk/walk_", 9),
@@ -113,12 +113,33 @@ class Character extends MovableObject {
    * Handles the character's actions.
    */
   handleActions() {
-    this.isAttacking = this.world.keyboard.ATTACK;
-    if (this.isAttacking) {
-      this.playAnimation(this.IMAGES.ATTACK);
+    if (this.world.keyboard.ATTACK && !this.isAttacking) {
+      this.isAttacking = true;
+      this.currentAttackFrame = 0;
+      playAttackSound(); 
+      this.playAttackAnimation(() => {
+        this.isAttacking = false; 
+      });
       this.attackEnemies();
     }
   }
+/**
+ * Plays the attack animation.
+ * @param {Function} callback - Optional callback function to execute after the animation ends.
+ */
+playAttackAnimation(callback) {
+  let attackIndex = 0; 
+  playAttackSound(); 
+  const attackInterval = setInterval(() => {
+    if (attackIndex < this.IMAGES.ATTACK.length) {
+      this.img = this.imageCache[this.IMAGES.ATTACK[attackIndex]];
+      attackIndex++;
+    } else {
+      clearInterval(attackInterval); 
+      if (callback) callback(); 
+    }
+  }, 150);
+}
 
   /**
    * Attacks enemies within range.
