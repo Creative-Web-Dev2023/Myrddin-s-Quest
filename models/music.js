@@ -97,7 +97,12 @@ function playWalkingSound() {
     };
   }
 }
-
+function stopWalkingSound() {
+  if (!walkingSound.paused) {
+    walkingSound.pause();
+    walkingSound.currentTime = 0;
+  }
+}
 /**
  * Plays the level 1 background sound.
  */

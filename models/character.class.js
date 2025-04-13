@@ -88,24 +88,27 @@ class Character extends MovableObject {
    * Handles the character's movement.
    */
   handleMovement() {
-    if (
-      this.world.keyboard.RIGHT &&
-      this.x < this.world.level.level_end_x + 200
-    ) {
+    const isMovingRight = this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200;
+    const isMovingLeft = this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft();
+    if (isMovingRight) { 
       this.moveRight();
       this.otherDirection = false;
-      playWalkingSound();
     }
-    if (this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft()) {
+    if (isMovingLeft) {
       this.moveLeft();
       this.otherDirection = true;
-      playWalkingSound();
     }
+    if (isMovingRight || isMovingLeft) {
+      playWalkingSound();
+    } else {
+      stopWalkingSound();
+    } 
     if (this.world.keyboard.JUMP && !this.isAboveGround()) {
       this.jump();
     }
   }
-
+  
+  
   /**
    * Handles the character's actions.
    */

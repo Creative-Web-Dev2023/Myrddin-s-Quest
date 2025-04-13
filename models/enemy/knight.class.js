@@ -72,16 +72,15 @@ class Knight extends Enemy {
    */
   animate() {
     this.setCustomInterval(() => {
-      if (this.dead) {
-        this.playAnimation(this.IMAGES_DEAD);
-      } else if (this.isAttacking) {
+      if (this.dead) return; // ❗ Tod? Dann nicht weitermachen
+      if (this.isAttacking) {
         this.playAnimation(this.IMAGES_ATTACKING);
       } else {
         this.playAnimation(this.IMAGES_WALKING);
       }
     }, 100);
   }
-
+  
   /**
    * Gets the attack box of the knight.
    * @param {Object} knightBox - The collision box of the knight.
@@ -215,9 +214,11 @@ class Knight extends Enemy {
     if (this.dead) return;
     this.dead = true;
     this.isMoving = false;
+    this.clearAllIntervals();
     this.playDeathAnimation();
-    setTimeout(() => this.remove(), 1000);
+    setTimeout(() => this.remove(), this.IMAGES_DEAD.length * 300 + 500);
   }
+  
 
   /**
    * Plays the death animation.
@@ -225,10 +226,18 @@ class Knight extends Enemy {
   playDeathAnimation() {
     if (this.deathAnimationPlayed) return;
     this.deathAnimationPlayed = true;
+    this.clearAllIntervals();
     this.currentImage = 0;
     this.img = this.imageCache[this.IMAGES_DEAD[0]];
     this.animateDeath();
   }
+ /**
+ * Stoppt alle laufenden Intervalle des Ritters.
+ */
+clearAllIntervals() {
+  this.intervalIDs.forEach(clearInterval);
+  this.intervalIDs = [];
+}
 
   /**
    * Animates the death of the knight.
@@ -245,7 +254,7 @@ class Knight extends Enemy {
           this.isRemoved = true;
         }, 1000);
       }
-    }, 150);
+    },400);
   }
 
   /**

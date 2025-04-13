@@ -14,6 +14,7 @@ class EndGame {
    */
   showGameOverScreen() {
     document.getElementById("game-over-container").style.display = "flex";
+    stop
   }
 
   /**
@@ -58,7 +59,7 @@ class EndGame {
    */
   showYouLostScreen() {
     document.getElementById("game-over-container").style.display = "flex";
-    muteAllSounds();
+    stopAllSounds();
   }
 
   /**
@@ -67,6 +68,7 @@ class EndGame {
   showYouWinScreen() {
     document.getElementById("win-screen").style.display = "block";
     this.clearAllIntervals();
+    stopAllSounds();
   }
 
   /**
@@ -89,13 +91,4 @@ class EndGame {
   }
 }
 
-/**
- * Mutes all sounds in the game.
- */
-function muteAllSounds() {
-  const sounds = document.querySelectorAll("audio");
-  sounds.forEach((sound) => {
-    sound.pause();
-    sound.currentTime = 0;
-  });
-}
+
