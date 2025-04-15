@@ -32,7 +32,7 @@ let allSounds = [
 function musicSwitcher() {
   const audioIcon = document.getElementById("audioSwitcher");
   musicIsOn = !musicIsOn;
-  localStorage.setItem("musicIsOn", musicIsOn); 
+  localStorage.setItem("musicIsOn", musicIsOn); // Speichere den Status in localStorage
   if (musicIsOn) {
     if (isAfterDoor) {
       playLevel2Sound();
@@ -45,6 +45,28 @@ function musicSwitcher() {
     audioIcon.src = "img/app_icons/sound_off_orange.png";
   }
 }
+
+/**
+ * Lädt den Mute-Status aus localStorage und setzt ihn entsprechend.
+ */
+function initializeMusicSettings() {
+  const savedMusicStatus = localStorage.getItem("musicIsOn");
+  musicIsOn = savedMusicStatus === "true"; 
+  const audioIcon = document.getElementById("audioSwitcher");
+  if (musicIsOn) {
+    audioIcon.src = "img/app_icons/soundon.png";
+    if (isAfterDoor) {
+      playLevel2Sound();
+    } else {
+      playLevel1Sound(); 
+    }
+  } else {
+    audioIcon.src = "img/app_icons/sound_off_orange.png";
+    stopAllSounds();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initializeMusicSettings);
 
 /**
  * Plays the background music.
@@ -103,14 +125,12 @@ function playWalkingSound() {
   }
 }
 
-
 function stopWalkingSound() {
   if (!walkingSound.paused) {
     walkingSound.pause();
     walkingSound.currentTime = 0;
   }
 }
-
 
 /**
  * Plays the level 1 background sound.

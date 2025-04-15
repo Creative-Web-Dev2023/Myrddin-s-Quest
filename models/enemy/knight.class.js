@@ -25,6 +25,9 @@ class Knight extends Enemy {
     this.y = 190;
     this.offset = { top: 120, bottom: 70, left: 210, right: 210 };
     this.healthDisplay = new KnightHealthDisplay(this);
+    this.statusBar = new StatusBar();
+    this.statusBar.x = this.x + this.width / 2 - this.statusBar.width / 2; // Zentriere die Statusleiste horizontal
+    this.statusBar.y = this.y - 20; // Positioniere die Statusleiste über dem Kopf
     this.IMAGES_WALKING = [
       "img/knight/walk/walk0.png",
       "img/knight/walk/walk1.png",
@@ -185,7 +188,7 @@ class Knight extends Enemy {
     playEnemyHitSound();
     this.playHurtAnimation();
     if (attacker instanceof Character && !this.isDead()) {
-      attacker.heal(5); 
+      attacker.heal(5);
     }
     if (this.energy <= 0) {
       this.die();
@@ -196,7 +199,7 @@ class Knight extends Enemy {
    * Plays the hurt animation.
    */
   playHurtAnimation() {
-    this.stopAllIntervals(); 
+    this.stopAllIntervals();
     let hurtIndex = 0;
     const hurtInterval = setInterval(() => {
       if (hurtIndex < this.IMAGES_HURT.length) {
@@ -204,17 +207,17 @@ class Knight extends Enemy {
         hurtIndex++;
       } else {
         clearInterval(hurtInterval);
-        this.startNormalAnimation(); 
+        this.startNormalAnimation();
       }
     }, 150);
-    this.intervalIDs.push(hurtInterval); 
+    this.intervalIDs.push(hurtInterval);
   }
   /**
    * Starts the normal animation after being hurt.
    */
   startNormalAnimation() {
     if (!this.dead) {
-      this.animate(); 
+      this.animate();
     }
   }
 
