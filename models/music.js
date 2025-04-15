@@ -6,11 +6,12 @@ let attackSound = new Audio("audio/wizard_attack.mp3");
 let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
 let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
 let jumpSound = new Audio("audio/jump.mp3");
-let musicIsOn = false;
+let musicIsOn = localStorage.getItem("musicIsOn") === "true";
 let level1Sound = new Audio("audio/woodsounds.mp3?v=" + new Date().getTime());
 let level2Sound = new Audio("audio/level2_sound.mp3");
 let snakeAttackSound = new Audio("audio/snake.mp3");
 let enemyHitSound = new Audio("audio/knight-hurt.mp3");
+let snakeDeadSound = new Audio("audio/snake_dying.mp3");
 
 let allSounds = [
   backgroundMusic,
@@ -22,6 +23,7 @@ let allSounds = [
   level2Sound,
   snakeAttackSound,
   enemyHitSound,
+  collectPoisonBottleSound,
 ];
 
 /**
@@ -30,6 +32,7 @@ let allSounds = [
 function musicSwitcher() {
   const audioIcon = document.getElementById("audioSwitcher");
   musicIsOn = !musicIsOn;
+  localStorage.setItem("musicIsOn", musicIsOn); 
   if (musicIsOn) {
     if (isAfterDoor) {
       playLevel2Sound();
@@ -99,12 +102,16 @@ function playWalkingSound() {
     };
   }
 }
+
+
 function stopWalkingSound() {
   if (!walkingSound.paused) {
     walkingSound.pause();
     walkingSound.currentTime = 0;
   }
 }
+
+
 /**
  * Plays the level 1 background sound.
  */
@@ -191,6 +198,17 @@ function playSnakeAttackSound() {
   if (musicIsOn && snakeAttackSound.paused) {
     snakeAttackSound.play();
   }
+}
+
+/**
+ * Plays the snake dead sound.
+ */
+function playSnakeDeadSound() {
+  if (!musicIsOn) return;
+  const snakeDead = new Audio("audio/snake_dying.mp3");
+  snakeDead.play().catch((err) => {
+    console.error("SnakeDeadSound konnte nicht abgespielt werden:", err);
+  });
 }
 
 /**

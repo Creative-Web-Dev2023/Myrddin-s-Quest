@@ -78,4 +78,16 @@ class Keyboard {
     }
   }
   
+  /**
+   * Resets the keyboard state to its initial values.
+   * This function is called when the game is restarted or when the player tries again.
+   */
+  reset() {
+    this.LEFT = false;
+    this.RIGHT = false;
+    this.JUMP = false;
+    this.ATTACK = false;
+    this.D = false;
+  }
+  
 }

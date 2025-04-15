@@ -88,9 +88,11 @@ class Character extends MovableObject {
    * Handles the character's movement.
    */
   handleMovement() {
-    const isMovingRight = this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200;
-    const isMovingLeft = this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft();
-    if (isMovingRight) { 
+    const isMovingRight =
+      this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200;
+    const isMovingLeft =
+      this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft();
+    if (isMovingRight) {
       this.moveRight();
       this.otherDirection = false;
     }
@@ -102,13 +104,12 @@ class Character extends MovableObject {
       playWalkingSound();
     } else {
       stopWalkingSound();
-    } 
+    }
     if (this.world.keyboard.JUMP && !this.isAboveGround()) {
       this.jump();
     }
   }
-  
-  
+
   /**
    * Handles the character's actions.
    */
@@ -116,30 +117,30 @@ class Character extends MovableObject {
     if (this.world.keyboard.ATTACK && !this.isAttacking) {
       this.isAttacking = true;
       this.currentAttackFrame = 0;
-      playAttackSound(); 
+      playAttackSound();
       this.playAttackAnimation(() => {
-        this.isAttacking = false; 
+        this.isAttacking = false;
       });
       this.attackEnemies();
     }
   }
-/**
- * Plays the attack animation.
- * @param {Function} callback - Optional callback function to execute after the animation ends.
- */
-playAttackAnimation(callback) {
-  let attackIndex = 0; 
-  playAttackSound(); 
-  const attackInterval = setInterval(() => {
-    if (attackIndex < this.IMAGES.ATTACK.length) {
-      this.img = this.imageCache[this.IMAGES.ATTACK[attackIndex]];
-      attackIndex++;
-    } else {
-      clearInterval(attackInterval); 
-      if (callback) callback(); 
-    }
-  }, 150);
-}
+  /**
+   * Plays the attack animation.
+   * @param {Function} callback - Optional callback function to execute after the animation ends.
+   */
+  playAttackAnimation(callback) {
+    let attackIndex = 0;
+    playAttackSound();
+    const attackInterval = setInterval(() => {
+      if (attackIndex < this.IMAGES.ATTACK.length) {
+        this.img = this.imageCache[this.IMAGES.ATTACK[attackIndex]];
+        attackIndex++;
+      } else {
+        clearInterval(attackInterval);
+        if (callback) callback();
+      }
+    }, 150);
+  }
 
   /**
    * Attacks enemies within range.
@@ -379,7 +380,9 @@ playAttackAnimation(callback) {
     }
     this.poisonCollected--;
     this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-    const poisonBottle = new ThrowableObject(this.x, this.y);
+    const offsetX = this.otherDirection ? -220 : 220; 
+    const poisonBottle = new ThrowableObject(this.x + offsetX, this.y + 50);
+    poisonBottle.otherDirection = this.otherDirection; 
     this.world.throwableObjects.push(poisonBottle);
   }
 

@@ -26,14 +26,18 @@ class ThrowableObject extends MovableObject {
   throw(x, y) {
     this.x = x;
     this.y = y;
-    this.speedY = 20;
-    this.acceleration = 1.5;
+    this.speedY = 15;
+    this.acceleration = 2.0;
     this.applyGravity();
-    setInterval(() => {
+    const throwDirection = this.otherDirection ? -13 : 13;
+    this.throwInterval = setInterval(() => {
       if (this.isVisible) {
-        this.x += 10;
+        this.x += throwDirection;
+        throwDirection *= 0.98; 
+      } else {
+        clearInterval(this.throwInterval);
       }
-    }, 25);
+    }, 20);
   }
 
   /**
@@ -51,7 +55,15 @@ class ThrowableObject extends MovableObject {
    */
   draw(ctx) {
     if (this.isVisible) {
-      super.draw(ctx);
+      ctx.save();  
+      const centerX = this.x + this.width/2;
+      const centerY = this.y + this.height/2;
+      ctx.translate(centerX, centerY);
+      const rotation = this.x * 0.02; 
+      ctx.rotate(rotation);
+      ctx.drawImage(
+        this.img, -this.width/2,   -this.height/2,this.width,this.height );
+      ctx.restore(); 
     }
   }
 

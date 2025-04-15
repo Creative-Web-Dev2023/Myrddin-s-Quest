@@ -90,5 +90,3 @@ class EndGame {
     }, 500); 
   }
 }
-
-

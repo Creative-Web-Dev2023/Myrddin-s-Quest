@@ -14,13 +14,14 @@ class MovableObject extends DrawableObject {
 
   constructor() {
     super();
-    this.deadAnimationPlayed = false; 
+    this.deadAnimationPlayed = false;
   }
 
   /**
    * Applies gravity to the object.
    */
   applyGravity() {
+    if (this.gravityInterval) clearInterval(this.gravityInterval); 
     this.gravityInterval = setInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
@@ -54,15 +55,6 @@ class MovableObject extends DrawableObject {
     if (this.isAboveGround()) return;
     this.speedY = 30;
     playJumpSound();
-  }
-
-  /**
-   * Plays the walking sound.
-   */
-  playWalkingSound() {
-    if (this.walking_sound && this.walking_sound.paused) {
-      this.walking_sound.play();
-    }
   }
 
   /**
@@ -175,6 +167,7 @@ class MovableObject extends DrawableObject {
   stopAllAnimations() {
     this.animationIntervals.forEach(clearInterval);
     this.animationIntervals = [];
+    if (this.gravityInterval) clearInterval(this.gravityInterval);
   }
 
   /**
