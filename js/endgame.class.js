@@ -14,7 +14,7 @@ class EndGame {
    */
   showGameOverScreen() {
     document.getElementById("game-over-container").style.display = "flex";
-    stop
+    stop;
   }
 
   /**
@@ -34,9 +34,10 @@ class EndGame {
     this.world.resetEnemies();
     this.world.resetObjects();
     this.world.character.reset();
+    this.world.resetCamera(); 
     this.hideGameOverScreen();
     this.world.character.applyGravity();
-    cancelAnimationFrame(this.world.loopID); 
+    cancelAnimationFrame(this.world.loopID);
     gameLoop();
   }
 
@@ -88,6 +89,6 @@ class EndGame {
   scheduleShowYouLostScreen() {
     setTimeout(() => {
       this.showYouLostScreen();
-    }, 500); 
+    }, 500);
   }
 }

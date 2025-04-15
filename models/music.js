@@ -203,12 +203,9 @@ function playSnakeAttackSound() {
 /**
  * Plays the snake dead sound.
  */
-function playSnakeDeadSound() {
-  if (!musicIsOn) return;
-  const snakeDead = new Audio("audio/snake_dying.mp3");
-  snakeDead.play().catch((err) => {
-    console.error("SnakeDeadSound konnte nicht abgespielt werden:", err);
-  });
+function playSnakeDyingSound() {
+  const audio = new Audio("audio/snake_dying.mp3");
+  audio.play();
 }
 
 /**

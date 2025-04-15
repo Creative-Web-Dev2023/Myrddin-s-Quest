@@ -269,10 +269,10 @@ class Character extends MovableObject {
    * Resets the character's state.
    */
   reset() {
-    this.speed = 4; 
+    this.speed = 4;
     this.stopAllAnimations();
     Object.assign(this, {
-      x: 130,
+      x: 90, // Feste Startposition, unabhängig von der letzten Position
       y: 150,
       isVisible: true,
       energy: 100,
@@ -392,14 +392,18 @@ class Character extends MovableObject {
    * Resets the character's position to the last saved location or a default position.
    */
   resetPosition(position) {
-    const resetPos = position || this.lastPosition || { x: 130, y: 150 };
-    this.x = resetPos.x;
+    const resetPos = {
+      x: (position?.x || this.lastPosition?.x || 90) - 100, 
+      y: position?.y || this.lastPosition?.y || 150,
+    };
+    this.x = resetPos.x < 0 ? 0 : resetPos.x;
     this.y = resetPos.y;
     this.energy = 100;
     this.isVisible = true;
     this.deadAnimationPlayed = false;
     this.invulnerable = false;
     this.playAnimation(this.IMAGES.IDLE);
+    this.stopGravity();
     this.applyGravity();
   }
 
