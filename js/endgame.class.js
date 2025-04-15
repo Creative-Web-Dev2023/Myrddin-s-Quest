@@ -36,6 +36,7 @@ class EndGame {
     this.world.character.reset();
     this.hideGameOverScreen();
     this.world.character.applyGravity();
+    cancelAnimationFrame(this.world.loopID); 
     gameLoop();
   }
 

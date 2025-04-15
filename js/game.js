@@ -3,6 +3,7 @@ let ctx;
 let keyboard = new Keyboard();
 let world;
 let IntervallIDs = [];
+let loopId = null;
 
 /**
  * The gameState object handles saving and restoring the game state using localStorage.
@@ -102,11 +103,8 @@ function init() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   world = new World(canvas, keyboard);
-
-  // Übergib die `world`-Instanz an die Touch-Steuerung
   keyboard.setupControls(world);
   keyboard.setupTouchControls(world);
-
   gameLoop();
   document.getElementById("tryAgain").addEventListener("click", tryAgain);
   document.getElementById("quitButton").addEventListener("click", quitGame);
@@ -117,6 +115,7 @@ function init() {
  * It uses requestAnimationFrame to continuously call itself, creating a loop.
  */
 function gameLoop() {
+  if (world.loopID) cancelAnimationFrame(world.loopID);
   world.update();
   world.draw();
   world.loopID = requestAnimationFrame(gameLoop);
@@ -201,7 +200,6 @@ function goBack() {
   impressumContainer.style.display = "block";
   document.body.style.overflow = "hidden";
 }
-
 
 /**
  * Checks the device orientation and shows/hides the "rotate device" message.

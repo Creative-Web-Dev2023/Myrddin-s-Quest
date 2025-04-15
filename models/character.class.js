@@ -7,7 +7,7 @@ let hasPassedDoor = false;
 class Character extends MovableObject {
   height = 290;
   width = 520;
-  speed = 5;
+  speed = 4;
   invulnerable = false;
   poisonCollected = 0;
   deadAnimationPlayed = false;
@@ -269,6 +269,7 @@ class Character extends MovableObject {
    * Resets the character's state.
    */
   reset() {
+    this.speed = 4; 
     this.stopAllAnimations();
     Object.assign(this, {
       x: 130,
@@ -286,6 +287,7 @@ class Character extends MovableObject {
     this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
     this.playAnimation(this.IMAGES.IDLE);
     this.animate();
+    this.stopGravity();
     this.applyGravity();
   }
 
@@ -380,9 +382,9 @@ class Character extends MovableObject {
     }
     this.poisonCollected--;
     this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-    const offsetX = this.otherDirection ? -220 : 220; 
+    const offsetX = this.otherDirection ? -220 : 220;
     const poisonBottle = new ThrowableObject(this.x + offsetX, this.y + 50);
-    poisonBottle.otherDirection = this.otherDirection; 
+    poisonBottle.otherDirection = this.otherDirection;
     this.world.throwableObjects.push(poisonBottle);
   }
 
