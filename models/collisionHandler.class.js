@@ -119,7 +119,7 @@ class CollisionHandler {
         this.world.character.speedY > 0
       ) {
         this.world.character.jump();
-        if (!enemy.isDead()) {
+        if (!enemy.dead) {
           enemy.takeDamage(10);
         }
       } else {

@@ -125,7 +125,7 @@ class Endboss extends Enemy {
       this.playAnimation(this.IMAGES_HURT);
       setTimeout(() => {
         this.die();
-      }, 800);
+      }, this.IMAGES_HURT.length * 250); 
     }
   }
 
@@ -142,11 +142,6 @@ class Endboss extends Enemy {
     setTimeout(() => {
       this.spawnCrystal();
       this.removeEnemy();
-      setTimeout(() => {
-        if (this.world && this.world.endGame) {
-          this.world.endGame.showYouWinScreen();
-        }
-      }, 1000);
     }, this.IMAGES_DEAD.length * 200);
   }
 

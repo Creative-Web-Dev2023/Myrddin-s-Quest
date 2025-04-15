@@ -38,7 +38,7 @@ class KnightHealthDisplay extends DrawableObject {
     let heartDistance = 40;
     for (let i = 0; i < 3; i++) {
       let img =
-        this.energy > i * 10
+      (this.energy || 0) > i * 10
           ? this.imageCache[this.IMAGES_HEARTS[1]]
           : this.imageCache[this.IMAGES_HEARTS[0]];
       ctx.drawImage(img, this.x + i * heartDistance, this.y, 30, 30);

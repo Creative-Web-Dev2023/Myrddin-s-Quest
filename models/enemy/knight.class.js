@@ -181,17 +181,17 @@ class Knight extends Enemy {
    * Makes the knight take damage.
    * @param {number} amount - The amount of damage to take.
    */
-  takeDamage(amount, attacker) {
+  takeDamage(amount) {
     if (this.dead) return;
-    this.energy = Math.max(0, this.energy - amount);
-    this.lastHit = Date.now();
-    playEnemyHitSound();
-    this.playHurtAnimation();
-    if (attacker instanceof Character && !this.isDead()) {
-      attacker.heal(5);
-    }
-    if (this.energy <= 0) {
-      this.die();
+    const now = Date.now();
+    if (now - this.lastHit > 1000) {
+      this.energy = Math.max(0, this.energy - amount);
+      this.lastHit = now;
+      if (this.energy <= 0) {
+        this.die();
+      } else {
+        this.playHurtAnimation();
+      }
     }
   }
 

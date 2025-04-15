@@ -74,9 +74,10 @@ class Crystal extends DrawableObject {
   collect() {
     if (this.isActive && this.world?.endGame) {
       this.deactivate();
+      this.world.level.objects = this.world.level.objects.filter( (obj) => obj !== this); 
       setTimeout(() => {
         this.world.endGame.showYouWinScreen(); 
-      }, 300); 
+      }, 300);
     }
   }
 
