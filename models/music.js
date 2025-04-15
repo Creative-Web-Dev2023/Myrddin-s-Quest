@@ -24,6 +24,7 @@ let allSounds = [
   snakeAttackSound,
   enemyHitSound,
   collectPoisonBottleSound,
+  snakeDeadSound
 ];
 
 /**
@@ -47,26 +48,17 @@ function musicSwitcher() {
 }
 
 /**
- * Lädt den Mute-Status aus localStorage und setzt ihn entsprechend.
+ * Initializes the music settings based on the saved status in localStorage.
  */
 function initializeMusicSettings() {
   const savedMusicStatus = localStorage.getItem("musicIsOn");
-  musicIsOn = savedMusicStatus === "true"; 
+  musicIsOn = savedMusicStatus === "true";
   const audioIcon = document.getElementById("audioSwitcher");
-  if (musicIsOn) {
-    audioIcon.src = "img/app_icons/soundon.png";
-    if (isAfterDoor) {
-      playLevel2Sound();
-    } else {
-      playLevel1Sound(); 
-    }
-  } else {
-    audioIcon.src = "img/app_icons/sound_off_orange.png";
-    stopAllSounds();
-  }
+  audioIcon.src = musicIsOn
+    ? "img/app_icons/soundon.png"
+    : "img/app_icons/sound_off_orange.png";
+  stopAllSounds();
 }
-
-document.addEventListener("DOMContentLoaded", initializeMusicSettings);
 
 /**
  * Plays the background music.
@@ -201,7 +193,6 @@ function playNewSound() {
 function playEnemyHitSound() {
   if (musicIsOn) {
     if (enemyHitSound.readyState >= 2) {
-      // Überprüfen, ob der Sound geladen ist
       enemyHitSound.currentTime = 0;
       enemyHitSound.play().catch((error) => {
         console.error("Failed to play enemy hit sound:", error);
@@ -224,8 +215,13 @@ function playSnakeAttackSound() {
  * Plays the snake dead sound.
  */
 function playSnakeDyingSound() {
-  const audio = new Audio("audio/snake_dying.mp3");
-  audio.play();
+  if (musicIsOn) { 
+    snakeDeadSound.pause();
+    snakeDeadSound.currentTime = 0;
+    snakeDeadSound.play().catch((e) =>
+      console.error("Fehler beim Abspielen von snakeDeadSound", e)
+    );
+  }
 }
 
 /**

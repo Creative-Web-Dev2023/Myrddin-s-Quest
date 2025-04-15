@@ -222,11 +222,8 @@ class CollisionHandler {
    */
   handleCrystalCollection(crystal) {
     this.world.character.collectCrystal(crystal);
-    if (
-      this.world.endGame &&
-      typeof this.world.endGame.showWinScreen === "function"
-    ) {
-      this.world.endGame.showWinScreen();
+    if (this.world.endGame &&typeof this.world.endGame.showWinScreen === "function") {
+      this.world.endGame.showYouWinScreen();
     }
   }
 
@@ -237,7 +234,6 @@ class CollisionHandler {
    * @returns {boolean} True if the character is colliding with the crystal, false otherwise.
    */
   isColliding(character, crystal) {
-    this._character = character;
-    return false;
+    return this.checkCollision(character, crystal);
   }
 }

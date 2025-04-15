@@ -71,6 +71,7 @@ class EndGame {
     document.getElementById("win-screen").style.display = "block";
     this.clearAllIntervals();
     stopAllSounds();
+    cancelAnimationFrame(this.world.loopID); 
   }
 
   /**

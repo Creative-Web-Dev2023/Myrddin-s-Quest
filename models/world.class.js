@@ -38,8 +38,8 @@ class World {
     this.drawer = new Drawer(this);
     this.initializeDoor();
     this.endbossHealthBar = new EndbossStatusbar();
-    this.crystal = null;
     this.endGame = new EndGame(this);
+    this.crystal = null; 
   }
 
   /**
@@ -155,6 +155,7 @@ class World {
     if (this.level.endboss) {
       this.endbossHealthBar.setPercentage(this.level.endboss.energy);
     }
+    this.updateCrystal();
   }
 
   /**
@@ -186,6 +187,16 @@ class World {
     });
   }
 
+  /**
+   * Aktualisiert den Zustand des Kristalls.
+   */
+  updateCrystal() {
+    if (this.crystal && this.crystal.isActive) {
+      if (this.collisionHandler.checkCollision(this.character, this.crystal)) {
+        this.crystal.collect();
+      }
+    }
+  }
   /**
    * Fügt einen Charakter zur Welt hinzu.
    * @param {Character} character - Der hinzuzufügende Charakter.

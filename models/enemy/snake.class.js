@@ -140,11 +140,11 @@ class Snake extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
-    playSnakeDyingSound();
+    playSnakeDyingSound(); 
     this.playAnimation(this.IMAGES_DEAD);
     setTimeout(() => this.remove(), 1000);
   }
-
+  
   /**
    * Removes the snake from the world.
    */

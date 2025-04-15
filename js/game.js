@@ -92,7 +92,9 @@ function startGame() {
   document.getElementById("bigScreen").classList.remove("hidden");
   document.getElementById("key-info").classList.add("show");
   document.getElementById("audioSwitcher").onclick = musicSwitcher;
+  initializeMusicSettings();
   init();
+ 
 }
 
 /**

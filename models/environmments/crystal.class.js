@@ -65,15 +65,18 @@ class Crystal extends DrawableObject {
   deactivate() {
     this.isActive = false;
     this.isCollected = true;
+    this.glowIntensity = 0;
   }
 
   /**
    * Collects the crystal and shows the win screen.
    */
   collect() {
-    if (!this.isCollected) {
+    if (this.isActive && this.world?.endGame) {
       this.deactivate();
-      this.world.endGame.showWinScreen();
+      setTimeout(() => {
+        this.world.endGame.showYouWinScreen(); 
+      }, 300); 
     }
   }
 
@@ -83,7 +86,7 @@ class Crystal extends DrawableObject {
   removeAfterBossDeath() {
     this.isActive = false;
     this.isCollected = true;
-    this.x = -100; // Move the crystal off-screen
+    this.x = -100;
     this.y = -100;
   }
 }

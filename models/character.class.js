@@ -272,7 +272,7 @@ class Character extends MovableObject {
     this.speed = 4;
     this.stopAllAnimations();
     Object.assign(this, {
-      x: 90, // Feste Startposition, unabhängig von der letzten Position
+      x: 90, 
       y: 150,
       isVisible: true,
       energy: 100,

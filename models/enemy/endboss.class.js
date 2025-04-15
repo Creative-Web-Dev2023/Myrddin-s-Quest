@@ -116,15 +116,16 @@ class Endboss extends Enemy {
    */
   takeDamage(damage) {
     if (this.dead) return;
-
     this.energy -= damage;
     this.energy = Math.max(0, this.energy);
     this.statusBarEndboss.setPercentage(this.energy);
-
     if (this.energy > 0) {
       this.playAnimation(this.IMAGES_HURT);
     } else {
-      this.die();
+      this.playAnimation(this.IMAGES_HURT);
+      setTimeout(() => {
+        this.die();
+      }, 800);
     }
   }
 
@@ -134,16 +135,18 @@ class Endboss extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
-    this.playAnimation(this.IMAGES_DEAD, 200); 
-    this.deadSound.play();
+    this.playAnimation(this.IMAGES_DEAD, 200);
+    if (this.world && this.world.soundOn) {
+      this.deadSound.play();
+    }
     setTimeout(() => {
       this.spawnCrystal();
       this.removeEnemy();
       setTimeout(() => {
-      if (this.world && this.world.endGame) {
-        this.world.endGame.showYouWinScreen(); 
-      }
-    }, 1000);
+        if (this.world && this.world.endGame) {
+          this.world.endGame.showYouWinScreen();
+        }
+      }, 1000);
     }, this.IMAGES_DEAD.length * 200);
   }
 
