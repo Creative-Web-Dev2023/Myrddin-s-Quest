@@ -184,6 +184,7 @@ class Knight extends Enemy {
   takeDamage(amount) {
     if (this.dead) return;
     const now = Date.now();
+    playEnemyHitSound();
     if (now - this.lastHit > 1000) {
       this.energy = Math.max(0, this.energy - amount);
       this.lastHit = now;

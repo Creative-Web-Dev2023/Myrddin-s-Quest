@@ -33,7 +33,7 @@ let allSounds = [
 function musicSwitcher() {
   const audioIcon = document.getElementById("audioSwitcher");
   musicIsOn = !musicIsOn;
-  localStorage.setItem("musicIsOn", musicIsOn); // Speichere den Status in localStorage
+  localStorage.setItem("musicIsOn", musicIsOn); 
   if (musicIsOn) {
     if (isAfterDoor) {
       playLevel2Sound();

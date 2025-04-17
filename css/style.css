@@ -1,6 +1,13 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html,
 body {
-  overflow: auto;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
@@ -31,29 +38,29 @@ body {
   align-items: center;
   gap: 5vw;
   width: 100%;
-  position: absolute;
+  gap: 20px;
   bottom: 0;
 }
 
 .overlay .start-button,
 .overlay .how-to-play-button {
-  background-color: #41431e !important;
+  background-color: transparent !important;
   color: white !important;
+  cursor: pointer;
 }
 
 .start-button {
   position: absolute;
   bottom: 68px;
-  left: 100px;
+  left: 60px;
   width: 115px;
   height: 32px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  text-decoration: none;
   transition: 0.5s;
   margin-top: 20px;
-  
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+
 }
 
 .start-button span,
@@ -63,15 +70,50 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   display: block;
-  width: 100%;
+  width: calc(100% + 2px);
+
   text-align: center;
   background: #41431e;
   transition: 0.5s;
-  cursor: pointer;
+  border: 3px solid #c3660ace;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 1px; 
 }
 
-.start-button:hover span {
-  color: rgba(255, 255, 255, 1);
+.start-button:hover span, .how-to-play-button:hover span {
+  color: #ffd700 !important;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+.how-to-play-button {
+  position: absolute;
+  bottom: 68px;
+  right: 100px;
+  width: 115px;
+  height: 32px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: 0.5s;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.how-to-play-button span::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.how-to-play-button:hover::before,
+.how-to-play-button:hover::after {
+  opacity: 1;
 }
 
 @keyframes rotate {
@@ -99,7 +141,7 @@ body {
 }
 
 h2 {
-  position: absolute;
+  position: relative;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
@@ -107,7 +149,7 @@ h2 {
   z-index: 1000;
   color: rgb(74, 78, 81);
   width: 100%;
-  margin: 0;
+  margin-bottom: 20px;
   text-align: center;
   padding: 10px 0;
   animation: textGlow 2s ease-in-out infinite;
@@ -128,20 +170,22 @@ h2 {
 
 #canvas-container {
   position: relative;
-  width: 100%;
-  max-width: 720px;
+  width: 90%; 
+  max-width: 720px; 
+  height: auto; 
+  margin: 20px auto; 
   aspect-ratio: 3 / 2;
-  height: auto;
-  margin-top: 104px;
-  box-sizing: border-box;
 }
 
 #canvas {
+  width: 100%;
+  height: 100%;
   background-color: black;
   border: 3px solid #96633f;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   border-radius: 15px;
   display: block;
+  margin: 0 auto;
 }
 
 #canvas::before,
@@ -162,27 +206,36 @@ h2 {
   bottom: -15px;
   right: -15px;
 }
-
-.audio-icon {
+.icon-container {
   position: absolute;
-  top: 8%;
-  right: 3%;
+  top: 5%;
+  right: 5%;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+.audio-icon {
+ 
   cursor: pointer;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.5);
   border: 2px solid white;
   border-radius: 5px;
+  width: clamp(25px, 4vw, 35px); /* Responsive Größe */
+  height: clamp(25px, 4vw, 35px);
+  transition: transform 0.3s ease;
 }
 
 .big-screen {
-  position: absolute;
-  top: 8%;
-  right: 11%;
+ 
   cursor: pointer;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.5);
   border: 2px solid white;
   border-radius: 5px;
+  width: clamp(25px, 4vw, 35px); /* Responsive Größe */
+  height: clamp(25px, 4vw, 35px);
+  transition: transform 0.3s ease;
 }
 
 .info-icon:hover,
@@ -194,6 +247,7 @@ h2 {
 }
 
 .description {
+  top:5vh;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -352,40 +406,6 @@ h3 {
   margin-top: 20px;
 }
 
-.how-to-play-button {
-  position: absolute;
-  bottom: 68px;
-  right: 100px;
-  width: 115px;
-  height: 32px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: 0.5s;
-  -webkit-box-reflect: below 1px linear-gradient(transparent, #0004);
-  margin-top: 20px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.how-to-play-button:hover span {
-  color: rgba(255, 255, 255, 1);
-}
-
-.how-to-play-button span::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  z-index: 10;
-}
-
-.how-to-play-button:hover::before,
-.how-to-play-button:hover::after {
-  opacity: 1;
-}
-
 .you-lost-image {
   background-image: url("../img/game_ui/login&pass/game_over.png");
   background-size: contain;
@@ -405,7 +425,6 @@ h3 {
   width: 60%;
   max-width: 600px;
   margin: 0 auto;
-  box-sizing: border-box;
   display: none;
   border: 2px solid #322b0e;
   background-image: linear-gradient(45deg, #cc9900, #cc9966);
@@ -446,14 +465,6 @@ h3 {
   }
 }
 
-.embark-image {
-  position: absolute;
-  bottom: 344px;
-  right: 54px;
-  width: 100%;
-  max-width: 400px;
-  z-index: 3;
-}
 
 /* #rotate {
   display: flex;
