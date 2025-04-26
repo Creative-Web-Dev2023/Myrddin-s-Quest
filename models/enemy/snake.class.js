@@ -11,6 +11,12 @@ class Snake extends Enemy {
    */
   constructor(startX = 400, moveRange = 100, id) {
     super(id);
+    this.loadImages(LOADED_IMAGES.snake.walk[0]);
+    this.addToImageCache('walk', LOADED_IMAGES.snake.walk);
+    this.addToImageCache('attack', LOADED_IMAGES.snake.attack);
+    this.addToImageCache('hurt', LOADED_IMAGES.snake.hurt);
+    this.addToImageCache('dead', LOADED_IMAGES.snake.dead);
+    this.img = this.imageCache['walk_0'];
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
@@ -26,33 +32,11 @@ class Snake extends Enemy {
     this.initialX = startX;
     this.initialY = this.y;
     this.offset = { top: 60, bottom: 60, left: 50, right: 50 };
-    this.IMAGES_WALKING = [
-      "img/snake/walk/walk0.png",
-      "img/snake/walk/walk1.png",
-      "img/snake/walk/walk2.png",
-      "img/snake/walk/walk3.png",
-    ];
-    this.IMAGES_ATTACKING = [
-      "img/snake/attack/attack0.png",
-      "img/snake/attack/attack1.png",
-      "img/snake/attack/attack2.png",
-      "img/snake/attack/attack3.png",
-    ];
-    this.IMAGES_HURT = ["img/snake/hurt/hurt0.png", "img/snake/hurt/hurt1.png"];
-    this.IMAGES_DEAD = [
-      "img/snake/die/die0.png",
-      "img/snake/die/die1.png",
-      "img/snake/die/die2.png",
-      "img/snake/die/die3.png",
-    ];
-
-    this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ATTACKING);
-    this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_DEAD);
     this.intervalIDs = [];
     this.startMovement();
     this.startAnimation();
+    console.log('[Snake] imageCache:', this.imageCache);
+    console.log('[Snake] img:', this.img);
   }
 
   /**
@@ -128,7 +112,7 @@ class Snake extends Enemy {
     this.energy -= damage;
     this.energy = Math.max(0, this.energy);
     if (this.energy > 0) {
-      this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(LOADED_IMAGES.snake.hurt);
     } else {
       this.die();
     }
@@ -140,11 +124,11 @@ class Snake extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
-    playSnakeDyingSound(); 
-    this.playAnimation(this.IMAGES_DEAD);
+    playSnakeDyingSound();
+    this.playAnimation(LOADED_IMAGES.snake.dead);
     setTimeout(() => this.remove(), 1000);
   }
-  
+
   /**
    * Removes the snake from the world.
    */
@@ -156,19 +140,19 @@ class Snake extends Enemy {
    * Loads images into the cache.
    * @param {Array} imageArray - The array of image paths.
    */
-  loadImages(imageArray) {
+  /*   loadImages(imageArray) {
     imageArray.forEach((path) => {
       const img = new Image();
       img.src = path;
       this.imageCache[path] = img;
     });
-  }
+  } */
 
   /**
    * Draws the snake on the canvas.
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
-  draw(ctx) {
+  /*   draw(ctx) {
     if (this.img && this.img.complete) {
       if (this.otherDirection) {
         ctx.save();
@@ -180,7 +164,7 @@ class Snake extends Enemy {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
       }
     }
-  }
+  } */
 
   /**
    * Animates the snake.
@@ -188,11 +172,11 @@ class Snake extends Enemy {
   animate() {
     setInterval(() => {
       if (this.dead) {
-        this.playAnimation(this.IMAGES_DEAD);
+        this.playAnimation(LOADED_IMAGES.snake.dead);
       } else if (this.isAttacking) {
-        this.playAnimation(this.IMAGES_ATTACKING);
+        this.playAnimation(LOADED_IMAGES.snake.attack);
       } else {
-        this.playAnimation(this.IMAGES_WALKING);
+        this.playAnimation(LOADED_IMAGES.snake.walk);
       }
     }, 100);
   }
@@ -230,7 +214,7 @@ class Snake extends Enemy {
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
+    this.playAnimation(LOADED_IMAGES.snake.attack);
     playSnakeAttackSound();
     setTimeout(() => {
       this.isAttacking = false;

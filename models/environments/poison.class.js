@@ -3,17 +3,6 @@
  * @extends DrawableObject
  */
 class PoisonObject extends DrawableObject {
-  IMAGES_POISON = [
-    "img/poison/1.png",
-    "img/poison/2.png",
-    "img/poison/3.png",
-    "img/poison/4.png",
-    "img/poison/5.png",
-    "img/poison/6.png",
-    "img/poison/7.png",
-    "img/poison/8.png",
-  ];
-
   isActive = true;
 
   /**
@@ -23,31 +12,15 @@ class PoisonObject extends DrawableObject {
    * @param {number} width - The width of the poison object.
    * @param {number} height - The height of the poison object.
    */
-  constructor(x, y, width, height) {
+  constructor(x, y) {
     super();
+    this.loadImages(LOADED_IMAGES.game_items.poison[0]);
+    this.addToImageCache('poison', LOADED_IMAGES.game_items.poison);
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
-    this.loadImages(this.IMAGES_POISON);
+    this.width = 50;
+    this.height = 50;
     this.animate();
-  }
-
-  /**
-   * Initializes poison objects.
-   * @returns {Array} An array of initialized poison objects.
-   */
-  static initializePoisons() {
-    const poisons = [
-      new PoisonObject(800, 400, 50, 50),
-      new PoisonObject(1600, 300, 50, 50),
-      new PoisonObject(2400, 200, 50, 50),
-      new PoisonObject(3200, 400, 50, 50),
-      new PoisonObject(4000, 300, 50, 50),
-      new PoisonObject(6400, 200, 50, 50),
-    ];
-
-    return poisons;
   }
 
   /**
@@ -80,7 +53,7 @@ class PoisonObject extends DrawableObject {
    */
   animate() {
     setInterval(() => {
-      this.playAnimation(this.IMAGES_POISON);
+      this.playAnimation(LOADED_IMAGES.game_items.poison);
     }, 100);
   }
 }

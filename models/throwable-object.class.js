@@ -11,7 +11,7 @@ class ThrowableObject extends MovableObject {
   constructor(x, y) {
     super();
     this.isVisible = true;
-    this.loadImage("img/poison/1.png");
+    this.loadImages("../assets/img/poison/1.png");
     this.x = x;
     this.y = y;
     this.height = 80;

@@ -1,17 +1,17 @@
 let backgroundMusic = new Audio(
-  "audio/woodsounds.mp3?v=" + new Date().getTime()
+  "./assets/audio/woodsounds.mp3?v=" + new Date().getTime()
 );
-let walkingSound = new Audio("audio/walking.mp3");
-let attackSound = new Audio("audio/wizard_attack.mp3");
-let throwPoisonBottleSound = new Audio("audio/throw-poison-bottle.mp3");
-let collectPoisonBottleSound = new Audio("audio/collect_bottle.mp3");
-let jumpSound = new Audio("audio/jump.mp3");
+let walkingSound = new Audio("./assets/audio/walking.mp3");
+let attackSound = new Audio("./assets/audio/wizard_attack.mp3");
+let throwPoisonBottleSound = new Audio("./assets/audio/throw-poison-bottle.mp3");
+let collectPoisonBottleSound = new Audio("./assets/audio/collect_bottle.mp3");
+let jumpSound = new Audio("./assets/audio/jump.mp3");
 let musicIsOn = localStorage.getItem("musicIsOn") === "true";
-let level1Sound = new Audio("audio/woodsounds.mp3?v=" + new Date().getTime());
-let level2Sound = new Audio("audio/level2_sound.mp3");
-let snakeAttackSound = new Audio("audio/snake.mp3");
-let enemyHitSound = new Audio("audio/knight-hurt.mp3");
-let snakeDeadSound = new Audio("audio/snake_dying.mp3");
+let level1Sound = new Audio("./assets/audio/woodsounds.mp3?v=" + new Date().getTime());
+let level2Sound = new Audio("./assets/audio/level2_sound.mp3");
+let snakeAttackSound = new Audio("./assets/audio/snake.mp3");
+let enemyHitSound = new Audio("./assets/audio/knight-hurt.mp3");
+let snakeDeadSound = new Audio("./assets/audio/snake_dying.mp3");
 
 let allSounds = [
   backgroundMusic,
@@ -40,10 +40,10 @@ function musicSwitcher() {
     } else {
       playLevel1Sound();
     }
-    audioIcon.src = "img/app_icons/soundon.png";
+    audioIcon.src = "./assets/img/app_icons/soundon.png";
   } else {
     stopAllSounds();
-    audioIcon.src = "img/app_icons/sound_off_orange.png";
+    audioIcon.src = "./assets/img/app_icons/sound_off_orange.png";
   }
 }
 
@@ -55,8 +55,8 @@ function initializeMusicSettings() {
   musicIsOn = savedMusicStatus === "true";
   const audioIcon = document.getElementById("audioSwitcher");
   audioIcon.src = musicIsOn
-    ? "img/app_icons/soundon.png"
-    : "img/app_icons/sound_off_orange.png";
+    ? "./assets/img/app_icons/soundon.png"
+    : "./assets/img/app_icons/sound_off_orange.png";
   stopAllSounds();
 }
 

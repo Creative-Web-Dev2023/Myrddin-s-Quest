@@ -3,31 +3,23 @@
  * @extends MovableObject
  */
 class Door extends MovableObject {
-  IMAGE_DOOR = [
-    "img/door/door 0.png",
-    "img/door/door 1.png",
-    "img/door/door 2.png",
-    "img/door/door 3.png",
-    "img/door/door 4.png",
-  ];
-
   /**
    * Creates an instance of Door.
    * @param {number} x - The x position of the door.
    * @param {number} y - The y position of the door.
    * @param {string} id - The id of the door.
    */
-  constructor(x, y, id) {
+  constructor(x, y) {
     super();
-    this.id = id;
-    this.imageCache = {};
-    this.loadImages(this.IMAGE_DOOR);
-    this.x = 4500;
+    this.loadImages(LOADED_IMAGES.game_items.door[0]);
+
+    this.addToImageCache("door", LOADED_IMAGES.game_items.door);
+    console.log("[Door] ImageCache:", this.imageCache);
+    this.x = x;
     this.y = y;
     this.width = 300;
     this.height = 460;
     this.offset = { top: 0, bottom: 250, left: 200, right: 200 };
-    this.img = this.imageCache[this.IMAGE_DOOR[0]];
     this.animate();
   }
 
@@ -36,11 +28,22 @@ class Door extends MovableObject {
    * @param {string[]} images - The array of image sources.
    */
   loadImages(images) {
-    images.forEach((src) => {
+    if (typeof images === "string") {
       const img = new Image();
-      img.src = src;
-      this.imageCache[src] = img;
-    });
+      img.src = images;
+      this.imageCache[images] = img;
+    } else if (Array.isArray(images)) {
+      images.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+        this.imageCache[src] = img;
+      });
+    } else {
+      console.error(
+        "loadImages erwartet einen String oder ein Array, erhielt:",
+        images
+      );
+    }
   }
 
   /**
@@ -49,8 +52,10 @@ class Door extends MovableObject {
   animate() {
     let currentImageIndex = 0;
     setInterval(() => {
-      this.img = this.imageCache[this.IMAGE_DOOR[currentImageIndex]];
-      currentImageIndex = (currentImageIndex + 1) % this.IMAGE_DOOR.length;
+      // this.img = this.imageCache[LOADED_IMAGES.game_items.door[currentImageIndex]];
+      this.img = this.imageCache[`door_${currentImageIndex}`];
+      currentImageIndex =
+        (currentImageIndex + 1) % LOADED_IMAGES.game_items.door.length;
     }, 1000 / 4);
   }
 
@@ -58,7 +63,15 @@ class Door extends MovableObject {
    * Draws the door on the canvas.
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
+  /*   draw(ctx) {
+    super.draw(ctx);
+  } */
+
   draw(ctx) {
+    console.log("[DRAW DOOR] wird aufgerufen bei x =", this.x);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "red";
+    ctx.fillRect(this.x, this.y, this.width, this.height);
     super.draw(ctx);
   }
 
@@ -93,18 +106,10 @@ class Door extends MovableObject {
   animateOpening() {
     let doorOpenFrame = 0;
     const openInterval = setInterval(() => {
-      this.img = this.imageCache[this.IMAGE_DOOR[doorOpenFrame]];
+      this.img = this.imageCache[`door_${doorOpenFrame}`];
       doorOpenFrame++;
-      if (doorOpenFrame >= this.IMAGE_DOOR.length) clearInterval(openInterval);
+      if (doorOpenFrame >= LOADED_IMAGES.game_items.door.length)
+        clearInterval(openInterval);
     }, 100);
-  }
-
-  /**
-   * Draws the door in the world.
-   * @param {World} world - The world object containing the door.
-   */
-  static drawDoor(world) {
-    if (world.door) {
-    }
   }
 }

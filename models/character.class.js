@@ -23,7 +23,7 @@ class Character extends MovableObject {
     ATTACK: this.loadImageArray("img/wizard/attack/attack_", 7),
     DEAD: this.loadImageArray("img/wizard/die/die_", 9),
     HURT: this.loadImageArray("img/wizard/hurt/hurt_", 9),
-    YOU_LOST: ["img/game_ui/login&pass/game_over.png"],
+    YOU_LOST: ["./assets/img/game_ui/login_and_pass/game_over.png"], // Korrigierter Pfad
   };
 
   /**
@@ -41,7 +41,7 @@ class Character extends MovableObject {
    * Initializes the character.
    */
   initCharacter() {
-    this.loadImage(this.IMAGES.IDLE[0]);
+    this.loadImages(this.IMAGES.IDLE[0]);
     this.loadAllImages();
     this.applyGravity();
     this.energy = 100;
@@ -56,7 +56,13 @@ class Character extends MovableObject {
    * Loads all images into the cache.
    */
   loadAllImages() {
-    Object.values(this.IMAGES).forEach((imgArray) => this.loadImages(imgArray));
+    Object.values(this.IMAGES).forEach((imgArray) => {
+      imgArray.forEach((imgPath) => {
+        const img = new Image(); // Erstelle ein HTMLImageElement
+        img.src = imgPath; // Setze den Bildpfad
+        this.imageCache[imgPath] = img; // Speichere das Bild im Cache
+      });
+    });
   }
 
   /**
@@ -66,7 +72,7 @@ class Character extends MovableObject {
     let images = [];
     for (let i = 0; i < count; i++) {
       let number = i.toString().padStart(3, "0");
-      images.push(`${path}${number}.png`);
+      images.push(`./assets/${path}${number}.png`); 
     }
     return images;
   }
@@ -272,7 +278,7 @@ class Character extends MovableObject {
     this.speed = 4;
     this.stopAllAnimations();
     Object.assign(this, {
-      x: 90, 
+      x: 90,
       y: 150,
       isVisible: true,
       energy: 100,
@@ -393,7 +399,7 @@ class Character extends MovableObject {
    */
   resetPosition(position) {
     const resetPos = {
-      x: (position?.x || this.lastPosition?.x || 90) - 100, 
+      x: (position?.x || this.lastPosition?.x || 90) - 100,
       y: position?.y || this.lastPosition?.y || 150,
     };
     this.x = resetPos.x < 0 ? 0 : resetPos.x;

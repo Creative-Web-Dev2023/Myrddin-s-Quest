@@ -14,29 +14,57 @@ class DrawableObject {
     this.y = y;
     this.width = width;
     this.height = height;
-    this.img = new Image();
+    this.img;
     this.imageCache = {};
     this.currentImage = 0;
     this.offset = { top: 0, bottom: 0, left: 0, right: 0 };
   }
 
   /**
-   * Loads an image for the object.
-   * @param {string} path - The path to the image.
+   * Assigns an image to this object.
+   *
+   * @param {HTMLImageElement} imageObject - The image to display.
    */
-  loadImage(path) {
-    this.img.src = path;
+  loadImages(imageObject) {
+    if (imageObject instanceof HTMLImageElement) {
+      this.img = imageObject;
+    } else {
+      console.error(
+        'loadImage expects an HTMLImageElement but got:',
+        imageObject
+      );
+    }
   }
 
+  //    loadImage(path) {
+  //   this.img.src = path;
+  // } 
+
+  // loadImages(images) {
+  //   images.forEach((path) => {
+  //     const img = new Image();
+  //     img.src = path;
+  //     this.imageCache[path] = img;
+  //   });
+  // } 
+
   /**
-   * Loads multiple images into the image cache.
-   * @param {string[]} images - An array of image paths.
+   * Adds an array of images to the image cache with a specific prefix.
+   *
+   * @param {string} prefix - Key prefix for the cache entries.
+   * @param {HTMLImageElement[]} imagesArray - The array of images to cache.
    */
-  loadImages(images) {
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
+  addToImageCache(prefix, imagesArray) {
+    if (!Array.isArray(imagesArray)) return;
+    imagesArray.forEach((img, index) => {
+      if (img instanceof HTMLImageElement) {
+        this.imageCache[`${prefix}_${index}`] = img;
+      } else {
+        console.warn(
+          `Unloaded image in array ${prefix} at index ${index}:`,
+          img
+        );
+      }
     });
   }
 
@@ -44,9 +72,15 @@ class DrawableObject {
    * Plays an animation by cycling through a set of images.
    * @param {string[]} images - An array of image paths for the animation.
    */
-  playAnimation(images) {
+  /*   playAnimation(images) {
     if (!images?.length) return;
     this.img = this.imageCache[images[this.currentImage % images.length]];
+    this.currentImage++;
+  } */
+
+  playAnimation(images) {
+    if (!images || !images.length) return;
+    this.img = images[this.currentImage % images.length];
     this.currentImage++;
   }
 
@@ -54,8 +88,21 @@ class DrawableObject {
    * Draws the object on the canvas.
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
-  draw(ctx) {
+  /*   draw(ctx) {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  } */
+
+  draw(ctx) {
+    let img = this.img || this.imageCache?.[this.currentImageKey];
+
+    if (img instanceof HTMLImageElement) {
+      ctx.drawImage(img, this.x, this.y, this.width, this.height);
+    } else {
+      console.warn(
+        `[draw()] Kein Bild für ${this.constructor.name}:`,
+        this.currentImageKey
+      );
+    }
   }
 
   /**

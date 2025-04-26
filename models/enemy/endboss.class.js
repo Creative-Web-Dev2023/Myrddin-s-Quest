@@ -9,7 +9,14 @@ class Endboss extends Enemy {
    */
   constructor(id) {
     super(id);
-    this.deadAnimationPlayed = false; // Initialisierung der Eigenschaft
+    this.loadImages(LOADED_IMAGES.troll.walk[0]);
+
+    this.addToImageCache('walk', LOADED_IMAGES.troll.walk);
+    this.addToImageCache('attack', LOADED_IMAGES.troll.attack);
+    this.addToImageCache('hurt', LOADED_IMAGES.troll.hurt);
+    this.addToImageCache('dead', LOADED_IMAGES.troll.dead);
+
+    this.deadAnimationPlayed = false;
     this.height = 450;
     this.width = 360;
     this.y = 50;
@@ -17,7 +24,7 @@ class Endboss extends Enemy {
     this.attackRange = 200;
     this.attackDamage = 20;
     this.speed = 0.5;
-    this.deadSound = new Audio("audio/troll dead.mp3");
+    this.deadSound = new Audio('./assets/audio/troll_dead.mp3');
     this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
     this.statusBarEndboss = new EndbossStatusbar();
     this.otherDirection = true;
@@ -28,58 +35,6 @@ class Endboss extends Enemy {
     this.initialX = this.x;
     this.initialY = this.y;
 
-    this.IMAGES_WALKING = [
-      "img/troll/walk/walk_000.png",
-      "img/troll/walk/walk_001.png",
-      "img/troll/walk/walk_002.png",
-      "img/troll/walk/walk_003.png",
-      "img/troll/walk/walk_004.png",
-      "img/troll/walk/walk_005.png",
-      "img/troll/walk/walk_006.png",
-      "img/troll/walk/walk_007.png",
-      "img/troll/walk/walk_008.png",
-      "img/troll/walk/walk_009.png",
-    ];
-    this.IMAGES_ATTACKING = [
-      "img/troll/attack/attack_000.png",
-      "img/troll/attack/attack_001.png",
-      "img/troll/attack/attack_002.png",
-      "img/troll/attack/attack_003.png",
-      "img/troll/attack/attack_004.png",
-      "img/troll/attack/attack_005.png",
-      "img/troll/attack/attack_006.png",
-      "img/troll/attack/attack_007.png",
-      "img/troll/attack/attack_008.png",
-      "img/troll/attack/attack_009.png",
-    ];
-    this.IMAGES_HURT = [
-      "img/troll/hurt/hurt_000.png",
-      "img/troll/hurt/hurt_001.png",
-      "img/troll/hurt/hurt_002.png",
-      "img/troll/hurt/hurt_003.png",
-      "img/troll/hurt/hurt_004.png",
-      "img/troll/hurt/hurt_005.png",
-      "img/troll/hurt/hurt_006.png",
-      "img/troll/hurt/hurt_007.png",
-      "img/troll/hurt/hurt_008.png",
-      "img/troll/hurt/hurt_009.png",
-    ];
-    this.IMAGES_DEAD = [
-      "img/troll/die/die_000.png",
-      "img/troll/die/die_001.png",
-      "img/troll/die/die_002.png",
-      "img/troll/die/die_003.png",
-      "img/troll/die/die_004.png",
-      "img/troll/die/die_005.png",
-      "img/troll/die/die_006.png",
-      "img/troll/die/die_007.png",
-      "img/troll/die/die_008.png",
-      "img/troll/die/die_009.png",
-    ];
-    this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ATTACKING);
-    this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_DEAD);
     this.animate();
   }
 
@@ -98,7 +53,7 @@ class Endboss extends Enemy {
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING, 100);
+    this.playAnimation(LOADED_IMAGES.troll.attack, 100);
     setTimeout(() => {
       if (this.isInAttackRange(character)) {
         character.takeDamage(this.attackDamage);
@@ -120,12 +75,12 @@ class Endboss extends Enemy {
     this.energy = Math.max(0, this.energy);
     this.statusBarEndboss.setPercentage(this.energy);
     if (this.energy > 0) {
-      this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(LOADED_IMAGES.troll.hurt);
     } else {
-      this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(LOADED_IMAGES.troll.hurt);
       setTimeout(() => {
         this.die();
-      }, this.IMAGES_HURT.length * 250); 
+      }, LOADED_IMAGES.troll.hurt.length * 250);
     }
   }
 
@@ -135,14 +90,14 @@ class Endboss extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
-    this.playAnimation(this.IMAGES_DEAD, 200);
+    this.playAnimation(LOADED_IMAGES.troll.dead, 200);
     if (this.world && this.world.soundOn) {
       this.deadSound.play();
     }
     setTimeout(() => {
       this.spawnCrystal();
       this.removeEnemy();
-    }, this.IMAGES_DEAD.length * 200);
+    }, LOADED_IMAGES.troll.dead.length * 200);
   }
 
   /**
@@ -235,11 +190,11 @@ class Endboss extends Enemy {
       if (this.dead && !this.deadAnimationPlayed) {
         this.playDeathAnimation();
       } else if (this.isAttacking) {
-        this.playAnimation(this.IMAGES_ATTACKING, 100);
+        this.playAnimation(LOADED_IMAGES.troll.attack, 100);
       } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT, 250);
+        this.playAnimation(LOADED_IMAGES.troll.hurt, 250);
       } else {
-        this.playAnimation(this.IMAGES_WALKING, 150);
+        this.playAnimation(LOADED_IMAGES.troll.walk, 150);
       }
       i++;
       if (this.x >= 13250 && this.x <= 13500) {

@@ -2,175 +2,82 @@
 <html translate="no">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Myrddin's Quest</title>
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/game_over.css">
-    <link rel="stylesheet" href="css/win_screen.css">
-    <link rel="icon" href="img/game_items/magic.png" type="image/x-icon">
-    <script src="models/drawable-object.class.js" defer></script>
-    <script src="models/movable-object.class.js" defer></script>
-    <script src="models/levels/level.class.js" defer></script>
-    <script src="models/environmments/statusbar.class.js" defer></script>
-    <script src="models/throwable-object.class.js" defer></script>
-    <script src="models/environmments/door.class.js" defer></script>
-    <script src="models/character.class.js" defer></script>
-    <script src="models/knight-health-display.class.js" defer></script>
-    <script src="models/enemy/enemy.class.js" defer></script>
-    <script src="models/enemy/knight.class.js" defer></script>
-    <script src="models/environmments/clouds.class.js" defer></script>
-    <script src="models/enemy/endboss.class.js" defer></script>
-    <script src="models/environmments/background-object.class.js" defer></script>
-    <script src="models/enemy/snake.class.js" defer></script>
-    <script src="models/environmments/key.class.js" defer></script>
-    <script src="models/environmments/poison.class.js" defer></script>
-    <script src="models/environmments/trap.class.js" defer></script>
-    <script src="models/environmments/crystal.class.js" defer></script>
-    <script src="models/levels/level1.js" defer></script>
-    <script src="js/endgame.class.js" defer></script>
-    <script src="models/keyboard.class.js" defer></script>
-    <script src="models/music.js" defer></script>
-    <script src="models/collisionHandler.class.js" defer></script>
-    <script src="models/drawer.class.js" defer></script>
-    <script src="models/world.class.js" defer></script>
-    <script src="js/game.js" defer></script>
-    <script src="models/ui.class.js" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Myrddin's Quest</title>
+  <link rel="stylesheet" href="./css/reset_stylesheet.css" />
+  <link rel="stylesheet" href="./css/fonts.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/media_queries.css" />
+  <link rel="stylesheet" href="./css/game_over.css" />
+  <link rel="stylesheet" href="./css/win_screen.css" />
+  <link rel="icon" href="./assets/img/game_items/magic.png" type="image/x-icon" />
+  <script src="./js/image-data.js"></script>
+  <script src="./js/templates.js"></script>
+  <script src="./models/drawable-object.class.js" defer></script>
+  <script src="./models/movable-object.class.js" defer></script>
+  <script src="./models/level.class.js" defer></script>
+  <script src="./models/environments/stausbarHealth.class.js" defer></script>
+  <script src="./models/environments/statusbarPoison.class.js" defer></script>
+  <script src="./models/environments/statusbarEndboss.class.js" defer></script>
+  <script src="./models/throwable-object.class.js" defer></script>
+  <script src="./models/environments/door.class.js" defer></script>
+  <script src="./models/character.class.js" defer></script>
+  <script src="./models/environments/statusbarKnight.js" defer></script>
+  <script src="./models/enemy/enemy.class.js" defer></script>
+  <script src="./models/enemy/knight.class.js" defer></script>
+  <script src="./models/environments/cloud.class.js" defer></script>
+  <script src="./models/environments/clouds.class.js" defer></script>
+  <script src="./models/enemy/endboss.class.js" defer></script>
+  <script src="./models/environments/background-object.class.js" defer></script>
+  <script src="./models/enemy/snake.class.js" defer></script>
+  <script src="./models/environments/key.class.js" defer></script>
+  <script src="./models/environments/poison.class.js" defer></script>
+  <script src="./models/environments/trap.class.js" defer></script>
+  <script src="./models/environments/crystal.class.js" defer></script>
+  <script src="./js/level1.js" defer></script>
+  <script src="./js/endgame.class.js" defer></script>
+  <script src="./models/keyboard.class.js" defer></script>
+  <script src="./models/music.js" defer></script>
+  <script src="./models/collisionHandler.class.js" defer></script>
+  <script src="./models/drawer.class.js" defer></script>
+  <script src="./models/world.class.js" defer></script>
+  <script src="./js/game.js" defer></script>
+  <script src="./models/ui.class.js" defer></script>
 </head>
 
-<body>
-    <h2>Myrddin's Quest</h2>
-    <div id="canvas-container">
-        <canvas id="canvas" width="720" height="480"></canvas>
-        <div class="icon-container">
-            <img class="big-screen hidden" id="bigScreen" src="img/app_icons/arrow_up_orange.png"
-                onclick="toggleFullscreen()" alt="Fullscreen">
-            <img class="audio-icon hidden" id="audioSwitcher" src="img/app_icons/sound_off_orange.png"
-                onclick="musicSwitcher()" alt="Sound Control">
+<body onload="init()">
+  <div id="fullscreen" class="fullscreen">
+    <div id="endScreen" class="end-screen"></div>
+    <h1 class="headline">Myrddin`s Quest</h1>
+    <div class="game-screen">
+      <canvas id="canvas" width="720" height="480" class="canvas d-none"></canvas>
+      <div id="gameButtons" class="game-buttons d-none">
+        <img onclick="handleFullscreenToggle()" id="fullscreenImg" src="./assets/img/app_icons/arrow_up_orange.png"
+          height="50" />
+        <img onclick="toggleMuteImg()" id="mute" src="./assets/img/app_icons/sound_off_orange.png" height="50" />
+      </div>
+      <div id="btnsContainer" class="btns-container d-none">
+        <div class="btns-left-side">
+          <img id="btnLeft" src="./assets/img/app_icons/arrow-left.png" width="60" />
+          <img id="btnJump" src="./assets/img/app_icons/arrow-up.png" width="60" />
         </div>
-        <div id="controls" class="mobile-controls">
-            <div class="control-button-container">
-                <img src="img/app_icons/arrow-left.png" id="btn-left" class="control-button" alt="Left">
-               
-            </div>
-            <div class="control-button-container">
-                <img src="img/app_icons/arrow-right.png" id="btn-right" class="control-button" alt="Right">
-               
-            </div>
-            <div class="control-button-container">
-                <img src="img/app_icons/arrow-up.png" id="btn-jump" class="control-button" alt="Jump">
-              
-            </div>
-            <div class="control-button-container">
-                <img src="img/app_icons/attack.png" id="btn-attack" class="control-button" alt="Attack">
-                
-            </div>
-            <div class="control-button-container">
-                <img src="img/app_icons/poison-bottle.png" id="btn-throw" class="control-button" alt="Throw Bottle">
-              
-            </div>
+        <div class="btns-right-side">
+          <img id="btnPoison" src="./assets/img/app_icons/poison-bottle.png" width="60" />
+          <img id="btnRight" src="./assets/img/app_icons/arrow-right.png" width="60" />
         </div>
-        <div class="overlay" width="780" height="480">
-            <img src="img/wizard/idle/idle_000.png" alt="Myrddin" class="overlay-character">
-            <div class="button-container">
-                <a id="startButton" class="game-button start-button" onclick="startGame()"><span>Start Game</span></a>
-                <div id="description-container" class="game-button how-to-play-button" onclick="handleDescription()">
-                    <span>How to Play</span>
-                </div>
-            </div>
-            <div id="description" class="description hidden">
-                <h3>How to Play</h3>
-                <div class="scroll-indicators">
-                    <img src="img\game_ui\login&pass\arrow2.png" class="scroll-down" alt="Scroll down">
-                    <img src="img\game_ui\login&pass\arrow1.png" class="scroll-up" alt="Scroll up">
-                </div>
-                <p class="description-text">Use the following keys:</p>
-                <table class="table-keys">
-                    <tbody>
-                        <tr>
-                            <td class="key">Right Arrow</td>
-                            <td class="action">Move right</td>
-                        </tr>
-                        <tr>
-                            <td class="key">Left Arrow</td>
-                            <td class="action">Move left</td>
-                        </tr>
-                        <tr>
-                            <td class="key">Up Arrow</td>
-                            <td class="action">Jump</td>
-                        </tr>
-                        <tr>
-                            <td class="key">A</td>
-                            <td class="action">Attack with the Sword</td>
-                        </tr>
-                        <tr>
-                            <td class="key">D</td>
-                            <td class="action">Throw Bottle</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p class="description-text">
-                    The powerful wizard Myrddin lives in a magical land that is threatened by dark forces.
-                    An evil troll boss has stolen the source of the land's magic - a powerful crystal that sustains all
-                    life.
-                    Without this crystal, the magical world slowly dies. Myrddin sets out to reclaim the crystal.
-                    On his way, he must cross dangerous forests guarded by knights, poisonous snakes and dark magic.
-                </p>
-                <p class="back-link" onclick="goBack()">← Back to Start</p>
-            </div>
-            <div id="impressum-container" class="impressum-button" onclick="handleImpressum()">
-                <span>Impressum</span>
-            </div>
-            <div id="impressum" class="impressum">
-                <h3>Impressum</h3>
-                <p>@ Gabriela Ströbl 2024</p>
-                <p>Gabriela Ströbl<br>
-                    Enzianstr.15a<br>
-                    85247 Schwabhausen<br>
-                </p>
-                <p>Font:Sylfaen</p>
-                <p>Images:CraftPix.net</p>
-                <p class="back-link2" onclick="goBack()">← Back to Start</p>
-            </div>
-        </div>
+      </div>
+      <div id="startScreen" class="start-screen">
+        <div id="start_container" class="start-container"></div>
+      </div>
     </div>
-    <div id="key-info" style="text-align: center; margin-top: 20px;">
-        <p><strong>Control buttons:</strong></p>
-        <p>
-           
-            <span>A: Attack</span> |
-            <span>D: Throw Bottle</span> |
-            <span><strong>←</strong>: To the left</span> |
-            <span><strong>→</strong>: To the right</span>  |
-            <span>↑ : Jump</span> 
-        </p>
+    <div class="rotate-screen">
+      <img src="./assets/img/game_ui/device-mobile-phone.png" alt="" />
+      <p>Please rotate your device.</p>
     </div>
-    <div id="rotate" style="display: flex;">
-        <img class="rotate-icon" src="img/game_ui/device-mobile-phone.png" alt="Rotate">
-        <p class="rotate-message">Please rotate your device</p>
-    </div>
-    <div id="game-over-container" style="display: none;">
-        <div class="you-lost-image"></div>
-        <div class="game-button-container">
-            <button id="tryAgain" class="game-button" onclick="tryAgain()">
-                <img class="tryAgain-img" src="img/game_ui/try_again.png" alt="Try Again">
-            </button>
-            <button id="quitButton" class="game-button" onclick="quitGame()">
-                <img src="img/game_ui/quit.png" alt="Quit Game">
-            </button>
-        </div>
-    </div>
-    <div id="win-screen">
-        <div class="win-content">
-            <h1>YOU WON THE GAME</h1>
-            <p>Congratulations! You defeated the boss and collected the crystal!</p>
-            <img src="img\game_ui\victory\knight_win.png" class="win-image">
-            <button class="win-screen-button" onclick="location.reload()">Play Again</button>
-        </div>
-    </div>
-
+    <div id="loadingMessage" class="loading-message">Loading ...</div>
+  </div>
+  <audio id="snakeDyingSound" src="./assets/audio/snake_dying.mp3"></audio>
 </body>
 
 </html>

@@ -6,14 +6,6 @@ class Trap extends MovableObject {
   height = 180;
   width = 180;
   isActive = false;
-  IMAGES_IDLE = [
-    "img/obstacles/trap/trap1.png",
-    "img/obstacles/trap/trap2.png",
-    "img/obstacles/trap/trap3.png",
-    "img/obstacles/trap/trap4.png",
-    "img/obstacles/trap/trap5.png",
-    "img/obstacles/trap/trap6.png",
-  ];
 
   /**
    * Creates an instance of Trap.
@@ -22,10 +14,10 @@ class Trap extends MovableObject {
    */
   constructor(x, y) {
     super();
+    this.loadImages(LOADED_IMAGES.game_items.trap[0]);
+    this.addToImageCache('trap', LOADED_IMAGES.game_items.trap)
     this.x = x;
     this.y = y;
-    this.loadImage(this.IMAGES_IDLE[0]);
-    this.loadImages(this.IMAGES_IDLE);
     this.animate();
   }
 
@@ -34,7 +26,7 @@ class Trap extends MovableObject {
    */
   animate() {
     setInterval(() => {
-      this.playAnimation(this.IMAGES_IDLE);
+      this.playAnimation(LOADED_IMAGES.game_items.trap);
     }, 100);
   }
 

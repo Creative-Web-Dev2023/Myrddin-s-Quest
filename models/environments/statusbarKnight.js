@@ -3,16 +3,15 @@
  * @extends DrawableObject
  */
 class KnightHealthDisplay extends DrawableObject {
-  IMAGES_HEARTS = ["img/game_ui/heart_empty.png", "img/game_ui/heart_full.png"];
-
   /**
    * Creates an instance of KnightHealthDisplay.
    * @param {Knight} knight - The knight object.
    */
   constructor(knight) {
     super();
+    this.loadImages(LOADED_IMAGES.game_items.hearts[0]);
+    this.addToImageCache('hearts', LOADED_IMAGES.game_items.hearts);
     this.knight = knight;
-    this.loadImages(this.IMAGES_HEARTS);
     this.x = 0;
     this.y = 0;
     this.width = 120;
@@ -37,10 +36,8 @@ class KnightHealthDisplay extends DrawableObject {
     this.update();
     let heartDistance = 40;
     for (let i = 0; i < 3; i++) {
-      let img =
-      (this.energy || 0) > i * 10
-          ? this.imageCache[this.IMAGES_HEARTS[1]]
-          : this.imageCache[this.IMAGES_HEARTS[0]];
+      let key = (this.energy || 0) > i * 10 ? 'hearts_1' : 'hearts_0';
+      let img = this.imageCache[key];
       ctx.drawImage(img, this.x + i * heartDistance, this.y, 30, 30);
     }
   }

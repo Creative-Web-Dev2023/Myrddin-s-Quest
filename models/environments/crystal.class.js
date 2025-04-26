@@ -10,7 +10,7 @@ class Crystal extends DrawableObject {
    */
   constructor(x, y) {
     super();
-    this.loadImage("img/game_items/diamond.png");
+    this.loadImages(LOADED_IMAGES.game_items.crystal);
     this.x = x;
     this.y = y;
     this.width = 80;

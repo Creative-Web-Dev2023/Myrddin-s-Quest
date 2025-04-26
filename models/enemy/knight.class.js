@@ -10,8 +10,14 @@ class Knight extends Enemy {
    * @param {number} [moveRange=100] - The range within which the knight can move.
    * @param {number} [id] - The ID of the knight.
    */
-  constructor(delay = 0, startX = 800, moveRange = 100, id) {
+  constructor(delay, startX, moveRange, id) {
     super(id);
+    this.loadImages(LOADED_IMAGES.knight.walk[0]);
+    this.addToImageCache('walk', LOADED_IMAGES.knight.walk);
+    this.addToImageCache('attack', LOADED_IMAGES.knight.attack);
+    this.addToImageCache('hurt', LOADED_IMAGES.knight.hurt);
+    this.addToImageCache('dead', LOADED_IMAGES.knight.dead);
+
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
@@ -26,42 +32,9 @@ class Knight extends Enemy {
     this.offset = { top: 120, bottom: 70, left: 210, right: 210 };
     this.healthDisplay = new KnightHealthDisplay(this);
     this.statusBar = new StatusBar();
-    this.statusBar.x = this.x + this.width / 2 - this.statusBar.width / 2; // Zentriere die Statusleiste horizontal
-    this.statusBar.y = this.y - 20; // Positioniere die Statusleiste über dem Kopf
-    this.IMAGES_WALKING = [
-      "img/knight/walk/walk0.png",
-      "img/knight/walk/walk1.png",
-      "img/knight/walk/walk2.png",
-      "img/knight/walk/walk3.png",
-      "img/knight/walk/walk4.png",
-      "img/knight/walk/walk5.png",
-    ];
-    this.IMAGES_ATTACKING = [
-      "img/knight/attack/attack0.png",
-      "img/knight/attack/attack1.png",
-      "img/knight/attack/attack2.png",
-      "img/knight/attack/attack3.png",
-      "img/knight/attack/attack4.png",
-      "img/knight/attack/attack5.png",
-      "img/knight/attack/attack6.png",
-    ];
-    this.IMAGES_HURT = [
-      "img/knight/hurt/hurt0.png",
-      "img/knight/hurt/hurt1.png",
-    ];
-    this.IMAGES_DEAD = [
-      "img/knight/death/death0.png",
-      "img/knight/death/death1.png",
-      "img/knight/death/death2.png",
-      "img/knight/death/death3.png",
-      "img/knight/death/death4.png",
-      "img/knight/death/death5.png",
-    ];
-    this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ATTACKING);
-    this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_DEAD);
-    this.loadImage(this.IMAGES_WALKING[0]);
+    this.statusBar.x = this.x + this.width / 2 - this.statusBar.width / 2;
+    this.statusBar.y = this.y - 20;
+
     this.lastHit = 0;
     this.intervalIDs = [];
     setTimeout(() => {
@@ -75,11 +48,11 @@ class Knight extends Enemy {
    */
   animate() {
     this.setCustomInterval(() => {
-      if (this.dead) return; // ❗ Tod? Dann nicht weitermachen
+      if (this.dead) return;
       if (this.isAttacking) {
-        this.playAnimation(this.IMAGES_ATTACKING);
+        this.playAnimation(LOADED_IMAGES.knight.attack);
       } else {
-        this.playAnimation(this.IMAGES_WALKING);
+        this.playAnimation(LOADED_IMAGES.knight.walk);
       }
     }, 100);
   }
@@ -125,7 +98,7 @@ class Knight extends Enemy {
   attack(character) {
     if (this.dead || this.isAttacking) return;
     this.isAttacking = true;
-    this.playAnimation(this.IMAGES_ATTACKING);
+    this.playAnimation(LOADED_IMAGES.knight.attack);
     setTimeout(() => {
       this.isAttacking = false;
       if (
@@ -203,8 +176,8 @@ class Knight extends Enemy {
     this.stopAllIntervals();
     let hurtIndex = 0;
     const hurtInterval = setInterval(() => {
-      if (hurtIndex < this.IMAGES_HURT.length) {
-        this.img = this.imageCache[this.IMAGES_HURT[hurtIndex]];
+      if (hurtIndex < LOADED_IMAGES.knight.hurt.length) {
+        this.img = this.imageCache[`hurt_${hurtIndex}`];
         hurtIndex++;
       } else {
         clearInterval(hurtInterval);
@@ -231,7 +204,10 @@ class Knight extends Enemy {
     this.isMoving = false;
     this.clearAllIntervals();
     this.playDeathAnimation();
-    setTimeout(() => this.remove(), this.IMAGES_DEAD.length * 300 + 500);
+    setTimeout(
+      () => this.remove(),
+      LOADED_IMAGES.knight.dead.length * 300 + 500
+    );
   }
 
   /**
@@ -242,7 +218,7 @@ class Knight extends Enemy {
     this.deathAnimationPlayed = true;
     this.clearAllIntervals();
     this.currentImage = 0;
-    this.img = this.imageCache[this.IMAGES_DEAD[0]];
+    this.img = this.imageCache['dead_0'];
     this.animateDeath();
   }
   /**
@@ -259,8 +235,8 @@ class Knight extends Enemy {
   animateDeath() {
     let deathIndex = 0;
     const deathInterval = setInterval(() => {
-      if (deathIndex < this.IMAGES_DEAD.length) {
-        this.img = this.imageCache[this.IMAGES_DEAD[deathIndex]];
+      if (deathIndex < LOADED_IMAGES.knight.dead.length) {
+        this.img = this.imageCache[`dead_${deathIndex}`];
         deathIndex++;
       } else {
         clearInterval(deathInterval);

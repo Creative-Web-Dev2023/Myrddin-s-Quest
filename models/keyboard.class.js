@@ -11,6 +11,7 @@ class Keyboard {
    */
   setupControls(world) {
     window.addEventListener("keydown", (e) => {
+      console.log('aktuelle Taste: ', e.key);
       if (e.key === "ArrowLeft") {
         this.LEFT = true;
       }

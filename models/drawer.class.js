@@ -24,7 +24,7 @@ class Drawer {
     this.drawTraps();
     if (this.world.door) {
       this.world.door.draw(this.world.ctx);
-     }
+    }
   }
 
   /**
@@ -92,21 +92,19 @@ class Drawer {
     if (this.world.character.isVisible) {
       this.world.addToMap(this.world.character);
     }
-    this.world.characters.forEach((character) => {
-      if (character.isVisible) {
-        character.draw(this.world.ctx);
-      }
-    });
+
     this.world.ctx.restore();
   }
 
   /**
    * Draws the snakes in the game world.
    */
+
   drawSnakes() {
-    this.world.snakes.forEach((snake) => {
-      snake.draw(this.world.ctx);
-    });
+    this.world.ctx.save();
+    this.world.ctx.translate(this.world.camera_x, 0);
+    this.world.addObjectsToMap(this.world.snakes);
+    this.world.ctx.restore();
   }
 
   /**

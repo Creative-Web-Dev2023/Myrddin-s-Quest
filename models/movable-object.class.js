@@ -129,7 +129,7 @@ class MovableObject extends DrawableObject {
   takeDamage(damage) {
     if (this.energy <= 0 || this.invulnerable) return;
     this.energy -= damage;
-    this.playAnimation(this.IMAGES_HURT);
+    this.playAnimation(LOADED_IMAGES.character.hurt);
     if (this.energy <= 0) {
       this.energy = 0;
       this.die();
@@ -158,11 +158,11 @@ class MovableObject extends DrawableObject {
         this.playDeathAnimation();
         clearInterval(interval);
       } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
+        this.playAnimation(LOADED_IMAGES.character.hurt);
       } else if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMPING);
+        this.playAnimation(LOADED_IMAGES.character.jump);
       } else {
-        this.playAnimation(this.IMAGES_IDLE);
+        this.playAnimation(LOADED_IMAGES.character.idle);
       }
     }, 100);
 
@@ -179,23 +179,11 @@ class MovableObject extends DrawableObject {
   }
 
   /**
-   * Plays an animation.
-   * @param {Array} images - The array of images for the animation.
-   */
-  playAnimation(images) {
-    if (!images || !Array.isArray(images) || images.length === 0) return;
-    let i = this.currentImage % images.length;
-    this.img = this.imageCache[images[i]];
-    this.currentImage++;
-    this.lastFrame = Date.now();
-  }
-
-  /**
    * Plays the death animation.
    */
   playDeathAnimation() {
     this.stopAllAnimations();
-    let deathImages = this.IMAGES?.DEAD || this.IMAGES_DEAD;
+    let deathImages = LOADED_IMAGES.character.dead;
     if (!deathImages || deathImages.length === 0) {
       return;
     }

@@ -7,39 +7,41 @@ class World {
   camera_x = 0;
   lastCloudSpawn = 0;
   cloudSpawnInterval = 3000;
-  characterStatusBar;
+  // characterStatusBar;
   characters = [];
   enemies = [];
   throwableObjects = [];
   imageCache = {};
-  IMAGES_YOU_LOST = ["img/game_ui/login&pass/game_over.png"];
+  IMAGES_YOU_LOST = ['./assets/img/game_ui/login_and_pass/game_over.png'];
   quitButton;
-  quitButtonImage = "img/game_ui/quit.png";
+  quitButtonImage = './assets/img/game_ui/quit.png';
   tryAgainButton;
-  tryAgainButtonImage = ["img/game_ui/try_again.png"];
+  tryAgainButtonImage = ['./assets/img/game_ui/try_again.png'];
   endGame;
   door;
   key;
+  clouds = [];
   snakes = [];
   traps = [];
-  environments = [];
+  // environments = [];
   endbossHealthBar;
   crystal;
 
-  constructor(canvas, keyboard) {
-    this.ctx = canvas.getContext("2d");
+  constructor(canvas, keyboard, level1) {
+    this.level = level1;
+    this.ctx = canvas.getContext('2d');
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.ui = new UI(canvas);
     this.initializeGameObjects();
-    this.environments = generateEnvironmentsLvl();
+    // this.environments = generateEnvironmentsLvl();
     this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
     this.initializeDoor();
     this.endbossHealthBar = new EndbossStatusbar();
     this.endGame = new EndGame(this);
-    this.crystal = null; 
+    this.crystal = null;
   }
 
   /**
@@ -56,7 +58,7 @@ class World {
    * Setzt die Welt des Spiels zurück.
    */
   resetGameWorld() {
-    this.characters = [];
+    // this.characters = []; // wird nicht genutzt
     this.enemies = [];
     this.throwableObjects = [];
     this.imageCache = {};
@@ -70,7 +72,9 @@ class World {
     this.key = null;
     this.snakes = [];
     this.traps = [];
-    this.environments = [];
+    this.clouds = [];
+    this.poisons = [];
+    // this.environments = [];
     this.endGame = null;
   }
 
@@ -78,23 +82,22 @@ class World {
    * Initialisiert die Spielobjekte.
    */
   initializeGameObjects() {
-    this.level = level1;
     this.clouds = this.level.clouds || [];
     this.poisonStatusBar = new PoisonStatusBar();
     this.characterStatusBar = new StatusBar();
     this.character = new Character(this, this.poisonStatusBar);
     this.character.world = this;
-    this.character.x = 130;
     this.character.y = 150;
-    this.poisonsArray = PoisonObject.initializePoisons();
-    this.environments = generateEnvironmentsLvl();
+    this.poisonsArray = this.level.poisons || [];
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
     this.enemies = this.level.enemies || [];
     this.level.objects = this.level.objects || [];
+    this.snakes = this.level.snakes || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
-    this.door = new Door(4500, 80);
+    this.clouds = this.level.clouds || new this.clouds([]);
+    this.door = this.level.door || null;
     this.key = Key.initializeKey();
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
@@ -140,6 +143,11 @@ class World {
    */
   update() {
     if (this.levelCompleted || this.character.energy <= 0) return;
+
+    if (this.clouds) {
+      this.clouds.updateClouds();
+    }
+
     if (this.collisionHandler) {
       this.collisionHandler.checkCollisions();
     }
@@ -201,9 +209,10 @@ class World {
    * Fügt einen Charakter zur Welt hinzu.
    * @param {Character} character - Der hinzuzufügende Charakter.
    */
-  addCharacter(character) {
+  /* WIRD NICHT GENUTZT! */
+  /*   addCharacter(character) {
     this.characters.push(character);
-  }
+  } */
 
   /**
    * Fügt einen Feind zur Welt hinzu.
@@ -221,15 +230,36 @@ class World {
   }
 
   /**
-   * Fügt Objekte zur Karte hinzu.
+   * Fügt Objekte zum Canvas hinzu.
    * @param {MovableObject[]} objects - Die hinzuzufügenden Objekte.
    */
-  addObjectsToMap(objects) {
+  /*   addObjectsToMap(objects) {
     if (objects && Array.isArray(objects)) {
       objects.forEach((object) => {
         this.addToMap(object);
       });
     }
+    if (
+      this.backgroundObjects.length > 0 &&
+      this.camera_x >= this.backgroundObjects[0].width
+    ) {
+      this.camera_x = 0;
+    }
+  } */
+
+  addObjectsToMap(objects) {
+    if (!Array.isArray(objects)) {
+      console.warn('[addObjectsToMap()] kein Array übergeben:', objects);
+      return;
+    }
+
+    objects.forEach((object, i) => {
+      if (!object) {
+        console.warn(`[addObjectsToMap()] Objekt an Index ${i} ist undefined`);
+      }
+      this.addToMap(object);
+    });
+
     if (
       this.backgroundObjects.length > 0 &&
       this.camera_x >= this.backgroundObjects[0].width
@@ -242,7 +272,7 @@ class World {
    * Fügt ein Objekt zur Karte hinzu.
    * @param {MovableObject} mo - Das hinzuzufügende Objekt.
    */
-  addToMap(mo) {
+  /*   addToMap(mo) {
     if (mo && mo.otherDirection) {
       this.flipImage(mo);
     }
@@ -252,6 +282,29 @@ class World {
     if (mo && mo.otherDirection) {
       this.flipImageBack(mo);
     }
+  } */
+
+  addToMap(mo) {
+    if (!mo) {
+      console.warn('[addToMap()] mo ist undefined oder null!');
+      console.trace(); // <-- zeigt dir, woher der Aufruf kam!
+      return;
+    }
+
+    if (mo.otherDirection) this.flipImage(mo);
+
+    if (mo.isActive !== false) {
+      try {
+        mo.draw(this.ctx);
+      } catch (err) {
+        console.error(
+          `[addToMap()] Fehler beim Zeichnen von ${mo.constructor?.name}:`,
+          err
+        );
+      }
+    }
+
+    if (mo.otherDirection) this.flipImageBack(mo);
   }
 
   /**
@@ -306,7 +359,7 @@ class World {
    */
   resetObjects() {
     if (!this.objects || !Array.isArray(this.objects)) {
-      console.warn("Keine Objekte zum Zurücksetzen vorhanden."); // Debugging-Log
+      console.warn('Keine Objekte zum Zurücksetzen vorhanden.'); // Debugging-Log
       return;
     }
     this.objects.forEach((obj) => {

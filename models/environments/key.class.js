@@ -7,10 +7,10 @@ class Key extends DrawableObject {
    * Creates an instance of Key.
    * @param {number} x - The x position of the key.
    * @param {number} y - The y position of the key.
-   * @param {string} id - The id of the key.
    */
-  constructor(x, y, id) {
-    super().loadImage("img/game_items/key.png");
+  constructor(x, y) {
+    super();
+    this.loadImages(LOADED_IMAGES.game_items.key);
     this.x = x;
     this.y = y;
     this.width = 60;
