@@ -4,7 +4,7 @@ const IMAGE_PATHS = {
         wood7: './assets/img/game_backgrounds/4/7.png',
         wood6: './assets/img/game_backgrounds/4/6.png',
         wood4: './assets/img/game_backgrounds/4/4.png',
-        wood2: './assets/img/game_backgrounds/4/2.png',
+        wood2: './assets/img/game_backgrounds/3/2.png',
         wood1: './assets/img/game_backgrounds/4/1.png',
       },
       blue_wood: {

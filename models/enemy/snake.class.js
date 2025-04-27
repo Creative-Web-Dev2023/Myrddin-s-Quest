@@ -1,141 +1,232 @@
 /**
- * Class representing the drawer for the game world.
+ * Class representing a Snake enemy.
+ * @extends Enemy
  */
-class Drawer {
+class Snake extends Enemy {
   /**
-   * Creates an instance of Drawer.
+   * Creates an instance of Snake.
+   * @param {number} [startX=400] - The starting x position of the snake.
+   * @param {number} [moveRange=100] - The range within which the snake can move.
+   * @param {number} [id] - The ID of the snake.
+   */
+  constructor(startX = 400, moveRange = 100, id) {
+    super(id);
+    this.loadImage(LOADED_IMAGES.snake.walk[0]);
+    this.addToImageCache('walk', LOADED_IMAGES.snake.walk);
+    this.addToImageCache('attack', LOADED_IMAGES.snake.attack);
+    this.addToImageCache('hurt', LOADED_IMAGES.snake.hurt);
+    this.addToImageCache('dead', LOADED_IMAGES.snake.dead);
+    this.img = this.imageCache['walk_0'];
+    this.x = startX;
+    this.startX = startX;
+    this.moveRange = moveRange;
+    this.width = 250;
+    this.height = 150;
+    this.y = 320;
+    this.energy = 10;
+    this.dead = false;
+    this.attackDamage = 10;
+    this.attackRange = 50;
+    this.speed = 0.5;
+    this.otherDirection = true;
+    this.initialX = startX;
+    this.initialY = this.y;
+    this.offset = { top: 60, bottom: 60, left: 50, right: 50 };
+    this.intervalIDs = [];
+    this.startMovement();
+    this.startAnimation();
+    console.log('[Snake] imageCache:', this.imageCache);
+    console.log('[Snake] img:', this.img);
+  }
+
+  /**
+   * Sets the world for the snake.
    * @param {Object} world - The world object.
    */
-  constructor(world) {
+  setWorld(world) {
     this.world = world;
   }
 
   /**
-   * Draws the entire game world.
+   * Checks if the character is in attack range and attacks if possible.
+   * @param {Character} character - The character to check.
    */
-  draw() {
-    this.world.clearCanvas();
-    this.drawBackground();
-    this.drawStatusBars();
-    this.drawGameObjects();
-    this.drawEnemies();
-    this.drawCharacter();
-    this.drawSnakes();
-    this.drawTraps();
-    if (this.world.door) {
-      this.world.door.draw(this.world.ctx);
+  checkForAttack(character) {
+    const isInAttackRange = this.calculateAttackRange(character);
+    if (isInAttackRange && !this.isAttacking) {
+      this.attack(character);
     }
   }
 
   /**
-   * Draws the background of the game world.
+   * Calculates if the character is in attack range.
+   * @param {Character} character - The character to check.
+   * @returns {boolean} True if the character is in attack range, false otherwise.
    */
-  drawBackground() {
-    this.world.ctx.save();
-    this.world.ctx.translate(this.world.camera_x, 0);
-    this.world.addObjectsToMap(this.world.backgroundObjects);
-    if (Array.isArray(this.world.level.clouds)) {
-      this.world.addObjectsToMap(this.world.level.clouds);
-    }
-    this.world.ctx.restore();
+  calculateAttackRange(character) {
+    const snakeBox = this.getCollisionBox();
+    const characterBox = character.getCollisionBox();
+    const attackBox = {
+      x: this.otherDirection
+        ? snakeBox.x - this.attackRange
+        : snakeBox.x + snakeBox.width,
+      y: snakeBox.y,
+      width: this.attackRange * 2,
+      height: snakeBox.height,
+    };
+    return (
+      attackBox.x < characterBox.x + characterBox.width &&
+      attackBox.x + attackBox.width > characterBox.x &&
+      attackBox.y < characterBox.y + characterBox.height &&
+      attackBox.y + attackBox.height > characterBox.y
+    );
   }
 
   /**
-   * Draws the status bars in the game world.
+   * Patrols the area by moving left or right.
    */
-  drawStatusBars() {
-    this.world.addToMap(this.world.poisonStatusBar);
-    this.world.addToMap(this.world.characterStatusBar);
-    if (this.world.level.endboss) {
-      this.world.level.endboss.updateStatusBarPosition();
-      this.world.addToMap(this.world.level.endboss.statusBarEndboss);
+  patrol() {
+    if (this.dead) return;
+    if (this.x <= this.startX - this.moveRange) {
+      this.otherDirection = false;
+    } else if (this.x >= this.startX + this.moveRange) {
+      this.otherDirection = true;
     }
-    this.world.addToMap(this.world.character.healthBar);
+    this.x += this.otherDirection ? -this.speed : this.speed;
   }
 
   /**
-   * Draws the game objects in the game world.
+   * Updates the snake's state.
+   * @param {Character} character - The character to interact with.
    */
-  drawGameObjects() {
-    this.world.ctx.save();
-    this.world.ctx.translate(this.world.camera_x, 0);
-    this.world.addObjectsToMap(this.world.enemies);
-    this.world.addObjectsToMap(this.world.poisonsArray);
-    if (this.world.key && this.world.key.isActive) {
-      this.world.key.draw(this.world.ctx);
+  update(character) {
+    this.checkForAttack(character);
+  }
+
+  /**
+   * Makes the snake take damage.
+   * @param {number} damage - The amount of damage to take.
+   */
+  takeDamage(damage) {
+    if (this.dead) return;
+    this.energy -= damage;
+    this.energy = Math.max(0, this.energy);
+    if (this.energy > 0) {
+      this.playAnimation(LOADED_IMAGES.snake.hurt);
+    } else {
+      this.die();
     }
-    this.world.throwableObjects.forEach((bottle) => {
-      bottle.draw(this.world.ctx, this.world.camera_x);
+  }
+
+  /**
+   * Handles the snake's death.
+   */
+  die() {
+    if (this.dead) return;
+    this.dead = true;
+    playSnakeDyingSound();
+    this.playAnimation(LOADED_IMAGES.snake.dead);
+    setTimeout(() => this.remove(), 1000);
+  }
+
+  /**
+   * Removes the snake from the world.
+   */
+  remove() {
+    this.removeEnemy();
+  }
+
+  /**
+   * Loads images into the cache.
+   * @param {Array} imageArray - The array of image paths.
+   */
+  /*   loadImages(imageArray) {
+    imageArray.forEach((path) => {
+      const img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
     });
-    this.world.addObjectsToMap(this.world.traps);
-    this.world.ctx.restore();
-  }
+  } */
 
   /**
-   * Draws the enemies in the game world.
+   * Draws the snake on the canvas.
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
-  drawEnemies() {
-    this.world.enemies.forEach((enemy) => {
-      enemy.draw(this.world.ctx);
-    });
-    if (this.world.level.endboss) {
-      this.world.level.endboss.draw(this.world.ctx);
-    }
-  }
-
-  /**
-   * Draws the character in the game world.
-   */
-  drawCharacter() {
-    this.world.ctx.save();
-    this.world.ctx.translate(this.world.camera_x, 0);
-    if (this.world.character.isVisible) {
-      this.world.addToMap(this.world.character);
-    }
-
-    this.world.ctx.restore();
-  }
-
-  /**
-   * Draws the snakes in the game world.
-   */
-
-  drawSnakes() {
-    this.world.ctx.save();
-    this.world.ctx.translate(this.world.camera_x, 0);
-    this.world.addObjectsToMap(this.world.snakes);
-    this.world.ctx.restore();
-  }
-
-  /**
-   * Draws the traps in the game world.
-   */
-  drawTraps() {
-    this.world.traps.forEach((trap) => {
-      trap.draw(this.world.ctx);
-    });
-  }
-
-  /**
-   * Draws the throwable objects.
-   */
-  drawThrowableObjects() {
-    this.world.throwableObjects.forEach((obj) => {
-      obj.draw(this.world.ctx);
-      if (obj.isColliding(this.world.level.endboss)) {
-        this.world.updateEndbossHealth(obj.damage);
-        this.world.characterStatusBar.update(this.world.character.energy);
-        obj.deactivate();
+  /*   draw(ctx) {
+    if (this.img && this.img.complete) {
+      if (this.otherDirection) {
+        ctx.save();
+        ctx.translate(this.x + this.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(this.img, 0, this.y, this.width, this.height);
+        ctx.restore();
+      } else {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
       }
-    });
+    }
+  } */
+
+  /**
+   * Animates the snake.
+   */
+  animate() {
+    setInterval(() => {
+      if (this.dead) {
+        this.playAnimation(LOADED_IMAGES.snake.dead);
+      } else if (this.isAttacking) {
+        this.playAnimation(LOADED_IMAGES.snake.attack);
+      } else {
+        this.playAnimation(LOADED_IMAGES.snake.walk);
+      }
+    }, 100);
   }
 
   /**
-   * Draws the guard range of the endboss.
+   * Resets the position of the snake.
    */
-  drawEndbossGuardRange() {
-    if (this.world.level.endboss) {
-      this.world.level.endboss.drawGuardRange(this.world.ctx);
-    }
+  resetPosition() {
+    this.x = this.initialX;
+    this.y = this.initialY;
+    this.dead = false;
+    this.isVisible = true;
+  }
+
+  /**
+   * Gets the attack box of the snake.
+   * @param {Object} snakeBox - The collision box of the snake.
+   * @returns {Object} The attack box of the snake.
+   */
+  getAttackBox(snakeBox) {
+    return {
+      x: this.otherDirection
+        ? snakeBox.x - this.attackRange
+        : snakeBox.x + snakeBox.width,
+      y: snakeBox.y,
+      width: this.attackRange,
+      height: snakeBox.height,
+    };
+  }
+
+  /**
+   * Attacks the character if in range.
+   * @param {Character} character - The character to attack.
+   */
+  attack(character) {
+    if (this.dead || this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAnimation(LOADED_IMAGES.snake.attack);
+    playSnakeAttackSound();
+    setTimeout(() => {
+      this.isAttacking = false;
+      if (
+        character &&
+        this.isInAttackRange(
+          this.getAttackBox(this.getCollisionBox()),
+          character.getCollisionBox()
+        )
+      ) {
+        character.takeDamage(this.attackDamage);
+      }
+    }, 800);
   }
 }

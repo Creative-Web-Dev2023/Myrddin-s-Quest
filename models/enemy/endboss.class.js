@@ -95,22 +95,9 @@ class Endboss extends Enemy {
       this.deadSound.play();
     }
     setTimeout(() => {
-      this.spawnCrystal();
+   
       this.removeEnemy();
     }, LOADED_IMAGES.troll.dead.length * 200);
-  }
-
-  /**
-   * Spawns a crystal at the Endboss's position.
-   */
-  spawnCrystal() {
-    if (!this.world || !this.world.level) return;
-    const crystal = new Crystal(
-      this.x + this.width / 2 - 40,
-      this.y + this.height / 2 - 40
-    );
-    this.world.level.objects.push(crystal);
-    this.world.crystal = crystal;
   }
 
   /**

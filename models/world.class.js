@@ -38,16 +38,26 @@ class World {
     this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
+    // this.initializeDoor(); // LÖSCHEN!!
     this.endbossHealthBar = new EndbossStatusbar();
     this.endGame = new EndGame(this);
-    this.crystal = null;
   }
 
+  /**
+   * LÖSCHEN!!
+   */
+/*   initializeDoor() {
+    if (!this.door) {
+      this.door = new Door(4500, 150);
+      this.door.world = this;
+    }
+  } */
 
   /**
    * Setzt die Welt des Spiels zurück.
    */
   resetGameWorld() {
+    // this.characters = []; // wird nicht genutzt
     this.enemies = [];
     this.throwableObjects = [];
     this.imageCache = {};
@@ -56,7 +66,6 @@ class World {
     this.cloudSpawnInterval = 3000;
     this.characterStatusBar = null;
     this.endbossHealthBar = null;
-    this.crystal = null;
     this.door = [];
     this.key = null;
     this.snakes = [];
@@ -87,8 +96,10 @@ class World {
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.clouds = this.level.clouds || new this.clouds([]);
     this.door = this.level.door || [];
+    this.key = this.level.key;
+    this.crystal = this.level.crystal;
+   
     console.log('Level-Door:', this.level.door);
-    this.key = Key.initializeKey();
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
   }
@@ -203,6 +214,14 @@ class World {
   /*   addCharacter(character) {
     this.characters.push(character);
   } */
+
+  /**
+   * Fügt einen Feind zur Welt hinzu.
+   * @param {Enemy} enemy - Der hinzuzufügende Feind.
+   */
+  addEnemy(enemy) {
+    this.enemies.push(enemy);
+  }
 
   /**
    * Löscht das Canvas.

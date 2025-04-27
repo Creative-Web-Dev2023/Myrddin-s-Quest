@@ -15,7 +15,7 @@ class Character extends MovableObject {
   isVisible = true;
   attackDamage = 10;
   animationIntervals = [];
-  offset = { top: 50, bottom: 10, left: 160, right: 200 };
+  offset = { top: 60, bottom: 10, left: 215, right: 200 };
 
   /**
    * Creates an instance of Character.

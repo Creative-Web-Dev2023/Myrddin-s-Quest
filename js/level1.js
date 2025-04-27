@@ -2,20 +2,16 @@
  * Initializes and returns the first level.
  * @returns {Level} The initialized level.
  */
-// const level1 = initLevel();
-
-/**
- * Initializes the level by generating enemies, environments, backgrounds, poison objects, and traps.
- * @returns {Level} The initialized level.
- */
 function createLevel1() {
   return new Level(
     generateEnemiesLvl(),
     generateCloudsLvl(),
+    generateKeyLvl(),
     generateDoorLvl(),
     generateBackgroundsLvl(),
     generatePoisonObjectsLvl(),
-    generateTrapsLvl()
+    generateTrapsLvl(),
+    generateCrystalLvl(),
   );
 }
 
@@ -31,18 +27,14 @@ function generateEnemiesLvl() {
     new Knight(8000, 2700, 100, 4),
     new Knight(10000, 3300, 100, 5),
     new Knight(12000, 3900, 100, 6),
-    new Key(LOADED_IMAGES.game_items.key, 4400, 130),
     new Snake(7000, 200, 7),
     new Snake(8300, 200, 8),
     new Snake(9500, 200, 9),
     new Snake(10700, 200, 10),
     new Snake(11700, 200, 11),
     new Endboss(11800, 200, 12),
-    new Crystal(LOADED_IMAGES.game_items.crystal, 13660, 380),
   ];
 }
-
-
 
 /**
  * Generates the environment objects for the level.
@@ -77,7 +69,13 @@ function generateCloudsLvl() {
   ]);
 }
 
-
+/**
+ * Generates the key for the level.
+ * @returns {Key} The key object.
+ */
+function generateKeyLvl() {
+  return new Key(LOADED_IMAGES.game_items.key, 4450, 110);
+}
 
 /**
  * Generates the background objects for the level.
@@ -235,10 +233,6 @@ function generateBackgroundsLvl() {
   ];
 }
 
-function generateDoorLvl() {
-  return new Door(4500, 80);
-}
-
 /**
  * Generates the poison objects for the level.
  * @returns {Array} An array of poison objects.
@@ -253,6 +247,13 @@ function generatePoisonObjectsLvl() {
     new PoisonObject(6400, 200),
   ];
 }
+/**
+ * Generates the door for the level.
+ * @returns {Door} The door object.
+ */
+function generateDoorLvl() {
+  return new Door(4500, 80);
+}
 
 /**
  * Generates the traps for the level.
@@ -266,4 +267,11 @@ function generateTrapsLvl() {
     new Trap(11000, 330),
     new Trap(11700, 330),
   ];
+}
+/**
+ * Generates the key for the level.
+ * @returns {Key} The key object.
+ */
+function generateCrystalLvl() {
+  return new Crystal(LOADED_IMAGES.game_items.crystal, 12000, 400); 
 }
