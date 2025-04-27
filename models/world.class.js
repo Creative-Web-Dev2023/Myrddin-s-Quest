@@ -12,13 +12,13 @@ class World {
   enemies = [];
   throwableObjects = [];
   imageCache = {};
-  IMAGES_YOU_LOST = ['./assets/img/game_ui/login_and_pass/game_over.png'];
+  IMAGES_YOU_LOST = ['./assets/img/game_ui/login&pass/game_over.png'];
   quitButton;
   quitButtonImage = './assets/img/game_ui/quit.png';
   tryAgainButton;
   tryAgainButtonImage = ['./assets/img/game_ui/try_again.png'];
   endGame;
-  door;
+  door = [];
   key;
   clouds = [];
   snakes = [];
@@ -38,27 +38,16 @@ class World {
     this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
-    this.initializeDoor();
     this.endbossHealthBar = new EndbossStatusbar();
     this.endGame = new EndGame(this);
     this.crystal = null;
   }
 
-  /**
-   * Initialisiert die Tür im Spiel.
-   */
-  initializeDoor() {
-    if (!this.door) {
-      this.door = new Door(4500, 150);
-      this.door.world = this;
-    }
-  }
 
   /**
    * Setzt die Welt des Spiels zurück.
    */
   resetGameWorld() {
-    // this.characters = []; // wird nicht genutzt
     this.enemies = [];
     this.throwableObjects = [];
     this.imageCache = {};
@@ -68,7 +57,7 @@ class World {
     this.characterStatusBar = null;
     this.endbossHealthBar = null;
     this.crystal = null;
-    this.door = null;
+    this.door = [];
     this.key = null;
     this.snakes = [];
     this.traps = [];
@@ -97,7 +86,8 @@ class World {
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     this.clouds = this.level.clouds || new this.clouds([]);
-    this.door = this.level.door || null;
+    this.door = this.level.door || [];
+    console.log('Level-Door:', this.level.door);
     this.key = Key.initializeKey();
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
@@ -213,14 +203,6 @@ class World {
   /*   addCharacter(character) {
     this.characters.push(character);
   } */
-
-  /**
-   * Fügt einen Feind zur Welt hinzu.
-   * @param {Enemy} enemy - Der hinzuzufügende Feind.
-   */
-  addEnemy(enemy) {
-    this.enemies.push(enemy);
-  }
 
   /**
    * Löscht das Canvas.

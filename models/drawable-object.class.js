@@ -25,7 +25,7 @@ class DrawableObject {
    *
    * @param {HTMLImageElement} imageObject - The image to display.
    */
-  loadImages(imageObject) {
+  loadImage(imageObject) {
     if (imageObject instanceof HTMLImageElement) {
       this.img = imageObject;
     } else {
@@ -36,17 +36,17 @@ class DrawableObject {
     }
   }
 
-  //    loadImage(path) {
-  //   this.img.src = path;
-  // } 
+  /*   loadImage(path) {
+    this.img.src = path;
+  } */
 
-  // loadImages(images) {
-  //   images.forEach((path) => {
-  //     const img = new Image();
-  //     img.src = path;
-  //     this.imageCache[path] = img;
-  //   });
-  // } 
+  /*   loadImages(images) {
+    images.forEach((path) => {
+      const img = new Image();
+      img.src = path;
+      this.imageCache[path] = img;
+    });
+  } */
 
   /**
    * Adds an array of images to the image cache with a specific prefix.

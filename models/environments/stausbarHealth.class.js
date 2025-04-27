@@ -10,7 +10,7 @@ class StatusBar extends DrawableObject {
      */
     constructor() {
       super();
-      this.loadImages(LOADED_IMAGES.gameUI.status_bars.health[0]);
+      this.loadImage(LOADED_IMAGES.gameUI.status_bars.health[0]);
       this.addToImageCache('health', LOADED_IMAGES.gameUI.status_bars.health);
       this.x = 2;
       this.y = 10;

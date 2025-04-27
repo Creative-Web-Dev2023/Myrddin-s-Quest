@@ -9,7 +9,7 @@ class KnightHealthDisplay extends DrawableObject {
    */
   constructor(knight) {
     super();
-    this.loadImages(LOADED_IMAGES.game_items.hearts[0]);
+    this.loadImage(LOADED_IMAGES.game_items.hearts[0]);
     this.addToImageCache('hearts', LOADED_IMAGES.game_items.hearts);
     this.knight = knight;
     this.x = 0;

@@ -11,15 +11,15 @@ class Door extends MovableObject {
    */
   constructor(x, y) {
     super();
-    this.loadImages(LOADED_IMAGES.game_items.door[0]);
-
-    this.addToImageCache("door", LOADED_IMAGES.game_items.door);
-    console.log("[Door] ImageCache:", this.imageCache);
+    this.loadImage(LOADED_IMAGES.game_items.door[0]);
+    this.addToImageCache('door', LOADED_IMAGES.game_items.door);
+    console.log('[Door] ImageCache:', this.imageCache);
     this.x = x;
     this.y = y;
     this.width = 300;
     this.height = 460;
-    this.offset = { top: 0, bottom: 250, left: 200, right: 200 };
+    this.offset = { top: 50, bottom: 100, left: 120, right: 120 };
+    this.img = this.imageCache['door_0'];
     this.animate();
   }
 
@@ -27,29 +27,18 @@ class Door extends MovableObject {
    * Loads images into the image cache.
    * @param {string[]} images - The array of image sources.
    */
-  loadImages(images) {
-    if (typeof images === "string") {
+  /*   loadImages(images) {
+    images.forEach((src) => {
       const img = new Image();
-      img.src = images;
-      this.imageCache[images] = img;
-    } else if (Array.isArray(images)) {
-      images.forEach((src) => {
-        const img = new Image();
-        img.src = src;
-        this.imageCache[src] = img;
-      });
-    } else {
-      console.error(
-        "loadImages erwartet einen String oder ein Array, erhielt:",
-        images
-      );
-    }
-  }
+      img.src = src;
+      this.imageCache[src] = img;
+    });
+  } */
 
   /**
    * Animates the door by cycling through images.
    */
-  animate() {
+  /*   animate() {
     let currentImageIndex = 0;
     setInterval(() => {
       // this.img = this.imageCache[LOADED_IMAGES.game_items.door[currentImageIndex]];
@@ -57,6 +46,18 @@ class Door extends MovableObject {
       currentImageIndex =
         (currentImageIndex + 1) % LOADED_IMAGES.game_items.door.length;
     }, 1000 / 4);
+  } */
+
+  /*     animate() {
+      setInterval(() => {
+        this.currentImageIndex =
+          (this.currentImageIndex + 1) % LOADED_IMAGES.game_items.door.length;
+        this.img = this.imageCache[`door_${this.currentImageIndex}`];
+      }, 1000 / 4);
+    } */
+
+  animate() {
+    this.playAnimation(LOADED_IMAGES.game_items.door);
   }
 
   /**
@@ -68,11 +69,19 @@ class Door extends MovableObject {
   } */
 
   draw(ctx) {
-    console.log("[DRAW DOOR] wird aufgerufen bei x =", this.x);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    console.log('[DRAW DOOR] wird aufgerufen bei x =', this.x);
     super.draw(ctx);
+
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 2;
+
+    const offsetX = this.x + this.offset.left;
+    const offsetY = this.y + this.offset.top;
+    const offsetWidth = this.width - this.offset.left - this.offset.right;
+    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
+
+    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
   }
 
   /**

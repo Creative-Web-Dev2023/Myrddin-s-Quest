@@ -10,7 +10,7 @@ class EndbossStatusbar extends DrawableObject {
      */
     constructor() {
       super();
-      this.loadImages(LOADED_IMAGES.gameUI.status_bars.endboss[0]);
+      this.loadImage(LOADED_IMAGES.gameUI.status_bars.endboss[0]);
       this.addToImageCache('endboss', LOADED_IMAGES.gameUI.status_bars.endboss);
       this.y = 710;
       this.width = 170;

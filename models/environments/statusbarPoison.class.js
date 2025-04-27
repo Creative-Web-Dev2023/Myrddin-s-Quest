@@ -8,7 +8,7 @@ class PoisonStatusBar extends DrawableObject {
    */
   constructor() {
     super();
-    this.loadImages(LOADED_IMAGES.gameUI.status_bars.poison[0]);
+    this.loadImage(LOADED_IMAGES.gameUI.status_bars.poison[0]);
     this.addToImageCache('poison', LOADED_IMAGES.gameUI.status_bars.poison);
     this.x = 2;
     this.y = 50;

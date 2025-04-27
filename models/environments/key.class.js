@@ -10,7 +10,7 @@ class Key extends DrawableObject {
    */
   constructor(x, y) {
     super();
-    this.loadImages(LOADED_IMAGES.game_items.key);
+    this.loadImage(LOADED_IMAGES.game_items.key);
     this.x = x;
     this.y = y;
     this.width = 60;

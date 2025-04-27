@@ -14,7 +14,7 @@ class PoisonObject extends DrawableObject {
    */
   constructor(x, y) {
     super();
-    this.loadImages(LOADED_IMAGES.game_items.poison[0]);
+    this.loadImage(LOADED_IMAGES.game_items.poison[0]);
     this.addToImageCache('poison', LOADED_IMAGES.game_items.poison);
     this.x = x;
     this.y = y;

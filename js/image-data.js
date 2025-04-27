@@ -13,10 +13,10 @@ const IMAGE_PATHS = {
       },
     },
     game_items: {
-      candle: './assets/img/game_items/magic effects/candle.png',
+      candle: './assets/img/game_items/candle.png',
       skull: './assets/img/skull/skull 000.png',
-      crystal: './assets/img/game_items/magic effects/crystal.png',
-      key: './assets/img/game_items/magic effects/key.png',
+      crystal: './assets/img/game_items/crystal.png',
+      key: './assets/img/game_items/key.png',
       hearts: [
         './assets/img/game_ui/heart_empty.png',
         './assets/img/game_ui/heart_full.png',

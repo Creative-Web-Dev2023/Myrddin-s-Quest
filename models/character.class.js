@@ -16,21 +16,19 @@ class Character extends MovableObject {
   attackDamage = 10;
   animationIntervals = [];
   offset = { top: 50, bottom: 10, left: 160, right: 200 };
-  IMAGES = {
-    IDLE: this.loadImageArray("img/wizard/idle/idle_", 10),
-    WALKING: this.loadImageArray("img/wizard/walk/walk_", 9),
-    JUMPING: this.loadImageArray("img/wizard/jump/jump_", 9),
-    ATTACK: this.loadImageArray("img/wizard/attack/attack_", 7),
-    DEAD: this.loadImageArray("img/wizard/die/die_", 9),
-    HURT: this.loadImageArray("img/wizard/hurt/hurt_", 9),
-    YOU_LOST: ["./assets/img/game_ui/login_and_pass/game_over.png"], // Korrigierter Pfad
-  };
 
   /**
    * Creates an instance of Character.
    */
   constructor(world, poisonStatusBar) {
     super();
+    this.loadImage(LOADED_IMAGES.character.idle[0]);
+    this.addToImageCache('idle', LOADED_IMAGES.character.idle);
+    this.addToImageCache('walk', LOADED_IMAGES.character.walk);
+    this.addToImageCache('jump', LOADED_IMAGES.character.jump);
+    this.addToImageCache('attack', LOADED_IMAGES.character.attack);
+    this.addToImageCache('die', LOADED_IMAGES.character.die);
+    this.addToImageCache('hurt', LOADED_IMAGES.character.hurt);
     this.world = world;
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
     this.initCharacter();
@@ -41,40 +39,16 @@ class Character extends MovableObject {
    * Initializes the character.
    */
   initCharacter() {
-    this.loadImages(this.IMAGES.IDLE[0]);
-    this.loadAllImages();
     this.applyGravity();
     this.energy = 100;
+    this.x = 4000;
     this.poisonStatusBar.setPercentage(0);
-    this.statusBar = new StatusBar();
+    this.healthBar = new StatusBar();
     this.world.camera_x = -this.x - 190;
     this.canMoveLeftFlag = true;
+    this.img = this.imageCache['idle_0'];
+    this.drawFrame();
     this.animate();
-  }
-
-  /**
-   * Loads all images into the cache.
-   */
-  loadAllImages() {
-    Object.values(this.IMAGES).forEach((imgArray) => {
-      imgArray.forEach((imgPath) => {
-        const img = new Image(); // Erstelle ein HTMLImageElement
-        img.src = imgPath; // Setze den Bildpfad
-        this.imageCache[imgPath] = img; // Speichere das Bild im Cache
-      });
-    });
-  }
-
-  /**
-   * Loads image arrays automatically.
-   */
-  loadImageArray(path, count) {
-    let images = [];
-    for (let i = 0; i < count; i++) {
-      let number = i.toString().padStart(3, "0");
-      images.push(`./assets/${path}${number}.png`); 
-    }
-    return images;
   }
 
   /**
@@ -138,8 +112,8 @@ class Character extends MovableObject {
     let attackIndex = 0;
     playAttackSound();
     const attackInterval = setInterval(() => {
-      if (attackIndex < this.IMAGES.ATTACK.length) {
-        this.img = this.imageCache[this.IMAGES.ATTACK[attackIndex]];
+      if (attackIndex < LOADED_IMAGES.character.attack.length) {
+        this.img = this.imageCache[LOADED_IMAGES.character.attack[attackIndex]];
         attackIndex++;
       } else {
         clearInterval(attackInterval);
@@ -199,7 +173,7 @@ class Character extends MovableObject {
       this.energy -= damage;
       this.lastHit = Date.now();
       this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(this.IMAGES.HURT);
+      this.playAnimation(LOADED_IMAGES.character.hurt);
       if (this.energy <= 0) {
         this.die();
       } else {
@@ -230,8 +204,8 @@ class Character extends MovableObject {
   playDeathAnimation(callback) {
     let deathIndex = 0;
     const deathInterval = setInterval(() => {
-      if (deathIndex < this.IMAGES.DEAD.length) {
-        this.img = this.imageCache[this.IMAGES.DEAD[deathIndex]];
+      if (deathIndex < LOADED_IMAGES.character.dead.length) {
+        this.img = this.imageCache[LOADED_IMAGES.character.dead[deathIndex]];
         deathIndex++;
       } else {
         clearInterval(deathInterval);
@@ -249,15 +223,15 @@ class Character extends MovableObject {
       if (this.isDead() && !this.deadAnimationPlayed) {
         this.die();
       } else if (this.isHurt() && this.energy >= 1) {
-        this.playAnimation(this.IMAGES.HURT);
+        this.playAnimation(LOADED_IMAGES.character.hurt);
       } else if (this.isAttacking) {
-        this.playAnimation(this.IMAGES.ATTACK);
+        this.playAnimation(LOADED_IMAGES.character.attack);
       } else if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES.JUMPING);
+        this.playAnimation(LOADED_IMAGES.character.jump);
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playAnimation(this.IMAGES.WALKING);
+        this.playAnimation(LOADED_IMAGES.character.walk);
       } else if (this.energy >= 1) {
-        this.playAnimation(this.IMAGES.IDLE);
+        this.playAnimation(LOADED_IMAGES.character.idle);
       }
     }, 100);
     this.animationIntervals.push(interval);
@@ -278,7 +252,7 @@ class Character extends MovableObject {
     this.speed = 4;
     this.stopAllAnimations();
     Object.assign(this, {
-      x: 90,
+      // x: 5000,
       y: 150,
       isVisible: true,
       energy: 100,
@@ -291,7 +265,7 @@ class Character extends MovableObject {
     });
     this.poisonCollected = 5;
     this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-    this.playAnimation(this.IMAGES.IDLE);
+    this.playAnimation(LOADED_IMAGES.character.idle);
     this.animate();
     this.stopGravity();
     this.applyGravity();
@@ -321,6 +295,8 @@ class Character extends MovableObject {
         this.isVisible = true;
         isAfterDoor = true;
         hasPassedDoor = true;
+        this.world.snakes = this.world.level.snakes || [];
+        console.log('🐍 Snakes nach Türdurchgang:', this.world.snakes);
         setTimeout(() => {
           isAfterDoor = false;
         }, 2000);
@@ -375,7 +351,7 @@ class Character extends MovableObject {
     if (!this.invulnerable && distance < 100) {
       this.takeDamage(5);
       this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(this.IMAGES.HURT);
+      this.playAnimation(LOADED_IMAGES.character.hurt);
     }
   }
 
@@ -408,7 +384,7 @@ class Character extends MovableObject {
     this.isVisible = true;
     this.deadAnimationPlayed = false;
     this.invulnerable = false;
-    this.playAnimation(this.IMAGES.IDLE);
+    this.playAnimation(LOADED_IMAGES.character.idle);
     this.stopGravity();
     this.applyGravity();
   }
@@ -418,5 +394,19 @@ class Character extends MovableObject {
    */
   saveLastPosition() {
     this.lastPosition = { x: this.x, y: this.y };
+  }
+
+  drawFrame() {
+    super.draw(ctx);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+
+    const offsetX = this.x + this.offset.left;
+    const offsetY = this.y + this.offset.top;
+    const offsetWidth = this.width - this.offset.left - this.offset.right;
+    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
+
+    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
   }
 }

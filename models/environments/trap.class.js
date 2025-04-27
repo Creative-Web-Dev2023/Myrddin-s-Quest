@@ -14,7 +14,7 @@ class Trap extends MovableObject {
    */
   constructor(x, y) {
     super();
-    this.loadImages(LOADED_IMAGES.game_items.trap[0]);
+    this.loadImage(LOADED_IMAGES.game_items.trap[0]);
     this.addToImageCache('trap', LOADED_IMAGES.game_items.trap)
     this.x = x;
     this.y = y;

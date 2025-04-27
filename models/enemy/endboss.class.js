@@ -9,7 +9,7 @@ class Endboss extends Enemy {
    */
   constructor(id) {
     super(id);
-    this.loadImages(LOADED_IMAGES.troll.walk[0]);
+    this.loadImage(LOADED_IMAGES.troll.walk[0]);
 
     this.addToImageCache('walk', LOADED_IMAGES.troll.walk);
     this.addToImageCache('attack', LOADED_IMAGES.troll.attack);

@@ -12,7 +12,7 @@ class Knight extends Enemy {
    */
   constructor(delay, startX, moveRange, id) {
     super(id);
-    this.loadImages(LOADED_IMAGES.knight.walk[0]);
+    this.loadImage(LOADED_IMAGES.knight.walk[0]);
     this.addToImageCache('walk', LOADED_IMAGES.knight.walk);
     this.addToImageCache('attack', LOADED_IMAGES.knight.attack);
     this.addToImageCache('hurt', LOADED_IMAGES.knight.hurt);
