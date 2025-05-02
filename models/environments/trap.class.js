@@ -29,26 +29,11 @@ class Trap extends MovableObject {
       this.playAnimation(LOADED_IMAGES.game_items.trap);
     }, 100);
   }
-
-  /**
-   * Draws the traps on the canvas.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
-   * @param {Trap[]} traps - The array of traps to draw.
-   * @param {number} camera_x - The x position of the camera.
-   */
-  static drawTraps(ctx, traps, camera_x) {
-    traps.forEach((trap) => {
-      if (typeof trap.draw === "function") {
-        trap.draw(ctx, camera_x);
-      }
-    });
-  }
-
-  /**
-   * Sets the world for the trap.
-   * @param {Object} world - The world object.
-   */
-  setWorld(world) {
-    this.world = world;
-  }
+  // /**
+  //  * Sets the world for the trap.
+  //  * @param {Object} world - The world object.
+  //  */
+  // setWorld(world) {
+  //   this.world = world;
+  // }
 }

@@ -34,9 +34,19 @@ class Drawer {
     this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0);
     this.world.addObjectsToMap(this.world.backgroundObjects);
-    if (Array.isArray(this.world.level.clouds)) {
-      this.world.addObjectsToMap(this.world.level.clouds);
+
+    // Wolken zeichnen
+    if (this.world.clouds && Array.isArray(this.world.clouds.clouds)) {
+      this.world.clouds.clouds.forEach((cloud, index) => {
+        console.log(
+          `[Drawer] Zeichne Wolke ${index} bei x=${cloud.x}, y=${cloud.y}`
+        ); // Debug-Log
+        cloud.draw(this.world.ctx); // Wolken zeichnen
+      });
+    } else {
+      console.warn("[Drawer] Keine Wolken zum Zeichnen gefunden.");
     }
+
     this.world.ctx.restore();
   }
 
@@ -59,12 +69,19 @@ class Drawer {
   drawGameObjects() {
     this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0);
+    this.world.poisonsArray.forEach((poison, index) => {
+      console.log(
+        `[Drawer] Drawing Poison ${index} at x: ${poison.x}, y: ${poison.y}`
+      );
+      this.world.addToMap(poison);
+    });
+
     this.world.addObjectsToMap(this.world.enemies);
-    this.world.addObjectsToMap(this.world.poisonsArray);
+    this.world.addObjectsToMap(this.world.traps);
     this.world.throwableObjects.forEach((bottle) => {
       bottle.draw(this.world.ctx, this.world.camera_x);
     });
-    this.world.addObjectsToMap(this.world.traps);
+
     this.world.ctx.restore();
   }
 

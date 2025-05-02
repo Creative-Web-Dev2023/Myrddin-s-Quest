@@ -12,11 +12,11 @@ class World {
   enemies = [];
   throwableObjects = [];
   imageCache = {};
-  IMAGES_YOU_LOST = ['./assets/img/game_ui/login&pass/game_over.png'];
+  IMAGES_YOU_LOST = ["./assets/img/game_ui/login&pass/game_over.png"];
   quitButton;
-  quitButtonImage = './assets/img/game_ui/quit.png';
+  quitButtonImage = "./assets/img/game_ui/quit.png";
   tryAgainButton;
-  tryAgainButtonImage = ['./assets/img/game_ui/try_again.png'];
+  tryAgainButtonImage = ["./assets/img/game_ui/try_again.png"];
   endGame;
   door = [];
   key;
@@ -29,7 +29,7 @@ class World {
 
   constructor(canvas, keyboard, level1) {
     this.level = level1;
-    this.ctx = canvas.getContext('2d');
+    this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.ui = new UI(canvas);
@@ -46,7 +46,7 @@ class World {
   /**
    * LÖSCHEN!!
    */
-/*   initializeDoor() {
+  /*   initializeDoor() {
     if (!this.door) {
       this.door = new Door(4500, 150);
       this.door.world = this;
@@ -80,13 +80,13 @@ class World {
    * Initialisiert die Spielobjekte.
    */
   initializeGameObjects() {
-    this.clouds = this.level.clouds || [];
     this.poisonStatusBar = new PoisonStatusBar();
     this.characterStatusBar = new StatusBar();
     this.character = new Character(this, this.poisonStatusBar);
     this.character.world = this;
     this.character.y = 150;
-    this.poisonsArray = this.level.poisons || [];
+    this.poisonsArray = this.level.poisonObjects || [];
+    console.log("[World] Initialized Poison Objects:", this.poisonsArray);
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
     this.enemies = this.level.enemies || [];
@@ -94,12 +94,14 @@ class World {
     this.snakes = this.level.snakes || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
-    this.clouds = this.level.clouds || new this.clouds([]);
+    const cloudsArray = generateCloudsLvl(); // Wolken-Array erstellen
+    this.clouds = new Clouds(cloudsArray); // Clouds-Instanz mit Wolken initialisieren
+    console.log("[World] Wolken initialisiert:", this.clouds.clouds); // Debug-Log
     this.door = this.level.door || [];
     this.key = this.level.key;
     this.crystal = this.level.crystal;
-   
-    console.log('Level-Door:', this.level.door);
+
+    console.log("Level-Door:", this.level.door);
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
   }
@@ -147,6 +149,7 @@ class World {
 
     if (this.clouds) {
       this.clouds.updateClouds();
+      console.log("[Clouds] Wolken-Array:", this.clouds);
     }
 
     if (this.collisionHandler) {
@@ -160,6 +163,7 @@ class World {
     if (this.character.isMoving() && musicIsOn) {
       playWalkingSound();
     }
+    this.updateKey();
     this.updateEnemies();
     if (this.level.endboss) {
       this.endbossHealthBar.setPercentage(this.level.endboss.energy);
@@ -179,7 +183,14 @@ class World {
    */
   updateEnemies() {
     this.enemies.forEach((enemy) => {
-      if (enemy instanceof Endboss || enemy instanceof Snake) {
+      if (enemy instanceof Snake) {
+        enemy.update(this.character);
+
+        // Prüfen, ob der Charakter mit der Schlange kollidiert
+        if (this.collisionHandler.checkCollision(this.character, enemy)) {
+          enemy.takeDamage(0, this.character); // Schaden 0, wenn der Charakter springt
+        }
+      } else if (enemy instanceof Endboss) {
         enemy.update(this.character);
       }
     });
@@ -206,6 +217,16 @@ class World {
       }
     }
   }
+
+  updateKey() {
+    if (this.key && this.key.isActive) {
+      if (this.collisionHandler.checkCollision(this.character, this.key)) {
+        this.character.collectKey(this.key);
+        console.log("🔑 Schlüssel eingesammelt");
+      }
+    }
+  }
+
   /**
    * Fügt einen Charakter zur Welt hinzu.
    * @param {Character} character - Der hinzuzufügende Charakter.
@@ -250,7 +271,7 @@ class World {
 
   addObjectsToMap(objects) {
     if (!Array.isArray(objects)) {
-      console.warn('[addObjectsToMap()] kein Array übergeben:', objects);
+      console.warn("[addObjectsToMap()] kein Array übergeben:", objects);
       return;
     }
 
@@ -287,7 +308,7 @@ class World {
 
   addToMap(mo) {
     if (!mo) {
-      console.warn('[addToMap()] mo ist undefined oder null!');
+      console.warn("[addToMap()] mo ist undefined oder null!");
       console.trace(); // <-- zeigt dir, woher der Aufruf kam!
       return;
     }
@@ -360,7 +381,7 @@ class World {
    */
   resetObjects() {
     if (!this.objects || !Array.isArray(this.objects)) {
-      console.warn('Keine Objekte zum Zurücksetzen vorhanden.'); // Debugging-Log
+      console.warn("Keine Objekte zum Zurücksetzen vorhanden."); // Debugging-Log
       return;
     }
     this.objects.forEach((obj) => {

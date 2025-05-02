@@ -31,22 +31,7 @@ class PoisonObject extends DrawableObject {
     this.x = -1000;
   }
 
-  /**
-   * Draws the poison objects on the canvas.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
-   * @param {number} camera_x - The x position of the camera.
-   */
-  drawPoisons(ctx, camera_x) {
-    if (this.isActive && this.img) {
-      ctx.drawImage(
-        this.img,
-        this.x + camera_x,
-        this.y,
-        this.width,
-        this.height
-      );
-    }
-  }
+ 
 
   /**
    * Animates the poison object.
