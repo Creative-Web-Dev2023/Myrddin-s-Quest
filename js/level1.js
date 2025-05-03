@@ -27,12 +27,12 @@ function generateEnemiesLvl() {
     new Knight(8000, 2700, 100, 4),
     new Knight(10000, 3300, 100, 5),
     new Knight(12000, 3900, 100, 6),
-    new Snake(7000, 200, 7),
-    new Snake(8300, 200, 8),
-    new Snake(9500, 200, 9),
-    new Snake(10700, 200, 10),
-    new Snake(11700, 200, 11),
-    new Endboss(11800, 200, 12),
+    new Snake(7000, 320, 7),
+    new Snake(8300, 320, 8),
+    new Snake(9500, 320, 9),
+    new Snake(10700, 320, 10),
+    new Snake(11700, 320, 11),
+    new Endboss(11800, 320, 12),
   ];
 }
 

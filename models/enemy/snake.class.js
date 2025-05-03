@@ -21,7 +21,7 @@ class Snake extends Enemy {
     this.startX = startX;
     this.moveRange = moveRange;
     this.width = 250;
-    this.height = 150;
+    this.height = 160;
     this.y = 320;
     this.energy = 10;
     this.dead = false;
@@ -31,7 +31,7 @@ class Snake extends Enemy {
     this.otherDirection = true;
     this.initialX = startX;
     this.initialY = this.y;
-    this.offset = { top: 60, bottom: 60, left: 50, right: 50 };
+    this.offset = { top: 60, bottom: 20, left: 30, right: 30};
     this.intervalIDs = [];
     this.startMovement();
     this.startAnimation();
@@ -108,6 +108,7 @@ class Snake extends Enemy {
    * @param {number} damage - The amount of damage to take.
    */
   takeDamage(damage) {
+    console.log(`Snake took ${damage} damage! Energy: ${this.energy}`);
     if (this.dead) return;
     this.energy -= damage;
     this.energy = Math.max(0, this.energy);
@@ -126,7 +127,10 @@ class Snake extends Enemy {
     this.dead = true;
     playSnakeDyingSound();
     this.playAnimation(LOADED_IMAGES.snake.dead);
-    setTimeout(() => this.remove(), 1000);
+    setTimeout(() => {
+      this.isVisible = false;
+      super.removeEnemy();
+    }, 1500);
   }
 
 

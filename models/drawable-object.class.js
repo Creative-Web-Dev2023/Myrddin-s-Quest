@@ -89,16 +89,17 @@ class DrawableObject {
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
   draw(ctx) {
-    let img = this.img || this.imageCache?.[this.currentImage]; // Verwendung von currentImage
-
-    if (img instanceof HTMLImageElement) {
-      ctx.drawImage(img, this.x, this.y, this.width, this.height);
-    } else {
-      console.warn(
-        `[draw()] Kein Bild für ${this.constructor.name}:`,
-        this.currentImage
-      );
+    if (!this.img) {
+      console.error(`[draw()] Kein Bild für ${this.constructor.name}: ${this.id || 'Unbekannt'}`);
+      return;
     }
+
+    if (!this.img.complete) {
+      console.warn(`[draw()] Bild für ${this.constructor.name} wird noch geladen: ${this.id || 'Unbekannt'}`);
+      return;
+    }
+
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }
 
   /**

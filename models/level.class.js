@@ -22,14 +22,14 @@ class Level {
    * @param {Trap[]} traps - The array of traps in the level.
    */
   constructor(enemies, clouds, key, door, backgroundObjects, poisonObjects, traps, crystal) {
-    // this.snakes = enemies.filter((e) => e instanceof Snake);
-    this.snakes = enemies.filter((e, i) => {
-      console.log(`Enemy ${i}:`, e);
-      console.log(`Ist Snake?`, e instanceof Snake);
-      return e instanceof Snake;
-    });
+    this.enemies = enemies || [];
+    // this.snakes = enemies.filter((e, i) => {
+    //   console.log(`Enemy ${i}:`, e);
+    //   console.log(`Ist Snake?`, e instanceof Snake);
+    //   return e instanceof Snake;
+    // });
     
-    this.enemies = enemies.filter((e) => !(e instanceof Snake));
+    // this.enemies = enemies.filter((e) => !(e instanceof Snake));
     this.clouds = clouds || [];
     this.key = key;
     this.door = door;

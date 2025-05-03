@@ -861,3 +861,48 @@ h2 {
 .styled-about-game tr:nth-child(even) {
   background: rgba(255, 255, 255, 0.1);
 }
+
+#canvas-container {
+  position: relative;
+  overflow: hidden; /* Verhindert, dass Elemente außerhalb des Containers sichtbar sind */
+}
+
+.game-buttons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  display: flex;
+  gap: 15px;
+  pointer-events: none; 
+}
+
+.canvas:not(.d-none) + .game-buttons {
+  pointer-events: auto; 
+}
+
+.game-buttons img {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 4px;
+}
+
+.game-buttons img:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.7));
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+  background-color: rgba(255, 165, 0, 0.2);
+}
+
+.game-buttons img:active {
+  transform: scale(1.1);
+  box-shadow: 0 0 5px rgba(255, 165, 0, 0.6);
+}
+
+.game-buttons img:hover {
+  transform: scale(1.1);
+}

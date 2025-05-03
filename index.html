@@ -51,11 +51,13 @@
     <div id="endScreen" class="end-screen"></div>
     <h1 class="headline">Myrddin`s Quest</h1>
     <div class="game-screen">
-      <canvas id="canvas" width="720" height="480" class="canvas d-none"></canvas>
-      <div id="gameButtons" class="game-buttons d-none">
-        <img onclick="handleFullscreenToggle()" id="fullscreenImg" src="./assets/img/app_icons/arrow_up_orange.png"
-          height="50" />
-        <img onclick="toggleMuteImg()" id="mute" src="./assets/img/app_icons/sound_off_orange.png" height="50" />
+      <div id="canvas-container">
+        <canvas id="canvas" width="720" height="480" class="canvas d-none"></canvas>
+        <div id="gameButtons" class="game-buttons">
+          <img onclick="handleFullscreenToggle()" id="fullscreenImg" src="./assets/img/app_icons/arrow_up_orange.png"
+            height="50" />
+          <img onclick="toggleMuteImg()" id="mute" src="./assets/img/app_icons/sound_off_orange.png" height="50" />
+        </div>
       </div>
       <div id="btnsContainer" class="btns-container d-none">
         <div class="btns-left-side">
