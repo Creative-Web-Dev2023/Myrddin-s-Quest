@@ -224,12 +224,12 @@ function generateBackgroundsLvl() {
  */
 function generatePoisonObjectsLvl() {
   return [
-    new PoisonObject(800, 400),
-    new PoisonObject(1600, 300),
-    new PoisonObject(2400, 200),
-    new PoisonObject(3200, 400),
-    new PoisonObject(4000, 300),
-    new PoisonObject(6400, 200),
+    new PoisonObject(LOADED_IMAGES.game_items.poison[0], 800, 400),
+    new PoisonObject(LOADED_IMAGES.game_items.poison[1], 1600, 300),
+    new PoisonObject(LOADED_IMAGES.game_items.poison[2], 2400, 200),
+    new PoisonObject(LOADED_IMAGES.game_items.poison[3], 3200, 400),
+    new PoisonObject(LOADED_IMAGES.game_items.poison[4], 4000, 300),
+    new PoisonObject(LOADED_IMAGES.game_items.poison[5], 6400, 200),
   ];
 }
 /**

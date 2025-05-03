@@ -68,11 +68,8 @@ class Drawer {
    */
   drawGameObjects() {
     this.world.ctx.save();
-    this.world.ctx.translate(this.world.camera_x, 0);
-    this.world.poisonsArray.forEach((poison, index) => {
-      console.log(
-        `[Drawer] Drawing Poison ${index} at x: ${poison.x}, y: ${poison.y}`
-      );
+    this.world.ctx.translate(this.world.camera_x, 0); 
+    this.world.poisonsArray.forEach((poison) => {
       this.world.addToMap(poison);
     });
 

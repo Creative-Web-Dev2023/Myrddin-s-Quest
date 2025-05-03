@@ -94,13 +94,12 @@ class World {
     this.snakes = this.level.snakes || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
-    const cloudsArray = generateCloudsLvl(); // Wolken-Array erstellen
-    this.clouds = new Clouds(cloudsArray); // Clouds-Instanz mit Wolken initialisieren
-    console.log("[World] Wolken initialisiert:", this.clouds.clouds); // Debug-Log
+    const cloudsArray = generateCloudsLvl();
+    this.clouds = new Clouds(cloudsArray); 
+    console.log("[World] Wolken initialisiert:", this.clouds.clouds); 
     this.door = this.level.door || [];
     this.key = this.level.key;
     this.crystal = this.level.crystal;
-
     console.log("Level-Door:", this.level.door);
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);

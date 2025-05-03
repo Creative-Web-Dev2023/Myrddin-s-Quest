@@ -48,8 +48,6 @@ class Level {
     this.backgroundObjects.forEach((bg) => bg.draw(ctx));
     this.clouds.forEach((cloud) => cloud.draw(ctx));
     this.enemies.forEach((enemy) => enemy.draw(ctx));
-
-    this.poisonObjects.forEach((poison) => {});
     this.traps.forEach((trap) => {
       if (trap.x >= camera_x && trap.x <= camera_x + canvas.width) {
         trap.draw(ctx);

@@ -12,15 +12,14 @@ class PoisonObject extends DrawableObject {
    * @param {number} width - The width of the poison object.
    * @param {number} height - The height of the poison object.
    */
-  constructor(x, y) {
+  constructor(imagePath, x, y) {
     super();
-    this.loadImage(LOADED_IMAGES.game_items.poison[0]);
-    this.addToImageCache('poison', LOADED_IMAGES.game_items.poison);
+    this.loadImage(imagePath);
     this.x = x;
     this.y = y;
     this.width = 50;
     this.height = 50;
-    this.animate();
+    this.isActive = true;
   }
 
   /**
@@ -29,16 +28,5 @@ class PoisonObject extends DrawableObject {
   deactivate() {
     this.isActive = false;
     this.x = -1000;
-  }
-
- 
-
-  /**
-   * Animates the poison object.
-   */
-  animate() {
-    setInterval(() => {
-      this.playAnimation(LOADED_IMAGES.game_items.poison);
-    }, 100);
   }
 }
