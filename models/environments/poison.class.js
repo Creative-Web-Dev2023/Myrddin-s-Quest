@@ -20,6 +20,7 @@ class PoisonObject extends DrawableObject {
     this.width = 50;
     this.height = 50;
     this.isActive = true;
+    console.log(`[PoisonObject] Initialized at x=${this.x}, y=${this.y}`); // Debug-Log
   }
 
   /**
@@ -28,5 +29,12 @@ class PoisonObject extends DrawableObject {
   deactivate() {
     this.isActive = false;
     this.x = -1000;
+  }
+
+  draw(ctx) {
+    if (this.isActive && this.img) {
+      console.log(`[PoisonObject] Zeichne Poison bei x=${this.x}, y=${this.y}`); // Debug-Log
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
   }
 }

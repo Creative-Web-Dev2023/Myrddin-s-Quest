@@ -38,9 +38,7 @@ class Drawer {
     // Wolken zeichnen
     if (this.world.clouds && Array.isArray(this.world.clouds.clouds)) {
       this.world.clouds.clouds.forEach((cloud, index) => {
-        console.log(
-          `[Drawer] Zeichne Wolke ${index} bei x=${cloud.x}, y=${cloud.y}`
-        ); // Debug-Log
+
         cloud.draw(this.world.ctx); // Wolken zeichnen
       });
     } else {
@@ -69,8 +67,11 @@ class Drawer {
   drawGameObjects() {
     this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0); 
-    this.world.poisonsArray.forEach((poison) => {
-      this.world.addToMap(poison);
+
+    // Poison-Objekte zeichnen
+    this.world.poisonsArray.forEach((poison, index) => {
+      console.log(`[Drawer] Zeichne Poison ${index} bei x=${poison.x}, y=${poison.y}`); 
+      poison.draw(this.world.ctx);
     });
 
     this.world.addObjectsToMap(this.world.enemies);
