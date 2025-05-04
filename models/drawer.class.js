@@ -67,10 +67,8 @@ class Drawer {
   drawGameObjects() {
     this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0); 
-
-    // Poison-Objekte zeichnen
     this.world.poisonsArray.forEach((poison, index) => {
-      console.log(`[Drawer] Zeichne Poison ${index} bei x=${poison.x}, y=${poison.y}`); 
+      
       poison.draw(this.world.ctx);
     });
 

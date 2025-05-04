@@ -129,12 +129,12 @@ class MovableObject extends DrawableObject {
   takeDamage(damage) {
     if (this.energy <= 0 || this.invulnerable) return;
     this.energy -= damage;
-    this.playAnimation(LOADED_IMAGES.character.hurt);
+    this.lastHit = Date.now();
+    this.invulnerable = true;
+    
     if (this.energy <= 0) {
-      this.energy = 0;
       this.die();
     } else {
-      this.invulnerable = true;
       setTimeout(() => (this.invulnerable = false), 2000);
     }
   }
@@ -153,21 +153,19 @@ class MovableObject extends DrawableObject {
    */
   animate() {
     this.stopAllAnimations();
-    let interval = setInterval(() => {
+    this.animationInterval = setInterval(() => {
       if (this.isDead()) {
         this.playDeathAnimation();
-        clearInterval(interval);
       } else if (this.isHurt()) {
-        this.playAnimation(LOADED_IMAGES.character.hurt);
+        this.playAnimation(LOADED_IMAGES.hurt);
       } else if (this.isAboveGround()) {
-        this.playAnimation(LOADED_IMAGES.character.jump);
+        this.playAnimation(LOADED_IMAGES.jump);
       } else {
-        this.playAnimation(LOADED_IMAGES.character.idle);
+        this.playAnimation(LOADED_IMAGES.idle);
       }
     }, 100);
-
-    this.animationIntervals.push(interval);
   }
+
 
   /**
    * Stops all animations.

@@ -172,34 +172,21 @@ class Character extends MovableObject {
    * Makes the character take damage.
    */
   takeDamage(damage) {
-    if (this.energy > 0 && !this.invulnerable) {
-      this.energy -= damage;
-      this.lastHit = Date.now();
-      this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(LOADED_IMAGES.character.hurt);
-      if (this.energy <= 0) {
-        this.die();
-      } else {
-        this.invulnerable = true;
-        setTimeout(() => (this.invulnerable = false), 1000);
-      }
-    }
+    super.takeDamage(damage); 
+    this.world.characterStatusBar.setPercentage(this.energy);
+    this.playAnimation(LOADED_IMAGES.character.hurt);
   }
-
   /**
    * Handles the character's death.
    */
   die() {
-    if (!this.deadAnimationPlayed) {
-      this.saveLastPosition();
-      this.deadAnimationPlayed = true;
-      this.isVisible = true;
-      this.playDeathAnimation(() => {
-        this.isVisible = false;
-        this.world.endGame.showYouLostScreen();
-      });
-    }
+    super.die(); // Basisklassen-Methode
+    this.playDeathAnimation(() => {
+      this.isVisible = false;
+      this.world.endGame.showYouLostScreen();
+    });
   }
+
 
   /**
    * Plays the death animation.
@@ -208,13 +195,14 @@ class Character extends MovableObject {
     let deathIndex = 0;
     const deathInterval = setInterval(() => {
       if (deathIndex < LOADED_IMAGES.character.die.length) {
-        this.img = this.imageCache[LOADED_IMAGES.character.die[deathIndex]];
+        this.img = LOADED_IMAGES.character.die[deathIndex];
         deathIndex++;
       } else {
         clearInterval(deathInterval);
         if (callback) callback();
       }
     }, 150);
+    this.animationIntervals.push(deathInterval); // Intervall zur Bereinigung registrieren
   }
 
   /**
@@ -223,8 +211,8 @@ class Character extends MovableObject {
   animate() {
     this.stopAllAnimations();
     let interval = setInterval(() => {
-      if (this.isDead() && !this.deadAnimationPlayed) {
-        this.die();
+      if (this.isDead()) {
+        return;
       } else if (this.isHurt() && this.energy >= 1) {
         this.playAnimation(LOADED_IMAGES.character.hurt);
       } else if (this.isAttacking) {
