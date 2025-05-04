@@ -101,7 +101,6 @@ class Drawer {
     this.world.ctx.translate(this.world.camera_x, 0);
     if (this.world.character.isVisible) {
       this.world.addToMap(this.world.character);
-      this.world.character.drawFrame();
     }
 
     this.world.ctx.restore();

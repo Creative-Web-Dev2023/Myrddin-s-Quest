@@ -35,8 +35,6 @@ class Snake extends Enemy {
     this.intervalIDs = [];
     this.startMovement();
     this.startAnimation();
-    console.log('[Snake] imageCache:', this.imageCache);
-    console.log('[Snake] img:', this.img);
   }
 
   /**

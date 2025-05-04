@@ -57,7 +57,6 @@ class World {
    * Setzt die Welt des Spiels zurück.
    */
   resetGameWorld() {
-    // this.characters = []; // wird nicht genutzt
     this.enemies = [];
     this.throwableObjects = [];
     this.imageCache = {};
@@ -72,7 +71,6 @@ class World {
     this.traps = [];
     this.clouds = [];
     this.poisons = [];
-    // this.environments = [];
     this.endGame = null;
   }
 
@@ -86,7 +84,6 @@ class World {
     this.character.world = this;
     this.character.y = 150;
     this.poisonsArray = this.level.poisonObjects || [];
-    console.log("[World] Initialized Poison Objects:", this.poisonsArray);
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
     this.enemies = this.level.enemies || [];
@@ -96,11 +93,9 @@ class World {
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     const cloudsArray = generateCloudsLvl();
     this.clouds = new Clouds(cloudsArray); 
-    console.log("[World] Wolken initialisiert:", this.clouds.clouds); 
     this.door = this.level.door || [];
     this.key = this.level.key;
     this.crystal = this.level.crystal;
-    console.log("Level-Door:", this.level.door);
     this.camera_x = this.character.x - 190;
     this.endGame = new EndGame(this);
   }
@@ -115,6 +110,9 @@ class World {
         enemy.setWorld(this);
       }
     });
+    if (this.crystal) {
+      this.crystal.world = this; 
+    }
     if (this.door) {
       this.door.world = this;
     }
@@ -148,7 +146,6 @@ class World {
 
     if (this.clouds) {
       this.clouds.updateClouds();
-      console.log("[Clouds] Wolken-Array:", this.clouds);
     }
 
     if (this.collisionHandler) {
@@ -184,10 +181,8 @@ class World {
     this.enemies.forEach((enemy) => {
       if (enemy instanceof Snake) {
         enemy.update(this.character);
-
-        // Prüfen, ob der Charakter mit der Schlange kollidiert
         if (this.collisionHandler.checkCollision(this.character, enemy)) {
-          enemy.takeDamage(0, this.character); // Schaden 0, wenn der Charakter springt
+          enemy.takeDamage(0, this.character); 
         }
       } else if (enemy instanceof Endboss) {
         enemy.update(this.character);
@@ -221,20 +216,9 @@ class World {
     if (this.key && this.key.isActive) {
       if (this.collisionHandler.checkCollision(this.character, this.key)) {
         this.character.collectKey(this.key);
-        console.log("🔑 Schlüssel eingesammelt");
       }
     }
   }
-
-  /**
-   * Fügt einen Charakter zur Welt hinzu.
-   * @param {Character} character - Der hinzuzufügende Charakter.
-   */
-  /* WIRD NICHT GENUTZT! */
-  /*   addCharacter(character) {
-    this.characters.push(character);
-  } */
-
   /**
    * Fügt einen Feind zur Welt hinzu.
    * @param {Enemy} enemy - Der hinzuzufügende Feind.
@@ -250,23 +234,7 @@ class World {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  /**
-   * Fügt Objekte zum Canvas hinzu.
-   * @param {MovableObject[]} objects - Die hinzuzufügenden Objekte.
-   */
-  /*   addObjectsToMap(objects) {
-    if (objects && Array.isArray(objects)) {
-      objects.forEach((object) => {
-        this.addToMap(object);
-      });
-    }
-    if (
-      this.backgroundObjects.length > 0 &&
-      this.camera_x >= this.backgroundObjects[0].width
-    ) {
-      this.camera_x = 0;
-    }
-  } */
+
 
   addObjectsToMap(objects) {
     if (!Array.isArray(objects)) {
@@ -289,26 +257,11 @@ class World {
     }
   }
 
-  /**
-   * Fügt ein Objekt zur Karte hinzu.
-   * @param {MovableObject} mo - Das hinzuzufügende Objekt.
-   */
-  /*   addToMap(mo) {
-    if (mo && mo.otherDirection) {
-      this.flipImage(mo);
-    }
-    if (mo && mo.isActive !== false) {
-      mo.draw(this.ctx);
-    }
-    if (mo && mo.otherDirection) {
-      this.flipImageBack(mo);
-    }
-  } */
 
   addToMap(mo) {
     if (!mo) {
       console.warn("[addToMap()] mo ist undefined oder null!");
-      console.trace(); // <-- zeigt dir, woher der Aufruf kam!
+      console.trace(); 
       return;
     }
 

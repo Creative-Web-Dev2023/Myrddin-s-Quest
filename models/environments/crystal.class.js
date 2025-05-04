@@ -70,13 +70,14 @@ class Crystal extends DrawableObject {
    * Collects the crystal and shows the win screen.
    */
   collect() {
-    if (this.isActive) { // Vereinfachte Bedingung
+    if (this.isActive && this.world) { 
       this.deactivate();
       this.world.level.objects = this.world.level.objects.filter(obj => obj !== this);
-      setTimeout(() => this.world.endGame.showYouWinScreen(), 300);
+      setTimeout(() => {
+        if (this.world.endGame) this.world.endGame.showYouWinScreen();
+      }, 300);
     }
   }
-
   /**
    * Removes the crystal after the final boss is defeated.
    */

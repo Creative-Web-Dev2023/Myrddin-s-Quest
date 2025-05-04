@@ -11,7 +11,8 @@ class ThrowableObject extends MovableObject {
   constructor(x, y) {
     super();
     this.isVisible = true;
-    this.loadImages("../assets/img/poison/1.png");
+    this.img = new Image();
+    this.img.src = "../assets/img/poison/1.png"; // Bildpfad sicherstellen
     this.x = x;
     this.y = y;
     this.height = 80;
@@ -54,7 +55,11 @@ class ThrowableObject extends MovableObject {
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
   draw(ctx) {
-    if (this.isVisible) {
+    if (
+      this.isVisible &&
+      this.img instanceof HTMLImageElement &&
+      this.img.complete
+    ) {
       ctx.save();
       const centerX = this.x + this.width / 2;
       const centerY = this.y + this.height / 2;

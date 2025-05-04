@@ -41,9 +41,9 @@ class Character extends MovableObject {
   initCharacter() {
     this.applyGravity();
     this.energy = 100;
-    // this.x =4000;
-    this.x = 90; 
-    this.y = 150; 
+     this.x =4000;
+    // this.x = 90; 
+    // this.y = 150; 
     this.poisonStatusBar.setPercentage(0);
     this.healthBar = new StatusBar();
     this.world.characterStatusBar = this.healthBar;
@@ -180,7 +180,7 @@ class Character extends MovableObject {
    * Handles the character's death.
    */
   die() {
-    super.die(); // Basisklassen-Methode
+    super.die(); 
     this.playDeathAnimation(() => {
       this.isVisible = false;
       this.world.endGame.showYouLostScreen();
@@ -202,7 +202,7 @@ class Character extends MovableObject {
         if (callback) callback();
       }
     }, 150);
-    this.animationIntervals.push(deathInterval); // Intervall zur Bereinigung registrieren
+    this.animationIntervals.push(deathInterval); 
   }
 
   /**
@@ -214,7 +214,7 @@ class Character extends MovableObject {
       if (this.isDead()) {
         return;
       } else if (this.isHurt() && this.energy >= 1) {
-        this.playAnimation(LOADED_IMAGES.character.hurt);
+        this.playAnimation(LOADED_IMAGES.character.hurt, 200);
       } else if (this.isAttacking) {
         this.playAnimation(LOADED_IMAGES.character.attack);
       } else if (this.isAboveGround()) {
@@ -388,7 +388,6 @@ class Character extends MovableObject {
   }
 
   drawFrame() {
-    super.draw(ctx);
     ctx.globalAlpha = 1;
     ctx.strokeStyle = "blue";
     ctx.lineWidth = 2;

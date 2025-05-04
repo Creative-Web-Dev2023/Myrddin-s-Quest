@@ -41,7 +41,6 @@ function generateEnemiesLvl() {
  * @returns {Array} An array of environment objects.
  */
 function generateCloudsLvl() {
-  console.log("[generateCloudsLvl] Wolken werden erstellt."); // Debug-Log
   return [
     new Cloud(),
     new Cloud(),
@@ -51,7 +50,7 @@ function generateCloudsLvl() {
     new Cloud(),
     new Cloud(),
     new Cloud(),
-  ]; // Rückgabe eines Arrays von Cloud-Objekten
+  ];
 }
 
 /**
@@ -258,5 +257,5 @@ function generateTrapsLvl() {
  * @returns {Key} The key object.
  */
 function generateCrystalLvl() {
-  return new Crystal(LOADED_IMAGES.game_items.crystal, 12000, 400);
+  return new Crystal(LOADED_IMAGES.game_items.crystal, 12000, 400, this);
 }

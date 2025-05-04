@@ -88,9 +88,6 @@ class DrawableObject {
    * Draws the object on the canvas.
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
-  /*   draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-  } */
 
   draw(ctx) {
     let img = this.img || this.imageCache?.[this.currentImageKey];

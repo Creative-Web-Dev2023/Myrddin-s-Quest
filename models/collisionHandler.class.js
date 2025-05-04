@@ -22,7 +22,7 @@ class CollisionHandler {
     this.checkDoorCollision();
     this.checkTraps();
     this.checkThrowableObject();
-    this.checkCrystalCollision();
+    // this.checkCrystalCollision();
   }
 
   /**
@@ -201,26 +201,26 @@ class CollisionHandler {
     }
   }
 
-  /**
-   * Checks collisions with the crystal.
-   */
-  checkCrystalCollision() {
-    const crystal = this.world.crystal;
-    if (crystal && this.isColliding(this.world.character, crystal)) {
-      this.handleCrystalCollection(crystal);
-    }
-  }
+  // /**
+  //  * Checks collisions with the crystal.
+  //  */
+  // checkCrystalCollision() {
+  //   const crystal = this.world.crystal;
+  //   if (crystal && this.isColliding(this.world.character, crystal)) {
+  //     this.handleCrystalCollection(crystal);
+  //   }
+  // }
 
-  /**
-   * Handles the collection of the crystal.
-   * @param {MovableObject} crystal - The crystal object.
-   */
-  handleCrystalCollection(crystal) {
-    this.world.character.collectCrystal(crystal);
-    if (this.world.endGame &&typeof this.world.endGame.showWinScreen === "function") {
-      this.world.endGame.showYouWinScreen();
-    }
-  }
+  // /**
+  //  * Handles the collection of the crystal.
+  //  * @param {MovableObject} crystal - The crystal object.
+  //  */
+  // handleCrystalCollection(crystal) {
+  //   this.world.character.collectCrystal(crystal);
+  //   if (this.world.endGame &&typeof this.world.endGame.showWinScreen === "function") {
+  //     this.world.endGame.showYouWinScreen();
+  //   }
+  // }
 
   /**
    * Checks if the character is colliding with the crystal.
