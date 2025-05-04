@@ -23,12 +23,12 @@ class Character extends MovableObject {
   constructor(world, poisonStatusBar) {
     super();
     this.loadImage(LOADED_IMAGES.character.idle[0]);
-    this.addToImageCache('idle', LOADED_IMAGES.character.idle);
-    this.addToImageCache('walk', LOADED_IMAGES.character.walk);
-    this.addToImageCache('jump', LOADED_IMAGES.character.jump);
-    this.addToImageCache('attack', LOADED_IMAGES.character.attack);
-    this.addToImageCache('die', LOADED_IMAGES.character.die);
-    this.addToImageCache('hurt', LOADED_IMAGES.character.hurt);
+    this.addToImageCache("idle", LOADED_IMAGES.character.idle);
+    this.addToImageCache("walk", LOADED_IMAGES.character.walk);
+    this.addToImageCache("jump", LOADED_IMAGES.character.jump);
+    this.addToImageCache("attack", LOADED_IMAGES.character.attack);
+    this.addToImageCache("die", LOADED_IMAGES.character.die);
+    this.addToImageCache("hurt", LOADED_IMAGES.character.hurt);
     this.world = world;
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
     this.initCharacter();
@@ -41,12 +41,15 @@ class Character extends MovableObject {
   initCharacter() {
     this.applyGravity();
     this.energy = 100;
-    this.x = 4000;
+    // this.x =4000;
+    this.x = 90; 
+    this.y = 150; 
     this.poisonStatusBar.setPercentage(0);
     this.healthBar = new StatusBar();
+    this.world.characterStatusBar = this.healthBar;
     this.world.camera_x = -this.x - 190;
     this.canMoveLeftFlag = true;
-    this.img = this.imageCache['idle_0'];
+    this.img = this.imageCache["idle_0"];
     this.drawFrame();
     this.animate();
   }
@@ -296,7 +299,7 @@ class Character extends MovableObject {
         isAfterDoor = true;
         hasPassedDoor = true;
         this.world.snakes = this.world.level.snakes || [];
-        console.log('🐍 Snakes nach Türdurchgang:', this.world.snakes);
+        console.log("🐍 Snakes nach Türdurchgang:", this.world.snakes);
         setTimeout(() => {
           isAfterDoor = false;
         }, 2000);
@@ -399,7 +402,7 @@ class Character extends MovableObject {
   drawFrame() {
     super.draw(ctx);
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'blue';
+    ctx.strokeStyle = "blue";
     ctx.lineWidth = 2;
 
     const offsetX = this.x + this.offset.left;

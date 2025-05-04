@@ -30,7 +30,7 @@ class DrawableObject {
       this.img = imageObject;
     } else {
       console.error(
-        "loadImage expects an HTMLImageElement but got:",
+        'loadImage expects an HTMLImageElement but got:',
         imageObject
       );
     }
@@ -88,18 +88,21 @@ class DrawableObject {
    * Draws the object on the canvas.
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
-  draw(ctx) {
-    if (!this.img) {
-      console.error(`[draw()] Kein Bild für ${this.constructor.name}: ${this.id || 'Unbekannt'}`);
-      return;
-    }
-
-    if (!this.img.complete) {
-      console.warn(`[draw()] Bild für ${this.constructor.name} wird noch geladen: ${this.id || 'Unbekannt'}`);
-      return;
-    }
-
+  /*   draw(ctx) {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  } */
+
+  draw(ctx) {
+    let img = this.img || this.imageCache?.[this.currentImageKey];
+
+    if (img instanceof HTMLImageElement) {
+      ctx.drawImage(img, this.x, this.y, this.width, this.height);
+    } else {
+      console.warn(
+        `[draw()] Kein Bild für ${this.constructor.name}:`,
+        this.currentImageKey
+      );
+    }
   }
 
   /**

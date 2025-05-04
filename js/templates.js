@@ -158,3 +158,18 @@ function generateImprintHtml() {
             </div>
           `;
 }
+
+function generateGameOverHTML() {
+  return /*html*/ `
+    <div id="game-over-container" class="hidden">
+      <div class="game-over-content">
+        <div class="game-over-image"></div>
+        <div class="game-over-buttons">
+          <button class="game-over-btn" id="tryAgainButton" onclick="endGame.restartGame()">
+            <span>Try Again</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}

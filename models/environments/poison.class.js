@@ -20,8 +20,15 @@ class PoisonObject extends DrawableObject {
     this.width = 50;
     this.height = 50;
     this.isActive = true;
+    this.animate();
   }
-
+  animate() {
+    setInterval(() => {
+      if (this.isActive) {
+        this.playAnimation(LOADED_IMAGES.game_items.poison);
+      }
+    }, 100);
+  }
   /**
    * Deactivates the poison object.
    */

@@ -380,7 +380,6 @@ class World {
    */
   resetObjects() {
     if (!this.objects || !Array.isArray(this.objects)) {
-      console.warn("Keine Objekte zum Zurücksetzen vorhanden."); // Debugging-Log
       return;
     }
     this.objects.forEach((obj) => {

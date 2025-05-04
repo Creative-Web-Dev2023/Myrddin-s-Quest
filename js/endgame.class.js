@@ -13,10 +13,10 @@ class EndGame {
    * Zeigt den Game-Over-Bildschirm an.
    */
   showGameOverScreen() {
-    document.getElementById("game-over-container").style.display = "flex";
-    stop;
+    const gameOverContainer = document.getElementById("game-over-container");
+    if (gameOverContainer) gameOverContainer.style.display = "flex";
+    stopAllSounds();
   }
-
   /**
    * Versteckt den Game-Over-Bildschirm.
    */

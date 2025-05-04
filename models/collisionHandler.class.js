@@ -114,20 +114,15 @@ class CollisionHandler {
    */
   handleEnemyCollision(enemy) {
     if (enemy instanceof Snake || enemy instanceof Knight) {
-      if (
-        this.world.character.isAboveGround() &&
-        this.world.character.speedY > 0
-      ) {
+      if ( this.world.character.isAboveGround() &&this.world.character.speedY > 0) {
         this.world.character.jump();
         if (!enemy.dead) {
           enemy.takeDamage(10);
         }
       } else {
         if (!enemy.isDead()) {
-          this.world.character.hit(enemy);
-          this.world.characterStatusBar.setPercentage(
-            this.world.character.energy
-          );
+          this.world.character.takeDamage(enemy.attackDamage);
+          this.world.characterStatusBar.setPercentage(this.world.character.energy); 
         }
       }
     } else {

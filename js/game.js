@@ -359,12 +359,18 @@ function backToMainScreen() {
 
 function startGame() {
   const startScreen = document.getElementById('startScreen');
+  const gameScreen = document.querySelector('.game-screen');
+  gameScreen.insertAdjacentHTML('beforeend', generateGameOverHTML());
+  document.getElementById('tryAgainButton').addEventListener('click', () => {
+    world.endGame.restartGame();
+  });
   const canvas = document.getElementById('canvas');
   startScreen.classList.add('d-none');
   canvas.classList.remove('d-none');
   ctx = canvas.getContext('2d');
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
+  window.endGame = world.endGame;
   keyboard.setupControls(world);
   // keyboard.setupTouchControls(world);
   gameLoop();
