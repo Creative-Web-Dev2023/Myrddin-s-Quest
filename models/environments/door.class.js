@@ -11,6 +11,7 @@ class Door extends MovableObject {
    */
   constructor(x, y) {
     super();
+    this.currentImage = 0; 
     this.loadImage(LOADED_IMAGES.game_items.door[0]);
     this.addToImageCache('door', LOADED_IMAGES.game_items.door);
     console.log('[Door] ImageCache:', this.imageCache);
@@ -23,41 +24,11 @@ class Door extends MovableObject {
     this.animate();
   }
 
-  /**
-   * Loads images into the image cache.
-   * @param {string[]} images - The array of image sources.
-   */
-  /*   loadImages(images) {
-    images.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-      this.imageCache[src] = img;
-    });
-  } */
-
-  /**
-   * Animates the door by cycling through images.
-   */
-  /*   animate() {
-    let currentImageIndex = 0;
-    setInterval(() => {
-      // this.img = this.imageCache[LOADED_IMAGES.game_items.door[currentImageIndex]];
-      this.img = this.imageCache[`door_${currentImageIndex}`];
-      currentImageIndex =
-        (currentImageIndex + 1) % LOADED_IMAGES.game_items.door.length;
-    }, 1000 / 4);
-  } */
-
-  // /*     animate() {
-  //     setInterval(() => {
-  //       this.currentImageIndex =
-  //         (this.currentImageIndex + 1) % LOADED_IMAGES.game_items.door.length;
-  //       this.img = this.imageCache[`door_${this.currentImageIndex}`];
-  //     }, 1000 / 4);
-  //   } */
-
+ 
   animate() {
-    this.playAnimation(LOADED_IMAGES.game_items.door);
+    setInterval(() => {
+      this.playAnimation(LOADED_IMAGES.game_items.door);
+    }, 1000 / 4); 
   }
 
   /**
@@ -69,16 +40,16 @@ class Door extends MovableObject {
   } */
 
   draw(ctx) {
+    console.log('[DRAW DOOR] wird aufgerufen bei x =', this.x);
     super.draw(ctx);
+
     ctx.globalAlpha = 1;
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
-
     const offsetX = this.x + this.offset.left;
     const offsetY = this.y + this.offset.top;
     const offsetWidth = this.width - this.offset.left - this.offset.right;
     const offsetHeight = this.height - this.offset.top - this.offset.bottom;
-
     ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
   }
 
@@ -103,20 +74,7 @@ class Door extends MovableObject {
    * Allows a character to enter the door.
    * @param {Character} character - The character entering the door.
    */
-  enterDoor(character) {
-    character.enterDoor(this);
-  }
-
-  /**
-   * Animates the door opening.
-   */
-  animateOpening() {
-    let doorOpenFrame = 0;
-    const openInterval = setInterval(() => {
-      this.img = this.imageCache[`door_${doorOpenFrame}`];
-      doorOpenFrame++;
-      if (doorOpenFrame >= LOADED_IMAGES.game_items.door.length)
-        clearInterval(openInterval);
-    }, 100);
-  }
+  // enterDoor(character) {
+  //   character.enterDoor(this);
+  // }
 }

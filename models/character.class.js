@@ -22,7 +22,7 @@ class Character extends MovableObject {
    */
   constructor(world, poisonStatusBar) {
     super();
-    console.log("Geladene Angriffsbilder:", LOADED_IMAGES.character.attack);
+    console.log("Geladene Angriffsbilder:", LOADED_IMAGES.character.attack); 
     this.loadImage(LOADED_IMAGES.character.idle[0]);
     this.addToImageCache("idle", LOADED_IMAGES.character.idle);
     this.addToImageCache("walk", LOADED_IMAGES.character.walk);
@@ -42,9 +42,9 @@ class Character extends MovableObject {
   initCharacter() {
     this.applyGravity();
     this.energy = 100;
-    this.x = 4000;
-    // this.x = 90;
-    // this.y = 150;
+     this.x =4000;
+    // this.x = 90; 
+    // this.y = 150; 
     this.poisonStatusBar.setPercentage(0);
     this.healthBar = new StatusBar();
     this.world.characterStatusBar = this.healthBar;
@@ -112,21 +112,21 @@ class Character extends MovableObject {
    * Plays the attack animation.
    * @param {Function} callback - Optional callback function to execute after the animation ends.
    */
-  // character.class.js
-  playAttackAnimation(callback) {
-    let attackIndex = 0;
-    this.currentImage = 0; // Reset des Index
-    playAttackSound();
-    const attackInterval = setInterval(() => {
-      if (attackIndex < LOADED_IMAGES.character.attack.length) {
-        this.img = this.imageCache[LOADED_IMAGES.character.attack[attackIndex]];
-        attackIndex++;
-      } else {
-        clearInterval(attackInterval);
-        if (callback) callback();
-      }
-    }, 150);
-  }
+// character.class.js
+playAttackAnimation(callback) {
+  let attackIndex = 0;
+  this.currentImage = 0; // Reset des Index
+  playAttackSound();
+  const attackInterval = setInterval(() => {
+    if (attackIndex < LOADED_IMAGES.character.attack.length) {
+      this.img = this.imageCache[LOADED_IMAGES.character.attack[attackIndex]];
+      attackIndex++;
+    } else {
+      clearInterval(attackInterval);
+      if (callback) callback();
+    }
+  }, 150);
+}
 
   /**
    * Attacks enemies within range.
@@ -175,7 +175,7 @@ class Character extends MovableObject {
    * Makes the character take damage.
    */
   takeDamage(damage) {
-    super.takeDamage(damage);
+    super.takeDamage(damage); 
     this.world.characterStatusBar.setPercentage(this.energy);
     this.playAnimation(LOADED_IMAGES.character.hurt);
   }
@@ -183,12 +183,13 @@ class Character extends MovableObject {
    * Handles the character's death.
    */
   die() {
-    super.die();
+    super.die(); 
     this.playDeathAnimation(() => {
       this.isVisible = false;
       this.world.endGame.showYouLostScreen();
     });
   }
+
 
   /**
    * Plays the death animation.
@@ -204,34 +205,34 @@ class Character extends MovableObject {
         if (callback) callback();
       }
     }, 150);
-    this.animationIntervals.push(deathInterval);
+    this.animationIntervals.push(deathInterval); 
   }
 
   /**
    * Animates the character.
    */
-  // character.class.js
-  animate() {
-    this.stopAllAnimations();
-    let interval = setInterval(() => {
-      if (this.isDead()) {
-        return;
-      } else if (this.isHurt() && this.energy >= 1) {
-        this.currentImage = 0;
-        this.playAnimation(LOADED_IMAGES.character.hurt, 200);
-      } else if (this.isAttacking) {
-        this.currentImage = 0;
-        this.playAnimation(LOADED_IMAGES.character.attack);
-      } else if (this.isAboveGround()) {
-        this.playAnimation(LOADED_IMAGES.character.jump);
-      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playAnimation(LOADED_IMAGES.character.walk);
-      } else if (this.energy >= 1) {
-        this.playAnimation(LOADED_IMAGES.character.idle);
-      }
-    }, 100);
-    this.animationIntervals.push(interval);
-  }
+ // character.class.js
+animate() {
+  this.stopAllAnimations();
+  let interval = setInterval(() => {
+    if (this.isDead()) {
+      return;
+    } else if (this.isHurt() && this.energy >= 1) {
+      this.currentImage = 0;
+      this.playAnimation(LOADED_IMAGES.character.hurt, 200);
+    } else if (this.isAttacking) {
+      this.currentImage = 0; 
+      this.playAnimation(LOADED_IMAGES.character.attack);
+    } else if (this.isAboveGround()) {
+      this.playAnimation(LOADED_IMAGES.character.jump);
+    } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+      this.playAnimation(LOADED_IMAGES.character.walk);
+    } else if (this.energy >= 1) {
+      this.playAnimation(LOADED_IMAGES.character.idle);
+    }
+  }, 100);
+  this.animationIntervals.push(interval);
+}
 
   /**
    * Stops all animations.
@@ -292,11 +293,10 @@ class Character extends MovableObject {
         isAfterDoor = true;
         hasPassedDoor = true;
         this.world.snakes = this.world.level.snakes || [];
-        console.log("🐍 Snakes nach Türdurchgang:", this.world.snakes);
         setTimeout(() => {
           isAfterDoor = false;
         }, 2000);
-        playNewSound(); // Spiele den neuen Ton basierend auf dem Zustand
+        playNewSound();
       }, 200);
     }, 2000);
   }
