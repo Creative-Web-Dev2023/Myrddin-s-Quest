@@ -1,4 +1,5 @@
-#game-over-container {
+/* Gemeinsame Stile für beide Screens */
+.end-screen-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,7 +13,11 @@
   backdrop-filter: blur(5px);
 }
 
-.game-over-content {
+.end-screen-container.show {
+  display: flex !important;
+}
+
+.end-screen-content {
   position: relative;
   text-align: center;
   padding: 2vh 4vw;
@@ -25,11 +30,10 @@
   width: 100%;
 }
 
-.game-over-image {
+.end-screen-image {
   width: min(600px, 90vw);
   height: auto;
   aspect-ratio: 2/1;
-  background-image: url("../../assets/img/game_ui/login&pass/game_over.png");
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -37,14 +41,14 @@
   filter: drop-shadow(0 0 10px rgba(224, 166, 53, 0.5));
 }
 
-.game-over-buttons {
+.end-screen-buttons {
   display: flex;
   justify-content: center;
   gap: clamp(1rem, 3vw, 2rem);
   flex-wrap: wrap;
 }
 
-.game-over-btn {
+.end-screen-btn {
   background: none;
   border: 2px solid #e0a635;
   color: #e0a635;
@@ -58,72 +62,52 @@
   min-width: 160px;
 }
 
-.game-over-btn span {
-  position: relative;
-  z-index: 1;
+/* Game Over spezifisches Bild */
+#game-over-container .end-screen-image {
+  background-image: url("../../assets/img/game_ui/login&pass/game_over.png");
 }
 
-.game-over-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(224, 166, 53, 0.3),
-    transparent
-  );
-  transition: 0.5s;
+/* Win Screen spezifisches Bild */
+#win-screen .end-screen-image {
+  background-image: url("../../assets/img/game_ui/victory/knight_win.png");
 }
 
-.game-over-btn:hover {
-  background: rgba(224, 166, 53, 0.1);
-  box-shadow: 0 0 15px #e0a635;
-  transform: scale(1.05);
-}
-
-.game-over-btn:hover::before {
-  left: 100%;
-}
-
+/* Media Queries für beide */
 @media screen and (max-width: 768px) {
-  .game-over-content {
+  .end-screen-content {
     padding: 1.5rem;
     margin: 0 3%;
   }
   
-  .game-over-image {
+  .end-screen-image {
     margin-bottom: 1.5rem;
   }
 }
 
 @media screen and (max-width: 480px) {
-  .game-over-content {
+  .end-screen-content {
     padding: 1rem;
     border-width: 3px;
   }
   
-  .game-over-btn {
+  .end-screen-btn {
     min-width: 140px;
     font-size: 1.1rem;
     padding: 0.5rem 1.2rem;
   }
   
-  .game-over-image {
-    aspect-ratio: 3/2; 
+  .end-screen-image {
+    aspect-ratio: 3/2;
   }
 }
 
 @media screen and (max-height: 600px) {
-  .game-over-image {
+  .end-screen-image {
     height: 40vh;
     margin-bottom: 1rem;
   }
   
-  .game-over-btn {
+  .end-screen-btn {
     padding: 0.4rem 1rem;
     font-size: 1rem;
   }

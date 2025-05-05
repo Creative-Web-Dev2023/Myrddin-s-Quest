@@ -5,159 +5,15 @@ let world;
 let IntervallIDs = [];
 let loopId = null;
 
-/* let canvas;
-const gameState = {
-  save() {
-    localStorage.setItem(
-      'gameState',
-      JSON.stringify({
-        characterX: world.character.x,
-        characterY: world.character.y,
-        characterEnergy: world.character.energy,
-        enemies: world.enemies.map((e) => ({
-          type: e.constructor.name,
-          x: e.x,
-          y: e.y,
-          energy: e.energy,
-          dead: e.dead,
-        })),
-        levelProgress: world.character.x,
-      })
-    );
-  },
 
-  restore() {
-    const saved = JSON.parse(localStorage.getItem('gameState'));
-    if (!saved) return;
-    this.restoreCharacter(saved);
-    this.restoreEnemies(saved);
-    world.camera_x = saved.levelProgress;
-  },
-
-  restoreCharacter(saved) {
-    Object.assign(world.character, {
-      x: saved.characterX,
-      y: saved.characterY,
-      energy: 100,
-      deadAnimationPlayed: false,
-      isVisible: true,
-      invincible: true,
-    });
-    setTimeout(() => (world.character.invincible = false), 3000);
-  },
-
-  restoreEnemies(saved) {
-    world.enemies =
-      saved.enemies?.map((data) => {
-        let enemy = new (window[data.type] || Enemy)();
-        Object.assign(enemy, data, { isVisible: !data.dead, canAttack: false });
-        setTimeout(() => (enemy.canAttack = true), 3000);
-        return enemy;
-      }) || [];
-  },
-};
-
-function startGame() {
-  document.querySelector('.overlay').style.display = 'none';
-  document.getElementById('audioSwitcher').classList.remove('hidden');
-  document.getElementById('bigScreen').classList.remove('hidden');
-  document.getElementById('key-info').classList.add('show');
-  document.getElementById('audioSwitcher').onclick = musicSwitcher;
-  initializeMusicSettings();
-  init();
-}
-
-function init() {
-  canvas = document.getElementById('canvas');
-  ctx = canvas.getContext('2d');
-  world = new World(canvas, keyboard);
-  keyboard.setupControls(world);
-  keyboard.setupTouchControls(world);
-  gameLoop();
-  document.getElementById('tryAgain').addEventListener('click', tryAgain);
-  document.getElementById('quitButton').addEventListener('click', quitGame);
-}
-
-function gameLoop() {
-  if (world.loopID) cancelAnimationFrame(world.loopID);
-  world.update();
-  world.draw();
-  world.loopID = requestAnimationFrame(gameLoop);
-}
-
-function tryAgain() {
-  clearAllIntervals();
-  setTimeout(() => world.endGame.resumeGame(), 100);
-}
-
-function clearAllIntervals() {
-  IntervallIDs.forEach(clearInterval);
-  IntervallIDs = [];
-}
-
-function quitGame() {
-  location.reload();
-}
-
-function toggleFullscreen() {
-  const container = document.getElementById('canvas_container');
+function handleFullscreenToggle() {
+  const container = document.getElementById('canvas-container');
   if (!document.fullscreenElement) {
     container.requestFullscreen().catch(() => {});
   } else {
     document.exitFullscreen();
   }
 }
-
-function handleImpressum() {
-  let impressum = document.getElementById('impressum');
-  impressum.classList.toggle('hidden');
-  impressum.classList.toggle('show');
-}
-
-function handleDescription() {
-  const description = document.getElementById('description');
-  const impressumContainer = document.getElementById('impressum-container');
-  description.classList.toggle('hidden');
-  description.classList.toggle('show');
-  impressumContainer.style.display = description.classList.contains('show')
-    ? 'none'
-    : 'block';
-  if (description.classList.contains('show')) {
-    document.body.style.overflow = 'auto';
-  } else {
-    document.body.style.overflow = 'hidden';
-  }
-}
-
-function goBack() {
-  let description = document.getElementById('description');
-  let impressum = document.getElementById('impressum');
-  let impressumContainer = document.getElementById('impressum-container');
-  description.classList.add('hidden');
-  description.classList.remove('show');
-  impressum.classList.add('hidden');
-  impressum.classList.remove('show');
-  impressumContainer.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-}
-
-function checkOrientation() {
-  const rotateMessage = document.getElementById('rotate');
-  if (!rotateMessage) {
-    return;
-  }
-  if (window.matchMedia('(orientation: landscape)').matches) {
-    rotateMessage.style.display = 'none';
-  } else {
-    rotateMessage.style.display = 'flex';
-  }
-}
-window.addEventListener('orientationchange', checkOrientation);
-
-document.addEventListener('DOMContentLoaded', () => {
-  init();
-  checkOrientation();
-}); */
 
 const gameState = {
   save() {
@@ -361,6 +217,7 @@ function startGame() {
   const startScreen = document.getElementById('startScreen');
   const gameScreen = document.querySelector('.game-screen');
   gameScreen.insertAdjacentHTML('beforeend', generateGameOverHTML());
+  gameScreen.insertAdjacentHTML('beforeend', generateWinScreenHTML());
   document.getElementById('tryAgainButton').addEventListener('click', () => {
     world.endGame.restartGame();
   });

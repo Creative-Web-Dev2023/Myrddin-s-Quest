@@ -72,12 +72,7 @@ class DrawableObject {
    * Plays an animation by cycling through a set of images.
    * @param {string[]} images - An array of image paths for the animation.
    */
-  /*   playAnimation(images) {
-    if (!images?.length) return;
-    this.img = this.imageCache[images[this.currentImage % images.length]];
-    this.currentImage++;
-  } */
-
+  
   playAnimation(images) {
     if (!images || !images.length) return;
     this.img = images[this.currentImage % images.length];
@@ -90,15 +85,9 @@ class DrawableObject {
    */
 
   draw(ctx) {
-    let img = this.img || this.imageCache?.[this.currentImageKey];
-
+    let img = this.img || this.imageCache?.[this.currentImage];
     if (img instanceof HTMLImageElement) {
       ctx.drawImage(img, this.x, this.y, this.width, this.height);
-    } else {
-      console.warn(
-        `[draw()] Kein Bild für ${this.constructor.name}:`,
-        this.currentImageKey
-      );
     }
   }
 

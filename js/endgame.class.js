@@ -28,13 +28,15 @@ class EndGame {
    * Startet das Spiel neu und setzt den Charakter, die Feinde und Objekte zurück.
    */
   restartGame() {
+    isDead = false; 
+    gameRestarted = true; 
     if (!this.world.character) {
       return;
     }
     this.world.resetEnemies();
     this.world.resetObjects();
     this.world.character.reset();
-    this.world.resetCamera(); 
+    this.world.resetCamera();
     this.hideGameOverScreen();
     this.world.character.applyGravity();
     cancelAnimationFrame(this.world.loopID);
@@ -65,13 +67,40 @@ class EndGame {
   }
 
   /**
-   * Displays the "You Win" screen.
+   * Zeigt den "You Win"-Bildschirm an.
    */
   showYouWinScreen() {
-    document.getElementById("win-screen").style.display = "block";
+    const winScreen = document.getElementById("win-screen");
+    this.hideGameOverScreen();
+    if (!winScreen) {
+      console.error("Win screen element not found.");
+      return;
+    }
+    winScreen.style.display = "block";
+    winScreen.classList.remove("hidden");
+    winScreen.classList.add("show");
+
+    const restartButton = document.getElementById("winTryAgainButton");
+    restartButton.onclick = () => {
+      this.hideWinScreen();
+      this.restartGame();
+    };
+
     this.clearAllIntervals();
     stopAllSounds();
-    cancelAnimationFrame(this.world.loopID); 
+    cancelAnimationFrame(this.world.loopID);
+  }
+
+  /**
+   * Versteckt den "You Win"-Bildschirm.
+   */
+  hideWinScreen() {
+    const winScreen = document.getElementById("win-screen");
+    if (winScreen) {
+      winScreen.style.display = "none";
+      winScreen.classList.add("hidden");
+      winScreen.classList.remove("show");
+    }
   }
 
   /**

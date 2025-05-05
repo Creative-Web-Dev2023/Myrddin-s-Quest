@@ -249,7 +249,7 @@ function generateTrapsLvl() {
     new Trap(8600, 330),
     new Trap(9900, 330),
     new Trap(11000, 330),
-    new Trap(11700, 330),
+    new Trap(11900, 330),
   ];
 }
 /**
@@ -257,5 +257,5 @@ function generateTrapsLvl() {
  * @returns {Key} The key object.
  */
 function generateCrystalLvl() {
-  return new Crystal(LOADED_IMAGES.game_items.crystal, 12000, 400, this);
+  return new Crystal(LOADED_IMAGES.game_items.crystal, 13550, 400, this);
 }

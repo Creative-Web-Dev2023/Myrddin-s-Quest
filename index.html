@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="./css/style.css" />
   <link rel="stylesheet" href="./css/media_queries.css" />
   <link rel="stylesheet" href="./css/game_over.css" />
-  <link rel="stylesheet" href="./css/win_screen.css" />
   <link rel="icon" href="./assets/img/game_items/magic.png" type="image/x-icon" />
   <script src="./js/image-data.js"></script>
   <script src="./js/templates.js"></script>
@@ -56,10 +55,11 @@
         <div id="gameButtons" class="game-buttons">
           <img onclick="handleFullscreenToggle()" id="fullscreenImg" src="./assets/img/app_icons/arrow_up_orange.png"
             height="50" />
-          <img onclick="toggleMuteImg()" id="mute" src="./assets/img/app_icons/sound_off_orange.png" height="50" />
+            <img onclick="musicSwitcher()" id="audioSwitcher" src="./assets/img/app_icons/sound_off_orange.png" 
+            height="50" />
         </div>
       </div>
-      <div id="btnsContainer" class="btns-container d-none">
+      <div id="btnsContainer" class="btns-container ">
         <div class="btns-left-side">
           <img id="btnLeft" src="./assets/img/app_icons/arrow-left.png" width="60" />
           <img id="btnJump" src="./assets/img/app_icons/arrow-up.png" width="60" />
@@ -67,17 +67,11 @@
         <div class="btns-right-side">
           <img id="btnPoison" src="./assets/img/app_icons/poison-bottle.png" width="60" />
           <img id="btnRight" src="./assets/img/app_icons/arrow-right.png" width="60" />
+          <img id="btnAttack" src="./assets/img/app_icons/attack.png" width="60" />
         </div>
       </div>
       <div id="startScreen" class="start-screen">
         <div id="start_container" class="start-container"></div>
-      </div>
-
-      <div id="win-screen" class="hidden">
-        <div class="win-content">
-          <h2>You Win!</h2>
-          <button onclick="endGame.restartGame()">Play Again</button>
-        </div>
       </div>
     </div>
     <div class="rotate-screen">

@@ -12,11 +12,11 @@ class Snake extends Enemy {
   constructor(startX = 400, moveRange = 100, id) {
     super(id);
     this.loadImage(LOADED_IMAGES.snake.walk[0]);
-    this.addToImageCache('walk', LOADED_IMAGES.snake.walk);
-    this.addToImageCache('attack', LOADED_IMAGES.snake.attack);
-    this.addToImageCache('hurt', LOADED_IMAGES.snake.hurt);
-    this.addToImageCache('dead', LOADED_IMAGES.snake.dead);
-    this.img = this.imageCache['walk_0'];
+    this.addToImageCache("walk", LOADED_IMAGES.snake.walk);
+    this.addToImageCache("attack", LOADED_IMAGES.snake.attack);
+    this.addToImageCache("hurt", LOADED_IMAGES.snake.hurt);
+    this.addToImageCache("dead", LOADED_IMAGES.snake.dead);
+    this.img = this.imageCache["walk_0"];
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
@@ -31,7 +31,7 @@ class Snake extends Enemy {
     this.otherDirection = true;
     this.initialX = startX;
     this.initialY = this.y;
-    this.offset = { top: 60, bottom: 20, left: 30, right: 30};
+    this.offset = { top: 60, bottom: 20, left: 30, right: 30 };
     this.intervalIDs = [];
     this.startMovement();
     this.startAnimation();
@@ -106,7 +106,6 @@ class Snake extends Enemy {
    * @param {number} damage - The amount of damage to take.
    */
   takeDamage(damage) {
-    console.log(`Snake took ${damage} damage! Energy: ${this.energy}`);
     if (this.dead) return;
     this.energy -= damage;
     this.energy = Math.max(0, this.energy);
@@ -131,7 +130,6 @@ class Snake extends Enemy {
     }, 1500);
   }
 
-
   /**
    * Loads images into the cache.
    * @param {Array} imageArray - The array of image paths.
@@ -148,7 +146,7 @@ class Snake extends Enemy {
    * Draws the snake on the canvas.
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
-  /*   draw(ctx) {
+  draw(ctx) {
     if (this.img && this.img.complete) {
       if (this.otherDirection) {
         ctx.save();
@@ -160,7 +158,7 @@ class Snake extends Enemy {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
       }
     }
-  } */
+  }
 
   /**
    * Animates the snake.

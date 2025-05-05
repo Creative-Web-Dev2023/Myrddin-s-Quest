@@ -197,3 +197,19 @@
     transform: scale(0.9);
   }
 }
+/* Vollbild-Anpassungen */
+#canvas-container:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+}
+
+#canvas-container:fullscreen #canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+}

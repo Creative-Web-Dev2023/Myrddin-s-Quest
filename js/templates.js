@@ -161,12 +161,27 @@ function generateImprintHtml() {
 
 function generateGameOverHTML() {
   return /*html*/ `
-    <div id="game-over-container" class="hidden">
-      <div class="game-over-content">
-        <div class="game-over-image"></div>
-        <div class="game-over-buttons">
-          <button class="game-over-btn" id="tryAgainButton" onclick="endGame.restartGame()">
+    <div id="game-over-container" class="end-screen-container hidden">
+      <div class="end-screen-content">
+        <div class="end-screen-image"></div>
+        <div class="end-screen-buttons">
+          <button class="end-screen-btn" id="tryAgainButton">
             <span>Try Again</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function generateWinScreenHTML() {
+  return /*html*/ `
+    <div id="win-screen" class="end-screen-container hidden">
+      <div class="end-screen-content">
+        <div class="end-screen-image"></div>
+        <div class="end-screen-buttons">
+          <button class="end-screen-btn" id="winTryAgainButton">
+            <span>Play Again</span>
           </button>
         </div>
       </div>

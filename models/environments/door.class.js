@@ -48,13 +48,13 @@ class Door extends MovableObject {
     }, 1000 / 4);
   } */
 
-  /*     animate() {
-      setInterval(() => {
-        this.currentImageIndex =
-          (this.currentImageIndex + 1) % LOADED_IMAGES.game_items.door.length;
-        this.img = this.imageCache[`door_${this.currentImageIndex}`];
-      }, 1000 / 4);
-    } */
+  // /*     animate() {
+  //     setInterval(() => {
+  //       this.currentImageIndex =
+  //         (this.currentImageIndex + 1) % LOADED_IMAGES.game_items.door.length;
+  //       this.img = this.imageCache[`door_${this.currentImageIndex}`];
+  //     }, 1000 / 4);
+  //   } */
 
   animate() {
     this.playAnimation(LOADED_IMAGES.game_items.door);
@@ -69,9 +69,7 @@ class Door extends MovableObject {
   } */
 
   draw(ctx) {
-    console.log('[DRAW DOOR] wird aufgerufen bei x =', this.x);
     super.draw(ctx);
-
     ctx.globalAlpha = 1;
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;

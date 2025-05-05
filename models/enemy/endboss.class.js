@@ -11,10 +11,10 @@ class Endboss extends Enemy {
     super(id);
     this.loadImage(LOADED_IMAGES.troll.walk[0]);
 
-    this.addToImageCache('walk', LOADED_IMAGES.troll.walk);
-    this.addToImageCache('attack', LOADED_IMAGES.troll.attack);
-    this.addToImageCache('hurt', LOADED_IMAGES.troll.hurt);
-    this.addToImageCache('dead', LOADED_IMAGES.troll.dead);
+    this.addToImageCache("walk", LOADED_IMAGES.troll.walk);
+    this.addToImageCache("attack", LOADED_IMAGES.troll.attack);
+    this.addToImageCache("hurt", LOADED_IMAGES.troll.hurt);
+    this.addToImageCache("dead", LOADED_IMAGES.troll.dead);
 
     this.deadAnimationPlayed = false;
     this.height = 450;
@@ -24,7 +24,7 @@ class Endboss extends Enemy {
     this.attackRange = 200;
     this.attackDamage = 20;
     this.speed = 0.5;
-    this.deadSound = new Audio('./assets/audio/troll_dead.mp3');
+    this.deadSound = new Audio("./assets/audio/troll_dead.mp3");
     this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
     this.statusBarEndboss = new EndbossStatusbar();
     this.otherDirection = true;
@@ -95,8 +95,10 @@ class Endboss extends Enemy {
       this.deadSound.play();
     }
     setTimeout(() => {
-   
       this.removeEnemy();
+      if (this.world && this.world.crystal) {
+        this.world.crystal.activate(); 
+      }
     }, LOADED_IMAGES.troll.dead.length * 200);
   }
 

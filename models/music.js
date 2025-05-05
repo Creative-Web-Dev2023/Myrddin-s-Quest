@@ -3,11 +3,15 @@ let backgroundMusic = new Audio(
 );
 let walkingSound = new Audio("./assets/audio/walking.mp3");
 let attackSound = new Audio("./assets/audio/wizard_attack.mp3");
-let throwPoisonBottleSound = new Audio("./assets/audio/throw-poison-bottle.mp3");
+let throwPoisonBottleSound = new Audio(
+  "./assets/audio/throw-poison-bottle.mp3"
+);
 let collectPoisonBottleSound = new Audio("./assets/audio/collect_bottle.mp3");
 let jumpSound = new Audio("./assets/audio/jump.mp3");
 let musicIsOn = localStorage.getItem("musicIsOn") === "true";
-let level1Sound = new Audio("./assets/audio/woodsounds.mp3?v=" + new Date().getTime());
+let level1Sound = new Audio(
+  "./assets/audio/woodsounds.mp3?v=" + new Date().getTime()
+);
 let level2Sound = new Audio("./assets/audio/level2_sound.mp3");
 let snakeAttackSound = new Audio("./assets/audio/snake.mp3");
 let enemyHitSound = new Audio("./assets/audio/knight-hurt.mp3");
@@ -24,7 +28,7 @@ let allSounds = [
   snakeAttackSound,
   enemyHitSound,
   collectPoisonBottleSound,
-  snakeDeadSound
+  snakeDeadSound,
 ];
 
 /**
@@ -33,7 +37,7 @@ let allSounds = [
 function musicSwitcher() {
   const audioIcon = document.getElementById("audioSwitcher");
   musicIsOn = !musicIsOn;
-  localStorage.setItem("musicIsOn", musicIsOn); 
+  localStorage.setItem("musicIsOn", musicIsOn);
   if (musicIsOn) {
     if (isAfterDoor) {
       playLevel2Sound();
@@ -129,6 +133,7 @@ function stopWalkingSound() {
  */
 function playLevel1Sound() {
   if (musicIsOn) {
+    stopAllSounds(); // Stoppe alle anderen Sounds
     level1Sound.loop = true;
     level1Sound.play().catch((error) => {
       console.error("Failed to play level 1 sound:", error);
@@ -139,8 +144,14 @@ function playLevel1Sound() {
 /**
  * Plays the level 2 background sound.
  */
-async function playLevel2Sound() {
-  await playSoundAsync(level2Sound);
+function playLevel2Sound() {
+  if (musicIsOn) {
+    stopAllSounds(); // Stoppe alle anderen Sounds
+    level2Sound.loop = true;
+    level2Sound.play().catch((error) => {
+      console.error("Failed to play level 2 sound:", error);
+    });
+  }
 }
 
 /**
@@ -182,9 +193,11 @@ function playCollectPoisonBottleSound() {
  */
 function playNewSound() {
   if (musicIsOn) {
-    stopAllSounds();
-    level2Sound.play();
-    level2Sound.loop = true;
+    if (isAfterDoor) {
+      playLevel2Sound(); // Spiele den Ton nach dem Tor
+    } else {
+      playLevel1Sound(); // Spiele den Ton vor dem Tor
+    }
   }
 }
 /**
@@ -215,12 +228,14 @@ function playSnakeAttackSound() {
  * Plays the snake dead sound.
  */
 function playSnakeDyingSound() {
-  if (musicIsOn) { 
+  if (musicIsOn) {
     snakeDeadSound.pause();
     snakeDeadSound.currentTime = 0;
-    snakeDeadSound.play().catch((e) =>
-      console.error("Fehler beim Abspielen von snakeDeadSound", e)
-    );
+    snakeDeadSound
+      .play()
+      .catch((e) =>
+        console.error("Fehler beim Abspielen von snakeDeadSound", e)
+      );
   }
 }
 
