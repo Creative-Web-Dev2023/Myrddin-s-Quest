@@ -30,23 +30,11 @@ class DrawableObject {
       this.img = imageObject;
     } else {
       console.error(
-        'loadImage expects an HTMLImageElement but got:',
+        "loadImage expects an HTMLImageElement but got:",
         imageObject
       );
     }
   }
-
-  /*   loadImage(path) {
-    this.img.src = path;
-  } */
-
-  /*   loadImages(images) {
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  } */
 
   /**
    * Adds an array of images to the image cache with a specific prefix.
@@ -72,7 +60,7 @@ class DrawableObject {
    * Plays an animation by cycling through a set of images.
    * @param {string[]} images - An array of image paths for the animation.
    */
-  
+
   playAnimation(images) {
     if (!images || !images.length) return;
     this.img = images[this.currentImage % images.length];
@@ -85,9 +73,13 @@ class DrawableObject {
    */
 
   draw(ctx) {
-    let img = this.img || this.imageCache?.[this.currentImage];
-    if (img instanceof HTMLImageElement) {
-      ctx.drawImage(img, this.x, this.y, this.width, this.height);
+    if (this.img instanceof HTMLImageElement && this.img.complete) {
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    } else {
+      console.warn(
+        `[DrawableObject.draw()] Bild nicht geladen oder ungültig für ${this.constructor.name}:`,
+        this.img
+      );
     }
   }
 

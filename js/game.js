@@ -229,7 +229,7 @@ function startGame() {
   world = new World(canvas, keyboard, level1);
   window.endGame = world.endGame;
   keyboard.setupControls(world);
-  // keyboard.setupTouchControls(world);
+  keyboard.setupTouchControls(world);
   gameLoop();
 }
 

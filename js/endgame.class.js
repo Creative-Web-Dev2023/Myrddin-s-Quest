@@ -28,14 +28,14 @@ class EndGame {
    * Startet das Spiel neu und setzt den Charakter, die Feinde und Objekte zurück.
    */
   restartGame() {
-    isDead = false; 
-    gameRestarted = true; 
+    isDead = false;
+    gameRestarted = true;
     if (!this.world.character) {
       return;
     }
     this.world.resetEnemies();
     this.world.resetObjects();
-    this.world.character.reset();
+    this.world.character.fullReset(); // Ändern von reset() zu fullReset()
     this.world.resetCamera();
     this.hideGameOverScreen();
     this.world.character.applyGravity();

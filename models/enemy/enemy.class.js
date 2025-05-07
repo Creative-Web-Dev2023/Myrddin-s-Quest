@@ -5,6 +5,15 @@
 class Enemy extends MovableObject {
   static nextId = 1;
 
+  loadEnemyImages(enemyType) {
+    const images = LOADED_IMAGES[enemyType];
+    this.loadImage(images.walk[0]);
+    this.addToImageCache('walk', images.walk);
+    this.addToImageCache('idle', images.idle);
+    this.addToImageCache('attack', images.attack);
+    this.addToImageCache('hurt', images.hurt);
+    this.addToImageCache('dead', images.dead);
+  }
   /**
    * Creates an instance of Enemy.
    * @param {number} [id] - The ID of the enemy.
@@ -39,11 +48,13 @@ class Enemy extends MovableObject {
   /**
    * Patrols the area by moving left or right.
    */
-  patrol() {
-    if (this.dead) return;
-    this.x += this.otherDirection ? -this.speed : this.speed;
+  startPatrol(leftLimit, rightLimit) {
+    this.setCustomInterval(() => {
+      if (this.x <= leftLimit) this.otherDirection = false;
+      if (this.x >= rightLimit) this.otherDirection = true;
+      this.x += this.otherDirection ? -this.speed : this.speed;
+    }, 50);
   }
-
   /**
    * Updates the enemy's state.
    * @param {Character} character - The character to interact with.
@@ -116,22 +127,23 @@ class Enemy extends MovableObject {
    * @returns {boolean} True if the enemy is hurt, false otherwise.
    */
   takeDamage(damage) {
-    if (this.energy <= 0 || this.invulnerable) return;
-    try {
-      playEnemyHitSound();
-    } catch (e) {
-      console.error("Sound error:", e);
-    }
-    this.energy -= damage;
-    this.energy = Math.max(0, this.energy); 
-    if (this.statusBar) {
-      this.statusBar.setPercentage(this.energy); 
-    }
-    if (this.energy > 0) {
-      this.playAnimation(this.IMAGES_HURT);
-    } else {
+    if (this.dead) return;
+    this.energy = Math.max(0, this.energy - damage);
+    playEnemyHitSound();
+    if (this.energy <= 0) {
       this.die();
-    }
+    } else {
+      this.playAnimation(this.IMAGES_HURT);
+    } 
+    // Für Subklassen erweiterbar
+    this.onTakeDamage();
+  }
+
+  die() {
+    if (this.dead) return;
+    this.dead = true;
+    this.playAnimation(this.IMAGES_DEAD);
+    setTimeout(() => this.removeEnemy(), 2000);
   }
 
   /**
@@ -155,7 +167,18 @@ class Enemy extends MovableObject {
     const id = setInterval(fn, interval);
     this.intervalIDs.push(id);
   }
-
+ 
+  getAttackBox() {
+    const box = this.getCollisionBox();
+    return {
+      x: this.otherDirection 
+        ? box.x - this.attackRange 
+        : box.x + box.width,
+      y: box.y,
+      width: this.attackRange,
+      height: box.height
+    };
+  }
   /**
    * Stops all set intervals.
    */
@@ -178,16 +201,16 @@ class Enemy extends MovableObject {
   /**
    * Starts the animation of the enemy.
    */
-  startAnimation() {
+  startStandardAnimation() {
     this.setCustomInterval(() => {
-      if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
+      if (this.dead && !this.deadAnimationPlayed) {
+        this.playDeathAnimation();
       } else if (this.isAttacking) {
-        this.playAnimation(this.IMAGES_ATTACKING);
+        this.playAnimation(this.IMAGES_ATTACK, this.attackAnimationSpeed || 100);
       } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
+        this.playAnimation(this.IMAGES_HURT, this.hurtAnimationSpeed || 100);
       } else {
-        this.playAnimation(this.IMAGES_WALKING);
+        this.playAnimation(this.IMAGES_WALK, this.walkAnimationSpeed || 100);
       }
     }, 100);
   }

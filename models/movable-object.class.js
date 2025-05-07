@@ -131,7 +131,7 @@ class MovableObject extends DrawableObject {
     this.energy -= damage;
     this.lastHit = Date.now();
     this.invulnerable = true;
-    
+
     if (this.energy <= 0) {
       this.die();
     } else {
@@ -147,54 +147,62 @@ class MovableObject extends DrawableObject {
     this.deadAnimationPlayed = true;
     this.playDeathAnimation();
   }
+  
 
-  /**
-   * Animates the object.
-   */
-  animate() {
+  playGenericAnimation(images, speed = 100, loop = true, animationName = '', onComplete = null) {
+    if (this.currentAnimationName === animationName) return;
     this.stopAllAnimations();
-    this.animationInterval = setInterval(() => {
-      if (this.isDead()) {
-        this.playDeathAnimation();
-      } else if (this.isHurt()) {
-        this.playAnimation(LOADED_IMAGES.hurt);
-      } else if (this.isAboveGround()) {
-        this.playAnimation(LOADED_IMAGES.jump);
+    this.currentAnimationName = animationName;
+    let index = 0;
+    const animationInterval = setInterval(() => {
+      if (index < images.length) {
+        this.img = images[index];
+        index++;
+      } else if (loop) {
+        index = 0;
       } else {
-        this.playAnimation(LOADED_IMAGES.idle);
+        clearInterval(animationInterval);
+        if (onComplete) onComplete();
       }
-    }, 100);
+    }, speed);
+    this.animationIntervals.push(animationInterval);
   }
-
-
+  
   /**
    * Stops all animations.
    */
-  stopAllAnimations() {
-    this.animationIntervals.forEach(clearInterval);
-    this.animationIntervals = [];
-    if (this.gravityInterval) clearInterval(this.gravityInterval);
+ stopAllAnimations() {
+  this.animationIntervals.forEach(clearInterval);
+  this.animationIntervals = [];
+  this.currentAnimationName = null; 
+}
+
+  registerInterval(interval) {
+    if (!this.allIntervals) this.allIntervals = [];
+    this.allIntervals.push(interval);
   }
 
+  clearAllIntervals() {
+    this.allIntervals.forEach(clearInterval);
+  }
   /**
-   * Plays the death animation.
+   * Resets the game to its initial state.
    */
-  playDeathAnimation() {
-    this.stopAllAnimations();
-    let deathImages = LOADED_IMAGES.character.dead;
-    if (!deathImages || deathImages.length === 0) {
-      return;
-    }
-    let deathIndex = 0;
-    let deathInterval = setInterval(() => {
-      if (deathIndex < deathImages.length) {
-        this.img = this.imageCache[deathImages[deathIndex]];
-        deathIndex++;
-      } else {
-        clearInterval(deathInterval);
-        this.isVisible = false;
-      }
-    }, 150);
-    this.animationIntervals.push(deathInterval);
+  resetGame() {
+    location.reload(); 
+  }
+
+  drawWithCollisionBox(ctx) {
+    super.draw(ctx);
+    const box = this.getCollisionBox();
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(box.x, box.y, box.width, box.height);
+  }
+
+  setCustomInterval(fn, interval) {
+    const id = setInterval(fn, interval);
+    this.animationIntervals.push(id);
+    return id;
   }
 }

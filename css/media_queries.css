@@ -11,12 +11,20 @@
     .start-screen,
     .end-screen-container,
     .game-buttons,
-    .btns-container,
+    /* .btns-container, */
     canvas {
       display: none !important;
     }
   }
-  
+  @media (max-width: 768px) {
+    .btns-container {
+      display: flex !important;
+    }
+    
+    .game-screen {
+      padding-bottom: 120px;
+    }
+  }
   @media (min-width: 64em) {
     .mobile-buttons-active {
       display: none;

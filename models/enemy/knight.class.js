@@ -10,14 +10,9 @@ class Knight extends Enemy {
    * @param {number} [moveRange=100] - The range within which the knight can move.
    * @param {number} [id] - The ID of the knight.
    */
-  constructor(delay, startX, moveRange, id) {
-    super(id);
-    this.loadImage(LOADED_IMAGES.knight.walk[0]);
-    this.addToImageCache('walk', LOADED_IMAGES.knight.walk);
-    this.addToImageCache('attack', LOADED_IMAGES.knight.attack);
-    this.addToImageCache('hurt', LOADED_IMAGES.knight.hurt);
-    this.addToImageCache('dead', LOADED_IMAGES.knight.dead);
-
+  constructor(delay, startX, moveRange) {
+    super(); 
+    this.loadEnemyImages("knight"); 
     this.x = startX;
     this.startX = startX;
     this.moveRange = moveRange;
@@ -47,31 +42,9 @@ class Knight extends Enemy {
    * Animates the knight.
    */
   animate() {
-    this.setCustomInterval(() => {
-      if (this.dead) return;
-      if (this.isAttacking) {
-        this.playAnimation(LOADED_IMAGES.knight.attack);
-      } else {
-        this.playAnimation(LOADED_IMAGES.knight.walk);
-      }
-    }, 100);
+    this.startStandardAnimation();
   }
-
-  /**
-   * Gets the attack box of the knight.
-   * @param {Object} knightBox - The collision box of the knight.
-   * @returns {Object} The attack box of the knight.
-   */
-  getAttackBox(knightBox) {
-    return {
-      x: this.otherDirection
-        ? knightBox.x - this.attackRange
-        : knightBox.x + knightBox.width,
-      y: knightBox.y,
-      width: this.attackRange,
-      height: knightBox.height,
-    };
-  }
+ 
 
   /**
    * Checks if the character is in attack range.
@@ -154,19 +127,8 @@ class Knight extends Enemy {
    * Makes the knight take damage.
    * @param {number} amount - The amount of damage to take.
    */
-  takeDamage(amount) {
-    if (this.dead) return;
-    const now = Date.now();
-    playEnemyHitSound();
-    if (now - this.lastHit > 1000) {
-      this.energy = Math.max(0, this.energy - amount);
-      this.lastHit = now;
-      if (this.energy <= 0) {
-        this.die();
-      } else {
-        this.playHurtAnimation();
-      }
-    }
+  onTakeDamage() {
+    this.statusBar.setPercentage(this.energy); 
   }
 
   /**
@@ -218,7 +180,7 @@ class Knight extends Enemy {
     this.deathAnimationPlayed = true;
     this.clearAllIntervals();
     this.currentImage = 0;
-    this.img = this.imageCache['dead_0'];
+    this.img = this.imageCache["dead_0"];
     this.animateDeath();
   }
   /**

@@ -92,7 +92,7 @@ class World {
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
     const cloudsArray = generateCloudsLvl();
-    this.clouds = new Clouds(cloudsArray); 
+    this.clouds = new Clouds(cloudsArray);
     this.door = this.level.door || [];
     this.key = this.level.key;
     this.crystal = this.level.crystal;
@@ -111,7 +111,7 @@ class World {
       }
     });
     if (this.crystal) {
-      this.crystal.world = this; 
+      this.crystal.world = this;
     }
     if (this.door) {
       this.door.world = this;
@@ -156,9 +156,15 @@ class World {
       this.character.playAnimation(this.character.IMAGES_IDLE);
     }
     this.updatePoison();
-    if (this.character.isMoving() && musicIsOn) {
+
+    // Bewegungslogik direkt prüfen
+    if (
+      (this.character.movement?.right || this.character.movement?.left) &&
+      musicIsOn
+    ) {
       playWalkingSound();
     }
+
     this.updateKey();
     this.updateEnemies();
     if (this.level.endboss) {
@@ -182,7 +188,7 @@ class World {
       if (enemy instanceof Snake) {
         enemy.update(this.character);
         if (this.collisionHandler.checkCollision(this.character, enemy)) {
-          enemy.takeDamage(0, this.character); 
+          enemy.takeDamage(0, this.character);
         }
       } else if (enemy instanceof Endboss) {
         enemy.update(this.character);
@@ -234,8 +240,6 @@ class World {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-
-
   addObjectsToMap(objects) {
     if (!Array.isArray(objects)) {
       console.warn("[addObjectsToMap()] kein Array übergeben:", objects);
@@ -257,11 +261,10 @@ class World {
     }
   }
 
-
   addToMap(mo) {
     if (!mo) {
       console.warn("[addToMap()] mo ist undefined oder null!");
-      console.trace(); 
+      console.trace();
       return;
     }
 

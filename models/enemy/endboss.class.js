@@ -8,13 +8,8 @@ class Endboss extends Enemy {
    * @param {number} id - The ID of the Endboss.
    */
   constructor(id) {
-    super(id);
-    this.loadImage(LOADED_IMAGES.troll.walk[0]);
-
-    this.addToImageCache("walk", LOADED_IMAGES.troll.walk);
-    this.addToImageCache("attack", LOADED_IMAGES.troll.attack);
-    this.addToImageCache("hurt", LOADED_IMAGES.troll.hurt);
-    this.addToImageCache("dead", LOADED_IMAGES.troll.dead);
+    super();
+    this.loadEnemyImages("troll");
 
     this.deadAnimationPlayed = false;
     this.height = 450;
@@ -23,6 +18,9 @@ class Endboss extends Enemy {
     this.x = 13250;
     this.attackRange = 200;
     this.attackDamage = 20;
+    this.attackAnimationSpeed = 100;
+    this.hurtAnimationSpeed = 250;
+    this.walkAnimationSpeed = 150;
     this.speed = 0.5;
     this.deadSound = new Audio("./assets/audio/troll_dead.mp3");
     this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
@@ -97,7 +95,7 @@ class Endboss extends Enemy {
     setTimeout(() => {
       this.removeEnemy();
       if (this.world && this.world.crystal) {
-        this.world.crystal.activate(); 
+        this.world.crystal.activate();
       }
     }, LOADED_IMAGES.troll.dead.length * 200);
   }
@@ -106,15 +104,8 @@ class Endboss extends Enemy {
    * Patrols the area between patrolLeftLimit and patrolRightLimit.
    */
   patrol() {
-    if (this.dead) return;
-    if (this.x <= this.patrolLeftLimit) {
-      this.otherDirection = false;
-    } else if (this.x >= this.patrolRightLimit) {
-      this.otherDirection = true;
-    }
-    this.x += this.otherDirection ? -this.speed : this.speed;
+    this.startPatrol(this.patrolLeftLimit, this.patrolRightLimit);
   }
-
   /**
    * Updates the Endboss's state.
    * @param {Character} character - The character to interact with.
@@ -174,23 +165,32 @@ class Endboss extends Enemy {
    * Animates the Endboss.
    */
   animate() {
+    this.startStandardAnimation();
     let i = 0;
-    setInterval(() => {
-      if (this.dead && !this.deadAnimationPlayed) {
-        this.playDeathAnimation();
-      } else if (this.isAttacking) {
-        this.playAnimation(LOADED_IMAGES.troll.attack, 100);
-      } else if (this.isHurt()) {
-        this.playAnimation(LOADED_IMAGES.troll.hurt, 250);
-      } else {
-        this.playAnimation(LOADED_IMAGES.troll.walk, 150);
-      }
+    this.setCustomInterval(() => {
       i++;
       if (this.x >= 13250 && this.x <= 13500) {
         this.hadFirstContact = true;
       }
     }, 100);
   }
+
+  //   let i = 0;
+  //   setInterval(() => {
+  //     if (this.dead && !this.deadAnimationPlayed) {
+  //       this.playDeathAnimation();
+  //     } else if (this.isAttacking) {
+  //       this.playAnimation(LOADED_IMAGES.troll.attack, 100);
+  //     } else if (this.isHurt()) {
+  //       this.playAnimation(LOADED_IMAGES.troll.hurt, 250);
+  //     } else {
+  //       this.playAnimation(LOADED_IMAGES.troll.walk, 150);
+  //     }
+  //     i++;
+  //     if (this.x >= 13250 && this.x <= 13500) {
+  //       this.hadFirstContact = true;
+  //     }
+  //   }, 100);
 
   /**
    * Checks if the character is in attack range.

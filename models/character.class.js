@@ -22,7 +22,7 @@ class Character extends MovableObject {
    */
   constructor(world, poisonStatusBar) {
     super();
-    console.log("Geladene Angriffsbilder:", LOADED_IMAGES.character.attack); 
+    console.log("Geladene Angriffsbilder:", LOADED_IMAGES.character.attack);
     this.loadImage(LOADED_IMAGES.character.idle[0]);
     this.addToImageCache("idle", LOADED_IMAGES.character.idle);
     this.addToImageCache("walk", LOADED_IMAGES.character.walk);
@@ -33,6 +33,8 @@ class Character extends MovableObject {
     this.world = world;
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
     this.initCharacter();
+    this.currentAnimation = LOADED_IMAGES.character.idle;
+    this.animate();
     this.canMoveLeftFlag = true;
   }
 
@@ -42,17 +44,15 @@ class Character extends MovableObject {
   initCharacter() {
     this.applyGravity();
     this.energy = 100;
-     this.x =4000;
-    // this.x = 90; 
-    // this.y = 150; 
+    this.x = 4000;
+    // this.x = 90;
+    // this.y = 150;
     this.poisonStatusBar.setPercentage(0);
     this.healthBar = new StatusBar();
     this.world.characterStatusBar = this.healthBar;
     this.world.camera_x = -this.x - 190;
     this.canMoveLeftFlag = true;
     this.img = this.imageCache["idle_0"];
-    this.drawFrame();
-    this.animate();
   }
 
   /**
@@ -60,38 +60,50 @@ class Character extends MovableObject {
    */
   update() {
     if (!this.isVisible || this.energy <= 0) return;
-    if (this.energy <= 0 && !this.deadAnimationPlayed) {
-      this.die();
-    }
-    this.handleMovement();
-    this.handleActions();
+    this.handleState();
     this.updateCamera();
+    if (!this.isAttacking) {
+      this.animate();
+    }
   }
 
-  /**
-   * Handles the character's movement.
-   */
-  handleMovement() {
-    const isMovingRight =
-      this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200;
-    const isMovingLeft =
-      this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft();
-    if (isMovingRight) {
-      this.moveRight();
-      this.otherDirection = false;
-    }
-    if (isMovingLeft) {
-      this.moveLeft();
-      this.otherDirection = true;
-    }
-    if (isMovingRight || isMovingLeft) {
-      playWalkingSound();
-    } else {
-      stopWalkingSound();
-    }
-    if (this.world.keyboard.JUMP && !this.isAboveGround()) {
-      this.jump();
-    }
+  animate() {
+    this.setCustomInterval(() => {
+      if (this.isDead()) {
+        this.stopAllAnimations();
+        return;
+      }
+      if (this.isHurt()) {this.playGenericAnimation(LOADED_IMAGES.character.hurt, 400,false,
+          "hurt" );
+      } else if (this.isAboveGround()) {this.playGenericAnimation(LOADED_IMAGES.character.jump, 100,false,
+          "jump");
+      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+        this.playGenericAnimation(LOADED_IMAGES.character.walk,100,true,
+          "walk"
+        );
+      } else {
+        this.playGenericAnimation(LOADED_IMAGES.character.idle,200, true,
+          "idle"
+        );
+      }
+    }, 100);
+  }
+
+  get movement() {
+    return {
+      right:
+        this.world.keyboard.RIGHT &&
+        this.x < this.world.level.level_end_x + 200,
+      left: this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft(),
+      jump: this.world.keyboard.JUMP,
+    };
+  }
+
+  handleState() {
+    if (this.movement.right) this.moveRight();
+    if (this.movement.left) this.moveLeft();
+    if (this.movement.jump) this.jump();
+    if (this.world.keyboard.ATTACK) this.attack();
   }
 
   /**
@@ -102,56 +114,9 @@ class Character extends MovableObject {
       this.isAttacking = true;
       this.currentAttackFrame = 0;
       playAttackSound();
-      this.playAttackAnimation(() => {
-        this.isAttacking = false;
-      });
+
       this.attackEnemies();
     }
-  }
-  /**
-   * Plays the attack animation.
-   * @param {Function} callback - Optional callback function to execute after the animation ends.
-   */
-// character.class.js
-playAttackAnimation(callback) {
-  let attackIndex = 0;
-  this.currentImage = 0; // Reset des Index
-  playAttackSound();
-  const attackInterval = setInterval(() => {
-    if (attackIndex < LOADED_IMAGES.character.attack.length) {
-      this.img = this.imageCache[LOADED_IMAGES.character.attack[attackIndex]];
-      attackIndex++;
-    } else {
-      clearInterval(attackInterval);
-      if (callback) callback();
-    }
-  }, 150);
-}
-
-  /**
-   * Attacks enemies within range.
-   */
-  attackEnemies() {
-    this.world.enemies.forEach((enemy) => {
-      if (
-        enemy instanceof Knight ||
-        enemy instanceof Snake ||
-        enemy instanceof Endboss
-      ) {
-        if (!enemy.dead) {
-          const distance = Math.abs(this.x - enemy.x);
-          if (distance < 150) {
-            enemy.takeDamage(10);
-            if (enemy instanceof Endboss) {
-              enemy.statusBarEndboss.setPercentage(enemy.energy);
-              if (enemy.energy <= 0) {
-                enemy.die();
-              }
-            }
-          }
-        }
-      }
-    });
   }
 
   /**
@@ -175,7 +140,7 @@ playAttackAnimation(callback) {
    * Makes the character take damage.
    */
   takeDamage(damage) {
-    super.takeDamage(damage); 
+    super.takeDamage(damage);
     this.world.characterStatusBar.setPercentage(this.energy);
     this.playAnimation(LOADED_IMAGES.character.hurt);
   }
@@ -183,56 +148,34 @@ playAttackAnimation(callback) {
    * Handles the character's death.
    */
   die() {
-    super.die(); 
-    this.playDeathAnimation(() => {
+    if (this.deadAnimationPlayed) return;
+    this.deadAnimationPlayed = true;
+    this.stopAllAnimations();
+    this.playGenericAnimation(
+      LOADED_IMAGES.character.die,
+      150,
+      false,
+      'die',
+      () => {
+        this.isVisible = false;
+        this.world.endGame.showYouLostScreen();
+      }
+    );
+  }
+  
+  
+
+  playAttack() {
+    this.playGenericAnimation(LOADED_IMAGES.character.attack, 150, false);
+    setTimeout(() => (this.isAttacking = false), 500);
+  }
+
+  playDeath() {
+    this.playGenericAnimation(LOADED_IMAGES.character.die, 150, false, () => {
       this.isVisible = false;
       this.world.endGame.showYouLostScreen();
     });
   }
-
-
-  /**
-   * Plays the death animation.
-   */
-  playDeathAnimation(callback) {
-    let deathIndex = 0;
-    const deathInterval = setInterval(() => {
-      if (deathIndex < LOADED_IMAGES.character.die.length) {
-        this.img = LOADED_IMAGES.character.die[deathIndex];
-        deathIndex++;
-      } else {
-        clearInterval(deathInterval);
-        if (callback) callback();
-      }
-    }, 150);
-    this.animationIntervals.push(deathInterval); 
-  }
-
-  /**
-   * Animates the character.
-   */
- // character.class.js
-animate() {
-  this.stopAllAnimations();
-  let interval = setInterval(() => {
-    if (this.isDead()) {
-      return;
-    } else if (this.isHurt() && this.energy >= 1) {
-      this.currentImage = 0;
-      this.playAnimation(LOADED_IMAGES.character.hurt, 200);
-    } else if (this.isAttacking) {
-      this.currentImage = 0; 
-      this.playAnimation(LOADED_IMAGES.character.attack);
-    } else if (this.isAboveGround()) {
-      this.playAnimation(LOADED_IMAGES.character.jump);
-    } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-      this.playAnimation(LOADED_IMAGES.character.walk);
-    } else if (this.energy >= 1) {
-      this.playAnimation(LOADED_IMAGES.character.idle);
-    }
-  }, 100);
-  this.animationIntervals.push(interval);
-}
 
   /**
    * Stops all animations.
@@ -240,39 +183,6 @@ animate() {
   stopAllAnimations() {
     this.animationIntervals.forEach(clearInterval);
     this.animationIntervals = [];
-  }
-
-  /**
-   * Resets the character's state.
-   */
-  reset() {
-    this.speed = 4;
-    this.stopAllAnimations();
-    Object.assign(this, {
-      // x: 5000,
-      y: 150,
-      isVisible: true,
-      energy: 100,
-      deadAnimationPlayed: false,
-      isAttacking: false,
-      invulnerable: false,
-      currentImage: 0,
-      speedY: 0,
-      acceleration: 2.5,
-    });
-    this.poisonCollected = 5;
-    this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-    this.playAnimation(LOADED_IMAGES.character.idle);
-    this.animate();
-    this.stopGravity();
-    this.applyGravity();
-  }
-
-  /**
-   * Resets the positions of all enemies.
-   */
-  resetEnemies() {
-    this.world.enemies.forEach((enemy) => enemy.resetPosition?.());
   }
 
   /**
@@ -310,13 +220,6 @@ animate() {
   }
 
   /**
-   * Checks if the character is moving.
-   */
-  isMoving() {
-    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
-  }
-
-  /**
    * Collects a poison bottle.
    */
   collectPoison(poison, index) {
@@ -336,18 +239,6 @@ animate() {
     if (key && key.isActive) {
       key.deactivate();
       this.hasKey = true;
-    }
-  }
-
-  /**
-   * Handles the character hitting an enemy.
-   */
-  hit(enemy) {
-    const distance = Math.abs(this.x - enemy.x);
-    if (!this.invulnerable && distance < 100) {
-      this.takeDamage(5);
-      this.world.characterStatusBar.setPercentage(this.energy);
-      this.playAnimation(LOADED_IMAGES.character.hurt);
     }
   }
 
@@ -392,16 +283,50 @@ animate() {
     this.lastPosition = { x: this.x, y: this.y };
   }
 
-  drawFrame() {
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = "blue";
-    ctx.lineWidth = 2;
+  draw(ctx) {
+    if (!this.isVisible) return;
+    this.drawWithCollisionBox(ctx);
+  }
 
-    const offsetX = this.x + this.offset.left;
-    const offsetY = this.y + this.offset.top;
-    const offsetWidth = this.width - this.offset.left - this.offset.right;
-    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
+  dealDamageToEnemy(enemy, damage = 10) {
+    if (!enemy.dead && Math.abs(this.x - enemy.x) < 150) {
+      enemy.takeDamage(damage);
+      if (enemy instanceof Endboss) {
+        enemy.statusBarEndboss.setPercentage(enemy.energy);
+      }
+    }
+  }
 
-    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
+  executeAttack() {
+    if (this.isAttacking) return;
+    this.isAttacking = true;
+    this.playAttack();
+    this.world.enemies.forEach((enemy) => this.dealDamageToEnemy(enemy));
+  }
+
+  fullReset(position = {}) {
+    this.stopAllAnimations();
+    Object.assign(this, {
+      x: position.x || 90,
+      y: position.y || 150,
+      energy: 100,
+      poisonCollected: 5,
+      isVisible: true,
+      deadAnimationPlayed: false,
+      speedY: 0,
+    });
+    this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
+    this.playAnimation(LOADED_IMAGES.character.idle);
+    this.applyGravity();
+  }
+
+  /**
+   * Sets a custom interval and tracks it for cleanup.
+   * @param {Function} callback - The function to execute at each interval.
+   * @param {number} interval - The interval time in milliseconds.
+   */
+  setCustomInterval(callback, interval) {
+    const intervalId = setInterval(callback, interval);
+    this.animationIntervals.push(intervalId);
   }
 }

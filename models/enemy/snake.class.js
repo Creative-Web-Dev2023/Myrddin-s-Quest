@@ -3,19 +3,16 @@
  * @extends Enemy
  */
 class Snake extends Enemy {
+  
   /**
    * Creates an instance of Snake.
    * @param {number} [startX=400] - The starting x position of the snake.
    * @param {number} [moveRange=100] - The range within which the snake can move.
    * @param {number} [id] - The ID of the snake.
    */
-  constructor(startX = 400, moveRange = 100, id) {
-    super(id);
-    this.loadImage(LOADED_IMAGES.snake.walk[0]);
-    this.addToImageCache("walk", LOADED_IMAGES.snake.walk);
-    this.addToImageCache("attack", LOADED_IMAGES.snake.attack);
-    this.addToImageCache("hurt", LOADED_IMAGES.snake.hurt);
-    this.addToImageCache("dead", LOADED_IMAGES.snake.dead);
+  constructor(startX = 400, moveRange = 100) {
+    super();
+    this.loadEnemyImages("snake"); // Lade die Bilder für den Snake-Feind
     this.img = this.imageCache["walk_0"];
     this.x = startX;
     this.startX = startX;
@@ -26,15 +23,14 @@ class Snake extends Enemy {
     this.energy = 10;
     this.dead = false;
     this.attackDamage = 10;
-    this.attackRange = 50;
+    this.attackRange = 30;
     this.speed = 0.5;
     this.otherDirection = true;
     this.initialX = startX;
     this.initialY = this.y;
-    this.offset = { top: 60, bottom: 20, left: 30, right: 30 };
+    this.offset = { top: 80, bottom: 40, left: 50, right: 50 }; // Kollisionsbox verkleinert
     this.intervalIDs = [];
     this.startMovement();
-    this.startAnimation();
   }
 
   /**
@@ -66,10 +62,10 @@ class Snake extends Enemy {
     const characterBox = character.getCollisionBox();
     const attackBox = {
       x: this.otherDirection
-        ? snakeBox.x - this.attackRange
-        : snakeBox.x + snakeBox.width,
+        ? snakeBox.x - this.attackRange - 50 // Angriffsdistanz nach links weiter verkleinert
+        : snakeBox.x + snakeBox.width + 30, // Angriffsdistanz nach rechts bleibt gleich
       y: snakeBox.y,
-      width: this.attackRange * 2,
+      width: this.attackRange - 40, // Breite der Angriffsbox weiter reduziert
       height: snakeBox.height,
     };
     return (
@@ -83,14 +79,8 @@ class Snake extends Enemy {
   /**
    * Patrols the area by moving left or right.
    */
-  patrol() {
-    if (this.dead) return;
-    if (this.x <= this.startX - this.moveRange) {
-      this.otherDirection = false;
-    } else if (this.x >= this.startX + this.moveRange) {
-      this.otherDirection = true;
-    }
-    this.x += this.otherDirection ? -this.speed : this.speed;
+  startMovement() {
+    this.startPatrol(this.startX - this.moveRange, this.startX);
   }
 
   /**
@@ -129,19 +119,6 @@ class Snake extends Enemy {
       super.removeEnemy();
     }, 1500);
   }
-
-  /**
-   * Loads images into the cache.
-   * @param {Array} imageArray - The array of image paths.
-   */
-  /*   loadImages(imageArray) {
-    imageArray.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  } */
-
   /**
    * Draws the snake on the canvas.
    * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
@@ -158,21 +135,31 @@ class Snake extends Enemy {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
       }
     }
+
+    // Zeichne die Kollisionsbox
+    const collisionBox = this.getCollisionBox();
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(
+      collisionBox.x,
+      collisionBox.y,
+      collisionBox.width,
+      collisionBox.height
+    );
+
+    // Zeichne die Angriffsbox
+    const attackBox = this.getAttackBox(collisionBox);
+    ctx.strokeStyle = "orange";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(attackBox.x, attackBox.y, attackBox.width, attackBox.height);
   }
 
   /**
-   * Animates the snake.
+   * Stops all animations.
    */
-  animate() {
-    setInterval(() => {
-      if (this.dead) {
-        this.playAnimation(LOADED_IMAGES.snake.dead);
-      } else if (this.isAttacking) {
-        this.playAnimation(LOADED_IMAGES.snake.attack);
-      } else {
-        this.playAnimation(LOADED_IMAGES.snake.walk);
-      }
-    }, 100);
+  stopAllAnimations() {
+    this.intervalIDs.forEach(clearInterval);
+    this.intervalIDs = [];
   }
 
   /**
@@ -190,16 +177,7 @@ class Snake extends Enemy {
    * @param {Object} snakeBox - The collision box of the snake.
    * @returns {Object} The attack box of the snake.
    */
-  getAttackBox(snakeBox) {
-    return {
-      x: this.otherDirection
-        ? snakeBox.x - this.attackRange
-        : snakeBox.x + snakeBox.width,
-      y: snakeBox.y,
-      width: this.attackRange,
-      height: snakeBox.height,
-    };
-  }
+  
 
   /**
    * Attacks the character if in range.
