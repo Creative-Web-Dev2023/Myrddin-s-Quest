@@ -62,9 +62,7 @@ class Character extends MovableObject {
     if (!this.isVisible || this.energy <= 0) return;
     this.handleState();
     this.updateCamera();
-    if (!this.isAttacking) {
       this.animate();
-    }
   }
 
   animate() {
@@ -73,16 +71,25 @@ class Character extends MovableObject {
         this.stopAllAnimations();
         return;
       }
-      if (this.isHurt()) {this.playGenericAnimation(LOADED_IMAGES.character.hurt, 400,false,
-          "hurt" );
-      } else if (this.isAboveGround()) {this.playGenericAnimation(LOADED_IMAGES.character.jump, 100,false,
-          "jump");
+      if (this.isAttacking) {
+        this.playGenericAnimation(LOADED_IMAGES.character.attack, 100,false,
+          "attack"
+        );}
+
+      else if (this.isHurt()) {
+        this.playGenericAnimation( LOADED_IMAGES.character.hurt, 400,false,
+          "hurt"
+        );
+      } else if (this.isAboveGround()) {
+        this.playGenericAnimation( LOADED_IMAGES.character.jump, 100, false,
+          "jump"
+        );
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playGenericAnimation(LOADED_IMAGES.character.walk,100,true,
+        this.playGenericAnimation(  LOADED_IMAGES.character.walk, 100,true,
           "walk"
         );
       } else {
-        this.playGenericAnimation(LOADED_IMAGES.character.idle,200, true,
+        this.playGenericAnimation(LOADED_IMAGES.character.idle,  200,  true,
           "idle"
         );
       }
@@ -103,7 +110,7 @@ class Character extends MovableObject {
     if (this.movement.right) this.moveRight();
     if (this.movement.left) this.moveLeft();
     if (this.movement.jump) this.jump();
-    if (this.world.keyboard.ATTACK) this.attack();
+    if (this.world.keyboard.ATTACK && !this.isAttacking) this.playAttack(); // Überprüfe, ob der Angriff ausgelöst werden soll
   }
 
   /**
@@ -150,24 +157,30 @@ class Character extends MovableObject {
   die() {
     if (this.deadAnimationPlayed) return;
     this.deadAnimationPlayed = true;
+    this.saveLastPosition();
     this.stopAllAnimations();
     this.playGenericAnimation(
       LOADED_IMAGES.character.die,
       150,
       false,
-      'die',
+      "die",
       () => {
         this.isVisible = false;
         this.world.endGame.showYouLostScreen();
       }
     );
   }
-  
-  
 
   playAttack() {
-    this.playGenericAnimation(LOADED_IMAGES.character.attack, 150, false);
-    setTimeout(() => (this.isAttacking = false), 500);
+    if (this.isAttacking) return; 
+    this.isAttacking = true;
+    this.playGenericAnimation( LOADED_IMAGES.character.attack,  100,  false,
+      "attack",
+      () => {
+        this.isAttacking = false;
+      }
+    );
+    this.executeAttack(); 
   }
 
   playDeath() {
@@ -298,9 +311,6 @@ class Character extends MovableObject {
   }
 
   executeAttack() {
-    if (this.isAttacking) return;
-    this.isAttacking = true;
-    this.playAttack();
     this.world.enemies.forEach((enemy) => this.dealDamageToEnemy(enemy));
   }
 

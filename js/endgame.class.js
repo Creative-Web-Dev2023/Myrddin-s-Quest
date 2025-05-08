@@ -33,9 +33,7 @@ class EndGame {
     if (!this.world.character) {
       return;
     }
-    this.world.resetEnemies();
-    this.world.resetObjects();
-    this.world.character.fullReset(); // Ändern von reset() zu fullReset()
+    this.world.character.resetPosition(this.world.character.lastPosition); 
     this.world.resetCamera();
     this.hideGameOverScreen();
     this.world.character.applyGravity();

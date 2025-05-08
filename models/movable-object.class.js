@@ -85,11 +85,6 @@ class MovableObject extends DrawableObject {
       this.x < mo.x + mo.width &&
       this.y + this.height > mo.y &&
       this.y < mo.y + mo.height;
-
-    if (colliding) {
-      console.log("Kollision erkannt mit:", mo.constructor.name);
-    }
-
     return colliding;
   }
 

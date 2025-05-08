@@ -308,16 +308,6 @@ class World {
     this.camera_x = -this.character.x + 190;
   }
 
-  /**
-   * Setzt alle Feinde auf ihre ursprünglichen Positionen zurück.
-   */
-  resetEnemies() {
-    this.enemies.forEach((enemy) => {
-      if (enemy.resetPosition) {
-        enemy.resetPosition();
-      }
-    });
-  }
 
   /**
    * Stellt die Feinde aus dem gespeicherten Zustand wieder her.
@@ -331,19 +321,7 @@ class World {
     });
   }
 
-  /**
-   * Setzt alle Objekte auf ihre ursprünglichen Positionen zurück.
-   */
-  resetObjects() {
-    if (!this.objects || !Array.isArray(this.objects)) {
-      return;
-    }
-    this.objects.forEach((obj) => {
-      if (obj.resetPosition) {
-        obj.resetPosition();
-      }
-    });
-  }
+
 
   /**
    * Stellt die Objekte aus dem gespeicherten Zustand wieder her.
