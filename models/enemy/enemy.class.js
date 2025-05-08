@@ -8,11 +8,11 @@ class Enemy extends MovableObject {
   loadEnemyImages(enemyType) {
     const images = LOADED_IMAGES[enemyType];
     this.loadImage(images.walk[0]);
-    this.addToImageCache('walk', images.walk);
-    this.addToImageCache('idle', images.idle);
-    this.addToImageCache('attack', images.attack);
-    this.addToImageCache('hurt', images.hurt);
-    this.addToImageCache('dead', images.dead);
+    this.addToImageCache("walk", images.walk);
+    this.addToImageCache("idle", images.idle);
+    this.addToImageCache("attack", images.attack);
+    this.addToImageCache("hurt", images.hurt);
+    this.addToImageCache("dead", images.dead);
   }
   /**
    * Creates an instance of Enemy.
@@ -20,7 +20,7 @@ class Enemy extends MovableObject {
    */
   constructor(id) {
     super();
-    this.deadAnimationPlayed = false; 
+    this.deadAnimationPlayed = false;
     this.id = id || Enemy.nextId++;
     this.energy = 100;
     this.dead = false;
@@ -31,7 +31,9 @@ class Enemy extends MovableObject {
     this.attackRange = 150;
     this.attackDamage = 10;
     this.otherDirection = false;
-    this.intervalIDs = [];
+    this.patrolling = false;
+    this.animationIntervals = []; 
+    this.patrolling = false;
   }
 
   /**
@@ -49,33 +51,32 @@ class Enemy extends MovableObject {
    * Patrols the area by moving left or right.
    */
   startPatrol(leftLimit, rightLimit) {
+    if (this.patrolling) return;
+    this.patrolling = true;
     this.setCustomInterval(() => {
       if (this.x <= leftLimit) this.otherDirection = false;
       if (this.x >= rightLimit) this.otherDirection = true;
       this.x += this.otherDirection ? -this.speed : this.speed;
     }, 50);
   }
+
   /**
    * Updates the enemy's state.
    * @param {Character} character - The character to interact with.
    */
   update(character) {
-    if (this.isDead()) return;
-    if (this.isInAttackRange(character)) {
+    if (this.dead) return;
+    if (this.calculateAttackRange(character)) {
       this.attack(character);
-    } else {
-      this.patrol();
     }
   }
-
   /**
    * Checks if the character is in attack range.
    * @param {Character} character - The character to check.
    * @returns {boolean} True if the character is in attack range, false otherwise.
    */
   isInAttackRange(character) {
-    const distance = Math.abs(this.x - character.x);
-    return distance < this.attackRange;
+    return Math.abs(this.x - character.x) < this.attackRange; 
   }
 
   /**
@@ -134,17 +135,18 @@ class Enemy extends MovableObject {
       this.die();
     } else {
       this.playAnimation(this.IMAGES_HURT);
-    } 
-    // Für Subklassen erweiterbar
+    }
     this.onTakeDamage();
   }
 
   die() {
     if (this.dead) return;
     this.dead = true;
-    this.playAnimation(this.IMAGES_DEAD);
-    setTimeout(() => this.removeEnemy(), 2000);
+    const deathFrames = this.IMAGES_DEAD || this.IMAGES_HURT;
+    this.playAnimation(deathFrames, 200, false);
+    setTimeout(() => this.removeEnemy(), deathFrames?.length ? deathFrames.length * 200 : 2000);
   }
+  
 
   /**
    * Makes the enemy take damage.
@@ -165,26 +167,24 @@ class Enemy extends MovableObject {
    */
   setCustomInterval(fn, interval) {
     const id = setInterval(fn, interval);
-    this.intervalIDs.push(id);
+    this.animationIntervals.push(id); // Verwende animationIntervals
   }
- 
+
   getAttackBox() {
     const box = this.getCollisionBox();
     return {
-      x: this.otherDirection 
-        ? box.x - this.attackRange 
-        : box.x + box.width,
+      x: this.otherDirection ? box.x - this.attackRange : box.x + box.width,
       y: box.y,
       width: this.attackRange,
-      height: box.height
+      height: box.height,
     };
   }
   /**
    * Stops all set intervals.
    */
   stopAllIntervals() {
-    this.intervalIDs.forEach((id) => clearInterval(id));
-    this.intervalIDs = [];
+    this.animationIntervals.forEach(clearInterval); 
+    this.animationIntervals = [];
   }
 
   /**
@@ -204,13 +204,13 @@ class Enemy extends MovableObject {
   startStandardAnimation() {
     this.setCustomInterval(() => {
       if (this.dead && !this.deadAnimationPlayed) {
-        this.playDeathAnimation();
+        this.playAnimation(this.IMAGES_DEAD, 200, false);
       } else if (this.isAttacking) {
         this.playAnimation(this.IMAGES_ATTACK, this.attackAnimationSpeed || 100);
-      } else if (this.isHurt()) {
+      } else if (this.isHurt() && !this.isAttacking) { // Priorisiere Angriff vor Verletzung
         this.playAnimation(this.IMAGES_HURT, this.hurtAnimationSpeed || 100);
       } else {
-        this.playAnimation(this.IMAGES_WALK, this.walkAnimationSpeed || 100);
+        this.playAnimation(this.IMAGES_WALK, this.walkAnimationSpeed || 150); // Geh-Animation abspielen
       }
     }, 100);
   }

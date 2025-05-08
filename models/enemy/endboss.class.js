@@ -33,6 +33,11 @@ class Endboss extends Enemy {
     this.initialX = this.x;
     this.initialY = this.y;
 
+    this.IMAGES_WALK = LOADED_IMAGES.troll.walk; // Geh-Animation hinzufügen
+    this.IMAGES_ATTACK = LOADED_IMAGES.troll.attack;
+    this.IMAGES_HURT = LOADED_IMAGES.troll.hurt;
+    this.IMAGES_DEAD = LOADED_IMAGES.troll.dead;
+
     this.animate();
   }
 
@@ -46,23 +51,22 @@ class Endboss extends Enemy {
 
   /**
    * Attacks the character if it is in range and not already attacking.
+   * Only attacks to the left.
    * @param {Character} character - The character to attack.
    */
   attack(character) {
-    if (this.dead || this.isAttacking) return;
+    if (this.dead || this.isAttacking) return; 
     this.isAttacking = true;
     this.playAnimation(LOADED_IMAGES.troll.attack, 100);
     setTimeout(() => {
       if (this.isInAttackRange(character)) {
         character.takeDamage(this.attackDamage);
-        this.takeDamage(character.attackDamage);
       }
     }, 300);
     setTimeout(() => {
       this.isAttacking = false;
     }, 1000);
   }
-
   /**
    * Takes damage and dies if energy is 0 or less.
    * @param {number} damage - The amount of damage to take.
@@ -101,12 +105,6 @@ class Endboss extends Enemy {
   }
 
   /**
-   * Patrols the area between patrolLeftLimit and patrolRightLimit.
-   */
-  patrol() {
-    this.startPatrol(this.patrolLeftLimit, this.patrolRightLimit);
-  }
-  /**
    * Updates the Endboss's state.
    * @param {Character} character - The character to interact with.
    */
@@ -115,7 +113,7 @@ class Endboss extends Enemy {
     if (this.isInAttackRange(character)) {
       this.attack(character);
     } else {
-      this.patrol();
+      this.startPatrol(this.patrolLeftLimit, this.patrolRightLimit);
     }
   }
 
@@ -175,28 +173,15 @@ class Endboss extends Enemy {
     }, 100);
   }
 
-  //   let i = 0;
-  //   setInterval(() => {
-  //     if (this.dead && !this.deadAnimationPlayed) {
-  //       this.playDeathAnimation();
-  //     } else if (this.isAttacking) {
-  //       this.playAnimation(LOADED_IMAGES.troll.attack, 100);
-  //     } else if (this.isHurt()) {
-  //       this.playAnimation(LOADED_IMAGES.troll.hurt, 250);
-  //     } else {
-  //       this.playAnimation(LOADED_IMAGES.troll.walk, 150);
-  //     }
-  //     i++;
-  //     if (this.x >= 13250 && this.x <= 13500) {
-  //       this.hadFirstContact = true;
-  //     }
-  //   }, 100);
 
   /**
    * Checks if the character is in attack range.
    */
   isInAttackRange(character) {
-    return Math.abs(this.x - character.x) < this.attackRange;
+    const distance = Math.abs(this.x - character.x);
+    const isFacingCharacter = (this.otherDirection && character.x < this.x) || 
+                            (!this.otherDirection && character.x > this.x);
+    return distance < this.attackRange && isFacingCharacter;
   }
 
   /**

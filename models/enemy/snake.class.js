@@ -3,16 +3,15 @@
  * @extends Enemy
  */
 class Snake extends Enemy {
-  
   /**
    * Creates an instance of Snake.
    * @param {number} [startX=400] - The starting x position of the snake.
    * @param {number} [moveRange=100] - The range within which the snake can move.
-   * @param {number} [id] - The ID of the snake.
    */
   constructor(startX = 400, moveRange = 100) {
     super();
-    this.loadEnemyImages("snake"); // Lade die Bilder für den Snake-Feind
+    this.loadEnemyImages("snake");
+
     this.img = this.imageCache["walk_0"];
     this.x = startX;
     this.startX = startX;
@@ -28,8 +27,14 @@ class Snake extends Enemy {
     this.otherDirection = true;
     this.initialX = startX;
     this.initialY = this.y;
-    this.offset = { top: 80, bottom: 40, left: 50, right: 50 }; // Kollisionsbox verkleinert
-    this.intervalIDs = [];
+    this.offset = { top: 80, bottom: 40, left: 50, right: 50 };
+
+    this.IMAGES_WALK = LOADED_IMAGES.snake.walk;
+    this.IMAGES_ATTACK = LOADED_IMAGES.snake.attack;
+    this.IMAGES_HURT = LOADED_IMAGES.snake.hurt;
+    this.IMAGES_DEAD = LOADED_IMAGES.snake.dead;
+
+    this.patrolling = false;
     this.startMovement();
   }
 
@@ -42,30 +47,49 @@ class Snake extends Enemy {
   }
 
   /**
-   * Checks if the character is in attack range and attacks if possible.
-   * @param {Character} character - The character to check.
+   * Starts patrol and animation.
    */
-  checkForAttack(character) {
-    const isInAttackRange = this.calculateAttackRange(character);
-    if (isInAttackRange && !this.isAttacking) {
+  startMovement() {
+    this.startPatrol(this.startX - this.moveRange, this.startX);
+    this.startStandardAnimation();
+  }
+
+  /**
+   * Overridden patrol method with protection against multiple intervals.
+   */
+  startPatrol(leftLimit, rightLimit) {
+    if (this.patrolling) return;
+    this.patrolling = true;
+    this.setCustomInterval(() => {
+      if (this.x <= leftLimit) this.otherDirection = false;
+      if (this.x >= rightLimit) this.otherDirection = true;
+      this.x += this.otherDirection ? -this.speed : this.speed;
+    }, 50);
+  }
+
+  /**
+   * Updates the snake's behavior.
+   * @param {Character} character - The character to interact with.
+   */
+  update(character) {
+    if (this.dead) return;
+    if (this.calculateAttackRange(character)) {
       this.attack(character);
     }
   }
 
   /**
-   * Calculates if the character is in attack range.
-   * @param {Character} character - The character to check.
-   * @returns {boolean} True if the character is in attack range, false otherwise.
+   * Checks if the character is in attack range.
    */
   calculateAttackRange(character) {
     const snakeBox = this.getCollisionBox();
     const characterBox = character.getCollisionBox();
     const attackBox = {
       x: this.otherDirection
-        ? snakeBox.x - this.attackRange - 50 // Angriffsdistanz nach links weiter verkleinert
-        : snakeBox.x + snakeBox.width + 30, // Angriffsdistanz nach rechts bleibt gleich
+        ? snakeBox.x - this.attackRange - 50
+        : snakeBox.x + snakeBox.width + 30,
       y: snakeBox.y,
-      width: this.attackRange - 40, // Breite der Angriffsbox weiter reduziert
+      width: this.attackRange - 40,
       height: snakeBox.height,
     };
     return (
@@ -77,51 +101,57 @@ class Snake extends Enemy {
   }
 
   /**
-   * Patrols the area by moving left or right.
+   * Triggers the attack animation and applies damage.
    */
-  startMovement() {
-    this.startPatrol(this.startX - this.moveRange, this.startX);
+  attack(character) {
+    if (this.dead || this.isAttacking) return;
+
+    this.isAttacking = true;
+    this.playAnimation(this.IMAGES_ATTACK, 150, false, "attack", () => {
+      this.isAttacking = false;
+    });
+
+    setTimeout(() => {
+      if (character && this.calculateAttackRange(character)) {
+        character.takeDamage(this.attackDamage);
+      }
+    }, 500);
   }
 
   /**
-   * Updates the snake's state.
-   * @param {Character} character - The character to interact with.
-   */
-  update(character) {
-    this.checkForAttack(character);
-  }
-
-  /**
-   * Makes the snake take damage.
-   * @param {number} damage - The amount of damage to take.
+   * Applies damage to the snake.
    */
   takeDamage(damage) {
     if (this.dead) return;
     this.energy -= damage;
     this.energy = Math.max(0, this.energy);
     if (this.energy > 0) {
-      this.playAnimation(LOADED_IMAGES.snake.hurt);
+      this.playAnimation(this.IMAGES_HURT);
     } else {
       this.die();
     }
   }
 
   /**
-   * Handles the snake's death.
+   * Handles snake's death.
    */
   die() {
     if (this.dead) return;
     this.dead = true;
     playSnakeDyingSound();
-    this.playAnimation(LOADED_IMAGES.snake.dead);
-    setTimeout(() => {
+    if (this.IMAGES_DEAD && this.IMAGES_DEAD.length > 0) {
+      this.playAnimation(this.IMAGES_DEAD, 150, false, "dead", () => {
+        this.isVisible = false;
+        super.removeEnemy();
+      });
+    } else {
       this.isVisible = false;
       super.removeEnemy();
-    }, 1500);
+    }
   }
+
   /**
-   * Draws the snake on the canvas.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   * Draws the snake and its collision/attack box.
    */
   draw(ctx) {
     if (this.img && this.img.complete) {
@@ -135,70 +165,15 @@ class Snake extends Enemy {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
       }
     }
-
-    // Zeichne die Kollisionsbox
-    const collisionBox = this.getCollisionBox();
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(
-      collisionBox.x,
-      collisionBox.y,
-      collisionBox.width,
-      collisionBox.height
-    );
-
-    // Zeichne die Angriffsbox
-    const attackBox = this.getAttackBox(collisionBox);
-    ctx.strokeStyle = "orange";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(attackBox.x, attackBox.y, attackBox.width, attackBox.height);
   }
 
   /**
-   * Stops all animations.
-   */
-  stopAllAnimations() {
-    this.intervalIDs.forEach(clearInterval);
-    this.intervalIDs = [];
-  }
-
-  /**
-   * Resets the position of the snake.
+   * Resets snake position and state.
    */
   resetPosition() {
     this.x = this.initialX;
     this.y = this.initialY;
     this.dead = false;
     this.isVisible = true;
-  }
-
-  /**
-   * Gets the attack box of the snake.
-   * @param {Object} snakeBox - The collision box of the snake.
-   * @returns {Object} The attack box of the snake.
-   */
-  
-
-  /**
-   * Attacks the character if in range.
-   * @param {Character} character - The character to attack.
-   */
-  attack(character) {
-    if (this.dead || this.isAttacking) return;
-    this.isAttacking = true;
-    this.playAnimation(LOADED_IMAGES.snake.attack);
-    playSnakeAttackSound();
-    setTimeout(() => {
-      this.isAttacking = false;
-      if (
-        character &&
-        this.isInAttackRange(
-          this.getAttackBox(this.getCollisionBox()),
-          character.getCollisionBox()
-        )
-      ) {
-        character.takeDamage(this.attackDamage);
-      }
-    }, 800);
   }
 }
