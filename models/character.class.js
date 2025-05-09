@@ -44,7 +44,7 @@ class Character extends MovableObject {
   initCharacter() {
     this.applyGravity();
     this.energy = 100;
-    this.x = 10000;
+     this.x = 11000;
     // this.x = 90;
     // this.y = 150;
     this.poisonStatusBar.setPercentage(0);
@@ -62,9 +62,7 @@ class Character extends MovableObject {
     if (!this.isVisible || this.energy <= 0) return;
     this.handleState();
     this.updateCamera();
-    if (!this.isAttacking) {
       this.animate();
-    }
   }
 
   animate() {
@@ -73,16 +71,27 @@ class Character extends MovableObject {
         this.stopAllAnimations();
         return;
       }
-      if (this.isAttacking) { // Attack hat jetzt Vorrang
-        this.playGenericAnimation(LOADED_IMAGES.character.attack, 150, false, "attack");
-      } else if (this.isHurt()) { // Hurt kommt danach
-        this.playGenericAnimation(LOADED_IMAGES.character.hurt, 400, false, "hurt");
+      if (this.isAttacking) {
+        this.playGenericAnimation(LOADED_IMAGES.character.attack, 100,false,
+          "attack"
+        );}
+
+      else if (this.isHurt()) {
+        this.playGenericAnimation( LOADED_IMAGES.character.hurt, 400,false,
+          "hurt"
+        );
       } else if (this.isAboveGround()) {
-        this.playGenericAnimation(LOADED_IMAGES.character.jump, 100, false, "jump");
+        this.playGenericAnimation( LOADED_IMAGES.character.jump, 100, false,
+          "jump"
+        );
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playGenericAnimation(LOADED_IMAGES.character.walk, 100, true, "walk");
+        this.playGenericAnimation(  LOADED_IMAGES.character.walk, 100,true,
+          "walk"
+        );
       } else {
-        this.playGenericAnimation(LOADED_IMAGES.character.idle, 200, true, "idle");
+        this.playGenericAnimation(LOADED_IMAGES.character.idle,  200,  true,
+          "idle"
+        );
       }
     }, 100);
   }
@@ -101,7 +110,7 @@ class Character extends MovableObject {
     if (this.movement.right) this.moveRight();
     if (this.movement.left) this.moveLeft();
     if (this.movement.jump) this.jump();
-    if (this.world.keyboard.ATTACK) this.attack();
+    if (this.world.keyboard.ATTACK && !this.isAttacking) this.playAttack(); // Überprüfe, ob der Angriff ausgelöst werden soll
   }
 
   /**
@@ -138,22 +147,10 @@ class Character extends MovableObject {
    * Makes the character take damage.
    */
   takeDamage(damage) {
-    if (this.energy <= 0 || this.invulnerable) return;
-    this.energy -= damage;
-    this.lastHit = Date.now();
-    this.invulnerable = true;
-    
-    if (this.energy <= 0) {
-      this.die();
-    } else {
-      this.playAnimation(LOADED_IMAGES.character.hurt);
-      setTimeout(() => {
-        this.invulnerable = false;
-      }, 1000); 
-    }
+    super.takeDamage(damage);
+    this.world.characterStatusBar.setPercentage(this.energy);
+    this.playAnimation(LOADED_IMAGES.character.hurt);
   }
-  
-  
   /**
    * Handles the character's death.
    */
@@ -166,21 +163,24 @@ class Character extends MovableObject {
       LOADED_IMAGES.character.die,
       150,
       false,
-      'die',
+      "die",
       () => {
         this.isVisible = false;
         this.world.endGame.showYouLostScreen();
       }
     );
   }
-  
-  hit(damage) {
-    this.takeDamage(damage);
-}
 
   playAttack() {
-    this.playGenericAnimation(LOADED_IMAGES.character.attack, 150, false);
-    setTimeout(() => (this.isAttacking = false), 500);
+    if (this.isAttacking) return; 
+    this.isAttacking = true;
+    this.playGenericAnimation( LOADED_IMAGES.character.attack,  100,  false,
+      "attack",
+      () => {
+        this.isAttacking = false;
+      }
+    );
+    this.executeAttack(); 
   }
 
   playDeath() {
@@ -309,23 +309,11 @@ class Character extends MovableObject {
       }
     }
   }
-  /**
-   * Attacks enemies within range.
-   */
-  attack() {
-    if (this.isAttacking) return;
-    this.isAttacking = true;
-    this.playAttack();
+
+  executeAttack() {
     this.world.enemies.forEach((enemy) => this.dealDamageToEnemy(enemy));
-    setTimeout(() => {
-      this.isAttacking = false;
-    }, 500); 
   }
-  /**
-   * Resets the character to its initial state.
-   * @param {Object} position - The position to reset to.
-   */
-  
+
   fullReset(position = {}) {
     this.stopAllAnimations();
     Object.assign(this, {

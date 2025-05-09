@@ -7,7 +7,6 @@ class World {
   camera_x = 0;
   lastCloudSpawn = 0;
   cloudSpawnInterval = 3000;
-  // characterStatusBar;
   characters = [];
   enemies = [];
   throwableObjects = [];
@@ -23,7 +22,6 @@ class World {
   clouds = [];
   snakes = [];
   traps = [];
-  // environments = [];
   endbossHealthBar;
   crystal;
 
@@ -34,24 +32,16 @@ class World {
     this.keyboard = keyboard;
     this.ui = new UI(canvas);
     this.initializeGameObjects();
-    // this.environments = generateEnvironmentsLvl();
     this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
-    // this.initializeDoor(); // LÖSCHEN!!
-    this.endbossHealthBar = new EndbossStatusbar();
+    if (this.level.endboss) {
+      this.endbossHealthBar = this.level.endboss.statusBarEndboss;
+    } else {
+      this.endbossHealthBar = null;
+    }
     this.endGame = new EndGame(this);
   }
-
-  /**
-   * LÖSCHEN!!
-   */
-  /*   initializeDoor() {
-    if (!this.door) {
-      this.door = new Door(4500, 150);
-      this.door.world = this;
-    }
-  } */
 
   /**
    * Setzt die Welt des Spiels zurück.
@@ -143,11 +133,9 @@ class World {
    */
   update() {
     if (this.levelCompleted || this.character.energy <= 0) return;
-
     if (this.clouds) {
       this.clouds.updateClouds();
     }
-
     if (this.collisionHandler) {
       this.collisionHandler.checkCollisions();
     }
@@ -156,23 +144,20 @@ class World {
       this.character.playAnimation(this.character.IMAGES_IDLE);
     }
     this.updatePoison();
-
-    // Bewegungslogik direkt prüfen
     if (
       (this.character.movement?.right || this.character.movement?.left) &&
       musicIsOn
     ) {
       playWalkingSound();
     }
-
     this.updateKey();
     this.updateEnemies();
-    if (this.level.endboss) {
-      this.endbossHealthBar.setPercentage(this.level.endboss.energy);
+    if (this.level.endboss && !this.level.endboss.dead) {
+      this.level.endboss.update(this.character); // Update the endboss state
+      this.endbossHealthBar?.setPercentage(this.level.endboss.energy); // Update health bar
     }
     this.updateCrystal();
   }
-
   /**
    * Zeichnet die Welt.
    */
@@ -183,18 +168,24 @@ class World {
   /**
    * Aktualisiert die Feinde in der Welt.
    */
-  updateEnemies() {
-    this.enemies.forEach((enemy) => {
-      if (enemy instanceof Snake) {
-        enemy.update(this.character);
-        if (this.collisionHandler.checkCollision(this.character, enemy)) {
-          enemy.takeDamage(0, this.character);
+ updateEnemies() {
+  this.enemies.forEach((enemy, index) => {
+    if (enemy.dead) {
+      return; 
+    }
+    if (enemy instanceof Snake) {
+      enemy.update(this.character);
+      if (this.collisionHandler.checkCollision(this.character, enemy)) {
+        if (this.character.isAttacking) {
+          enemy.takeDamage(this.character.attackDamage);
         }
-      } else if (enemy instanceof Endboss) {
-        enemy.update(this.character);
       }
-    });
-  }
+    } else if (enemy instanceof Endboss) {
+      enemy.update(this.character);
+    }
+  });
+  this.enemies = this.enemies.filter(enemy => !enemy.dead);
+}
 
   /**
    * Aktualisiert den Zustand des Gifts.
@@ -262,25 +253,13 @@ class World {
   }
 
   addToMap(mo) {
-    if (!mo) {
-      console.warn("[addToMap()] mo ist undefined oder null!");
-      console.trace();
+    if (!mo) return;
+    if (mo instanceof Endboss) {
+      if (mo.isActive !== false) mo.draw(this.ctx);
       return;
     }
-
     if (mo.otherDirection) this.flipImage(mo);
-
-    if (mo.isActive !== false) {
-      try {
-        mo.draw(this.ctx);
-      } catch (err) {
-        console.error(
-          `[addToMap()] Fehler beim Zeichnen von ${mo.constructor?.name}:`,
-          err
-        );
-      }
-    }
-
+    if (mo.isActive !== false) mo.draw(this.ctx);
     if (mo.otherDirection) this.flipImageBack(mo);
   }
 
@@ -290,9 +269,9 @@ class World {
    */
   flipImage(mo) {
     this.ctx.save();
-    this.ctx.translate(mo.width, 0);
-    this.ctx.scale(-1, 1);
-    mo.x = mo.x * -1;
+    this.ctx.translate(mo.width, 0); 
+    this.ctx.scale(-1, 1);   
+    mo.x = mo.x * -1; // 
   }
 
   /**
@@ -308,7 +287,6 @@ class World {
     this.camera_x = -this.character.x + 190;
   }
 
-
   /**
    * Stellt die Feinde aus dem gespeicherten Zustand wieder her.
    * @param {Array} enemies - Die gespeicherten Feind-Daten.
@@ -320,8 +298,6 @@ class World {
       return enemy;
     });
   }
-
-
 
   /**
    * Stellt die Objekte aus dem gespeicherten Zustand wieder her.

@@ -138,18 +138,31 @@ class Snake extends Enemy {
   die() {
     if (this.dead) return;
     this.dead = true;
+    this.stopAllIntervals();
     playSnakeDyingSound();
+
     if (this.IMAGES_DEAD && this.IMAGES_DEAD.length > 0) {
-      this.playAnimation(this.IMAGES_DEAD, 150, false, "dead", () => {
+      this.playAnimation(this.IMAGES_DEAD, 300, false, "dead", () => {
         this.isVisible = false;
-        super.removeEnemy();
+        this.removeFromWorld();
       });
     } else {
       this.isVisible = false;
-      super.removeEnemy();
+      this.removeFromWorld();
     }
   }
 
+  /**
+   * Removes the snake from the world.
+   */
+  removeFromWorld() {
+    if (this.world && this.world.enemies) {
+      const index = this.world.enemies.indexOf(this);
+      if (index !== -1) {
+        this.world.enemies.splice(index, 1);
+      }
+    }
+  }
   /**
    * Draws the snake and its collision/attack box.
    */

@@ -23,13 +23,6 @@ class Level {
    */
   constructor(enemies, clouds, key, door, backgroundObjects, poisonObjects, traps, crystal) {
     this.enemies = enemies || [];
-    // this.snakes = enemies.filter((e, i) => {
-    //   console.log(`Enemy ${i}:`, e);
-    //   console.log(`Ist Snake?`, e instanceof Snake);
-    //   return e instanceof Snake;
-    // });
-    
-    // this.enemies = enemies.filter((e) => !(e instanceof Snake));
     this.clouds = clouds || [];
     this.key = key;
     this.door = door;

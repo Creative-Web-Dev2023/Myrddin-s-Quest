@@ -205,14 +205,11 @@ function playNewSound() {
  */
 function playEnemyHitSound() {
   if (musicIsOn) {
-    if (enemyHitSound.readyState >= 2) {
-      enemyHitSound.currentTime = 0;
-      enemyHitSound.play().catch((error) => {
-        console.error("Failed to play enemy hit sound:", error);
-      });
-    } else {
-      console.warn("Enemy hit sound is not ready to play.");
-    }
+    enemyHitSound.pause(); 
+    enemyHitSound.currentTime = 0; 
+    enemyHitSound.play().catch(error => {
+      console.error("Failed to play enemy hit sound:", error);
+    });
   }
 }
 /**

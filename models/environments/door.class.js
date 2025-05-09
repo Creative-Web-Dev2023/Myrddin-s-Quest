@@ -14,7 +14,6 @@ class Door extends MovableObject {
     this.currentImage = 0; 
     this.loadImage(LOADED_IMAGES.game_items.door[0]);
     this.addToImageCache('door', LOADED_IMAGES.game_items.door);
-    console.log('[Door] ImageCache:', this.imageCache);
     this.x = x;
     this.y = y;
     this.width = 300;
@@ -31,18 +30,9 @@ class Door extends MovableObject {
     }, 1000 / 4); 
   }
 
-  /**
-   * Draws the door on the canvas.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
-   */
-  /*   draw(ctx) {
-    super.draw(ctx);
-  } */
 
   draw(ctx) {
-    console.log('[DRAW DOOR] wird aufgerufen bei x =', this.x);
     super.draw(ctx);
-
     ctx.globalAlpha = 1;
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
@@ -70,11 +60,4 @@ class Door extends MovableObject {
     return isColliding;
   }
 
-  /**
-   * Allows a character to enter the door.
-   * @param {Character} character - The character entering the door.
-   */
-  // enterDoor(character) {
-  //   character.enterDoor(this);
-  // }
 }

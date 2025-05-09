@@ -126,7 +126,6 @@ class CollisionHandler {
         }
       }
     } else {
-      this.world.character.hit(enemy);
       this.world.characterStatusBar.setPercentage(this.world.character.energy);
     }
   }
