@@ -33,7 +33,7 @@ class World {
     this.ui = new UI(canvas);
     this.initializeGameObjects();
     this.setWorld();
-    this.collisionHandler = new CollisionHandler(this);
+     this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
     if (this.level.endboss) {
       this.endbossHealthBar = this.level.endboss.statusBarEndboss;
@@ -73,14 +73,30 @@ class World {
     this.character = new Character(this, this.poisonStatusBar);
     this.character.world = this;
     this.character.y = 150;
+    
+    // Initialisiere Arrays
     this.poisonsArray = this.level.poisonObjects || [];
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
-    this.enemies = this.level.enemies || [];
+    this.enemies = [];
+    this.snakes = [];
+    
+    // Füge Feinde zur richtigen Liste hinzu
+    if (this.level.enemies) {
+      this.level.enemies.forEach(enemy => {
+        if (enemy instanceof Snake) {
+          this.snakes.push(enemy);
+        } else {
+          this.enemies.push(enemy);
+        }
+        enemy.setWorld(this);
+      });
+    }
+    
     this.level.objects = this.level.objects || [];
-    this.snakes = this.level.snakes || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
+    
     const cloudsArray = generateCloudsLvl();
     this.clouds = new Clouds(cloudsArray);
     this.door = this.level.door || [];
@@ -131,33 +147,55 @@ class World {
   /**
    * Aktualisiert den Zustand der Welt.
    */
-  update() {
+update() {
     if (this.levelCompleted || this.character.energy <= 0) return;
-    if (this.clouds) {
-      this.clouds.updateClouds();
-    }
-    if (this.collisionHandler) {
-      this.collisionHandler.checkCollisions();
-    }
+    this.clouds?.updateClouds();
+    this.collisionHandler?.checkCollisions();   
     if (this.character.isVisible) {
       this.character.update();
       this.character.playAnimation(this.character.IMAGES_IDLE);
     }
-    this.updatePoison();
-    if (
-      (this.character.movement?.right || this.character.movement?.left) &&
-      musicIsOn
-    ) {
-      playWalkingSound();
-    }
-    this.updateKey();
+    this.updateCollectibles(); 
     this.updateEnemies();
     if (this.level.endboss && !this.level.endboss.dead) {
-      this.level.endboss.update(this.character); // Update the endboss state
-      this.endbossHealthBar?.setPercentage(this.level.endboss.energy); // Update health bar
+      this.endbossHealthBar?.setPercentage(this.level.endboss.energy);
     }
-    this.updateCrystal();
   }
+  /**
+   * Aktualisiert alle Sammelobjekte (Gift, Schlüssel, Kristall).
+   */
+  updateCollectibles() {
+    this.updatePoison();
+    this.updateCrystal();
+    this.updateKey();
+  }
+
+   updatePoison() {
+    this.poisonsArray.forEach((poison, index) => {
+      if (this.collisionHandler.isColliding(this.character, poison)) {
+        this.character.collectPoison(poison, index);
+      }
+    });
+  }
+
+  /**
+   * Aktualisiert den Zustand des Kristalls.
+   */
+updateCrystal() {
+  if (this.crystal && this.crystal.isActive) {
+    if (this.collisionHandler.isColliding(this.character, this.crystal)) {
+      this.crystal.collect();
+    }
+  }
+}
+
+updateKey() {
+  if (this.key && this.key.isActive) {
+    if (this.collisionHandler.isColliding(this.character, this.key)) {
+      this.character.collectKey(this.key);
+    }
+  }
+}
   /**
    * Zeichnet die Welt.
    */
@@ -168,54 +206,47 @@ class World {
   /**
    * Aktualisiert die Feinde in der Welt.
    */
- updateEnemies() {
-  this.enemies.forEach((enemy, index) => {
-    if (enemy.dead) {
-      return; 
+  updateEnemies() {
+    const allEnemies = [...this.enemies, ...this.snakes];
+    for (let i = allEnemies.length - 1; i >= 0; i--) {
+      const enemy = allEnemies[i];
+      if (enemy.isRemoved) continue;
+      if (enemy.isReadyToRemove) {
+        this.removeEnemyFromWorld(enemy);
+        continue;
+      }
+      if (!enemy.dead) {
+        enemy.update(this.character);
+      }
     }
+  }
+
+  removeEnemyFromWorld(enemy) {
+  
+    const lists = []; 
     if (enemy instanceof Snake) {
-      enemy.update(this.character);
-      if (this.collisionHandler.checkCollision(this.character, enemy)) {
-        if (this.character.isAttacking) {
-          enemy.takeDamage(this.character.attackDamage);
+      lists.push(this.snakes, this.level?.snakes);
+    } else {
+      lists.push(this.enemies, this.level?.enemies);
+    }
+    lists.forEach(list => {
+      if (Array.isArray(list)) {
+        const index = list.indexOf(enemy);
+        if (index > -1) {
+          list.splice(index, 1);
+          console.log(`Enemy ${enemy.id} removed from list`);
         }
       }
-    } else if (enemy instanceof Endboss) {
-      enemy.update(this.character);
-    }
-  });
-  this.enemies = this.enemies.filter(enemy => !enemy.dead);
-}
-
-  /**
-   * Aktualisiert den Zustand des Gifts.
-   */
-  updatePoison() {
-    this.poisonsArray.forEach((poison, index) => {
-      if (this.collisionHandler.checkCollision(this.character, poison)) {
-        this.character.collectPoison(poison, index);
-      }
     });
-  }
-
-  /**
-   * Aktualisiert den Zustand des Kristalls.
-   */
-  updateCrystal() {
-    if (this.crystal && this.crystal.isActive) {
-      if (this.collisionHandler.checkCollision(this.character, this.crystal)) {
-        this.crystal.collect();
-      }
+    enemy.stopAllIntervals();
+    enemy.isRemoved = true;
+    enemy.isVisible = false;
+ 
+    if (this.level?.endboss === enemy) {
+      this.level.endboss = null;
     }
   }
 
-  updateKey() {
-    if (this.key && this.key.isActive) {
-      if (this.collisionHandler.checkCollision(this.character, this.key)) {
-        this.character.collectKey(this.key);
-      }
-    }
-  }
   /**
    * Fügt einen Feind zur Welt hinzu.
    * @param {Enemy} enemy - Der hinzuzufügende Feind.
@@ -269,9 +300,9 @@ class World {
    */
   flipImage(mo) {
     this.ctx.save();
-    this.ctx.translate(mo.width, 0); 
-    this.ctx.scale(-1, 1);   
-    mo.x = mo.x * -1; // 
+    this.ctx.translate(mo.width, 0);
+    this.ctx.scale(-1, 1);
+    mo.x = mo.x * -1;
   }
 
   /**

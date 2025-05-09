@@ -18,11 +18,11 @@ class Drawer {
     this.drawBackground();
     this.drawStatusBars();
     this.drawGameObjects();
+    this.drawTraps();
+    this.drawSnakes();
     this.drawEnemies();
     this.drawDoor();
     this.drawCharacter();
-    this.drawSnakes();
-    this.drawTraps();
     this.drawKey();
     this.drawCrystal();
   }
@@ -67,17 +67,12 @@ class Drawer {
   drawGameObjects() {
     this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0); 
-    this.world.poisonsArray.forEach((poison, index) => {
-      
+    this.world.poisonsArray.forEach((poison) => {
       poison.draw(this.world.ctx);
     });
-
-    this.world.addObjectsToMap(this.world.enemies);
-    this.world.addObjectsToMap(this.world.traps);
     this.world.throwableObjects.forEach((bottle) => {
       bottle.draw(this.world.ctx, this.world.camera_x);
     });
-
     this.world.ctx.restore();
   }
 
@@ -85,13 +80,18 @@ class Drawer {
    * Draws the enemies in the game world.
    */
   drawEnemies() {
-    this.world.enemies.forEach((enemy) => {
+  this.world.ctx.save();
+  this.world.ctx.translate(this.world.camera_x, 0);
+  this.world.enemies.forEach((enemy) => {
+    if (!enemy.isRemoved && enemy.isVisible) {
       enemy.draw(this.world.ctx);
-    });
-    if (this.world.level.endboss) {
-      this.world.level.endboss.draw(this.world.ctx);
     }
+  });
+  if (this.world.level.endboss && !this.world.level.endboss.isRemoved && this.world.level.endboss.isVisible) {
+    this.world.level.endboss.draw(this.world.ctx);
   }
+  this.world.ctx.restore();
+}
 
   /**
    * Draws the character in the game world.
@@ -109,12 +109,16 @@ class Drawer {
   /**
    * Draws the snakes in the game world.
    */
-  drawSnakes() {
-    this.world.ctx.save();
-    this.world.ctx.translate(this.world.camera_x, 0);
-    this.world.addObjectsToMap(this.world.snakes);
-    this.world.ctx.restore();
-  }
+drawSnakes() {
+  this.world.ctx.save();
+  this.world.ctx.translate(this.world.camera_x, 0);
+  this.world.snakes.forEach((snake) => {
+    if (!snake.isRemoved && snake.isVisible) { 
+      snake.draw(this.world.ctx);
+    }
+  });
+  this.world.ctx.restore();
+}
 
   drawDoor() {
     this.world.ctx.save();
@@ -130,14 +134,15 @@ class Drawer {
     this.world.ctx.save();
     this.world.ctx.translate(this.world.camera_x, 0);
     this.world.traps.forEach((trap) => {
-      trap.draw(this.world.ctx);
+      if (!trap.isRemoved) {
+        trap.draw(this.world.ctx);
+      }
     });
     this.world.ctx.restore();
   }
 
   drawKey() {
     if (this.world.key && this.world.key.isActive) {
-      this.world.addToMap(this.world.key);
       this.world.ctx.save();
       this.world.ctx.translate(this.world.camera_x, 0);
       this.world.addToMap(this.world.key);

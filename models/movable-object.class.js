@@ -147,10 +147,22 @@ class MovableObject extends DrawableObject {
     this.deadAnimationPlayed = true;
     this.playDeathAnimation();
   }
-  
 
-  playGenericAnimation(images, speed = 100, loop = true, animationName = '', onComplete = null) {
-    if (this.currentAnimationName === animationName) return;
+  playGenericAnimation(images, interval, loop, animationName, onComplete) {
+    if (!images) {
+      // Keine Animation möglich, wenn undefined oder null
+      return;
+    }
+    if (!Array.isArray(images)) {
+      console.error(
+        `[Character] Ungültige Bilder für ${animationName}:`,
+        images
+      );
+      return;
+    }
+    if (this.currentAnimationName === animationName) {
+      return;
+    }
     this.stopAllAnimations();
     this.currentAnimationName = animationName;
     let index = 0;
@@ -164,18 +176,18 @@ class MovableObject extends DrawableObject {
         clearInterval(animationInterval);
         if (onComplete) onComplete();
       }
-    }, speed);
+    }, interval);
     this.animationIntervals.push(animationInterval);
   }
-  
+
   /**
    * Stops all animations.
    */
- stopAllAnimations() {
-  this.animationIntervals.forEach(clearInterval);
-  this.animationIntervals = [];
-  this.currentAnimationName = null; 
-}
+  stopAllAnimations() {
+    this.animationIntervals.forEach(clearInterval);
+    this.animationIntervals = [];
+    this.currentAnimationName = null;
+  }
 
   registerInterval(interval) {
     if (!this.allIntervals) this.allIntervals = [];
@@ -189,7 +201,7 @@ class MovableObject extends DrawableObject {
    * Resets the game to its initial state.
    */
   resetGame() {
-    location.reload(); 
+    location.reload();
   }
 
   drawWithCollisionBox(ctx) {

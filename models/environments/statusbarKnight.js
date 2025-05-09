@@ -10,7 +10,7 @@ class KnightHealthDisplay extends DrawableObject {
   constructor(knight) {
     super();
     this.loadImage(LOADED_IMAGES.game_items.hearts[0]);
-    this.addToImageCache('hearts', LOADED_IMAGES.game_items.hearts);
+    this.addToImageCache("hearts", LOADED_IMAGES.game_items.hearts);
     this.knight = knight;
     this.x = 0;
     this.y = 0;
@@ -27,6 +27,14 @@ class KnightHealthDisplay extends DrawableObject {
       this.energy = this.knight.energy;
     }
   }
+ 
+  /**
+   * Updates the number of hits taken by the knight.
+   * @param {number} hits - The number of hits the knight has taken.
+   */
+  updateHits(hits) {
+    this.energy = 100 - hits * (100 / this.knight.maxHits); // Update energy based on hits
+  }
 
   /**
    * Draws the health display on the canvas.
@@ -36,7 +44,7 @@ class KnightHealthDisplay extends DrawableObject {
     this.update();
     let heartDistance = 40;
     for (let i = 0; i < 3; i++) {
-      let key = (this.energy || 0) > i * 10 ? 'hearts_1' : 'hearts_0';
+      let key = (this.energy || 0) > i * 10 ? "hearts_1" : "hearts_0";
       let img = this.imageCache[key];
       ctx.drawImage(img, this.x + i * heartDistance, this.y, 30, 30);
     }
@@ -46,9 +54,11 @@ class KnightHealthDisplay extends DrawableObject {
    * Updates the position of the health display.
    * @param {number} knightX - The x position of the knight.
    * @param {number} knightY - The y position of the knight.
+   * @param {number} knightWidth - The width of the knight.
    */
-  updatePosition(knightX, knightY) {
-    this.x = knightX + 145;
-    this.y = knightY + 30;
+  updatePosition(knightX, knightY, knightWidth) {
+    // Berechne die mittige Position über dem Kopf
+    this.x = knightX + (knightWidth / 2) - (this.width / 2);
+    this.y = knightY - 40;
   }
 }

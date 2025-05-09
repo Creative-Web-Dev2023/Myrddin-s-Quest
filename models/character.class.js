@@ -30,6 +30,19 @@ class Character extends MovableObject {
     this.addToImageCache("attack", LOADED_IMAGES.character.attack);
     this.addToImageCache("die", LOADED_IMAGES.character.die);
     this.addToImageCache("hurt", LOADED_IMAGES.character.hurt);
+
+  
+    this.IMAGES_WALK = LOADED_IMAGES.character.walk;
+    this.IMAGES_ATTACK = LOADED_IMAGES.character.attack;
+    this.IMAGES_HURT = LOADED_IMAGES.character.hurt;
+    this.IMAGES_DEAD = LOADED_IMAGES.character.die;
+
+    console.log("character IMAGES:", {
+      walk: this.IMAGES_WALK,
+      attack: this.IMAGES_ATTACK,
+      hurt: this.IMAGES_HURT,
+      dead: this.IMAGES_DEAD,
+    });
     this.world = world;
     this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
     this.initCharacter();
@@ -44,7 +57,7 @@ class Character extends MovableObject {
   initCharacter() {
     this.applyGravity();
     this.energy = 100;
-     this.x = 11000;
+      this.x = 11000;
     // this.x = 90;
     // this.y = 150;
     this.poisonStatusBar.setPercentage(0);
@@ -62,34 +75,50 @@ class Character extends MovableObject {
     if (!this.isVisible || this.energy <= 0) return;
     this.handleState();
     this.updateCamera();
-      this.animate();
+    this.animate();
   }
 
   animate() {
     this.setCustomInterval(() => {
-      if (this.isDead()) {
-        this.stopAllAnimations();
-        return;
-      }
+      if (this.isDead()) return;
       if (this.isAttacking) {
-        this.playGenericAnimation(LOADED_IMAGES.character.attack, 100,false,
+        if (!LOADED_IMAGES.character.attack) {
+          console.error("Angriffsbilder nicht geladen!");
+          return;
+        }
+        this.playGenericAnimation(
+          LOADED_IMAGES.character.attack,
+          100,
+          false,
           "attack"
-        );}
-
-      else if (this.isHurt()) {
-        this.playGenericAnimation( LOADED_IMAGES.character.hurt, 400,false,
-          "hurt"
         );
+      }
+
+      // Validiere LOADED_IMAGES.character.hurt
+      else if (this.isHurt()) {
+        if (!LOADED_IMAGES.character.hurt) {
+          console.error("Schadensbilder nicht geladen!");
+          return;
+        }
       } else if (this.isAboveGround()) {
-        this.playGenericAnimation( LOADED_IMAGES.character.jump, 100, false,
+        this.playGenericAnimation(
+          LOADED_IMAGES.character.jump,
+          100,
+          false,
           "jump"
         );
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playGenericAnimation(  LOADED_IMAGES.character.walk, 100,true,
+        this.playGenericAnimation(
+          LOADED_IMAGES.character.walk,
+          100,
+          true,
           "walk"
         );
       } else {
-        this.playGenericAnimation(LOADED_IMAGES.character.idle,  200,  true,
+        this.playGenericAnimation(
+          LOADED_IMAGES.character.idle,
+          200,
+          true,
           "idle"
         );
       }
@@ -172,15 +201,18 @@ class Character extends MovableObject {
   }
 
   playAttack() {
-    if (this.isAttacking) return; 
+    if (this.isAttacking) return;
     this.isAttacking = true;
-    this.playGenericAnimation( LOADED_IMAGES.character.attack,  100,  false,
+    this.playGenericAnimation(
+      LOADED_IMAGES.character.attack,
+      100,
+      false,
       "attack",
       () => {
         this.isAttacking = false;
       }
     );
-    this.executeAttack(); 
+    this.executeAttack();
   }
 
   playDeath() {

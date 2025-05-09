@@ -6,6 +6,8 @@ class Trap extends MovableObject {
   height = 180;
   width = 180;
   isActive = false;
+  isRemoved = false;
+  animationIntervals = [];
 
   /**
    * Creates an instance of Trap.
@@ -15,7 +17,7 @@ class Trap extends MovableObject {
   constructor(x, y) {
     super();
     this.loadImage(LOADED_IMAGES.game_items.trap[0]);
-    this.addToImageCache('trap', LOADED_IMAGES.game_items.trap)
+    this.addToImageCache('trap', LOADED_IMAGES.game_items.trap);
     this.x = x;
     this.y = y;
     this.animate();
@@ -25,9 +27,22 @@ class Trap extends MovableObject {
    * Animates the trap.
    */
   animate() {
-    setInterval(() => {
-      this.playAnimation(LOADED_IMAGES.game_items.trap);
+    const interval = setInterval(() => {
+      if (!this.isRemoved) {
+        this.playAnimation(LOADED_IMAGES.game_items.trap);
+      }
     }, 100);
+    this.animationIntervals.push(interval);
+  }
+
+  /**
+   * Removes the trap from the world.
+   */
+  remove() {
+    this.isRemoved = true;
+    this.isActive = false;
+    this.animationIntervals.forEach(clearInterval);
+    this.animationIntervals = [];
   }
   // /**
   //  * Sets the world for the trap.

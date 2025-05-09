@@ -26,6 +26,15 @@ class Endboss extends Enemy {
     this.IMAGES_ATTACK = LOADED_IMAGES.troll.attack;
     this.IMAGES_HURT = LOADED_IMAGES.troll.hurt;
     this.IMAGES_DEAD = LOADED_IMAGES.troll.dead;
+
+   
+    console.log("Endboss IMAGES:", {
+      walk: this.IMAGES_WALK,
+      attack: this.IMAGES_ATTACK,
+      hurt: this.IMAGES_HURT,
+      dead: this.IMAGES_DEAD,
+    });
+
     this.animate();
   }
 
@@ -45,8 +54,10 @@ class Endboss extends Enemy {
     if (this.dead) return;
     super.takeDamage(damage);
     this.statusBarEndboss.setPercentage(this.energy);
+    if (!this.isDead()) {
+      this.playAnimation(this.IMAGES_HURT, 100);
+    }
   }
-
   getCollisionBox() {
     return {
       x: this.otherDirection
@@ -68,27 +79,20 @@ class Endboss extends Enemy {
    * Handles the death of the Endboss.
    */
   die() {
-    if (this.dead) return;
-    this.dead = true;
-    this.playAnimation(LOADED_IMAGES.troll.dead, 200);
-    if (this.world && this.world.soundOn) {
-      this.deadSound.play();
-    }
-    setTimeout(() => {
-      this.removeEnemy();
-      if (this.world && this.world.crystal) {
-        this.world.crystal.activate();
-      }
-    }, LOADED_IMAGES.troll.dead.length * 200);
+    super.die(); // Basisimplementierung aufrufen
+    this.playAnimation(this.IMAGES_DEAD, 200, false, () => {
+      this.isReadyToRemove = true;
+      if (this.world?.crystal) this.world.crystal.activate();
+      this.world?.showYouWinScreen();
+    });
   }
-
   /**
    * Updates the Endboss's state.
    * @param {Character} character - The character to interact with.
    */
   update(character) {
     if (this.dead) return;
-    this.updateStatusBarPosition(); // Ensure the status bar position is updated
+    this.updateStatusBarPosition();
     if (this.isInAttackRange(character)) {
       this.attack(character);
     } else {
@@ -110,12 +114,10 @@ class Endboss extends Enemy {
   /**
    * Checks if the character is in attack range.
    */
+  // endboss.class.js
   isInAttackRange(character) {
-    const distance = Math.abs(this.x - character.x);
-    const isFacingCharacter =
-      (character.x < this.x && this.otherDirection) ||
-      (character.x > this.x && !this.otherDirection);
-    return distance < this.attackRange && isFacingCharacter;
+    const distance = this.x - character.x; // Positive Werte = Charakter ist links
+    return distance > 0 && distance < this.attackRange;
   }
 
   /**
