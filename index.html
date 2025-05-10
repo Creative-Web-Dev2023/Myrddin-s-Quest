@@ -52,22 +52,22 @@
     <div class="game-screen">
       <div id="canvas-container">
         <canvas id="canvas" width="720" height="480" class="canvas d-none"></canvas>
+        <div id="btnsContainer" class="btns-container" style="display: none; pointer-events: none">
+          <div class="btns-left-side">
+            <img id="btnLeft" src="./assets/img/app_icons/arrow-left.png" width="50" />
+            <img id="btnRight" src="./assets/img/app_icons/arrow-right.png" width="50" />
+          </div>
+          <div class="btns-right-side">
+            <img id="btnPoison" src="./assets/img/app_icons/poison-bottle.png" width="50" />
+            <img id="btnJump" src="./assets/img/app_icons/arrow-up.png" width="50" />
+            <img id="btnAttack" src="./assets/img/app_icons/attack.png" width="50" />
+          </div>
+        </div>
         <div id="gameButtons" class="game-buttons">
           <img onclick="handleFullscreenToggle()" id="fullscreenImg" src="./assets/img/app_icons/arrow_up_orange.png"
             height="50" />
-            <img onclick="musicSwitcher()" id="audioSwitcher" src="./assets/img/app_icons/sound_off_orange.png" 
+          <img onclick="musicSwitcher()" id="audioSwitcher" src="./assets/img/app_icons/sound_off_orange.png"
             height="50" />
-        </div>
-      </div>
-      <div id="btnsContainer" class="btns-container">
-        <div class="btns-left-side">
-          <img id="btnLeft" src="./assets/img/app_icons/arrow-left.png" width="50" onclick="moveCharacterLeft()" />
-          <img id="btnRight" src="./assets/img/app_icons/arrow-right.png" width="50" onclick="characterJump()" />
-        </div>
-        <div class="btns-right-side">
-          <img id="btnPoison" src="./assets/img/app_icons/poison-bottle.png" width="50" onclick="throwPoison()" />
-          <img id="btnJump" src="./assets/img/app_icons/arrow-up.png" width="50" onclick="moveCharacterRight()" />
-          <img id="btnAttack" src="./assets/img/app_icons/attack.png" width="50" onclick="attackEnemy()" />
         </div>
       </div>
       <div id="startScreen" class="start-screen">

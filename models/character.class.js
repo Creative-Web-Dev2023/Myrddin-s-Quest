@@ -94,7 +94,6 @@ class Character extends MovableObject {
         );
       }
 
-      // Validiere LOADED_IMAGES.character.hurt
       else if (this.isHurt()) {
         if (!LOADED_IMAGES.character.hurt) {
           console.error("Schadensbilder nicht geladen!");

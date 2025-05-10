@@ -44,11 +44,5 @@ class Trap extends MovableObject {
     this.animationIntervals.forEach(clearInterval);
     this.animationIntervals = [];
   }
-  // /**
-  //  * Sets the world for the trap.
-  //  * @param {Object} world - The world object.
-  //  */
-  // setWorld(world) {
-  //   this.world = world;
-  // }
+  
 }

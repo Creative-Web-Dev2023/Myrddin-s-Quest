@@ -33,7 +33,7 @@ class KnightHealthDisplay extends DrawableObject {
    * @param {number} hits - The number of hits the knight has taken.
    */
   updateHits(hits) {
-    this.energy = 100 - hits * (100 / this.knight.maxHits); // Update energy based on hits
+    this.energy = 100 - hits * (100 / this.knight.maxHits); 
   }
 
   /**
@@ -57,7 +57,6 @@ class KnightHealthDisplay extends DrawableObject {
    * @param {number} knightWidth - The width of the knight.
    */
   updatePosition(knightX, knightY, knightWidth) {
-    // Berechne die mittige Position über dem Kopf
     this.x = knightX + (knightWidth / 2) - (this.width / 2);
     this.y = knightY - 40;
   }

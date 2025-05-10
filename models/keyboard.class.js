@@ -3,73 +3,65 @@ class Keyboard {
   RIGHT = false;
   JUMP = false;
   ATTACK = false;
-  D = false;
+  THROW = false;
 
-  setupControls(world) {
-    // Tastatur-Events
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") this.LEFT = true;
-      if (e.key === "ArrowRight") this.RIGHT = true;
-      if (e.key === "ArrowUp") this.JUMP = true;
-      if (e.key.toLowerCase() === "a") this.ATTACK = true;
-      if (e.key.toLowerCase() === "d") this.handleThrow(world);
-    });
-
-    window.addEventListener("keyup", (e) => {
-      if (e.key === "ArrowLeft") this.LEFT = false;
-      if (e.key === "ArrowRight") this.RIGHT = false;
-      if (e.key === "ArrowUp") this.JUMP = false;
-      if (e.key.toLowerCase() === "a") this.ATTACK = false;
-      if (e.key.toLowerCase() === "d") this.D = false;
-    });
-  }
-
-  setupTouchControls(world) {
-    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    const container = document.querySelector(".btns-container");
-    if (container) {
-      container.style.display = isTouch ? "flex" : "none";
-      container.style.pointerEvents = "auto"; // Hinzufügen
-    }
-    
+  constructor() {
+    window.addEventListener("keydown", (e) => this.handleKeyDown(e));
+    window.addEventListener("keyup", (e) => this.handleKeyUp(e));
   
-    const buttons = {
-      "btnLeft": "LEFT",
-      "btnRight": "RIGHT",
-      "btnJump": "JUMP",
-      "btnAttack": "ATTACK",
-      "btnPoison": "D"
-    };
-
-    for (const [id, key] of Object.entries(buttons)) {
-      const btn = document.getElementById(id);
-      if (!btn) continue;
-
-      btn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        this[key] = true;
-        if (id === "btnPoison") world.character.throwPoisonBottle();
-      });
-
-      btn.addEventListener("touchend", (e) => {
-        e.preventDefault();
-        this[key] = false;
-      });
-    }
+    this.setupTouchControls();
   }
 
-  handleThrow(world) {
-    if (!this.D) {
-      this.D = true;
-      world.character.throwPoisonBottle();
-    }
+  handleKeyDown(e) {
+    if (e.keyCode === 37) this.LEFT = true;
+    if (e.keyCode === 39) this.RIGHT = true;
+    if (e.keyCode === 38) this.JUMP = true;
+    if (e.keyCode === 65) this.ATTACK = true; 
+    if (e.keyCode === 68) this.THROW = true;   
   }
 
-  reset() {
-    this.LEFT = false;
-    this.RIGHT = false;
-    this.JUMP = false;
-    this.ATTACK = false;
-    this.D = false;
+  handleKeyUp(e) {
+    if (e.keyCode === 37) this.LEFT = false;
+    if (e.keyCode === 39) this.RIGHT = false;
+    if (e.keyCode === 38) this.JUMP = false;
+    if (e.keyCode === 65) this.ATTACK = false;
+    if (e.keyCode === 68) this.THROW = false;
+  }
+
+  setupTouchControls() {
+   
+    const btnLeft = document.getElementById('btnLeft');
+    if (btnLeft) {
+      btnLeft.ontouchstart = () => this.LEFT = true;
+      btnLeft.ontouchend = () => this.LEFT = false;
+    }
+
+    
+    const btnRight = document.getElementById('btnRight');
+    if (btnRight) {
+      btnRight.ontouchstart = () => this.RIGHT = true;
+      btnRight.ontouchend = () => this.RIGHT = false;
+    }
+
+  
+    const btnJump = document.getElementById('btnJump');
+    if (btnJump) {
+      btnJump.ontouchstart = () => this.JUMP = true;
+      btnJump.ontouchend = () => this.JUMP = false;
+    }
+
+   
+    const btnAttack = document.getElementById('btnAttack');
+    if (btnAttack) {
+      btnAttack.ontouchstart = () => this.ATTACK = true;
+      btnAttack.ontouchend = () => this.ATTACK = false;
+    }
+
+  
+    const btnThrow = document.getElementById('btnPoison') || document.getElementById('btnThrow');
+    if (btnThrow) {
+      btnThrow.ontouchstart = () => this.THROW = true;
+      btnThrow.ontouchend = () => this.THROW = false;
+    }
   }
 }

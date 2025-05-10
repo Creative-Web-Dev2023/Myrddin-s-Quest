@@ -150,7 +150,6 @@ class MovableObject extends DrawableObject {
 
   playGenericAnimation(images, interval, loop, animationName, onComplete) {
     if (!images) {
-      // Keine Animation möglich, wenn undefined oder null
       return;
     }
     if (!Array.isArray(images)) {

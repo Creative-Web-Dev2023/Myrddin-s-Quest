@@ -5,9 +5,8 @@ let world;
 let IntervallIDs = [];
 let loopId = null;
 
-
 function handleFullscreenToggle() {
-  const container = document.getElementById('canvas-container');
+  const container = document.getElementById("canvas-container");
   if (!document.fullscreenElement) {
     container.requestFullscreen().catch(() => {});
   } else {
@@ -18,7 +17,7 @@ function handleFullscreenToggle() {
 const gameState = {
   save() {
     localStorage.setItem(
-      'gameState',
+      "gameState",
       JSON.stringify({
         characterX: world.character.x,
         characterY: world.character.y,
@@ -36,7 +35,7 @@ const gameState = {
   },
 
   restore() {
-    const saved = JSON.parse(localStorage.getItem('gameState'));
+    const saved = JSON.parse(localStorage.getItem("gameState"));
     if (!saved) return;
     this.restoreCharacter(saved);
     this.restoreEnemies(saved);
@@ -67,7 +66,7 @@ const gameState = {
 };
 
 function init() {
-  canvas = document.getElementById('canvas');
+  canvas = document.getElementById("canvas");
   preloadImages();
   /*   ctx = canvas.getContext('2d');
   
@@ -102,7 +101,7 @@ function preloadImagesStructured(paths) {
 function collectPathsAsImages(src, target) {
   for (const key in src) {
     const val = src[key];
-    if (typeof val === 'string') {
+    if (typeof val === "string") {
       const img = new Image();
       img.src = val;
       target[key] = img;
@@ -121,13 +120,17 @@ function collectPathsAsImages(src, target) {
  */
 function extractAllImages(obj) {
   const list = []; // Erstellt ein leeres Array, um alle gefundenen HTMLImageElement-Objekte zu speichern.
-  
-  (function collect(o) { // Definiert eine selbstaufrufende Funktion namens 'collect', die rekursiv arbeitet.
-    for (const key in o) { // Iteriert über alle Eigenschaften des Objekts 'o'.
+
+  (function collect(o) {
+    // Definiert eine selbstaufrufende Funktion namens 'collect', die rekursiv arbeitet.
+    for (const key in o) {
+      // Iteriert über alle Eigenschaften des Objekts 'o'.
       const val = o[key]; // Holt den Wert der aktuellen Eigenschaft.
-      if (val instanceof HTMLImageElement) { // Prüft, ob der Wert ein HTMLImageElement (Bild-Element) ist.
+      if (val instanceof HTMLImageElement) {
+        // Prüft, ob der Wert ein HTMLImageElement (Bild-Element) ist.
         list.push(val); // Falls ja, fügt es das Bild-Element dem 'list'-Array hinzu.
-      } else if (typeof val === 'object') { // Prüft, ob der Wert ein Objekt ist (z. B. ein verschachteltes Objekt).
+      } else if (typeof val === "object") {
+        // Prüft, ob der Wert ein Objekt ist (z. B. ein verschachteltes Objekt).
         collect(val); // Falls ja, ruft die Funktion 'collect' rekursiv mit diesem Objekt auf.
       }
     }
@@ -167,16 +170,16 @@ function waitForAllImagesToLoad(images, result) {
  * If an error occurs during image loading, it is logged to the console.
  */
 function preloadImages() {
-  document.getElementById('loadingMessage').classList.remove('d-none');
+  document.getElementById("loadingMessage").classList.remove("d-none");
   preloadImagesStructured(IMAGE_PATHS)
     .then((loadedImages) => {
       window.LOADED_IMAGES = loadedImages;
-      console.log('Geladene Bilder: ', LOADED_IMAGES);
-      document.getElementById('loadingMessage').classList.add('d-none');
+      console.log("Geladene Bilder: ", LOADED_IMAGES);
+      document.getElementById("loadingMessage").classList.add("d-none");
       showInfoBox();
     })
     .catch((err) => {
-      console.error('Error loading images:', err);
+      console.error("Error loading images:", err);
     });
 }
 
@@ -184,53 +187,99 @@ function preloadImages() {
  * Displays the info box by updating the html content.
  */
 function showInfoBox() {
-  const startContainer = document.getElementById('start_container');
+  const startContainer = document.getElementById("start_container");
   startContainer.innerHTML += generateStartContentHTML();
 }
 
 function showContent(content) {
-  const innerStartContainer = document.getElementById('inner_start_container');
-  const instructionsBox = document.getElementById('instructions_box');
-  innerStartContainer.classList.remove('d-none');
-  instructionsBox.classList.add('d-none');
-  if (content === 'startGame') {
+  const innerStartContainer = document.getElementById("inner_start_container");
+  const instructionsBox = document.getElementById("instructions_box");
+  innerStartContainer.classList.remove("d-none");
+  instructionsBox.classList.add("d-none");
+  if (content === "startGame") {
     startGame();
-  } else if (content === 'howToPlay') {
-    innerStartContainer.classList.add('d-none');
-    instructionsBox.classList.remove('d-none');
+  } else if (content === "howToPlay") {
+    innerStartContainer.classList.add("d-none");
+    instructionsBox.classList.remove("d-none");
     instructionsBox.innerHTML = generateAboutGameHtml();
-  } else if (content === 'imprint') {
-    innerStartContainer.classList.add('d-none');
-    instructionsBox.classList.remove('d-none');
+  } else if (content === "imprint") {
+    innerStartContainer.classList.add("d-none");
+    instructionsBox.classList.remove("d-none");
     instructionsBox.innerHTML = generateImprintHtml();
   }
 }
 
 function backToMainScreen() {
-  const innerStartContainer = document.getElementById('inner_start_container');
-  const instructionsBox = document.getElementById('instructions_box');
-  innerStartContainer.classList.remove('d-none');
-  instructionsBox.classList.add('d-none');
+  const innerStartContainer = document.getElementById("inner_start_container");
+  const instructionsBox = document.getElementById("instructions_box");
+  innerStartContainer.classList.remove("d-none");
+  instructionsBox.classList.add("d-none");
+}
+
+function hideMobileButtons() {
+  const btnsContainer = document.getElementById("btnsContainer");
+  if (btnsContainer) {
+    btnsContainer.style.display = "none";
+    btnsContainer.classList.remove("active");
+  }
 }
 
 function startGame() {
-  const startScreen = document.getElementById('startScreen');
-  const gameScreen = document.querySelector('.game-screen');
-  gameScreen.insertAdjacentHTML('beforeend', generateGameOverHTML());
-  gameScreen.insertAdjacentHTML('beforeend', generateWinScreenHTML());
-  document.getElementById('tryAgainButton').addEventListener('click', () => {
-    world.endGame.restartGame();
-  });
-  const canvas = document.getElementById('canvas');
-  startScreen.classList.add('d-none');
-  canvas.classList.remove('d-none');
-  ctx = canvas.getContext('2d');
+  setupGameScreens();
+  initializeGameWorld();
+  setupGameControls();
+  startGameLoop();
+}
+
+function setupGameScreens() {
+  const startScreen = document.getElementById("startScreen");
+  const canvas = document.getElementById("canvas");
+  const btnsContainer = document.getElementById("btnsContainer");
+  const gameScreen = document.querySelector(".game-screen");
+
+  hideMobileButtons();
+  btnsContainer.style.display = "none";
+  btnsContainer.classList.remove("active");
+  gameScreen.insertAdjacentHTML("beforeend", generateGameOverHTML());
+  gameScreen.insertAdjacentHTML("beforeend", generateWinScreenHTML());
+  startScreen.classList.add("d-none");
+  canvas.classList.remove("d-none");
+}
+
+function initializeGameWorld() {
+  const canvas = document.getElementById("canvas");
+  ctx = canvas.getContext("2d");
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
   window.endGame = world.endGame;
-  keyboard.setupControls(world);
-  keyboard.setupTouchControls(world);
-  gameLoop();
+}
+
+function setupGameControls() {
+  document.getElementById("tryAgainButton").addEventListener("click", () => {
+    world.endGame.restartGame();
+  });
+}
+
+function startGameLoop() {
+  setTimeout(() => {
+    if (isMobile()) {
+      const btnsContainer = document.getElementById("btnsContainer");
+      btnsContainer.style.display = "flex";
+      btnsContainer.classList.add("active");
+    }
+    gameLoop();
+  }, 300);
+}
+
+function isMobile() {
+  return (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    ) ||
+    (navigator.maxTouchPoints > 0 &&
+      window.matchMedia("(pointer: coarse)").matches) ||
+    (window.innerWidth <= 768 && window.innerHeight <= 1024)
+  );
 }
 
 function gameLoop() {
@@ -250,66 +299,8 @@ function clearAllIntervals() {
   IntervallIDs = [];
 }
 
-/* function quitGame() {
-  location.reload();
-} */
 
-/* function toggleFullscreen() {
-  const container = document.getElementById('canvas_container');
-  if (!document.fullscreenElement) {
-    container.requestFullscreen().catch(() => {});
-  } else {
-    document.exitFullscreen();
-  }
-} */
 
-/* function handleImpressum() {
-  let impressum = document.getElementById('impressum');
-  impressum.classList.toggle('hidden');
-  impressum.classList.toggle('show');
-} */
-
-/* function handleDescription() {
-  const description = document.getElementById('description');
-  const impressumContainer = document.getElementById('impressum-container');
-  description.classList.toggle('hidden');
-  description.classList.toggle('show');
-  impressumContainer.style.display = description.classList.contains('show')
-    ? 'none'
-    : 'block';
-  if (description.classList.contains('show')) {
-    document.body.style.overflow = 'auto';
-  } else {
-    document.body.style.overflow = 'hidden';
-  }
-} */
-
-/* function goBack() {
-  let description = document.getElementById('description');
-  let impressum = document.getElementById('impressum');
-  let impressumContainer = document.getElementById('impressum-container');
-  description.classList.add('hidden');
-  description.classList.remove('show');
-  impressum.classList.add('hidden');
-  impressum.classList.remove('show');
-  impressumContainer.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-} */
-
-/* function checkOrientation() {
-  const rotateMessage = document.getElementById('rotate');
-  if (!rotateMessage) {
-    return;
-  }
-  if (window.matchMedia('(orientation: landscape)').matches) {
-    rotateMessage.style.display = 'none';
-  } else {
-    rotateMessage.style.display = 'flex';
-  }
+function showWinScreen() {
+  hideMobileButtons();
 }
-window.addEventListener('orientationchange', checkOrientation);
-
-document.addEventListener('DOMContentLoaded', () => {
-  init();
-  checkOrientation();
-}); */

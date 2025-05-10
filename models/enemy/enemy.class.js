@@ -65,9 +65,9 @@ class Enemy extends MovableObject {
     this.setCustomInterval(() => {
       if (!this.dead && !this.isAttacking) {
         if (this.x <= leftLimit) {
-          this.x = rightLimit; // Zurück zum Startpunkt
+          this.x = rightLimit; 
         } else {
-          this.x -= this.speed; // Immer nach links bewegen
+          this.x -= this.speed; 
         }
       }
     }, 50);
@@ -199,7 +199,7 @@ class Enemy extends MovableObject {
    */
   setCustomInterval(fn, interval) {
     const id = setInterval(fn, interval);
-    this.animationIntervals.push(id); // Verwende animationIntervals
+    this.animationIntervals.push(id); 
   }
 
   getAttackBox() {

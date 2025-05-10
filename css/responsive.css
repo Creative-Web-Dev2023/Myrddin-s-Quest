@@ -4,6 +4,50 @@
   --z-index-impressum: 1200;
 }
 
+#canvas-container:fullscreen .btns-container {
+  display: flex !important; 
+  pointer-events: auto !important;
+}
+
+/* Erzwinge display: none, wenn Game-Over-Screen aktiv ist */
+#game-over-container[style*="flex"] + #btnsContainer {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* iPhone SE (375px) */
+@media (max-width: 375px) and (orientation: portrait) {
+  #btnsContainer {
+    width: 95% !important;
+    max-width: 350px !important;
+    bottom: 10px !important;
+  }
+  
+  .btns-container img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+/* Samsung Galaxy S8+ (360px) */
+@media (max-width: 360px) and (orientation: portrait) {
+  .btns-container {
+    bottom: 5px !important;
+    gap: 8px !important;
+  }
+}
+
+/* Surface Duo (540px - Dual Screen) */
+@media (max-width: 540px) and (orientation: portrait) {
+  .btns-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btns-container img {
+    margin: 5px;
+  }
+}
+
 @media screen and (max-width: 460px) {
   .button-container {
     gap: 10px !important;
@@ -106,15 +150,7 @@
 .impressum-item {
   padding: 10px;
 }
-.btns-container {
-  bottom: 10px;
-  padding: 0 10px;
-}
 
-.btns-container img {
-  width: 45px;
-  height: 45px;
-}
 }
 
 @media screen and (min-width: 769px) and (max-width: 1366px) {

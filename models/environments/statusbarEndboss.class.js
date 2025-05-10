@@ -23,9 +23,9 @@ class EndbossStatusbar extends DrawableObject {
    * @param {number} percentage - The percentage to set.
    */
   setPercentage(percentage) {
-    this.percentage = Math.max(0, Math.min(100, percentage)); // Clamp percentage between 0 and 100
+    this.percentage = Math.max(0, Math.min(100, percentage)); 
     const imageIndex = this.resolveImageIndex();
-    this.img = this.imageCache[`endboss_${imageIndex}`]; // Update the image based on percentage
+    this.img = this.imageCache[`endboss_${imageIndex}`]; 
   }
 
   takeDamage(damage) {
@@ -40,8 +40,8 @@ class EndbossStatusbar extends DrawableObject {
    * @param {number} endbossY - The y position of the Endboss.
    */
   updatePosition(endbossX, endbossY) {
-    this.x = endbossX + 90; // Adjust position relative to the Endboss
-    this.y = endbossY - 50; // Place above the Endboss
+    this.x = endbossX + 90; 
+    this.y = endbossY - 50; 
   }
 
   /**

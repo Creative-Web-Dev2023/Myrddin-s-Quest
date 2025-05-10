@@ -7,16 +7,9 @@ let isDead = false;
 class EndGame {
   constructor(world) {
     this.world = world;
+      this.intervalIDs = [];
   }
 
-  /**
-   * Zeigt den Game-Over-Bildschirm an.
-   */
-  showGameOverScreen() {
-    const gameOverContainer = document.getElementById("game-over-container");
-    if (gameOverContainer) gameOverContainer.style.display = "flex";
-    stopAllSounds();
-  }
   /**
    * Versteckt den Game-Over-Bildschirm.
    */
@@ -30,9 +23,13 @@ class EndGame {
   restartGame() {
     isDead = false;
     gameRestarted = true;
-    if (!this.world.character) {
-      return;
-    }
+    if (!this.world.character)  return;
+      const btnsContainer = document.getElementById("btnsContainer");
+  if (btnsContainer && isMobile()) {
+    btnsContainer.style.display = "flex";
+    btnsContainer.classList.add("active");
+    btnsContainer.style.pointerEvents = "auto";
+  }
     this.world.character.resetPosition(this.world.character.lastPosition); 
     this.world.resetCamera();
     this.hideGameOverScreen();
@@ -59,31 +56,57 @@ class EndGame {
   /**
    * Zeigt den "You Lost"-Bildschirm an.
    */
-  showYouLostScreen() {
-    document.getElementById("game-over-container").style.display = "flex";
-    stopAllSounds();
-  }
+showYouLostScreen() {
+  const btnsContainer = document.getElementById("btnsContainer");
+  document.getElementById("game-over-container").style.display = "flex";
+  btnsContainer.style.display = "none";
+  btnsContainer.classList.remove("active"); 
+  btnsContainer.style.pointerEvents = "none";
+  
+  stopAllSounds();
 
+}
   /**
    * Zeigt den "You Win"-Bildschirm an.
    */
   showYouWinScreen() {
     const winScreen = document.getElementById("win-screen");
-    this.hideGameOverScreen();
     if (!winScreen) {
       console.error("Win screen element not found.");
       return;
     }
+    this.prepareWinScreen(winScreen);
+    this.setupRestartButton();
+    this.cleanupAfterWin();
+  }
+
+  /**
+   * Bereitet den "You Win"-Bildschirm vor.
+   */
+  prepareWinScreen(winScreen) {
+    this.hideGameOverScreen();
     winScreen.style.display = "block";
     winScreen.classList.remove("hidden");
     winScreen.classList.add("show");
+  }
 
+  /**
+   * Setzt die Funktionalität des Neustart-Buttons.
+   */
+  setupRestartButton() {
     const restartButton = document.getElementById("winTryAgainButton");
-    restartButton.onclick = () => {
-      this.hideWinScreen();
-      this.restartGame();
-    };
+    if (restartButton) {
+      restartButton.onclick = () => {
+        this.hideWinScreen();
+        this.restartGame();
+      };
+    }
+  }
 
+  /**
+   * Führt Aufräumarbeiten nach einem Sieg durch.
+   */
+  cleanupAfterWin() {
     this.clearAllIntervals();
     stopAllSounds();
     cancelAnimationFrame(this.world.loopID);

@@ -299,31 +299,32 @@ h2 {
   padding: 5px;
 }
 
-.btns-container {
-  /* Ändere von display: none zu */
+.btns-container,
+#btnsContainer {
+  position: absolute !important;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
   display: none;
-  position: fixed;
-  bottom: 20px;
-  left: 0;
-  right: 0;
   justify-content: space-between;
   padding: 0 15px;
-  z-index: 1000;
+  z-index: 12000;
+  pointer-events: none;
+  width: 90%;
+  max-width: 600px;
 }
 
-#btnsContainer {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0); /* Zentriert den Container horizontal */
-  display: flex;
-  justify-content: space-between;
-  width: 80%; 
-  max-width: 600px; 
-  z-index: 1000;
+.btns-container.active,
+#btnsContainer.active {
+  display: flex !important;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .btns-container img {
   touch-action: manipulation;
+  user-select: none;
+  pointer-events: auto;
   width: 50px;
   height: 50px;
   opacity: 0.8;
@@ -332,7 +333,7 @@ h2 {
 }
 
 .btns-container img:active {
-  transform: scale(0.85);
+  transform: scale(0.9);
   opacity: 1;
 }
 
