@@ -72,7 +72,6 @@ class DrawableObject {
 
   get effectiveWidth() {
     return this.width - this.offset.left - this.offset.right;
-
   }
 
   get effectiveHeight() {

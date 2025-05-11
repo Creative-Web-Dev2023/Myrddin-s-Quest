@@ -13,6 +13,7 @@ class Enemy extends MovableObject {
     this.addToImageCache("attack", images.attack);
     this.addToImageCache("hurt", images.hurt);
     this.addToImageCache("dead", images.dead);
+    this.img = images.walk[0];
   }
   /**
    * Creates an instance of Enemy.
@@ -30,11 +31,12 @@ class Enemy extends MovableObject {
     this.speed = 1;
     this.attackRange = 150;
     this.attackDamage = 10;
-    this.otherDirection = true; 
+    this.otherDirection = true;
     this.patrolling = false;
     this.animationIntervals = [];
-    this.isReadyToRemove = false; 
+    this.isReadyToRemove = false;
     this.isVisible = true;
+    this.isHurt = false; // <-- Initialisierung
   }
 
   /**
@@ -60,14 +62,14 @@ class Enemy extends MovableObject {
   startPatrol(leftLimit, rightLimit) {
     if (this.patrolling) return;
     this.patrolling = true;
-    this.otherDirection = true; 
-    
+    this.otherDirection = true;
+
     this.setCustomInterval(() => {
       if (!this.dead && !this.isAttacking) {
         if (this.x <= leftLimit) {
-          this.x = rightLimit; 
+          this.x = rightLimit;
         } else {
-          this.x -= this.speed; 
+          this.x -= this.speed;
         }
       }
     }, 50);
@@ -145,15 +147,13 @@ class Enemy extends MovableObject {
    */
   takeDamage(damage) {
     if (this.dead) return;
-    
     this.energy -= damage;
-    this.isHurt = true;
-    
+    this.isHurt = true; // <-- Korrekt als Eigenschaft
     if (this.energy <= 0) {
       this.die();
     } else {
       this.playAnimation(this.IMAGES_HURT, 100, false, () => {
-        this.isHurt = false;
+        this.isHurt = false; // <-- Nach Animation zurücksetzen
       });
     }
   }
@@ -162,22 +162,21 @@ class Enemy extends MovableObject {
    * Handles the death of the enemy.
    */
   die() {
+    console.log("Knight stirbt!", this.id);
+
     if (this.dead) return;
-    
     this.dead = true;
     this.stopAllIntervals();
-    
-    console.log(`Enemy ${this.id} started death animation`);
-    
     this.playAnimation(this.IMAGES_DEAD, 200, false, () => {
       this.isReadyToRemove = true;
       this.isVisible = false;
-      console.log(`Enemy ${this.id} death animation completed, ready to remove`);
-      
-      if (this.world) {
-        this.world.removeEnemyFromWorld(this);
-      }
     });
+    setTimeout(() => {
+      if (!this.isReadyToRemove) {
+        this.isReadyToRemove = true;
+        this.isVisible = false;
+      }
+    }, 1000);
   }
 
   /**
@@ -199,7 +198,7 @@ class Enemy extends MovableObject {
    */
   setCustomInterval(fn, interval) {
     const id = setInterval(fn, interval);
-    this.animationIntervals.push(id); 
+    this.animationIntervals.push(id);
   }
 
   getAttackBox() {
@@ -223,17 +222,15 @@ class Enemy extends MovableObject {
   /**
    * Starts the movement of the enemy.
    */
-startMovement() {
-  this.setCustomInterval(() => {
-    if (!this.isDead()) {
-      this.x += this.otherDirection ? -this.speed : this.speed;
-    }
-  }, 50);
+  startMovement() {
+    this.setCustomInterval(() => {
+      if (!this.isDead()) {
+        this.x += this.otherDirection ? -this.speed : this.speed;
+      }
+    }, 50);
 
-  this.startStandardAnimation(); 
-}
-
-
+    this.startStandardAnimation();
+  }
 
   /**
    * Starts the standard animation of the enemy.
@@ -243,11 +240,12 @@ startMovement() {
       if (this.dead) {
         this.playAnimation(this.IMAGES_DEAD, 200, false);
       } else if (this.isAttacking) {
+        // Nur bei Angriff Attack-Animation
         this.playAnimation(this.IMAGES_ATTACK, 100);
       } else if (this.isHurt) {
         this.playAnimation(this.IMAGES_HURT, 100);
       } else {
-        this.playAnimation(this.IMAGES_WALK, 150);
+        this.playAnimation(this.IMAGES_WALK, 150); // Standardmäßig Walk-Animation
       }
     }, 100);
   }
@@ -266,7 +264,7 @@ startMovement() {
 
   draw(ctx) {
     if (!this.isVisible) return;
-    
+
     ctx.save();
     if (this.otherDirection) {
       ctx.translate(this.x + this.width, 0);

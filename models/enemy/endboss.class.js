@@ -102,21 +102,20 @@ class Endboss extends Enemy {
   /**
    * Animates the Endboss.
    */
-  animate() {
-    this.startStandardAnimation();
-    this.setCustomInterval(() => {
-      if (!this.dead && !this.isAttacking) {
-        this.startPatrol(this.patrolLeftLimit, this.patrolRightLimit);
-      }
-    }, 100);
-  }
-
+ animate() {
+  this.startStandardAnimation();
+  this.setCustomInterval(() => {
+    if (!this.dead && !this.isAttacking) { // Nur patroullieren wenn nicht im Angriff
+      this.startPatrol(this.patrolLeftLimit, this.patrolRightLimit);
+    }
+  }, 100);
+}
   /**
    * Checks if the character is in attack range.
    */
-  // endboss.class.js
+  
   isInAttackRange(character) {
-    const distance = this.x - character.x; // Positive Werte = Charakter ist links
+    const distance = this.x - character.x; 
     return distance > 0 && distance < this.attackRange;
   }
 

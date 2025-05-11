@@ -5,7 +5,8 @@ let world;
 let IntervallIDs = [];
 let loopId = null;
 
-function handleFullscreenToggle() {
+function handleFullscreenToggle(event) { 
+  event?.stopPropagation();
   const container = document.getElementById("canvas-container");
   if (!document.fullscreenElement) {
     container.requestFullscreen().catch(() => {});
@@ -255,6 +256,12 @@ function initializeGameWorld() {
 }
 
 function setupGameControls() {
+   const btnsContainer = document.getElementById("btnsContainer");
+  if (btnsContainer) {
+    btnsContainer.addEventListener("touchstart", (e) => {
+      e.stopPropagation();
+    });
+  }
   document.getElementById("tryAgainButton").addEventListener("click", () => {
     world.endGame.restartGame();
   });
@@ -298,8 +305,6 @@ function clearAllIntervals() {
   IntervallIDs.forEach(clearInterval);
   IntervallIDs = [];
 }
-
-
 
 function showWinScreen() {
   hideMobileButtons();

@@ -309,9 +309,13 @@ h2 {
   justify-content: space-between;
   padding: 0 15px;
   z-index: 12000;
-  pointer-events: none;
   width: 90%;
   max-width: 600px;
+}
+
+.btns-container:not(.active),
+#btnsContainer:not(.active) {
+  pointer-events: none;
 }
 
 .btns-container.active,
@@ -426,12 +430,14 @@ h2 {
   z-index: 1000;
   display: flex;
   gap: 15px;
-  pointer-events: none;
+  pointer-events: auto; /* <-- immer klickbar */
 }
 
+/* Entferne diese Regel komplett:
 .canvas:not(.d-none) + .game-buttons {
   pointer-events: auto;
 }
+*/
 
 .game-buttons img {
   width: 40px;

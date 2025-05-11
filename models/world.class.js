@@ -33,7 +33,7 @@ class World {
     this.ui = new UI(canvas);
     this.initializeGameObjects();
     this.setWorld();
-     this.collisionHandler = new CollisionHandler(this);
+    this.collisionHandler = new CollisionHandler(this);
     this.drawer = new Drawer(this);
     if (this.level.endboss) {
       this.endbossHealthBar = this.level.endboss.statusBarEndboss;
@@ -73,17 +73,17 @@ class World {
     this.character = new Character(this, this.poisonStatusBar);
     this.character.world = this;
     this.character.y = 150;
-    
+
     // Initialisiere Arrays
     this.poisonsArray = this.level.poisonObjects || [];
     this.backgroundObjects = this.level.backgroundObjects || [];
     this.traps = this.level.traps || [];
     this.enemies = [];
     this.snakes = [];
-    
+
     // Füge Feinde zur richtigen Liste hinzu
     if (this.level.enemies) {
-      this.level.enemies.forEach(enemy => {
+      this.level.enemies.forEach((enemy) => {
         if (enemy instanceof Snake) {
           this.snakes.push(enemy);
         } else {
@@ -92,11 +92,11 @@ class World {
         enemy.setWorld(this);
       });
     }
-    
+
     this.level.objects = this.level.objects || [];
     this.loadImages(this.IMAGES_YOU_LOST);
     this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
-    
+
     const cloudsArray = generateCloudsLvl();
     this.clouds = new Clouds(cloudsArray);
     this.door = this.level.door || [];
@@ -147,15 +147,15 @@ class World {
   /**
    * Aktualisiert den Zustand der Welt.
    */
-update() {
+  update() {
     if (this.levelCompleted || this.character.energy <= 0) return;
     this.clouds?.updateClouds();
-    this.collisionHandler?.checkCollisions();   
+    this.collisionHandler?.checkCollisions();
     if (this.character.isVisible) {
       this.character.update();
       this.character.playAnimation(this.character.IMAGES_IDLE);
     }
-    this.updateCollectibles(); 
+    this.updateCollectibles();
     this.updateEnemies();
     if (this.level.endboss && !this.level.endboss.dead) {
       this.endbossHealthBar?.setPercentage(this.level.endboss.energy);
@@ -170,7 +170,7 @@ update() {
     this.updateKey();
   }
 
-   updatePoison() {
+  updatePoison() {
     this.poisonsArray.forEach((poison, index) => {
       if (this.collisionHandler.isColliding(this.character, poison)) {
         this.character.collectPoison(poison, index);
@@ -181,21 +181,21 @@ update() {
   /**
    * Aktualisiert den Zustand des Kristalls.
    */
-updateCrystal() {
-  if (this.crystal && this.crystal.isActive) {
-    if (this.collisionHandler.isColliding(this.character, this.crystal)) {
-      this.crystal.collect();
+  updateCrystal() {
+    if (this.crystal && this.crystal.isActive) {
+      if (this.collisionHandler.isColliding(this.character, this.crystal)) {
+        this.crystal.collect();
+      }
     }
   }
-}
 
-updateKey() {
-  if (this.key && this.key.isActive) {
-    if (this.collisionHandler.isColliding(this.character, this.key)) {
-      this.character.collectKey(this.key);
+  updateKey() {
+    if (this.key && this.key.isActive) {
+      if (this.collisionHandler.isColliding(this.character, this.key)) {
+        this.character.collectKey(this.key);
+      }
     }
   }
-}
   /**
    * Zeichnet die Welt.
    */
@@ -207,6 +207,7 @@ updateKey() {
    * Aktualisiert die Feinde in der Welt.
    */
   updateEnemies() {
+    console.log("Feinde aktuell:", this.enemies.length);
     const allEnemies = [...this.enemies, ...this.snakes];
     for (let i = allEnemies.length - 1; i >= 0; i--) {
       const enemy = allEnemies[i];
@@ -218,30 +219,21 @@ updateKey() {
       if (!enemy.dead) {
         enemy.update(this.character);
       }
+      if (enemy.isReadyToRemove) {
+        console.log(`Ready to remove:`, enemy.constructor.name, enemy.id);
+      }
     }
   }
 
   removeEnemyFromWorld(enemy) {
-  
-    const lists = []; 
     if (enemy instanceof Snake) {
-      lists.push(this.snakes, this.level?.snakes);
+      this.snakes = this.snakes.filter((e) => e !== enemy);
     } else {
-      lists.push(this.enemies, this.level?.enemies);
+      this.enemies = this.enemies.filter((e) => e !== enemy);
     }
-    lists.forEach(list => {
-      if (Array.isArray(list)) {
-        const index = list.indexOf(enemy);
-        if (index > -1) {
-          list.splice(index, 1);
-          console.log(`Enemy ${enemy.id} removed from list`);
-        }
-      }
-    });
-    enemy.stopAllIntervals();
+    enemy.stopAllIntervals?.();
     enemy.isRemoved = true;
     enemy.isVisible = false;
- 
     if (this.level?.endboss === enemy) {
       this.level.endboss = null;
     }
