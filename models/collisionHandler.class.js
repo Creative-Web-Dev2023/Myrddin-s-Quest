@@ -1,148 +1,239 @@
 /**
- * Handles all collision checks in the game.
+ * Class representing the collision handler.
  */
 class CollisionHandler {
+  /**
+   * Creates an instance of CollisionHandler.
+   * @param {Object} world - The game world.
+   */
   constructor(world) {
     this.world = world;
+    this.canThrow = true;
   }
 
   /**
-   * Checks all relevant collisions in the game.
+   * Checks all collisions in the game.
    */
-  checkCollisions() {
-    this.checkEnemyInteractions();
-    this.checkCollectibles();
+/*   checkCollisions() {
+    this.checkCollisionWithPoisons();
+    this.checkCollisionsWithEnemies();
+    this.checkCollisionWithEndboss();
+    this.checkCollisionWithKey();
+    this.checkDoorCollision();
     this.checkTraps();
-    this.checkDoor();
-    this.checkThrowables();
+    this.checkThrowableObject();
+    this.checkCrystalCollision();
+  } */
+
+  /**
+   * Checks if two objects are colliding.
+   * @param {MovableObject} character - The character object.
+   * @param {MovableObject} object - The other object.
+   * @returns {boolean} True if the objects are colliding, false otherwise.
+   */
+  checkCollision(character, object) {
+    if (!character || !object) return false;
+    const charBox = character.getCollisionBox();
+    const objBox = object.getCollisionBox();
+    return (
+      charBox.x < objBox.x + objBox.width &&
+      charBox.x + charBox.width > objBox.x &&
+      charBox.y < objBox.y + objBox.height &&
+      charBox.y + charBox.height > objBox.y
+    );
   }
 
   /**
-   * Checks collisions between character and enemies, and handles attacks.
+   * Checks collisions with poisons.
    */
-  checkEnemyInteractions() {
-    // Combine all enemies (normal enemies + snakes)
-    const allEnemies = [...this.world.enemies, ...this.world.snakes];
-    
-    allEnemies.forEach(enemy => {
-      if (this.isColliding(this.world.character, enemy)) {
-        this.handleEnemyCollision(enemy);
-      }
-      this.handleEnemyAttack(enemy);
-    });
-
-    // Special handling for Endboss projectiles
-    this.checkEndbossProjectiles();
-  }
-
-  /**
-   * Generic enemy collision handling.
-   */
-  handleEnemyCollision(enemy) {
-    if (enemy.dead) return;
-
-    // Character jumps on enemy
-    if (this.world.character.isAboveGround() && this.world.character.speedY > 0) {
-      this.world.character.jump();
-      enemy.takeDamage(10);
-    } 
-    // Enemy damages character
-    else {
-      this.world.character.takeDamage(enemy.attackDamage);
-    }
-  }
-
-  /**
-   * Handles enemy attack logic.
-   */
-  handleEnemyAttack(enemy) {
-    if (enemy.dead) return;
-    
-    // Check attack range (uses enemy's own attack range)
-    const distance = Math.abs(this.world.character.x - enemy.x);
-    if (distance <= enemy.attackRange) {
-      enemy.attack(this.world.character);
-    }
-  }
-
-  /**
-   * Checks collisions with collectible items (poisons, key, crystal).
-   */
-  checkCollectibles() {
-    // Poisons
+  checkCollisionWithPoisons() {
     this.world.poisonsArray.forEach((poison, index) => {
-      if (this.isColliding(this.world.character, poison)) {
+      if (this.checkCollision(this.world.character, poison)) {
         this.world.character.collectPoison(poison, index);
       }
     });
-
-    // Key
-    if (this.world.key?.isActive && this.isColliding(this.world.character, this.world.key)) {
-      this.world.character.collectKey(this.world.key);
-    }
-
-    // Crystal
-    if (this.world.crystal?.isActive && this.isColliding(this.world.character, this.world.crystal)) {
-      this.world.crystal.collect();
-    }
   }
 
   /**
-   * Checks collisions with traps.
+   * Checks collisions with enemies.
    */
-  checkTraps() {
-    this.world.traps.forEach(trap => {
-      if (this.isColliding(this.world.character, trap)) {
-        this.world.character.takeDamage(10);
+  checkCollisionsWithEnemies() {
+    this.world.enemies.forEach((enemy) => {
+      if (this.checkCollision(this.world.character, enemy)) {
+        this.handleEnemyCollision(enemy);
+      } else {
+        this.checkEnemyAttack(enemy);
       }
     });
   }
 
   /**
-   * Checks door collision.
+   * Checks collisions with the endboss.
    */
-  checkDoor() {
-    if (this.world.door && this.isColliding(this.world.character, this.world.door)) {
-      this.world.character.enterDoor(this.world.door);
-    }
-  }
-
-  /**
-   * Checks throwable object collisions with Endboss.
-   */
-  checkEndbossProjectiles() {
-    this.world.throwableObjects.forEach(bottle => {
-      this.world.enemies.forEach(enemy => {
-        if (enemy instanceof Endboss && this.isColliding(bottle, enemy)) {
-          enemy.takeDamage(25);
-          bottle.deactivate();
+  checkCollisionWithEndboss() {
+    this.world.throwableObjects.forEach((bottle) => {
+      if (bottle.collided) return;
+      this.world.enemies.forEach((enemy) => {
+        if (enemy instanceof Endboss && this.checkCollision(bottle, enemy)) {
+          bottle.collided = true;
+          bottle.isVisible = true;
+          const damage = 25;
+          const steps = Math.ceil(enemy.energy / 20) - 1;
+          enemy.energy = Math.max(steps * 20, 0);
+          enemy.statusBarEndboss.setPercentage(enemy.energy);
+          if (enemy.energy <= 0) {
+            enemy.die();
+          }
         }
       });
     });
   }
 
   /**
-   * Handles poison bottle throwing.
+   * Checks collisions with the key.
    */
-  checkThrowables() {
-    if (this.world.keyboard.D && this.world.character.poisonCollected > 0) {
-      this.world.character.throwPoisonBottle();
-      this.world.keyboard.D = false; 
+  checkCollisionWithKey() {
+    if (!this.world.character || !this.world.enemies) {
+      return;
+    }
+    this.world.enemies.forEach((enemy, index) => {
+      if (
+        enemy instanceof Key &&
+        this.checkCollision(this.world.character, enemy)
+      ) {
+        enemy.deactivate();
+        this.world.enemies.splice(index, 1);
+        this.world.character.collectKey(enemy);
+      }
+    });
+  }
+
+  /**
+   * Handles collisions with enemies.
+   * @param {MovableObject} enemy - The enemy object.
+   */
+  handleEnemyCollision(enemy) {
+    if (enemy instanceof Snake || enemy instanceof Knight) {
+      if (
+        this.world.character.isAboveGround() &&
+        this.world.character.speedY > 0
+      ) {
+        this.world.character.jump();
+        if (!enemy.dead) {
+          enemy.takeDamage(10);
+        }
+      } else {
+        if (!enemy.isDead()) {
+          this.world.character.hit(enemy);
+          this.world.characterStatusBar.setPercentage(
+            this.world.character.energy
+          );
+        }
+      }
+    } else {
+      this.world.character.hit(enemy);
+      this.world.characterStatusBar.setPercentage(this.world.character.energy);
     }
   }
 
   /**
-   * Generic collision check between two objects.
+   * Checks if the enemy can attack the character.
+   * @param {MovableObject} enemy - The enemy object.
    */
-  isColliding(obj1, obj2) {
-    const box1 = obj1.getCollisionBox?.() || obj1;
-    const box2 = obj2.getCollisionBox?.() || obj2;
+  checkEnemyAttack(enemy) {
+    if (enemy instanceof Snake || enemy instanceof Knight) {
+      const distance = Math.abs(this.world.character.x - enemy.x);
+      if (distance <= 150 && !enemy.isDead()) {
+        enemy.attack(this.world.character);
+      }
+    }
+  }
 
-    return (
-      box1.x < box2.x + box2.width &&
-      box1.x + box1.width > box2.x &&
-      box1.y < box2.y + box2.height &&
-      box1.y + box1.height > box2.y
-    );
+  /**
+   * Checks collisions with the door.
+   */
+  checkDoorCollision() {
+    const character = this.world.character;
+    const door = this.world.door;
+    if (!door) {
+      return;
+    }
+    if (this.checkCollision(character, door)) {
+      character.enterDoor(door);
+    }
+  }
+
+  /**
+   * Resets the collision handler state.
+   */
+  resetCollisionState() {
+    this.canThrow = true;
+  }
+
+  /**
+   * Checks collisions with traps.
+   */
+  checkTraps() {
+    if (this.world.traps) {
+      this.world.traps.forEach((trap) => {
+        if (this.checkCollision(this.world.character, trap)) {
+          trap.isActive = true;
+          this.world.character.takeDamage(10);
+          this.world.characterStatusBar.setPercentage(
+            this.world.character.energy
+          );
+        } else {
+          trap.isActive = false;
+        }
+      });
+    }
+  }
+
+  /**
+   * Checks if the character can throw a throwable object.
+   */
+  checkThrowableObject() {
+    if (
+      this.world.keyboard.D &&
+      this.canThrow &&
+      this.world.character.poisonCollected > 0
+    ) {
+      this.world.character.throwPoisonBottle();
+      this.canThrow = false;
+      setTimeout(() => {
+        this.canThrow = true;
+      }, 500);
+    }
+  }
+
+  /**
+   * Checks collisions with the crystal.
+   */
+  checkCrystalCollision() {
+    const crystal = this.world.crystal;
+    if (crystal && this.isColliding(this.world.character, crystal)) {
+      this.handleCrystalCollection(crystal);
+    }
+  }
+
+  /**
+   * Handles the collection of the crystal.
+   * @param {MovableObject} crystal - The crystal object.
+   */
+  handleCrystalCollection(crystal) {
+    this.world.character.collectCrystal(crystal);
+    if (this.world.endGame &&typeof this.world.endGame.showWinScreen === "function") {
+      this.world.endGame.showYouWinScreen();
+    }
+  }
+
+  /**
+   * Checks if the character is colliding with the crystal.
+   * @param {MovableObject} character - The character object.
+   * @param {MovableObject} crystal - The crystal object.
+   * @returns {boolean} True if the character is colliding with the crystal, false otherwise.
+   */
+  isColliding(character, crystal) {
+    return this.checkCollision(character, crystal);
   }
 }

@@ -1,144 +1,94 @@
-/**
- * Class representing the Endboss.
- * @extends Enemy
- */
-class Endboss extends Enemy {
-  /**
-   * Creates an instance of Endboss.
-   * @param {number} id - The ID of the Endboss.
-   */
-  constructor(id) {
-    super(id);
-    this.loadEnemyImages("troll");
-    this.height = 450;
-    this.width = 360;
-    this.y = 50;
-    this.x = 13250;
-    this.attackRange = 200;
-    this.attackDamage = 20;
-    this.speed = 0.5;
-    this.deadSound = new Audio("./assets/audio/troll_dead.mp3");
-    this.offset = { top: 50, bottom: 20, left: 20, right: 20 };
-    this.statusBarEndboss = new EndbossStatusbar();
-    this.patrolLeftLimit = 13150;
-    this.patrolRightLimit = 13500;
-    this.IMAGES_WALK = LOADED_IMAGES.troll.walk;
-    this.IMAGES_ATTACK = LOADED_IMAGES.troll.attack;
-    this.IMAGES_HURT = LOADED_IMAGES.troll.hurt;
-    this.IMAGES_DEAD = LOADED_IMAGES.troll.dead;
+class Endboss extends MovableObject {
+  innerOffset = { top: 10, bottom: 100, left: 250, right: 180 };
+  outerOffset = { top: 10, bottom: 100, left: 40, right: 50 };
+  constructor() {
+    super();
+    this.addToImageCache('walk', LOADED_IMAGES.troll.walk);
+    this.addToImageCache('hurt', LOADED_IMAGES.troll.hurt);
+    this.addToImageCache('dead', LOADED_IMAGES.troll.die);
 
-   
-    console.log("Endboss IMAGES:", {
-      walk: this.IMAGES_WALK,
-      attack: this.IMAGES_ATTACK,
-      hurt: this.IMAGES_HURT,
-      dead: this.IMAGES_DEAD,
-    });
+    this.img = this.imageCache['walk_0'];
+    this.deadAnimationPlayed = false;
+    this.height = 409;
+    this.width = 700;
+    this.y = 100;
+    this.x = 5500;
+    this.speed = 2;
 
-    this.animate();
+    this.energy = 100;
+
+    this.patrolMin = 5000;
+    this.patrolMax = 5800;
+    this.nextTurnPoint = this.getRandomTurnPoint('left');
+    this.deadSound = new Audio('./assets/audio/troll_dead.mp3');
   }
 
-  /**
-   * Draws the Endboss on the canvas.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
-   */
-  draw(ctx) {
-    super.draw(ctx);
-    if (!this.dead && this.statusBarEndboss) {
-      this.updateStatusBarPosition();
-      this.statusBarEndboss.draw(ctx);
-    }
+  handleAnimations() {
+    this.animate(LOADED_IMAGES.troll.walk);
   }
 
-  takeDamage(damage) {
-    if (this.dead) return;
-    super.takeDamage(damage);
-    this.statusBarEndboss.setPercentage(this.energy);
-    if (!this.isDead()) {
-      this.playAnimation(this.IMAGES_HURT, 100);
-    }
-  }
-  getCollisionBox() {
-    return {
-      x: this.otherDirection
-        ? this.x + this.offset.left
-        : this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom,
-    };
-  }
-
-  updateStatusBarPosition() {
-    this.statusBarEndboss.x =
-      this.x + this.width / 2 - this.statusBarEndboss.width / 2;
-    this.statusBarEndboss.y = this.y - 40;
-    this.statusBarEndboss.setPercentage(this.energy);
-  }
-  /**
-   * Handles the death of the Endboss.
-   */
-  die() {
-    super.die(); // Basisimplementierung aufrufen
-    this.playAnimation(this.IMAGES_DEAD, 200, false, () => {
-      this.isReadyToRemove = true;
-      if (this.world?.crystal) this.world.crystal.activate();
-      this.world?.showYouWinScreen();
-    });
-  }
-  /**
-   * Updates the Endboss's state.
-   * @param {Character} character - The character to interact with.
-   */
-  update(character) {
-    if (this.dead) return;
-    this.updateStatusBarPosition();
-    if (this.isInAttackRange(character)) {
-      this.attack(character);
+  getRandomTurnPoint(direction) {
+    if (direction === 'right') {
+      return this.patrolMax - Math.random() * 150; 
     } else {
-      this.startPatrol(this.patrolLeftLimit, this.patrolRightLimit);
+      return this.patrolMin + Math.random() * 200; 
     }
   }
-  /**
-   * Animates the Endboss.
-   */
- animate() {
-  this.startStandardAnimation();
-  this.setCustomInterval(() => {
-    if (!this.dead && !this.isAttacking) { // Nur patroullieren wenn nicht im Angriff
-      this.startPatrol(this.patrolLeftLimit, this.patrolRightLimit);
-    }
-  }, 100);
-}
-  /**
-   * Checks if the character is in attack range.
-   */
-  
-  isInAttackRange(character) {
-    const distance = this.x - character.x; 
-    return distance > 0 && distance < this.attackRange;
-  }
 
-  /**
-   * Resets the position of the Endboss.
-   */
-  resetPosition() {
-    this.x = this.initialX;
-    this.y = this.initialY;
-    this.dead = false;
-    this.isVisible = true;
-  }
-
-  drawImage(ctx) {
-    if (!this.img?.complete) return;
-    ctx.save();
-    if (this.otherDirection) {
-      ctx.translate(this.x + this.width, 0);
-      ctx.scale(-1, 1);
-      ctx.drawImage(this.img, 0, this.y, this.width, this.height);
+  patrol() {
+    if (this.isDead()) return;
+    if (!this.otherDirection) {
+      this.moveLeft();
+      if (this.x <= this.nextTurnPoint) {
+        this.otherDirection = true;
+        this.nextTurnPoint = this.getRandomTurnPoint('right');
+      }
     } else {
-      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+      this.moveRight();
+      if (this.x >= this.nextTurnPoint) {
+        this.otherDirection = false;
+        this.nextTurnPoint = this.getRandomTurnPoint('left');
+      }
     }
-    ctx.restore();
+  }
+
+  drawInnerFrame() {
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'orchid';
+    ctx.lineWidth = 2;
+
+    const innerOffsetX = this.x + this.innerOffset.left;
+    const innerOffsetY = this.y + this.innerOffset.top;
+    const innerOffsetWidth =
+      this.width - this.innerOffset.left - this.innerOffset.right;
+    const innerOffsetHeight =
+      this.height - this.innerOffset.top - this.innerOffset.bottom;
+
+    ctx.strokeRect(
+      innerOffsetX,
+      innerOffsetY,
+      innerOffsetWidth,
+      innerOffsetHeight
+    );
+  }
+
+  drawOuterFrame() {
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'royalblue';
+    ctx.lineWidth = 2;
+
+    const outerOffsetX = this.x + this.outerOffset.left;
+    const outerOffsetY = this.y + this.outerOffset.top;
+    const outerOffsetWidth =
+      this.width - this.outerOffset.left - this.outerOffset.right;
+    const outerOffsetHeight =
+      this.height - this.outerOffset.top - this.outerOffset.bottom;
+
+    ctx.strokeRect(
+      outerOffsetX,
+      outerOffsetY,
+      outerOffsetWidth,
+      outerOffsetHeight
+    );
   }
 }

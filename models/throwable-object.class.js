@@ -1,18 +1,9 @@
-/**
- * Class representing a throwable object.
- * @extends MovableObject
- */
 class ThrowableObject extends MovableObject {
-  /**
-   * Creates an instance of ThrowableObject.
-   * @param {number} x - The x position of the throwable object.
-   * @param {number} y - The y position of the throwable object.
-   */
   constructor(x, y) {
     super();
     this.isVisible = true;
-    this.img = new Image();
-    this.img.src = "../assets/img/poison/1.png"; // Bildpfad sicherstellen
+    this.addToImageCache('poison', LOADED_IMAGES.game_items.poison);
+    this.img = this.imageCache['poison_0'];
     this.x = x;
     this.y = y;
     this.height = 80;
@@ -21,9 +12,6 @@ class ThrowableObject extends MovableObject {
     this.throw(x, y);
   }
 
-  /**
-   * Throws the object.
-   */
   throw(x, y) {
     this.x = x;
     this.y = y;
@@ -41,45 +29,10 @@ class ThrowableObject extends MovableObject {
     }, 20);
   }
 
-  /**
-   * Checks if the object is colliding with another object.
-   * @param {Object} obj - The object to check collision with.
-   * @returns {boolean} - True if colliding, false otherwise.
-   */
   isColliding(obj) {
     return !this.collided && super.isColliding(obj);
   }
 
-  /**
-   * Draws the throwable object on the canvas.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
-   */
-  draw(ctx) {
-    if (
-      this.isVisible &&
-      this.img instanceof HTMLImageElement &&
-      this.img.complete
-    ) {
-      ctx.save();
-      const centerX = this.x + this.width / 2;
-      const centerY = this.y + this.height / 2;
-      ctx.translate(centerX, centerY);
-      const rotation = this.x * 0.02;
-      ctx.rotate(rotation);
-      ctx.drawImage(
-        this.img,
-        -this.width / 2,
-        -this.height / 2,
-        this.width,
-        this.height
-      );
-      ctx.restore();
-    }
-  }
-
-  /**
-   * Handles the collision of the object.
-   */
   onCollision() {
     if (this.hasHit) return;
     this.hasHit = true;
@@ -88,9 +41,6 @@ class ThrowableObject extends MovableObject {
     this.applyGravity();
   }
 
-  /**
-   * Updates the state of the object.
-   */
   update() {
     super.update();
     if (this.y > 480) {
@@ -98,9 +48,6 @@ class ThrowableObject extends MovableObject {
     }
   }
 
-  /**
-   * Deactivates the object.
-   */
   deactivate() {
     this.isVisible = false;
     this.collided = true;

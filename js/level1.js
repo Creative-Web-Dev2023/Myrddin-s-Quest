@@ -2,218 +2,131 @@
  * Initializes and returns the first level.
  * @returns {Level} The initialized level.
  */
+// const level1 = initLevel();
+
+/**
+ * Initializes the level by generating enemies, environments, backgrounds, poison objects, and traps.
+ * @returns {Level} The initialized level.
+ */
 function createLevel1() {
   return new Level(
-    generateEnemiesLvl(),
-    generateCloudsLvl(),
+    generateBackgroundsLvl(),
+    generateCandlesLvl(),
+    generateSkullsLvl(),
+    generateKnightsLvl(),
+    generatePoisonsLvl(),
+    generateHeartsLvl(),
     generateKeyLvl(),
     generateDoorLvl(),
-    generateBackgroundsLvl(),
-    generatePoisonObjectsLvl(),
     generateTrapsLvl(),
-    generateCrystalLvl()
+    generateEndboss()
   );
 }
 
-/**
- * Generates the enemies for the level.
- * @returns {Array} An array of enemies.
- */
-function generateEnemiesLvl() {
-  return [
-    new Knight(0, 900, 100, 1),
-    new Knight(2000, 1500, 100, 2),
-    new Knight(4000, 2100, 100, 3),
-    new Knight(8000, 2700, 100, 4),
-    new Knight(10000, 3300, 100, 5),
-    new Knight(12000, 3900, 100, 6),
-    new Snake(7000, 320, 7),
-    new Snake(8300, 320, 8),
-    new Snake(9500, 320, 9),
-    new Snake(10700, 320, 10),
-    new Snake(11700, 320, 11),
-    new Endboss(11800, 320, 12),
-  ];
-}
-
-/**
- * Generates the environment objects for the level.
- * @returns {Array} An array of environment objects.
- */
-function generateCloudsLvl() {
-  return [
-    new Cloud(),
-    new Cloud(),
-    new Cloud(),
-    new Cloud(),
-    new Cloud(),
-    new Cloud(),
-    new Cloud(),
-    new Cloud(),
-  ];
-}
-
-/**
- * Generates the key for the level.
- * @returns {Key} The key object.
- */
-function generateKeyLvl() {
-  return new Key(LOADED_IMAGES.game_items.key, 4450, 110);
-}
-
-/**
- * Generates the background objects for the level.
- * @returns {Array} An array of background objects.
- */
 function generateBackgroundsLvl() {
   return [
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, -719),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, -719),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood4, -719, 0),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood3, -719, 100),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, -719),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, -685, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, -719),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 0),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 0),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood4, 0, 0),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood3, 0, 100),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 0),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 150, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 0),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood4, 719, 0),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood3, 719, 100),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 740, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.game_items.skull, 950, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719 * 2),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719 * 2),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.green_wood.wood4,
-      719 * 2,
-      0
-    ),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.blue_wood.wood3,
-      719 * 2,
-      100
-    ),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719 * 2),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 1400, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719 * 2),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719 * 3),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719 * 3),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.green_wood.wood4,
-      719 * 3,
-      0
-    ),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.blue_wood.wood3,
-      719 * 3,
-      100
-    ),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719 * 3),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 2200, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.game_items.skull, 2400, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719 * 3),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719 * 4),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719 * 4),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.green_wood.wood4,
-      719 * 4,
-      0
-    ),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.blue_wood.wood3,
-      719 * 4,
-      100
-    ),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719 * 4),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 3000, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.game_items.skull, 3200, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719 * 4),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719 * 5),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719 * 5),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.green_wood.wood4,
-      719 * 5,
-      0
-    ),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.blue_wood.wood3,
-      719 * 5,
-      100
-    ),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719 * 5),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 3700, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.game_items.skull, 3900, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719 * 5),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719 * 6),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719 * 6),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.green_wood.wood4,
-      719 * 6,
-      0
-    ),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.blue_wood.wood3,
-      719 * 6,
-      100
-    ),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719 * 6),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 4400, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.game_items.skull, 4600, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719 * 6),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719 * 7),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719 * 7),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.green_wood.wood4,
-      719 * 7,
-      0
-    ),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.blue_wood.wood3,
-      719 * 7,
-      100
-    ),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719 * 7),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 5100, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.game_items.skull, 5300, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719 * 7),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood7, 719 * 8),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood6, 719 * 8),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.green_wood.wood4,
-      719 * 8,
-      0
-    ),
-    new BackgroundObject(
-      LOADED_IMAGES.backgrounds.blue_wood.wood3,
-      719 * 8,
-      100
-    ),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood2, 719 * 8),
-    new BackgroundObject(LOADED_IMAGES.game_items.candle, 5800, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.game_items.skull, 6000, 50, 10, 30),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.green_wood.wood1, 719 * 8),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 6471),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 7190),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 7910),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 8629),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 9348),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 10067),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 10786),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 11505),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 12225),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 12944),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 13000),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 13719),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 14438),
-    new BackgroundObject(LOADED_IMAGES.backgrounds.blue_wood.wood2, 15157),
+    new Background(LOADED_IMAGES.backgrounds.wood0, -960),
+    new Background(LOADED_IMAGES.backgrounds.wood1, -960),
+    new Background(LOADED_IMAGES.backgrounds.wood2, -960),
+    new Background(LOADED_IMAGES.backgrounds.wood3, -960),
+    new Background(LOADED_IMAGES.backgrounds.wood4, -960),
+    new Background(LOADED_IMAGES.backgrounds.wood5, -960),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 0),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 0),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 0),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 0),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 0),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 0),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 2),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 2),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 2),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 2),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 2),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 2),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 3),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 3),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 3),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 3),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 3),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 3),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 4),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 4),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 4),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 4),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 4),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 4),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 5),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 5),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 5),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 5),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 5),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 5),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 6),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 6),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 6),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 6),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 6),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 6),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 7),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 7),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 7),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 7),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 7),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 7),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 8),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 8),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 8),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 8),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 8),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 8),
+    new Background(LOADED_IMAGES.backgrounds.wood0, 960 * 9),
+    new Background(LOADED_IMAGES.backgrounds.wood1, 960 * 9),
+    new Background(LOADED_IMAGES.backgrounds.wood2, 960 * 9),
+    new Background(LOADED_IMAGES.backgrounds.wood3, 960 * 9),
+    new Background(LOADED_IMAGES.backgrounds.wood4, 960 * 9),
+    new Background(LOADED_IMAGES.backgrounds.wood5, 960 * 9),
+  ];
+}
+
+function generateCandlesLvl() {
+  return [
+    new Candle(-154),
+    new Candle(806),
+    new Candle(1766),
+    new Candle(2726),
+    new Candle(3686),
+    new Candle(4646),
+    new Candle(5606),
+  ];
+}
+
+function generateSkullsLvl() {
+  return [
+    new Skull(-200),
+    new Skull(760),
+    new Skull(1720),
+    new Skull(2680),
+    new Skull(3640),
+    new Skull(4600),
+    new Skull(5560),
+    new Skull(6360),
+  ];
+}
+
+function generateKnightsLvl() {
+  return [
+    new Knight(500),
+    new Knight(1600),
+    new Knight(2100),
+    new Knight(3700),
+    new Knight(4800),
+    new Knight(5400),
   ];
 }
 
@@ -221,22 +134,36 @@ function generateBackgroundsLvl() {
  * Generates the poison objects for the level.
  * @returns {Array} An array of poison objects.
  */
-function generatePoisonObjectsLvl() {
+function generatePoisonsLvl() {
   return [
-    new PoisonObject(LOADED_IMAGES.game_items.poison[0], 800, 400),
-    new PoisonObject(LOADED_IMAGES.game_items.poison[1], 1600, 300),
-    new PoisonObject(LOADED_IMAGES.game_items.poison[2], 2400, 200),
-    new PoisonObject(LOADED_IMAGES.game_items.poison[3], 3200, 400),
-    new PoisonObject(LOADED_IMAGES.game_items.poison[4], 4000, 300),
-    new PoisonObject(LOADED_IMAGES.game_items.poison[5], 6400, 200),
+    new PoisonObject(400),
+    new PoisonObject(800),
+    new PoisonObject(1600),
+    new PoisonObject(3300),
+    new PoisonObject(3700),
+    new PoisonObject(4400),
   ];
 }
-/**
- * Generates the door for the level.
- * @returns {Door} The door object.
- */
+
+function generateHeartsLvl() {
+  return [
+    new Heart(560),
+    new Heart(1100),
+    new Heart(2000),
+    new Heart(2680),
+    new Heart(3110),
+    new Heart(3550),
+    new Heart(4800),
+    new Heart(5400),
+  ];
+}
+
+function generateKeyLvl() {
+  return new Key();
+}
+
 function generateDoorLvl() {
-  return new Door(4500, 80);
+  return new Door();
 }
 
 /**
@@ -245,17 +172,14 @@ function generateDoorLvl() {
  */
 function generateTrapsLvl() {
   return [
-    new Trap(7500, 330),
-    new Trap(8600, 330),
-    new Trap(9900, 330),
-    new Trap(11000, 330),
-    new Trap(11900, 330),
+    new Trap(800),
+    new Trap(1600),
+    new Trap(2600),
+    new Trap(3400),
+    new Trap(4800),
   ];
 }
-/**
- * Generates the key for the level.
- * @returns {Key} The key object.
- */
-function generateCrystalLvl() {
-  return new Crystal(LOADED_IMAGES.game_items.crystal, 13550, 400, this);
+
+function generateEndboss() {
+  return new Endboss();
 }

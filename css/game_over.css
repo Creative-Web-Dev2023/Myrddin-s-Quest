@@ -1,114 +1,81 @@
-/* Gemeinsame Stile für beide Screens */
-.end-screen-container {
+#game-over-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(23, 26, 35);
   display: none;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   z-index: 1000;
-  backdrop-filter: blur(5px);
+}
+.game-button {
+  background: none;
+  border: none;
+  padding: 0;
+}
+.game-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.end-screen-container.show {
-  display: flex !important;
-}
-
-.end-screen-content {
-  position: relative;
-  text-align: center;
-  padding: 2vh 4vw;
-  background: rgba(0, 0, 0, 0.8);
-  border: 4px ridge #e0a635;
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(224, 166, 53, 0.5);
-  max-width: 90%;
-  margin: 0 5%;
-  width: 100%;
-}
-
-.end-screen-image {
-  width: min(600px, 90vw);
+.game-button img {
   height: auto;
-  aspect-ratio: 2/1;
+  transition: transform 0.3s ease;
+}
+
+.game-button:hover img {
+  transform: scale(1.1);
+}
+
+.you-lost-image {
+  background-image: url("../assets/img/game_ui/login_and_pass/game_over.png");
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  margin: 0 auto 2rem;
-  filter: drop-shadow(0 0 10px rgba(224, 166, 53, 0.5));
+  width: 600px;
+  height: 300px;
+  margin-bottom: 50px;
 }
 
-.end-screen-buttons {
-  display: flex;
-  justify-content: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  flex-wrap: wrap;
-}
-
-.end-screen-btn {
-  background: none;
-  border: 2px solid #e0a635;
-  color: #e0a635;
-  padding: clamp(0.6rem, 2vw, 0.8rem) clamp(1.5rem, 4vw, 2rem);
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  border-radius: 5px;
-  min-width: 160px;
-}
-
-/* Game Over spezifisches Bild */
-#game-over-container .end-screen-image {
-  background-image: url("../../assets/img/game_ui/login&pass/game_over.png");
-}
-
-/* Win Screen spezifisches Bild */
-#win-screen .end-screen-image {
-  background-image: url("../../assets/img/game_ui/victory/knight_win.png");
-}
-
-/* Media Queries für beide */
-@media screen and (max-width: 768px) {
-  .end-screen-content {
-    padding: 1.5rem;
-    margin: 0 3%;
+@media (max-width: 768px) {
+  .you-lost-image {
+    width: 80%;
+    height: 200px;
+    margin-bottom: 30px;
   }
-  
-  .end-screen-image {
-    margin-bottom: 1.5rem;
+
+  .game-button img {
+    width: 160px;
   }
 }
 
-@media screen and (max-width: 480px) {
-  .end-screen-content {
-    padding: 1rem;
-    border-width: 3px;
+@media (max-width: 480px) {
+  .you-lost-image {
+    height: 150px;
+    margin-bottom: 20px;
   }
-  
-  .end-screen-btn {
-    min-width: 140px;
-    font-size: 1.1rem;
-    padding: 0.5rem 1.2rem;
+
+  .game-button img {
+    width: 120px;
   }
-  
-  .end-screen-image {
-    aspect-ratio: 3/2;
+
+  .game-button-container {
+    gap: 20px;
   }
 }
 
-@media screen and (max-height: 600px) {
-  .end-screen-image {
-    height: 40vh;
-    margin-bottom: 1rem;
+@media (max-width: 375px) and (max-height: 667px) {
+  .you-lost-image {
+    width: 80%;
+    height: 150px;
+    margin-bottom: 20px;
   }
-  
-  .end-screen-btn {
-    padding: 0.4rem 1rem;
-    font-size: 1rem;
+
+  .game-button img {
+    width: 100px;
   }
 }

@@ -1,39 +1,30 @@
-/**
- * Class representing a Poison object.
- * @extends DrawableObject
- */
-class PoisonObject extends DrawableObject {
-  isActive = true;
-
-  /**
-   * Creates an instance of PoisonObject.
-   * @param {number} x - The x position of the poison object.
-   * @param {number} y - The y position of the poison object.
-   * @param {number} width - The width of the poison object.
-   * @param {number} height - The height of the poison object.
-   */
-  constructor(imagePath, x, y) {
+class PoisonObject extends MovableObject {
+  offset = { top: 0, bottom: 0, left: 10, right: 10 };
+  constructor(x) {
     super();
-    this.loadImage(imagePath);
+    this.addToImageCache('poison', LOADED_IMAGES.game_items.poison);
+    this.img = this.imageCache['poison_0'];
     this.x = x;
-    this.y = y;
-    this.width = 50;
-    this.height = 50;
-    this.isActive = true;
-    this.animate();
+    this.y = Math.floor(Math.random() * 220);
+    this.startY = this.y;
+    this.width = 70;
+    this.height = 70;
   }
-  animate() {
-    setInterval(() => {
-      if (this.isActive) {
-        this.playAnimation(LOADED_IMAGES.game_items.poison);
-      }
-    }, 100);
+
+  handleAnimations() {
+    this.animate(LOADED_IMAGES.game_items.poison);
   }
-  /**
-   * Deactivates the poison object.
-   */
-  deactivate() {
-    this.isActive = false;
-    this.x = -1000;
+
+  drawFrame() {
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+
+    const offsetX = this.x + this.offset.left;
+    const offsetY = this.y + this.offset.top;
+    const offsetWidth = this.width - this.offset.left - this.offset.right;
+    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
+
+    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
   }
 }

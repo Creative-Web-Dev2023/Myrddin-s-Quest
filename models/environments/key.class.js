@@ -1,29 +1,31 @@
-/**
- * Class representing a key object.
- * @extends DrawableObject
- */
-class Key extends DrawableObject {
-  /**
-   * Creates an instance of Key.
-   * @param {string} imagePath - The path to the key image.
-   * @param {number} x - The x position of the key.
-   * @param {number} y - The y position of the key.
-   */
-  constructor(imagePath, x, y) {
+class Key extends MovableObject {
+  offset = { top: 10, bottom: 10, left: 10, right: 10 };
+  constructor(x = null, y = 130) {
     super();
-    this.loadImage(imagePath);
-    this.x = x;
+    this.img = LOADED_IMAGES.game_items.key;
+    this.x = x !== null ? x : 200 + Math.floor(Math.random() * 5000);
     this.y = y;
-    this.width = 65;
-    this.height = 65;
-    this.isActive = true;
+    this.startY = this.y;
+    this.width = 70;
+    this.height = 70;
+    this.floatAmplitude = 20;
+    this.floatSpeed = 2;
+    this.floatOffset = 0;
+
+    this.pingSound = LOADED_SOUNDS.key.collected;
+    this.pingSound.volume = 0.5;
   }
 
-  /**
-   * Deactivates the key object.
-   */
-  deactivate() {
-    this.isActive = false;
-  }
+    drawFrame() {
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'orange';
+    ctx.lineWidth = 2;
 
+    const offsetX = this.x + this.offset.left;
+    const offsetY = this.y + this.offset.top;
+    const offsetWidth = this.width - this.offset.left - this.offset.right;
+    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
+
+    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
+  }
 }

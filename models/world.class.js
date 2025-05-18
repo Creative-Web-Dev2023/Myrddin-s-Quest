@@ -1,262 +1,221 @@
 class World {
-  character;
-  level;
   canvas;
-  ctx;
   keyboard;
+  ctx;
+  loopId;
+  level;
+  character;
   camera_x = 0;
-  lastCloudSpawn = 0;
-  cloudSpawnInterval = 3000;
-  characters = [];
-  enemies = [];
-  throwableObjects = [];
-  imageCache = {};
-  IMAGES_YOU_LOST = ["./assets/img/game_ui/login&pass/game_over.png"];
-  quitButton;
-  quitButtonImage = "./assets/img/game_ui/quit.png";
-  tryAgainButton;
-  tryAgainButtonImage = ["./assets/img/game_ui/try_again.png"];
-  endGame;
-  door = [];
-  key;
-  clouds = [];
-  snakes = [];
+
+  backgrounds = [];
+  candles = [];
+  skulls = [];
+  knights = [];
+  poisons = [];
+  hearts = [];
   traps = [];
+  key;
+  door;
+  endboss;
+  // throwableObjects = [];
+
+  characterStatusBar;
+  poisonStatusBar;
   endbossHealthBar;
-  crystal;
+  characterKeyIcon;
+  characterTickIcon;
+
+  endGame;
+  quitButton;
+  tryAgainButton;
+  IMAGES_YOU_LOST = LOADED_IMAGES.gameUI.game_over;
+  quitButtonImage = LOADED_IMAGES.gameUI.quit_game;
+  tryAgainButtonImage = LOADED_IMAGES.gameUI.try_again;
 
   constructor(canvas, keyboard, level1) {
-    this.level = level1;
-    this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
+    this.level = level1;
+    this.ctx = canvas.getContext('2d');
     this.keyboard = keyboard;
-    this.ui = new UI(canvas);
+    this.loopId = null;
+    // this.keyboard.linkButtonsToPressEvents();
+    // NICHT löschen! später wieder einkommentieren, wenn die IDs vorhanden sind.
+
     this.initializeGameObjects();
-    this.setWorld();
     this.collisionHandler = new CollisionHandler(this);
-    this.drawer = new Drawer(this);
-    if (this.level.endboss) {
-      this.endbossHealthBar = this.level.endboss.statusBarEndboss;
-    } else {
-      this.endbossHealthBar = null;
-    }
-    this.endGame = new EndGame(this);
   }
 
-  /**
-   * Setzt die Welt des Spiels zurück.
-   */
-  resetGameWorld() {
-    this.enemies = [];
-    this.throwableObjects = [];
-    this.imageCache = {};
-    this.camera_x = 0;
-    this.lastCloudSpawn = 0;
-    this.cloudSpawnInterval = 3000;
-    this.characterStatusBar = null;
-    this.endbossHealthBar = null;
-    this.door = [];
-    this.key = null;
-    this.snakes = [];
-    this.traps = [];
-    this.clouds = [];
-    this.poisons = [];
-    this.endGame = null;
-  }
-
-  /**
-   * Initialisiert die Spielobjekte.
-   */
   initializeGameObjects() {
-    this.poisonStatusBar = new PoisonStatusBar();
-    this.characterStatusBar = new StatusBar();
-    this.character = new Character(this, this.poisonStatusBar);
-    this.character.world = this;
-    this.character.y = 150;
+    this.character = new Character(this);
+    this.characterStatusBar = new StatusBar(
+      'health',
+      20,
+      20,
+      200,
+      40,
+      'Wizard'
+    );
+    this.poisonStatusBar = new StatusBar('poison', 20, 70, 200, 40);
+    this.character.setStatusBars(this.characterStatusBar, this.poisonStatusBar);
+    this.characterKeyIcon = new Key(250, 10);
+    this.character.setKeyIcon(this.characterKeyIcon);
+    this.characterTickIcon = new TickIcon();
+    this.character.setTickIcon(this.characterTickIcon);
 
-    // Initialisiere Arrays
-    this.poisonsArray = this.level.poisonObjects || [];
-    this.backgroundObjects = this.level.backgroundObjects || [];
+    this.backgrounds = this.level.backgrounds || [];
+    this.candles = this.level.candles || [];
+    this.skulls = this.level.skulls || [];
+    this.knights = this.level.knights || [];
+    this.poisons = this.level.poisons || [];
+    this.hearts = this.level.hearts || [];
+    this.key = this.level.key;
+    this.door = this.level.door;
     this.traps = this.level.traps || [];
-    this.enemies = [];
-    this.snakes = [];
+    this.endboss = this.level.endboss;
+    this.endbossHealthBar = new StatusBar('endboss', 720, 20, 200, 40, 'Troll');
+    this.endboss.setStatusBars(this.endbossHealthBar);
 
-    // Füge Feinde zur richtigen Liste hinzu
-    if (this.level.enemies) {
-      this.level.enemies.forEach((enemy) => {
-        if (enemy instanceof Snake) {
-          this.snakes.push(enemy);
-        } else {
-          this.enemies.push(enemy);
-        }
-        enemy.setWorld(this);
+    this.camera_x = -this.character.x + 100;
+  }
+
+  update() {
+    this.character.handleMovements();
+    this.camera_x = -this.character.x + 100;
+    this.character.handleAnimations();
+    if (Array.isArray(this.poisons) && this.poisons.length > 0) {
+      this.poisons.forEach((poison) => {
+        poison.handleAnimations();
+        poison.handleFloating();
       });
     }
+    if (Array.isArray(this.hearts) && this.hearts.length > 0) {
+      this.hearts.forEach((heart) => heart.handleFloating());
+    }
+    if (Array.isArray(this.hearts) && this.hearts.length > 0) {
+      this.knights.forEach((knight) => {
+        knight.handleAnimations();
+        knight.moveLeft();
+      });
+    }
+    if (this.key) this.key.handleFloating();
+    this.traps.forEach((trap) => trap.handleAnimations());
+    this.endboss.handleAnimations();
+    this.endboss.patrol();
 
-    this.level.objects = this.level.objects || [];
-    this.loadImages(this.IMAGES_YOU_LOST);
-    this.loadImages([this.quitButtonImage, this.tryAgainButtonImage]);
-
-    const cloudsArray = generateCloudsLvl();
-    this.clouds = new Clouds(cloudsArray);
-    this.door = this.level.door || [];
-    this.key = this.level.key;
-    this.crystal = this.level.crystal;
-    this.camera_x = this.character.x - 190;
-    this.endGame = new EndGame(this);
+    this.updateCollisions();
   }
 
-  /**
-   * Setzt die Welt des Spiels.
-   */
-  setWorld() {
-    this.character.world = this;
-    this.enemies.forEach((enemy) => {
-      if (enemy instanceof Enemy) {
-        enemy.setWorld(this);
+  updateCollisions() {
+    this.checkCollisionWithKey();
+    this.poisons = this.checkCollisionWithCollectableItem(
+      this.poisons,
+      LOADED_SOUNDS.poison.collected,
+      () => {
+        this.character.poisonCollected += 1;
       }
-    });
-    if (this.crystal) {
-      this.crystal.world = this;
-    }
-    if (this.door) {
-      this.door.world = this;
-    }
-    if (this.key) {
-      this.key.world = this;
-    }
-    this.traps.forEach((trap) => {
-      trap.world = this;
-    });
+    );
 
-    this.camera_x = -this.character.x - 190;
-  }
-
-  /**
-   * Lädt die angegebenen Bilder.
-   * @param {string[]} images - Die zu ladenden Bilder.
-   */
-  loadImages(images) {
-    images.forEach((path) => {
-      const img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  }
-
-  /**
-   * Aktualisiert den Zustand der Welt.
-   */
-  update() {
-    if (this.levelCompleted || this.character.energy <= 0) return;
-    this.clouds?.updateClouds();
-    this.collisionHandler?.checkCollisions();
-    if (this.character.isVisible) {
-      this.character.update();
-      this.character.playAnimation(this.character.IMAGES_IDLE);
-    }
-    this.updateCollectibles();
-    this.updateEnemies();
-    if (this.level.endboss && !this.level.endboss.dead) {
-      this.endbossHealthBar?.setPercentage(this.level.endboss.energy);
-    }
-  }
-  /**
-   * Aktualisiert alle Sammelobjekte (Gift, Schlüssel, Kristall).
-   */
-  updateCollectibles() {
-    this.updatePoison();
-    this.updateCrystal();
-    this.updateKey();
-  }
-
-  updatePoison() {
-    this.poisonsArray.forEach((poison, index) => {
-      if (this.collisionHandler.isColliding(this.character, poison)) {
-        this.character.collectPoison(poison, index);
+    this.hearts = this.checkCollisionWithCollectableItem(
+      this.hearts,
+      LOADED_SOUNDS.heart.collected,
+      () => {
+        this.character.energy = Math.min(this.character.energy + 20, 100);
       }
+    );
+  }
+
+  checkCollisionWithKey() {
+    if (!this.key) return;
+
+    if (this.character.isColliding(this.key)) {
+      this.character.keyCollected = true;
+      if (sounds) {
+        this.key.pingSound.pause();
+        this.key.pingSound.currentTime = 0;
+        this.key.pingSound.play();
+      }
+
+      this.key = null;
+    }
+  }
+
+  checkCollisionWithCollectableItem(array, sound, effectFn) {
+    if (!array || array.length === 0) return;
+
+    return array.filter((item) => {
+      if (this.character.isColliding(item)) {
+        effectFn();
+
+        if (sounds) {
+          sound.pause();
+          sound.currentTime = 0;
+          sound.play();
+        }
+        return false;
+      }
+
+      return true;
     });
   }
 
-  /**
-   * Aktualisiert den Zustand des Kristalls.
-   */
-  updateCrystal() {
-    if (this.crystal && this.crystal.isActive) {
-      if (this.collisionHandler.isColliding(this.character, this.crystal)) {
-        this.crystal.collect();
-      }
-    }
-  }
-
-  updateKey() {
-    if (this.key && this.key.isActive) {
-      if (this.collisionHandler.isColliding(this.character, this.key)) {
-        this.character.collectKey(this.key);
-      }
-    }
-  }
-  /**
-   * Zeichnet die Welt.
-   */
   draw() {
-    this.drawer.draw();
-  }
+    this.clearCanvas();
+    this.ctx.save();
+    this.ctx.translate(this.camera_x, 0);
 
-  /**
-   * Aktualisiert die Feinde in der Welt.
-   */
-  updateEnemies() {
-    console.log("Feinde aktuell:", this.enemies.length);
-    const allEnemies = [...this.enemies, ...this.snakes];
-    for (let i = allEnemies.length - 1; i >= 0; i--) {
-      const enemy = allEnemies[i];
-      if (enemy.isRemoved) continue;
-      if (enemy.isReadyToRemove) {
-        this.removeEnemyFromWorld(enemy);
-        continue;
-      }
-      if (!enemy.dead) {
-        enemy.update(this.character);
-      }
-      if (enemy.isReadyToRemove) {
-        console.log(`Ready to remove:`, enemy.constructor.name, enemy.id);
-      }
+    this.addObjectsToMap(this.backgrounds);
+    this.addObjectsToMap(this.candles);
+    this.addObjectsToMap(this.skulls);
+    if (Array.isArray(this.knights) && this.knights.length > 0) {
+      this.addObjectsToMap(this.knights);
+    }
+    if (Array.isArray(this.poisons) && this.poisons.length > 0) {
+      this.addObjectsToMap(this.poisons);
+    }
+    if (Array.isArray(this.hearts) && this.hearts.length > 0) {
+      this.addObjectsToMap(this.hearts);
+    }
+    this.addObjectsToMap(this.traps);
+    if (this.key) this.addToMap(this.key);
+    this.addToMap(this.door);
+    if (this.endboss) this.addToMap(this.endboss);
+    if (this.character) this.addToMap(this.character);
+
+    this.character.drawFrame(this.ctx);
+    if (this.key) this.key.drawFrame(this.ctx);
+    if (Array.isArray(this.knights) && this.knights.length > 0) {
+      this.knights.forEach((knight) => knight.drawFrame(this.ctx));
+    }
+    if (Array.isArray(this.poisons) && this.poisons.length > 0) {
+      this.poisons.forEach((poison) => poison.drawFrame(this.ctx));
+    }
+    if (Array.isArray(this.hearts) && this.hearts.length > 0) {
+      this.hearts.forEach((heart) => heart.drawFrame(this.ctx));
+    }
+    this.traps.forEach((trap) => trap.drawFrame(this.ctx));
+    if (this.endboss) this.endboss.drawInnerFrame(this.ctx);
+    if (this.endboss) this.endboss.drawOuterFrame(this.ctx);
+
+    this.ctx.restore();
+
+    this.addToMap(this.character.healthBar);
+    this.addToMap(this.character.poisonBar);
+    this.addToMap(this.character.keyIcon);
+    this.addToMap(this.endbossHealthBar);
+    this.character.healthBar.drawLabel(this.ctx);
+    this.endbossHealthBar.drawLabel(this.ctx);
+    if (this.character.keyCollected) {
+      this.character.tickIcon.draw(ctx);
     }
   }
 
-  removeEnemyFromWorld(enemy) {
-    if (enemy instanceof Snake) {
-      this.snakes = this.snakes.filter((e) => e !== enemy);
-    } else {
-      this.enemies = this.enemies.filter((e) => e !== enemy);
-    }
-    enemy.stopAllIntervals?.();
-    enemy.isRemoved = true;
-    enemy.isVisible = false;
-    if (this.level?.endboss === enemy) {
-      this.level.endboss = null;
-    }
-  }
-
-  /**
-   * Fügt einen Feind zur Welt hinzu.
-   * @param {Enemy} enemy - Der hinzuzufügende Feind.
-   */
-  addEnemy(enemy) {
-    this.enemies.push(enemy);
-  }
-
-  /**
-   * Löscht das Canvas.
-   */
   clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   addObjectsToMap(objects) {
     if (!Array.isArray(objects)) {
-      console.warn("[addObjectsToMap()] kein Array übergeben:", objects);
+      console.warn('[addObjectsToMap()] kein Array übergeben:', objects);
       return;
     }
 
@@ -268,28 +227,36 @@ class World {
     });
 
     if (
-      this.backgroundObjects.length > 0 &&
-      this.camera_x >= this.backgroundObjects[0].width
+      this.backgrounds.length > 0 &&
+      this.camera_x >= this.backgrounds[0].width
     ) {
       this.camera_x = 0;
     }
   }
 
   addToMap(mo) {
-    if (!mo) return;
-    if (mo instanceof Endboss) {
-      if (mo.isActive !== false) mo.draw(this.ctx);
+    if (!mo) {
+      console.warn('[addToMap()] mo ist undefined oder null!');
+      console.trace(); // <-- zeigt dir, woher der Aufruf kam!
       return;
     }
+
     if (mo.otherDirection) this.flipImage(mo);
-    if (mo.isActive !== false) mo.draw(this.ctx);
+
+    if (mo.isActive !== false) {
+      try {
+        mo.draw(this.ctx);
+      } catch (err) {
+        console.error(
+          `[addToMap()] Fehler beim Zeichnen von ${mo.constructor?.name}:`,
+          err
+        );
+      }
+    }
+
     if (mo.otherDirection) this.flipImageBack(mo);
   }
 
-  /**
-   * Spiegelt das Bild eines Objekts.
-   * @param {MovableObject} mo - Das zu spiegelnde Objekt.
-   */
   flipImage(mo) {
     this.ctx.save();
     this.ctx.translate(mo.width, 0);
@@ -297,40 +264,8 @@ class World {
     mo.x = mo.x * -1;
   }
 
-  /**
-   * Setzt das Bild eines Objekts zurück.
-   * @param {MovableObject} mo - Das zurückzusetzende Objekt.
-   */
   flipImageBack(mo) {
     mo.x = mo.x * -1;
     this.ctx.restore();
-  }
-
-  resetCamera() {
-    this.camera_x = -this.character.x + 190;
-  }
-
-  /**
-   * Stellt die Feinde aus dem gespeicherten Zustand wieder her.
-   * @param {Array} enemies - Die gespeicherten Feind-Daten.
-   */
-  restoreEnemies(enemies) {
-    this.enemies = enemies.map((data) => {
-      const enemy = new (window[data.type] || Enemy)();
-      Object.assign(enemy, data);
-      return enemy;
-    });
-  }
-
-  /**
-   * Stellt die Objekte aus dem gespeicherten Zustand wieder her.
-   * @param {Array} objects - Die gespeicherten Objekt-Daten.
-   */
-  restoreObjects(objects) {
-    this.objects = objects.map((data) => {
-      const obj = new GameObject();
-      Object.assign(obj, data);
-      return obj;
-    });
   }
 }

@@ -1,53 +1,37 @@
-/**
- * Class representing a game level.
- */
 class Level {
-  enemies;
-  clouds;
+  backgrounds;
+  candles;
+  skulls;
+  knights;
+  poisons;
+  hearts;
   key;
   door;
-  snakes;
-  backgroundObjects;
-  poisonObjects;
   traps;
-  crystal;
-  level_end_x = 13395;
+  endboss;
+  level_end_x = 7000;
 
-  /**
-   * Creates an instance of Level.
-   * @param {Enemy[]} enemies - The array of enemies in the level.
-   * @param {Cloud[]} clouds - The array of clouds in the level.
-   * @param {BackgroundObject[]} backgroundObjects - The array of background objects in the level.
-   * @param {PoisonObject[]} poisonObjects - The array of poison objects in the level.
-   * @param {Trap[]} traps - The array of traps in the level.
-   */
-  constructor(enemies, clouds, key, door, backgroundObjects, poisonObjects, traps, crystal) {
-    this.enemies = enemies || [];
-    this.clouds = clouds || [];
+  constructor(
+    backgrounds,
+    candles,
+    skulls,
+    knights,
+    poisons,
+    hearts,
+    key,
+    door,
+    traps,
+    endboss
+  ) {
+    this.backgrounds = backgrounds || [];
+    this.candles = candles || [];
+    this.skulls = skulls || [];
+    this.knights = knights || [];
+    this.poisons = poisons || [];
+    this.hearts = hearts || [];
     this.key = key;
     this.door = door;
-    this.backgroundObjects = backgroundObjects || [];
-    this.poisonObjects = poisonObjects || [];
     this.traps = traps || [];
-    this.crystal = crystal;
-    this.endboss = this.enemies.find((e) => e instanceof Endboss) || null;
-  }
-
-  /**
-   * Draws the level on the canvas.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
-   */
-  draw(ctx) {
-    this.backgroundObjects.forEach((bg) => bg.draw(ctx));
-    this.clouds.forEach((cloud) => cloud.draw(ctx));
-[...this.enemies, ...this.snakes].forEach((enemy) => {
-    if (enemy.isVisible) enemy.draw(ctx); 
-  });
-  
-    this.traps.forEach((trap) => {
-      if (trap.x >= camera_x && trap.x <= camera_x + canvas.width) {
-        trap.draw(ctx);
-      }
-    });
+    this.endboss = endboss;
   }
 }

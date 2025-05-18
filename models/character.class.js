@@ -1,373 +1,140 @@
-let isAfterDoor = false;
-let hasPassedDoor = false;
-/**
- * Class representing the character.
- * @extends MovableObject
- */
 class Character extends MovableObject {
-  height = 290;
-  width = 520;
+  world;
+  height;
+  width;
   speed = 4;
   invulnerable = false;
+  healthBar;
+  poisonBar;
+  keyIcon;
+  tickIcon;
+  energy = 100;
   poisonCollected = 0;
+  keyCollected = false;
+  hasPassedDoor = false;
   deadAnimationPlayed = false;
   hasKey = false;
-  isVisible = true;
-  attackDamage = 10;
   animationIntervals = [];
-  offset = { top: 60, bottom: 10, left: 215, right: 200 };
+  offset = { top: 40, bottom: 10, left: 5, right: 30 };
 
-  /**
-   * Creates an instance of Character.
-   */
-  constructor(world, poisonStatusBar) {
+  constructor(world) {
     super();
-    console.log("Geladene Angriffsbilder:", LOADED_IMAGES.character.attack);
-    this.loadImage(LOADED_IMAGES.character.idle[0]);
-    this.addToImageCache("idle", LOADED_IMAGES.character.idle);
-    this.addToImageCache("walk", LOADED_IMAGES.character.walk);
-    this.addToImageCache("jump", LOADED_IMAGES.character.jump);
-    this.addToImageCache("attack", LOADED_IMAGES.character.attack);
-    this.addToImageCache("die", LOADED_IMAGES.character.die);
-    this.addToImageCache("hurt", LOADED_IMAGES.character.hurt);
-
-  
-    this.IMAGES_WALK = LOADED_IMAGES.character.walk;
-    this.IMAGES_ATTACK = LOADED_IMAGES.character.attack;
-    this.IMAGES_HURT = LOADED_IMAGES.character.hurt;
-    this.IMAGES_DEAD = LOADED_IMAGES.character.die;
-
-    console.log("character IMAGES:", {
-      walk: this.IMAGES_WALK,
-      attack: this.IMAGES_ATTACK,
-      hurt: this.IMAGES_HURT,
-      dead: this.IMAGES_DEAD,
-    });
     this.world = world;
-    this.poisonStatusBar = poisonStatusBar || new PoisonStatusBar();
-    this.initCharacter();
-    this.currentAnimation = LOADED_IMAGES.character.idle;
-    this.animate();
-    this.canMoveLeftFlag = true;
-  }
+    this.addToImageCache('idle', LOADED_IMAGES.character.idle);
+    this.addToImageCache('walk', LOADED_IMAGES.character.walk);
+    this.addToImageCache('jump', LOADED_IMAGES.character.jump);
+    this.addToImageCache('die', LOADED_IMAGES.character.die);
+    this.addToImageCache('hurt', LOADED_IMAGES.character.hurt);
+    this.img = this.imageCache['idle_0'];
+    this.x = 0;
+    // this.x = 4800;
+    this.y = 270;
+    this.width = 200;
+    this.height = 239;
+    this.soundWalking = LOADED_SOUNDS.character.walk;
+    this.soundWalking.loop = true;
+    this.soundWalking.volume = 0.1;
+    this.soundJump = LOADED_SOUNDS.character.jump;
+    this.soundJump.volume = 0.5;
 
-  /**
-   * Initializes the character.
-   */
-  initCharacter() {
     this.applyGravity();
-    this.energy = 100;
-      this.x = 11000;
-    // this.x = 90;
-    // this.y = 150;
-    this.poisonStatusBar.setPercentage(0);
-    this.healthBar = new StatusBar();
-    this.world.characterStatusBar = this.healthBar;
-    this.world.camera_x = -this.x - 190;
-    this.canMoveLeftFlag = true;
-    this.img = this.imageCache["idle_0"];
+    // this.healthBar.setPercentage(0)
+    // this.poisonBar.setPercentage(0);
   }
 
-  /**
-   * Updates the character's state.
-   */
-  update() {
-    if (!this.isVisible || this.energy <= 0) return;
-    this.handleState();
-    this.updateCamera();
-    this.animate();
+  setKeyIcon(keyIcon) {
+    this.keyIcon = keyIcon;
   }
 
-  animate() {
-    this.setCustomInterval(() => {
-      if (this.isDead()) return;
-      if (this.isAttacking) {
-        if (!LOADED_IMAGES.character.attack) {
-          console.error("Angriffsbilder nicht geladen!");
-          return;
-        }
-        this.playGenericAnimation(
-          LOADED_IMAGES.character.attack,
-          100,
-          false,
-          "attack"
-        );
-      }
-
-      else if (this.isHurt()) {
-        if (!LOADED_IMAGES.character.hurt) {
-          console.error("Schadensbilder nicht geladen!");
-          return;
-        }
-      } else if (this.isAboveGround()) {
-        this.playGenericAnimation(
-          LOADED_IMAGES.character.jump,
-          100,
-          false,
-          "jump"
-        );
-      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playGenericAnimation(
-          LOADED_IMAGES.character.walk,
-          100,
-          true,
-          "walk"
-        );
-      } else {
-        this.playGenericAnimation(
-          LOADED_IMAGES.character.idle,
-          200,
-          true,
-          "idle"
-        );
-      }
-    }, 100);
+  setTickIcon(tickIcon) {
+    this.tickIcon = tickIcon;
   }
 
-  get movement() {
-    return {
-      right:
-        this.world.keyboard.RIGHT &&
-        this.x < this.world.level.level_end_x + 200,
-      left: this.world.keyboard.LEFT && this.x > 0 && this.canMoveLeft(),
-      jump: this.world.keyboard.JUMP,
-    };
-  }
-
-  handleState() {
-    if (this.movement.right) this.moveRight();
-    if (this.movement.left) this.moveLeft();
-    if (this.movement.jump) this.jump();
-    if (this.world.keyboard.ATTACK && !this.isAttacking) this.playAttack(); // Überprüfe, ob der Angriff ausgelöst werden soll
-  }
-
-  /**
-   * Handles the character's actions.
-   */
-  handleActions() {
-    if (this.world.keyboard.ATTACK && !this.isAttacking) {
-      this.isAttacking = true;
-      this.currentAttackFrame = 0;
-      playAttackSound();
-
-      this.attackEnemies();
+  drawTickIcon() {
+    if (this.keyCollected) {
+      this.world.a;
     }
   }
 
-  /**
-   * Makes the character jump.
-   */
+  handleMovements() {
+    const isMovingRight =
+      this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x + 200;
+    const isMovingLeft = this.world.keyboard.LEFT && this.x > -500;
+
+    if (isMovingRight) {
+      this.otherDirection = false;
+      this.moveRight();
+    }
+
+    if (isMovingLeft) {
+      this.otherDirection = true;
+      this.moveLeft();
+    }
+
+    if (this.world.keyboard.JUMP && !this.isAboveGround()) {
+      this.jump();
+    }
+
+    if ((isMovingRight || isMovingLeft) && sounds ) {
+      this.startWalkingSound();
+    } else {
+      this.stopWalkingSound();
+    }
+  }
+
+  handleAnimations() {
+    if (this.isDead()) {
+      this.animate(LOADED_IMAGES.character.die);
+    } else if (this.isHurt()) {
+      this.animate(LOADED_IMAGES.character.hurt);
+    } else if (this.isAboveGround()) {
+      this.animate(LOADED_IMAGES.character.jump);
+    } else if (this.isMoving()) {
+      this.animate(LOADED_IMAGES.character.walk);
+    } else {
+      this.animate(LOADED_IMAGES.character.idle);
+    }
+  }
+
   jump() {
     if (!this.isAboveGround()) {
-      this.speedY = 33;
-      playJumpSound();
-    }
-  }
-
-  /**
-   * Updates the camera position.
-   */
-  updateCamera() {
-    this.world.camera_x = -this.x - 190;
-  }
-
-  /**
-   * Makes the character take damage.
-   */
-  takeDamage(damage) {
-    super.takeDamage(damage);
-    this.world.characterStatusBar.setPercentage(this.energy);
-    this.playAnimation(LOADED_IMAGES.character.hurt);
-  }
-  /**
-   * Handles the character's death.
-   */
-  die() {
-    if (this.deadAnimationPlayed) return;
-    this.deadAnimationPlayed = true;
-    this.saveLastPosition();
-    this.stopAllAnimations();
-    this.playGenericAnimation(
-      LOADED_IMAGES.character.die,
-      150,
-      false,
-      "die",
-      () => {
-        this.isVisible = false;
-        this.world.endGame.showYouLostScreen();
-      }
-    );
-  }
-
-  playAttack() {
-    if (this.isAttacking) return;
-    this.isAttacking = true;
-    this.playGenericAnimation(
-      LOADED_IMAGES.character.attack,
-      100,
-      false,
-      "attack",
-      () => {
-        this.isAttacking = false;
-      }
-    );
-    this.executeAttack();
-  }
-
-  playDeath() {
-    this.playGenericAnimation(LOADED_IMAGES.character.die, 150, false, () => {
-      this.isVisible = false;
-      this.world.endGame.showYouLostScreen();
-    });
-  }
-
-  /**
-   * Stops all animations.
-   */
-  stopAllAnimations() {
-    this.animationIntervals.forEach(clearInterval);
-    this.animationIntervals = [];
-  }
-
-  /**
-   * Handles the character entering a door.
-   */
-  enterDoor(door) {
-    if (hasPassedDoor) return;
-    this.isVisible = false;
-    this.x = door.x;
-    this.y = door.y;
-    setTimeout(() => {
-      this.isVisible = false;
-      setTimeout(() => {
-        this.x = 6471;
-        this.y = 150;
-        this.world.camera_x = -this.x - 190;
-        this.isVisible = true;
-        isAfterDoor = true;
-        hasPassedDoor = true;
-        this.world.snakes = this.world.level.snakes || [];
-        setTimeout(() => {
-          isAfterDoor = false;
-        }, 2000);
-        playNewSound();
-      }, 200);
-    }, 2000);
-  }
-
-  /**
-   * Checks if the character can move left.
-   */
-  canMoveLeft() {
-    if (hasPassedDoor && this.x < 6471) return false;
-    return this.canMoveLeftFlag && !isAfterDoor;
-  }
-
-  /**
-   * Collects a poison bottle.
-   */
-  collectPoison(poison, index) {
-    if (poison && poison.isActive) {
-      poison.deactivate();
-      this.poisonCollected += 1;
-      this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-      this.world.poisonsArray.splice(index, 1);
-      playCollectPoisonBottleSound();
-    }
-  }
-
-  /**
-   * Collects a key.
-   */
-  collectKey(key) {
-    if (key && key.isActive) {
-      key.deactivate();
-      this.hasKey = true;
-    }
-  }
-
-  /**
-   * Throws a poison bottle.
-   */
-  throwPoisonBottle() {
-    if (this.poisonCollected === 0) {
-      return;
-    }
-    this.poisonCollected--;
-    this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-    const offsetX = this.otherDirection ? -220 : 220;
-    const poisonBottle = new ThrowableObject(this.x + offsetX, this.y + 50);
-    poisonBottle.otherDirection = this.otherDirection;
-    this.world.throwableObjects.push(poisonBottle);
-  }
-
-  /**
-   * Resets the character's position to the last saved location or a default position.
-   */
-  resetPosition(position) {
-    const resetPos = {
-      x: (position?.x || this.lastPosition?.x || 90) - 100,
-      y: position?.y || this.lastPosition?.y || 150,
-    };
-    this.x = resetPos.x < 0 ? 0 : resetPos.x;
-    this.y = resetPos.y;
-    this.energy = 100;
-    this.isVisible = true;
-    this.deadAnimationPlayed = false;
-    this.invulnerable = false;
-    this.playAnimation(LOADED_IMAGES.character.idle);
-    this.stopGravity();
-    this.applyGravity();
-  }
-
-  /**
-   * Speichert die aktuelle Position des Charakters.
-   */
-  saveLastPosition() {
-    this.lastPosition = { x: this.x, y: this.y };
-  }
-
-  draw(ctx) {
-    if (!this.isVisible) return;
-    this.drawWithCollisionBox(ctx);
-  }
-
-  dealDamageToEnemy(enemy, damage = 10) {
-    if (!enemy.dead && Math.abs(this.x - enemy.x) < 150) {
-      enemy.takeDamage(damage);
-      if (enemy instanceof Endboss) {
-        enemy.statusBarEndboss.setPercentage(enemy.energy);
+      this.speedY = 38;
+      if (sounds) {
+        this.soundJump.pause();
+        this.soundJump.currentTime = 0;
+        this.soundJump.play();
       }
     }
   }
 
-  executeAttack() {
-    this.world.enemies.forEach((enemy) => this.dealDamageToEnemy(enemy));
+  isMoving() {
+    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
   }
 
-  fullReset(position = {}) {
-    this.stopAllAnimations();
-    Object.assign(this, {
-      x: position.x || 90,
-      y: position.y || 150,
-      energy: 100,
-      poisonCollected: 5,
-      isVisible: true,
-      deadAnimationPlayed: false,
-      speedY: 0,
-    });
-    this.poisonStatusBar.setPercentage(this.poisonCollected * 20);
-    this.playAnimation(LOADED_IMAGES.character.idle);
-    this.applyGravity();
+  startWalkingSound() {
+    if (this.soundWalking.paused) {
+      this.soundWalking.currentTime = 0;
+      this.soundWalking.play();
+    }
   }
 
-  /**
-   * Sets a custom interval and tracks it for cleanup.
-   * @param {Function} callback - The function to execute at each interval.
-   * @param {number} interval - The interval time in milliseconds.
-   */
-  setCustomInterval(callback, interval) {
-    const intervalId = setInterval(callback, interval);
-    this.animationIntervals.push(intervalId);
+  stopWalkingSound() {
+    if (!this.soundWalking.paused) {
+      this.soundWalking.pause();
+      this.soundWalking.currentTime = 0;
+    }
+  }
+
+  drawFrame(ctx) {
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+
+    const offsetX = this.x + this.offset.left;
+    const offsetY = this.y + this.offset.top;
+    const offsetWidth = this.width - this.offset.left - this.offset.right;
+    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
+
+    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
   }
 }

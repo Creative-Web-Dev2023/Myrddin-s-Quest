@@ -2,66 +2,103 @@ class Keyboard {
   LEFT = false;
   RIGHT = false;
   JUMP = false;
-  ATTACK = false;
-  THROW = false;
+  D = false;
 
-  constructor() {
-    window.addEventListener("keydown", (e) => this.handleKeyDown(e));
-    window.addEventListener("keyup", (e) => this.handleKeyUp(e));
-  
-    this.setupTouchControls();
+  /**
+   * Sets up keyboard controls for the game.
+   * @param {Object} world - The game world object.
+   */
+  setupControls(world) {
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        this.LEFT = true;
+      }
+      if (e.key === 'ArrowRight') {
+        this.RIGHT = true;
+      }
+      if (e.key === 'ArrowUp') {
+        this.JUMP = true;
+      }
+
+      if (e.key.toLowerCase() === 'd' && !this.D) {
+        this.D = true;
+        world.character.throwPoisonBottle();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft') {
+        this.LEFT = false;
+      }
+      if (e.key === 'ArrowRight') {
+        this.RIGHT = false;
+      }
+      if (e.key === 'ArrowUp') {
+        this.JUMP = false;
+      }
+
+      if (e.key.toLowerCase() === 'd') {
+        this.D = false;
+      }
+    });
   }
 
-  handleKeyDown(e) {
-    if (e.keyCode === 37) this.LEFT = true;
-    if (e.keyCode === 39) this.RIGHT = true;
-    if (e.keyCode === 38) this.JUMP = true;
-    if (e.keyCode === 65) this.ATTACK = true; 
-    if (e.keyCode === 68) this.THROW = true;   
+  reset() {
+    this.LEFT = false;
+    this.RIGHT = false;
+    this.JUMP = false;
+    this.D = false;
   }
 
-  handleKeyUp(e) {
-    if (e.keyCode === 37) this.LEFT = false;
-    if (e.keyCode === 39) this.RIGHT = false;
-    if (e.keyCode === 38) this.JUMP = false;
-    if (e.keyCode === 65) this.ATTACK = false;
-    if (e.keyCode === 68) this.THROW = false;
-  }
+  linkButtonsToPressEvents() {
+    document.getElementById('btn_left').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      this.LEFT = true;
+    });
 
-  setupTouchControls() {
-   
-    const btnLeft = document.getElementById('btnLeft');
-    if (btnLeft) {
-      btnLeft.ontouchstart = () => this.LEFT = true;
-      btnLeft.ontouchend = () => this.LEFT = false;
-    }
+    document.getElementById('btn_left').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.LEFT = false;
+    });
 
-    
-    const btnRight = document.getElementById('btnRight');
-    if (btnRight) {
-      btnRight.ontouchstart = () => this.RIGHT = true;
-      btnRight.ontouchend = () => this.RIGHT = false;
-    }
+    document.getElementById('btn_right').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      this.RIGHT = true;
+    });
 
-  
-    const btnJump = document.getElementById('btnJump');
-    if (btnJump) {
-      btnJump.ontouchstart = () => this.JUMP = true;
-      btnJump.ontouchend = () => this.JUMP = false;
-    }
+    document.getElementById('btn_right').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.RIGHT = false;
+    });
 
-   
-    const btnAttack = document.getElementById('btnAttack');
-    if (btnAttack) {
-      btnAttack.ontouchstart = () => this.ATTACK = true;
-      btnAttack.ontouchend = () => this.ATTACK = false;
-    }
+    document.getElementById('btn_up').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      this.JUMP = true;
+    });
 
-  
-    const btnThrow = document.getElementById('btnPoison') || document.getElementById('btnThrow');
-    if (btnThrow) {
-      btnThrow.ontouchstart = () => this.THROW = true;
-      btnThrow.ontouchend = () => this.THROW = false;
-    }
+    document.getElementById('btn_up').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.JUMP = false;
+    });
+
+    document.getElementById('btn_space').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      this.SPACE = true;
+    });
+
+    document.getElementById('btn_space').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.SPACE = false;
+    });
+
+    document.getElementById('btn_space').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      this.D = true;
+    });
+
+    document.getElementById('btn_space').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.D = false;
+    });
   }
 }
