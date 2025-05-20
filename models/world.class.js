@@ -17,7 +17,7 @@ class World {
   key;
   door;
   endboss;
-  // throwableObjects = [];
+  throwableObjects = [];
 
   characterStatusBar;
   poisonStatusBar;
@@ -94,7 +94,7 @@ class World {
     if (Array.isArray(this.hearts) && this.hearts.length > 0)
       this.hearts.forEach((heart) => heart.handleFloating());
 
-    if (Array.isArray(this.hearts) && this.hearts.length > 0)
+    if (Array.isArray(this.knights) && this.knights.length > 0)
       this.knights.forEach((knight) => knight.update());
 
     if (this.key) this.key.handleFloating();
@@ -103,6 +103,9 @@ class World {
 
     this.updateCollisions();
     this.checkThrowObjects();
+    this.throwableObjects = this.throwableObjects.filter(
+      (obj) => !obj.markedForRemoval
+    );
   }
 
   updateCollisions() {
@@ -175,14 +178,17 @@ class World {
       this.character.poisonCollected > 0 &&
       this.character.bottleReady
     ) {
-      console.log('Flasche geworfen');
       this.character.bottleReady = false;
+      let bottle = new ThrowableObject(
+        this.character.x + 150,
+        this.character.y + 80
+      );
+      this.throwableObjects.push(bottle);
       this.character.poisonCollected = Math.max(
         this.character.poisonCollected - 20,
         0
       );
-
-      // später: Flasche erzeugen und animieren
+      this.character.poisonBar.setPercentage(this.character.poisonCollected);
     }
 
     if (!this.keyboard.D) {
@@ -208,6 +214,12 @@ class World {
       this.addObjectsToMap(this.hearts);
     }
     this.addObjectsToMap(this.traps);
+    if (
+      Array.isArray(this.throwableObjects) &&
+      this.throwableObjects.length > 0
+    ) {
+      this.addObjectsToMap(this.throwableObjects);
+    }
     if (this.key) this.addToMap(this.key);
     this.addToMap(this.door);
     if (this.endboss) this.addToMap(this.endboss);

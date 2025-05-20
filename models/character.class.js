@@ -10,7 +10,7 @@ class Character extends MovableObject {
   tickIcon;
   energy = 40;
   bottleReady = true;
-  poisonCollected = 100;
+  poisonCollected = 0;
   keyCollected = false;
   hasPassedDoor = false;
   hasKey = false;

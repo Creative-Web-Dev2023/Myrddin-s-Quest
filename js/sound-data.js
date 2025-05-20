@@ -1,5 +1,9 @@
 const SOUND_PATHS = {
-  background: './assets/audio/woodsounds.mp3',
+ game: {
+    background: './assets/audio/woodsounds.mp3',
+    you_win: './assets/audio/game_won.mp3',
+    you_lose: './assets/audio/game_lost.mp3',
+  },
   character: {
     walk: './assets/audio/walking.mp3',
     jump: './assets/audio/jump.mp3',
