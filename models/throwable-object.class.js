@@ -1,4 +1,4 @@
-class ThrowableObject extends MovableObject {
+/* class ThrowableObject extends MovableObject {
   constructor(x, y) {
     super();
     this.isVisible = true;
@@ -51,5 +51,24 @@ class ThrowableObject extends MovableObject {
   deactivate() {
     this.isVisible = false;
     this.collided = true;
+  }
+} */
+
+class ThrowableObject extends MovableObject {
+  offset = { top: 0, bottom: 0, left: 10, right: 10 };
+  constructor() {
+    super();
+    this.img = LOADED_IMAGES.game_items.poison[0];
+    this.x = x;
+    this.y = y;
+    this.height = 70;
+    this.width = 70;
+  }
+
+  throw() {
+    this.speedY = 20;
+    this.applyGravity();
+
+    this.x += 8;
   }
 }

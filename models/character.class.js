@@ -8,13 +8,12 @@ class Character extends MovableObject {
   poisonBar;
   keyIcon;
   tickIcon;
-  energy = 100;
-  poisonCollected = 0;
+  energy = 40;
+  bottleReady = true;
+  poisonCollected = 100;
   keyCollected = false;
   hasPassedDoor = false;
-  deadAnimationPlayed = false;
   hasKey = false;
-  animationIntervals = [];
   offset = { top: 40, bottom: 10, left: 5, right: 30 };
 
   constructor(world) {
@@ -38,8 +37,13 @@ class Character extends MovableObject {
     this.soundJump.volume = 0.5;
 
     this.applyGravity();
-    // this.healthBar.setPercentage(0)
-    // this.poisonBar.setPercentage(0);
+  }
+
+  update() {
+    this.handleMovements();
+    this.handleAnimations();
+    this.healthBar.setPercentage(this.energy);
+    this.poisonBar.setPercentage(this.poisonCollected);
   }
 
   setKeyIcon(keyIcon) {
@@ -75,7 +79,7 @@ class Character extends MovableObject {
       this.jump();
     }
 
-    if ((isMovingRight || isMovingLeft) && sounds ) {
+    if ((isMovingRight || isMovingLeft) && sounds) {
       this.startWalkingSound();
     } else {
       this.stopWalkingSound();

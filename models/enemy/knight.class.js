@@ -11,6 +11,11 @@ class Knight extends MovableObject {
     this.height = 290;
   }
 
+  update() {
+    this.handleAnimations();
+    this.moveLeft();
+  }
+
   handleAnimations() {
     this.animate(LOADED_IMAGES.knight.walk);
   }

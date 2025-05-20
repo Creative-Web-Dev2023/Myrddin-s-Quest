@@ -3,11 +3,11 @@ class Endboss extends MovableObject {
   outerOffset = { top: 10, bottom: 100, left: 40, right: 50 };
   constructor() {
     super();
-    this.addToImageCache('walk', LOADED_IMAGES.troll.walk);
-    this.addToImageCache('hurt', LOADED_IMAGES.troll.hurt);
-    this.addToImageCache('dead', LOADED_IMAGES.troll.die);
+    this.addToImageCache("walk", LOADED_IMAGES.troll.walk);
+    this.addToImageCache("hurt", LOADED_IMAGES.troll.hurt);
+    this.addToImageCache("dead", LOADED_IMAGES.troll.die);
 
-    this.img = this.imageCache['walk_0'];
+    this.img = this.imageCache["walk_0"];
     this.deadAnimationPlayed = false;
     this.height = 409;
     this.width = 700;
@@ -16,11 +16,17 @@ class Endboss extends MovableObject {
     this.speed = 2;
 
     this.energy = 100;
-
+    this.healthBar;
     this.patrolMin = 5000;
     this.patrolMax = 5800;
-    this.nextTurnPoint = this.getRandomTurnPoint('left');
-    this.deadSound = new Audio('./assets/audio/troll_dead.mp3');
+    this.nextTurnPoint = this.getRandomTurnPoint("left");
+    this.deadSound = new Audio("./assets/audio/troll_dead.mp3");
+  }
+
+  update() {
+    this.handleAnimations();
+    this.patrol();
+    this.healthBar.setPercentage(this.energy);
   }
 
   handleAnimations() {
@@ -28,10 +34,10 @@ class Endboss extends MovableObject {
   }
 
   getRandomTurnPoint(direction) {
-    if (direction === 'right') {
-      return this.patrolMax - Math.random() * 150; 
+    if (direction === "right") {
+      return this.patrolMax - Math.random() * 150;
     } else {
-      return this.patrolMin + Math.random() * 200; 
+      return this.patrolMin + Math.random() * 200;
     }
   }
 
@@ -41,20 +47,20 @@ class Endboss extends MovableObject {
       this.moveLeft();
       if (this.x <= this.nextTurnPoint) {
         this.otherDirection = true;
-        this.nextTurnPoint = this.getRandomTurnPoint('right');
+        this.nextTurnPoint = this.getRandomTurnPoint("right");
       }
     } else {
       this.moveRight();
       if (this.x >= this.nextTurnPoint) {
         this.otherDirection = false;
-        this.nextTurnPoint = this.getRandomTurnPoint('left');
+        this.nextTurnPoint = this.getRandomTurnPoint("left");
       }
     }
   }
 
   drawInnerFrame() {
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'orchid';
+    ctx.strokeStyle = "orchid";
     ctx.lineWidth = 2;
 
     const innerOffsetX = this.x + this.innerOffset.left;
@@ -74,7 +80,7 @@ class Endboss extends MovableObject {
 
   drawOuterFrame() {
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'royalblue';
+    ctx.strokeStyle = "royalblue";
     ctx.lineWidth = 2;
 
     const outerOffsetX = this.x + this.outerOffset.left;

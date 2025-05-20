@@ -130,8 +130,4 @@ class MovableObject extends DrawableObject {
       this.startY +
       Math.sin(this.floatOffset * this.floatSpeed) * this.floatAmplitude;
   }
-
-  soundPause(sound) {
-    sound.pause();
-  }
 }

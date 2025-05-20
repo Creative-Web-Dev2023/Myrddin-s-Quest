@@ -46,6 +46,22 @@ class World {
   }
 
   initializeGameObjects() {
+    this.initializeCharacter();
+    this.backgrounds = this.level.backgrounds;
+    this.candles = this.level.candles;
+    this.skulls = this.level.skulls;
+    this.knights = this.level.knights;
+    this.poisons = this.level.poisons;
+    this.hearts = this.level.hearts;
+    this.key = this.level.key;
+    this.door = this.level.door;
+    this.traps = this.level.traps;
+    this.initializeEndboss();
+
+    this.camera_x = -this.character.x + 100;
+  }
+
+  initializeCharacter() {
     this.character = new Character(this);
     this.characterStatusBar = new StatusBar(
       'health',
@@ -61,66 +77,48 @@ class World {
     this.character.setKeyIcon(this.characterKeyIcon);
     this.characterTickIcon = new TickIcon();
     this.character.setTickIcon(this.characterTickIcon);
+  }
 
-    this.backgrounds = this.level.backgrounds || [];
-    this.candles = this.level.candles || [];
-    this.skulls = this.level.skulls || [];
-    this.knights = this.level.knights || [];
-    this.poisons = this.level.poisons || [];
-    this.hearts = this.level.hearts || [];
-    this.key = this.level.key;
-    this.door = this.level.door;
-    this.traps = this.level.traps || [];
+  initializeEndboss() {
     this.endboss = this.level.endboss;
     this.endbossHealthBar = new StatusBar('endboss', 720, 20, 200, 40, 'Troll');
     this.endboss.setStatusBars(this.endbossHealthBar);
-
-    this.camera_x = -this.character.x + 100;
   }
 
   update() {
-    this.character.handleMovements();
+    this.character.update();
     this.camera_x = -this.character.x + 100;
-    this.character.handleAnimations();
-    if (Array.isArray(this.poisons) && this.poisons.length > 0) {
-      this.poisons.forEach((poison) => {
-        poison.handleAnimations();
-        poison.handleFloating();
-      });
-    }
-    if (Array.isArray(this.hearts) && this.hearts.length > 0) {
+    if (Array.isArray(this.poisons) && this.poisons.length > 0)
+      this.poisons.forEach((poison) => poison.update());
+
+    if (Array.isArray(this.hearts) && this.hearts.length > 0)
       this.hearts.forEach((heart) => heart.handleFloating());
-    }
-    if (Array.isArray(this.hearts) && this.hearts.length > 0) {
-      this.knights.forEach((knight) => {
-        knight.handleAnimations();
-        knight.moveLeft();
-      });
-    }
+
+    if (Array.isArray(this.hearts) && this.hearts.length > 0)
+      this.knights.forEach((knight) => knight.update());
+
     if (this.key) this.key.handleFloating();
     this.traps.forEach((trap) => trap.handleAnimations());
-    this.endboss.handleAnimations();
-    this.endboss.patrol();
+    this.endboss.update();
 
     this.updateCollisions();
+    this.checkThrowObjects();
   }
 
   updateCollisions() {
     this.checkCollisionWithKey();
-    this.poisons = this.checkCollisionWithCollectableItem(
-      this.poisons,
-      LOADED_SOUNDS.poison.collected,
-      () => {
-        this.character.poisonCollected += 1;
-      }
+    this.checkCollisionWithCollectableItem(
+      'hearts',
+      LOADED_SOUNDS.heart.collected,
+      'energy',
+      20
     );
 
-    this.hearts = this.checkCollisionWithCollectableItem(
-      this.hearts,
-      LOADED_SOUNDS.heart.collected,
-      () => {
-        this.character.energy = Math.min(this.character.energy + 20, 100);
-      }
+    this.checkCollisionWithCollectableItem(
+      'poisons',
+      LOADED_SOUNDS.poison.collected,
+      'poisonCollected',
+      20
     );
   }
 
@@ -139,23 +137,57 @@ class World {
     }
   }
 
-  checkCollisionWithCollectableItem(array, sound, effectFn) {
+  checkCollisionWithCollectableItem(
+    propertyName,
+    sound,
+    targetProperty,
+    change = 0
+  ) {
+    const array = this[propertyName];
     if (!array || array.length === 0) return;
 
-    return array.filter((item) => {
+    this[propertyName] = array.filter((item) => {
       if (this.character.isColliding(item)) {
-        effectFn();
-
-        if (sounds) {
-          sound.pause();
-          sound.currentTime = 0;
-          sound.play();
+        if (change !== 0 && targetProperty) {
+          this.character[targetProperty] = Math.min(
+            this.character[targetProperty] + change,
+            100
+          );
         }
+        this.playSound(sound);
         return false;
       }
-
       return true;
     });
+  }
+
+  playSound(sound) {
+    if (sounds) {
+      sound.pause();
+      sound.currentTime = 0;
+      sound.play();
+    }
+  }
+
+  checkThrowObjects() {
+    if (
+      this.keyboard.D &&
+      this.character.poisonCollected > 0 &&
+      this.character.bottleReady
+    ) {
+      console.log('Flasche geworfen');
+      this.character.bottleReady = false;
+      this.character.poisonCollected = Math.max(
+        this.character.poisonCollected - 20,
+        0
+      );
+
+      // später: Flasche erzeugen und animieren
+    }
+
+    if (!this.keyboard.D) {
+      this.character.bottleReady = true;
+    }
   }
 
   draw() {
@@ -237,7 +269,7 @@ class World {
   addToMap(mo) {
     if (!mo) {
       console.warn('[addToMap()] mo ist undefined oder null!');
-      console.trace(); // <-- zeigt dir, woher der Aufruf kam!
+      console.trace();
       return;
     }
 
