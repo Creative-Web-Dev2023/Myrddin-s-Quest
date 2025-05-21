@@ -7,6 +7,8 @@ const SOUND_PATHS = {
   character: {
     walk: './assets/audio/walking.mp3',
     jump: './assets/audio/jump.mp3',
+      hurt: './assets/audio/autsch.mp3',
+    dying: './assets/audio/wizard_dying.mp3',
   },
   key: {
     collected: './assets/audio/collect_key.mp3',

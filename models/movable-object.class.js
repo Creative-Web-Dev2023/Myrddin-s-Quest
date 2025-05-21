@@ -3,15 +3,13 @@ class MovableObject extends DrawableObject {
   speedY = 0;
   acceleration = 2.5;
   energy = 100;
+  isDeadAlready = false;
   lastHit = 0;
-  isVisible = true;
   otherDirection = false;
   imageCache = {};
   currentImage = 0;
   lastAnimationTime = 0;
   animationSpeed = 100;
-  currentAnimation = null;
-  animationIntervals = [];
   floatAmplitude = 20;
   floatSpeed = 2;
   floatOffset = 0;
@@ -49,7 +47,7 @@ class MovableObject extends DrawableObject {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
-      } 
+      }
     }, 1000 / 25);
   }
 
@@ -61,21 +59,42 @@ class MovableObject extends DrawableObject {
     return this.y < 270;
   }
 
-  isColliding(mo) {
-    if (!(mo instanceof DrawableObject)) return false;
+  getHitbox() {
+    return {
+      x: this.x + (this.offset?.left || 0),
+      y: this.y + (this.offset?.top || 0),
+      width: this.width - (this.offset?.left || 0) - (this.offset?.right || 0),
+      height:
+        this.height - (this.offset?.top || 0) - (this.offset?.bottom || 0),
+    };
+  }
+
+  isAbove(other) {
+    const myBox = this.getHitbox();
+    const otherBox = other.getHitbox();
+    return myBox.y + myBox.height <= otherBox.y + 10;
+  }
+
+
+
+  isColliding(other) {
+    if (!(other instanceof DrawableObject)) return false;
+    const a = this.getHitbox();
+    const b = other.getHitbox();
     return (
-      this.x + this.width > mo.x &&
-      this.x < mo.x + mo.width &&
-      this.y + this.height > mo.y &&
-      this.y < mo.y + mo.height
+      a.x + a.width > b.x &&
+      a.x < b.x + b.width &&
+      a.y + a.height > b.y &&
+      a.y < b.y + b.height
     );
   }
 
-  takeDamage(damage) {
-    this.energy -= damage;
-    if (this.energy <= 0) {
-      this.energy = 0;
-    }
+  takeDamage(amount, sound, imageSet) {
+    if (this.invulnerable || this.isDead()) return;
+    this.energy = Math.max(this.energy - amount, 0);
+    this.invulnerable = true;
+    this.playSound(sound);
+    this.playAnimationOnce(imageSet);
   }
 
   isDead() {
@@ -91,20 +110,29 @@ class MovableObject extends DrawableObject {
     this.playDeathAnimation();
   }
 
-  playDeathAnimation() {
-    const images = LOADED_IMAGES.character.die;
-    let index = 0;
-    /*     this.stopAllAnimations();
+  playDeathAnimation(imageSet, sound = null) {
+    if (!this.isDead() || this.isDeadAlready) return;
+    this.isDeadAlready = true;
+    this.playSound(sound);
+    this.playAnimationOnce(imageSet);
+  }
+
+  playAnimationOnce(imageSet) {
+    let frame = 0;
     const interval = setInterval(() => {
-      if (index < images.length) {
-        this.img = this.imageCache[images[index]];
-        index++;
-      } else {
+      if (frame >= imageSet.length) {
         clearInterval(interval);
-        this.isVisible = false;
+        return;
       }
-    }, 150);
-    this.animationIntervals.push(interval); */
+
+      const img = imageSet[frame++];
+      if (img instanceof HTMLImageElement) {
+        this.img = img;
+      }
+    }, this.animationSpeed || 100);
+    setTimeout(() => {
+      this.invulnerable = false;
+    }, 2000);
   }
 
   animate(images) {
@@ -114,7 +142,6 @@ class MovableObject extends DrawableObject {
     this.lastAnimationTime = now;
     this.currentImage = (this.currentImage + 1) % images.length;
     const img = images[this.currentImage];
-
     if (img instanceof HTMLImageElement) {
       this.img = img;
     } else {
@@ -127,5 +154,17 @@ class MovableObject extends DrawableObject {
     this.y =
       this.startY +
       Math.sin(this.floatOffset * this.floatSpeed) * this.floatAmplitude;
+  }
+
+  playSound(sound) {
+    if (sounds) {
+      this.soundPause(sound);
+      sound.currentTime = 0;
+      sound.play();
+    }
+  }
+
+  soundPause(sound) {
+    sound.pause();
   }
 }

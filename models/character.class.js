@@ -8,12 +8,11 @@ class Character extends MovableObject {
   poisonBar;
   keyIcon;
   tickIcon;
-  energy = 40;
+  energy = 100;
   bottleReady = true;
   poisonCollected = 0;
   keyCollected = false;
   hasPassedDoor = false;
-  hasKey = false;
   offset = { top: 40, bottom: 10, left: 5, right: 30 };
 
   constructor(world) {
@@ -26,7 +25,6 @@ class Character extends MovableObject {
     this.addToImageCache('hurt', LOADED_IMAGES.character.hurt);
     this.img = this.imageCache['idle_0'];
     this.x = 0;
-    // this.x = 4800;
     this.y = 270;
     this.width = 200;
     this.height = 239;
@@ -40,6 +38,7 @@ class Character extends MovableObject {
   }
 
   update() {
+    if (this.isDeadAlready) return;
     this.handleMovements();
     this.handleAnimations();
     this.healthBar.setPercentage(this.energy);
@@ -88,7 +87,15 @@ class Character extends MovableObject {
 
   handleAnimations() {
     if (this.isDead()) {
-      this.animate(LOADED_IMAGES.character.die);
+      if (!this.isDeadAlready) {
+        this.playDeathAnimation(
+          LOADED_IMAGES.character.die,
+          LOADED_SOUNDS.character.dying
+        );
+      } else {
+        this.animate(LOADED_IMAGES.character.die); // Animation trotzdem weiterspielen!
+      }
+      return;
     } else if (this.isHurt()) {
       this.animate(LOADED_IMAGES.character.hurt);
     } else if (this.isAboveGround()) {

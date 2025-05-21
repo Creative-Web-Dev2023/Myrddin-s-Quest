@@ -1,6 +1,4 @@
-let backgroundMusic = new Audio(
-  "./assets/audio/woodsounds.mp3?v=" + new Date().getTime()
-);
+let backgroundMusic = new Audio( "./assets/audio/woodsounds.mp3?v=" + new Date().getTime());
 let walkingSound = new Audio("./assets/audio/walking.mp3");
 let attackSound = new Audio("./assets/audio/wizard_attack.mp3");
 let throwPoisonBottleSound = new Audio("./assets/audio/throw-poison-bottle.mp3");

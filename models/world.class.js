@@ -42,7 +42,6 @@ class World {
     // NICHT löschen! später wieder einkommentieren, wenn die IDs vorhanden sind.
 
     this.initializeGameObjects();
-    this.collisionHandler = new CollisionHandler(this);
   }
 
   initializeGameObjects() {
@@ -123,6 +122,7 @@ class World {
       'poisonCollected',
       20
     );
+    this.checkCollisionWithKnight();
   }
 
   checkCollisionWithKey() {
@@ -157,19 +157,24 @@ class World {
             100
           );
         }
-        this.playSound(sound);
+        item.playSound(sound);
         return false;
       }
       return true;
     });
   }
 
-  playSound(sound) {
-    if (sounds) {
-      sound.pause();
-      sound.currentTime = 0;
-      sound.play();
-    }
+  checkCollisionWithKnight() {
+    this.knights.forEach((knight) => {
+      if (this.character.isColliding(knight)) {
+        if (this.character.isAbove(knight)) {
+          this.knights = this.knights.filter((k) => k !== knight);
+          knight.playSound(LOADED_SOUNDS.knight.hurt);
+        } else if (!this.character.invulnerable) {
+          this.character.takeDamage(20, LOADED_SOUNDS.character.hurt, LOADED_IMAGES.character.hurt);
+        }
+      }
+    });
   }
 
   checkThrowObjects() {
