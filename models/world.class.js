@@ -97,7 +97,6 @@ class World {
       this.knights.forEach((knight) => knight.update());
 
     if (this.key) this.key.handleFloating();
-    this.traps.forEach((trap) => trap.handleAnimations());
     this.endboss.update();
 
     this.updateCollisions();
@@ -123,6 +122,7 @@ class World {
       20
     );
     this.checkCollisionWithKnight();
+    this.checkCollisionWithTrap();
   }
 
   checkCollisionWithKey() {
@@ -171,11 +171,49 @@ class World {
           this.knights = this.knights.filter((k) => k !== knight);
           knight.playSound(LOADED_SOUNDS.knight.hurt);
         } else if (!this.character.invulnerable) {
-          this.character.takeDamage(20, LOADED_SOUNDS.character.hurt, LOADED_IMAGES.character.hurt);
+          this.character.takeDamage(
+            20,
+            LOADED_SOUNDS.character.hurt,
+            LOADED_IMAGES.character.hurt
+          );
         }
       }
     });
   }
+
+  checkCollisionWithTrap() {
+    this.traps.forEach((trap) => {
+      const box = this.character.getHitbox();
+      const trapBox = trap.getHitbox();
+
+      console.log('char bottom:', box.y + box.height);
+      console.log('trap top:', trapBox.y);
+      console.log('delta:', box.y + box.height - trapBox.y);
+      console.log('speedY:', this.character.speedY);
+      if (this.character.isColliding(trap)) {
+        if (this.character.isAbove(trap, 30)) {
+          console.log('Ich werde ausgeführt.');
+          trap.shutTrap();
+          this.character.energy = 0;
+        } else if (!this.character.invulnerable) {
+          this.character.takeDamage(
+            20,
+            LOADED_SOUNDS.character.hurt,
+            LOADED_IMAGES.character.hurt
+          );
+        }
+      }
+    });
+  }
+
+  /*   checkCollisionWithTrap() {
+    this.traps.forEach((trap) => {
+      if (this.character.isColliding(trap)) {
+        trap.shutTrap();
+        this.character.energy = 0;
+      }
+    });
+  } */
 
   checkThrowObjects() {
     if (

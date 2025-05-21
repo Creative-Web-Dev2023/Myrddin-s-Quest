@@ -11,7 +11,6 @@ class StatusBar extends MovableObject {
     this.width = width;
     this.height = height;
     this.label = label;
-    this.setPercentage(100);
   }
 
   setPercentage(percentage) {

@@ -123,8 +123,6 @@ function preloadAssets() {
     .then(([loadedImages, _, loadedSounds]) => {
       window.LOADED_IMAGES = loadedImages;
       window.LOADED_SOUNDS = loadedSounds;
-      console.log('Geladene Bilder:', LOADED_IMAGES);
-      console.log('Geladene Sounds:', LOADED_SOUNDS);
       document.getElementById('loadingMessage').classList.add('d-none');
       showInfoBox();
     })
@@ -171,7 +169,7 @@ function startGame() {
   ctx = canvas.getContext('2d');
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
-  keyboard.setupControls(world);
+  keyboard.setupControls();
   // keyboard.setupTouchControls(world);
   gameLoop();
 }

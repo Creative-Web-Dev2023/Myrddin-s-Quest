@@ -20,7 +20,7 @@ class Endboss extends MovableObject {
     this.patrolMin = 5000;
     this.patrolMax = 5800;
     this.nextTurnPoint = this.getRandomTurnPoint("left");
-    this.deadSound = new Audio("./assets/audio/troll_dead.mp3");
+
   }
 
   update() {

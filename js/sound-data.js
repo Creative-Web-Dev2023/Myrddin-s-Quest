@@ -15,13 +15,17 @@ const SOUND_PATHS = {
   },
   poison: {
     collected: './assets/audio/collect_bottle.mp3',
-    thrown: './assets/audio/throw-poison-bottle.mp3',
+    thrown: './assets/audio/throw_bottle.mp3',
   },
   heart: {
     collected: './assets/audio/collect_heart.mp3',
   },
+   trap: {
+    snap: './assets/audio/trap_snap.mp3',
+  },
   troll: {
-    dying: './assets/audio/troll_dead.mp3',
+    hurt: './assets/audio/troll_hurt.mp3',
+    dying: './assets/audio/troll_dying.mp3',
   },
   knight: {
     hurt: './assets/audio/knight-hurt.mp3',

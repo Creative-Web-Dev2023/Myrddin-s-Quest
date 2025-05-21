@@ -36,13 +36,4 @@ class DrawableObject {
       );
     }
   }
-
-  getCollisionBox() {
-    return {
-      x: this.x + this.offset.left,
-      y: this.y + this.offset.top,
-      width: this.width - this.offset.left - this.offset.right,
-      height: this.height - this.offset.top - this.offset.bottom,
-    };
-  }
 }

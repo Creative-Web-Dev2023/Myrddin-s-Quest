@@ -3,12 +3,12 @@ class Character extends MovableObject {
   height;
   width;
   speed = 4;
-  invulnerable = false;
   healthBar;
   poisonBar;
   keyIcon;
   tickIcon;
   energy = 100;
+  invulnerable = false;
   bottleReady = true;
   poisonCollected = 0;
   keyCollected = false;
@@ -90,7 +90,10 @@ class Character extends MovableObject {
       if (!this.isDeadAlready) {
         this.playDeathAnimation(
           LOADED_IMAGES.character.die,
-          LOADED_SOUNDS.character.dying
+         LOADED_SOUNDS.character.dying,
+          () => {
+            this.stopWalkingSound();
+          }
         );
       } else {
         this.animate(LOADED_IMAGES.character.die); // Animation trotzdem weiterspielen!
@@ -109,7 +112,7 @@ class Character extends MovableObject {
 
   jump() {
     if (!this.isAboveGround()) {
-      this.speedY = 38;
+      this.speedY = 40;
       if (sounds) {
         this.soundJump.pause();
         this.soundJump.currentTime = 0;
