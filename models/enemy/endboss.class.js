@@ -24,9 +24,10 @@ class Endboss extends MovableObject {
   }
 
   update() {
-    this.handleAnimations();
+   if(this.isDeadAlready)return;
+   this.handleAnimations();
     this.patrol();
-    this.healthBar.setPercentage(this.energy);
+    // this.healthBar.setPercentage(this.energy);
   }
 
   handleAnimations() {
@@ -39,6 +40,27 @@ class Endboss extends MovableObject {
     } else {
       return this.patrolMin + Math.random() * 200;
     }
+  }
+
+  die() {
+    if (this.isDeadAlready || !this.isDead()) return;
+    this.playDeathAnimation(
+      LOADED_IMAGES.troll.die,
+      LOADED_SOUNDS.troll.die,
+      null
+    );
+  }
+
+  isHitBy(otherObject, otherOffset = null, myOffset = this.outerOffset) {
+    const a = otherObject.getHitbox(otherOffset);
+    const b = this.getHitbox(myOffset);
+
+    return (  // Kollisionsprüfung (AABB – Axis-Aligned Bounding Box):
+      a.x + a.width > b.x &&  //→ Rechte Seite von a ist rechts von der linken Seite von b.
+      a.x < b.x + b.width &&  //→ Linke Seite von a ist links von der rechten Seite von b.
+      a.y + a.height > b.y &&  //→ Untere Seite von a ist unterhalb der oberen Seite von b.
+      a.y < b.y + b.height  //→ Obere Seite von a ist oberhalb der unteren Seite von b.
+    );
   }
 
   patrol() {

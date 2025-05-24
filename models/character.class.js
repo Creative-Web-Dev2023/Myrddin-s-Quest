@@ -8,9 +8,8 @@ class Character extends MovableObject {
   keyIcon;
   tickIcon;
   energy = 100;
-  invulnerable = false;
   bottleReady = true;
-  poisonCollected = 0;
+  poisonCollected = 1000;
   keyCollected = false;
   hasPassedDoor = false;
   offset = { top: 40, bottom: 10, left: 5, right: 30 };
@@ -24,7 +23,7 @@ class Character extends MovableObject {
     this.addToImageCache('die', LOADED_IMAGES.character.die);
     this.addToImageCache('hurt', LOADED_IMAGES.character.hurt);
     this.img = this.imageCache['idle_0'];
-    this.x = 0;
+    this.x = 4800;
     this.y = 270;
     this.width = 200;
     this.height = 239;
@@ -90,7 +89,7 @@ class Character extends MovableObject {
       if (!this.isDeadAlready) {
         this.playDeathAnimation(
           LOADED_IMAGES.character.die,
-         LOADED_SOUNDS.character.dying,
+         LOADED_SOUNDS.character.die,
           () => {
             this.stopWalkingSound();
           }

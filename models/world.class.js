@@ -49,7 +49,7 @@ class World {
     this.backgrounds = this.level.backgrounds;
     this.candles = this.level.candles;
     this.skulls = this.level.skulls;
-    this.knights = this.level.knights;
+    // this.knights = this.level.knights;
     this.poisons = this.level.poisons;
     this.hearts = this.level.hearts;
     this.key = this.level.key;
@@ -72,6 +72,8 @@ class World {
     );
     this.poisonStatusBar = new StatusBar('poison', 20, 70, 200, 40);
     this.character.setStatusBars(this.characterStatusBar, this.poisonStatusBar);
+    this.character.healthBar.setPercentage(this.character.energy);
+    this.character.poisonBar.setPercentage(this.character.poisonCollected);
     this.characterKeyIcon = new Key(250, 10);
     this.character.setKeyIcon(this.characterKeyIcon);
     this.characterTickIcon = new TickIcon();
@@ -82,6 +84,7 @@ class World {
     this.endboss = this.level.endboss;
     this.endbossHealthBar = new StatusBar('endboss', 720, 20, 200, 40, 'Troll');
     this.endboss.setStatusBars(this.endbossHealthBar);
+    this.endboss.healthBar.setPercentage(this.endboss.energy);
   }
 
   update() {
@@ -123,6 +126,8 @@ class World {
     );
     this.checkCollisionWithKnight();
     this.checkCollisionWithTrap();
+    this.checkBottleCollisionWithEndboss();
+    this.checkEndbossCollisionWithCharacter();
   }
 
   checkCollisionWithKey() {
@@ -183,19 +188,12 @@ class World {
 
   checkCollisionWithTrap() {
     this.traps.forEach((trap) => {
-      const box = this.character.getHitbox();
-      const trapBox = trap.getHitbox();
-
-      console.log('char bottom:', box.y + box.height);
-      console.log('trap top:', trapBox.y);
-      console.log('delta:', box.y + box.height - trapBox.y);
-      console.log('speedY:', this.character.speedY);
       if (this.character.isColliding(trap)) {
         if (this.character.isAbove(trap, 30)) {
-          console.log('Ich werde ausgeführt.');
           trap.shutTrap();
           this.character.energy = 0;
         } else if (!this.character.invulnerable) {
+          trap.playSound(LOADED_SOUNDS.trap.snap);
           this.character.takeDamage(
             20,
             LOADED_SOUNDS.character.hurt,
@@ -206,14 +204,25 @@ class World {
     });
   }
 
-  /*   checkCollisionWithTrap() {
-    this.traps.forEach((trap) => {
-      if (this.character.isColliding(trap)) {
-        trap.shutTrap();
-        this.character.energy = 0;
+  checkBottleCollisionWithEndboss() {
+    this.throwableObjects.forEach((bottle) => {
+      if (
+        !bottle.hasHit &&
+        this.endboss.isHitBy(bottle, bottle.offset, this.endboss.innerOffset)
+      ) {
+        bottle.registerHit();
+        this.endboss.takeDamage(
+          25,
+          LOADED_SOUNDS.troll.hurt,
+          LOADED_IMAGES.troll.hurt
+        );
+        console.log('Troll-Energie: ', this.endboss.energy);
+        if (this.endboss.energy === 0) {
+          this.endboss.die();
+        }
       }
     });
-  } */
+  }
 
   checkThrowObjects() {
     if (
@@ -231,11 +240,26 @@ class World {
         this.character.poisonCollected - 20,
         0
       );
+      bottle.playSound(LOADED_SOUNDS.poison.thrown);
       this.character.poisonBar.setPercentage(this.character.poisonCollected);
     }
 
     if (!this.keyboard.D) {
       this.character.bottleReady = true;
+    }
+  }
+
+  checkEndbossCollisionWithCharacter() {
+    if (
+      !this.endboss.isDead() &&
+      this.endboss.isHitBy(this.character) &&
+      !this.character.invulnerable
+    ) {
+      this.character.takeDamage(
+        10,
+        LOADED_SOUNDS.character.hurt,
+        LOADED_IMAGES.character.hurt
+      );
     }
   }
 
@@ -257,16 +281,16 @@ class World {
       this.addObjectsToMap(this.hearts);
     }
     this.addObjectsToMap(this.traps);
+    if (this.key) this.addToMap(this.key);
+    this.addToMap(this.door);
+    if (this.endboss) this.addToMap(this.endboss);
+    if (this.character) this.addToMap(this.character);
     if (
       Array.isArray(this.throwableObjects) &&
       this.throwableObjects.length > 0
     ) {
       this.addObjectsToMap(this.throwableObjects);
     }
-    if (this.key) this.addToMap(this.key);
-    this.addToMap(this.door);
-    if (this.endboss) this.addToMap(this.endboss);
-    if (this.character) this.addToMap(this.character);
 
     this.character.drawFrame(this.ctx);
     if (this.key) this.key.drawFrame(this.ctx);

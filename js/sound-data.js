@@ -7,8 +7,8 @@ const SOUND_PATHS = {
   character: {
     walk: './assets/audio/walking.mp3',
     jump: './assets/audio/jump.mp3',
-      hurt: './assets/audio/autsch.mp3',
-    dying: './assets/audio/wizard_dying.mp3',
+    hurt: './assets/audio/autsch.mp3',
+    die: './assets/audio/wizard_dying.mp3',
   },
   key: {
     collected: './assets/audio/collect_key.mp3',
@@ -25,7 +25,7 @@ const SOUND_PATHS = {
   },
   troll: {
     hurt: './assets/audio/troll_hurt.mp3',
-    dying: './assets/audio/troll_dying.mp3',
+    die: './assets/audio/troll_dying.mp3',
   },
   knight: {
     hurt: './assets/audio/knight-hurt.mp3',
