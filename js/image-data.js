@@ -183,9 +183,8 @@ const IMAGE_PATHS = {
       sound_on: './assets/img/app_icons/soundon.png',
       sound_off: './assets/img/app_icons/sound_off_orange.png',
     },
-    quit_game: './assets/img/game_ui/quit.png',
-    try_again: './assets/img/game_ui/try_again.png',
-    game_over: './assets/img/game_ui/login&pass/game_over.png',
+    game_won: './assets/img/game_ui/victory/knight_win.png',
+    game_lost: './assets/img/game_ui/failure/game_lost.png',
     tick_icon: './assets/img/game_ui/tick_icon.svg',
   },
 };

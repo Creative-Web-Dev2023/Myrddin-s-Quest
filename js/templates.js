@@ -159,32 +159,63 @@ function generateImprintHtml() {
           `;
 }
 
-function generateGameOverHTML() {
-  return /*html*/ `
-    <div id="game-over-container" class="end-screen-container hidden">
-      <div class="end-screen-content">
-        <div class="end-screen-image"></div>
-        <div class="end-screen-buttons">
-          <button class="end-screen-btn" id="tryAgainButton">
-            <span>Try Again</span>
-          </button>
-        </div>
+// function generateGameOverHTML() {
+//   return /*html*/ `
+//     <div id="game-over-container" class="end-screen-container hidden">
+//       <div class="end-screen-content">
+//         <div class="end-screen-image"></div>
+//         <div class="end-screen-buttons">
+//           <button class="end-screen-btn" id="tryAgainButton">
+//             <span>Try Again</span>
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   `;
+// }
+
+// function generateWinScreenHTML() {
+//   return /*html*/ `
+//     <div id="win-screen" class="end-screen-container hidden">
+//       <div class="end-screen-content">
+//         <div class="end-screen-image"></div>
+//         <div class="end-screen-buttons">
+//           <button class="end-screen-btn" id="winTryAgainButton">
+//             <span>Play Again</span>
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   `;
+// }
+function generateWinnerScreenHTML() {
+  return /* html */ `
+  <div class="winner-screen-wrapper">
+    <div class="inner-winner-screen-wrapper">
+      <figure>
+        <img src="../assets/img/game_ui/victory/knight_win.png" alt="">
+      </figure>
+      <p>Congratulations. You won!</p>
+      <div class="retry-button-wrapper">
+        <button onclick="showStartScreen()">Play again</button>
       </div>
     </div>
+  </div>
   `;
 }
 
-function generateWinScreenHTML() {
-  return /*html*/ `
-    <div id="win-screen" class="end-screen-container hidden">
-      <div class="end-screen-content">
-        <div class="end-screen-image"></div>
-        <div class="end-screen-buttons">
-          <button class="end-screen-btn" id="winTryAgainButton">
-            <span>Play Again</span>
-          </button>
-        </div>
+function generateLoserScreenHTML() {
+  return /* html */ `
+  <div class="loser-screen-wrapper">
+    <div class="inner-loser-screen-wrapper">
+      <figure>
+        <img src="../assets/img/game_ui/failure/game_lost.png" alt="">
+      </figure>
+      <p>Sorry. You lost!</p>
+      <div class="retry-button-wrapper">
+        <button onclick="showStartScreen()">Play again</button>
       </div>
     </div>
+  </div>
   `;
 }

@@ -12,7 +12,6 @@ class Trap extends MovableObject {
     this.isShut = false;
   }
 
-
   shutTrap() {
     if (!this.isShut) {
       this.playAnimationOnce(LOADED_IMAGES.game_items.trap, () => {
@@ -21,19 +20,17 @@ class Trap extends MovableObject {
       this.playSound(LOADED_SOUNDS.trap.snap);
     }
   }
-  handleAnimations() {
-    this.animate(LOADED_IMAGES.game_items.trap);
-  }
 
-
-    drawFrame() {
+  drawFrame() {
     ctx.globalAlpha = 1;
     ctx.strokeStyle = 'purple';
     ctx.lineWidth = 2;
+
     const offsetX = this.x + this.offset.left;
     const offsetY = this.y + this.offset.top;
     const offsetWidth = this.width - this.offset.left - this.offset.right;
     const offsetHeight = this.height - this.offset.top - this.offset.bottom;
+
     ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
   }
 }

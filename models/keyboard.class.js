@@ -22,7 +22,6 @@ class Keyboard {
 
       if (e.key.toLowerCase() === 'd' && !this.D) {
         this.D = true;
-        world.character.throwPoisonBottle();
       }
     });
 

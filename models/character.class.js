@@ -9,8 +9,9 @@ class Character extends MovableObject {
   tickIcon;
   energy = 100;
   bottleReady = true;
-  poisonCollected = 1000;
+  poisonCollected = 0;
   keyCollected = false;
+  // keyCollected = true;
   hasPassedDoor = false;
   offset = { top: 40, bottom: 10, left: 5, right: 30 };
 
@@ -23,7 +24,8 @@ class Character extends MovableObject {
     this.addToImageCache('die', LOADED_IMAGES.character.die);
     this.addToImageCache('hurt', LOADED_IMAGES.character.hurt);
     this.img = this.imageCache['idle_0'];
-    this.x = 4800;
+    this.x = 0;
+    // this.x = 6176;
     this.y = 270;
     this.width = 200;
     this.height = 239;
@@ -40,8 +42,6 @@ class Character extends MovableObject {
     if (this.isDeadAlready) return;
     this.handleMovements();
     this.handleAnimations();
-    this.healthBar.setPercentage(this.energy);
-    this.poisonBar.setPercentage(this.poisonCollected);
   }
 
   setKeyIcon(keyIcon) {
@@ -89,13 +89,16 @@ class Character extends MovableObject {
       if (!this.isDeadAlready) {
         this.playDeathAnimation(
           LOADED_IMAGES.character.die,
-         LOADED_SOUNDS.character.die,
+          LOADED_SOUNDS.character.die,
           () => {
             this.stopWalkingSound();
           }
         );
+        setTimeout(() => {
+          this.world.triggerFailure();
+        }, 3000);
       } else {
-        this.animate(LOADED_IMAGES.character.die); // Animation trotzdem weiterspielen!
+        this.animate(LOADED_IMAGES.character.die);
       }
       return;
     } else if (this.isHurt()) {

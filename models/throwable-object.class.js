@@ -11,10 +11,12 @@ class ThrowableObject extends MovableObject {
     this.throw();
   }
 
-   throw() {
+  throw() {
     this.speedY = -20;
     this.acceleration = 1.5;
+
     this.applyBottleGravity();
+
     this.throwInterval = setInterval(() => {
       this.x += 5;
     }, 1000 / 60);
@@ -29,11 +31,10 @@ class ThrowableObject extends MovableObject {
       this.y += this.speedY;
       this.speedY += this.acceleration;
 
-
       if (this.y > 720) {
         clearInterval(this.gravityInterval);
         clearInterval(this.throwInterval);
-        this.markedForRemoval = true; 
+        this.markedForRemoval = true;
       }
     }, 1000 / 25);
   }

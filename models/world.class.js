@@ -2,7 +2,6 @@ class World {
   canvas;
   keyboard;
   ctx;
-  loopId;
   level;
   character;
   camera_x = 0;
@@ -25,9 +24,11 @@ class World {
   characterKeyIcon;
   characterTickIcon;
 
-  endGame;
-  quitButton;
-  tryAgainButton;
+  running;
+  victoryTriggered;
+
+  collisionHandler;
+
   IMAGES_YOU_LOST = LOADED_IMAGES.gameUI.game_over;
   quitButtonImage = LOADED_IMAGES.gameUI.quit_game;
   tryAgainButtonImage = LOADED_IMAGES.gameUI.try_again;
@@ -37,7 +38,8 @@ class World {
     this.level = level1;
     this.ctx = canvas.getContext('2d');
     this.keyboard = keyboard;
-    this.loopId = null;
+    this.running = true;
+    this.victoryTriggered = false;
     // this.keyboard.linkButtonsToPressEvents();
     // NICHT löschen! später wieder einkommentieren, wenn die IDs vorhanden sind.
 
@@ -49,13 +51,14 @@ class World {
     this.backgrounds = this.level.backgrounds;
     this.candles = this.level.candles;
     this.skulls = this.level.skulls;
-    // this.knights = this.level.knights;
+    this.knights = this.level.knights;
     this.poisons = this.level.poisons;
     this.hearts = this.level.hearts;
     this.key = this.level.key;
     this.door = this.level.door;
     this.traps = this.level.traps;
     this.initializeEndboss();
+    this.collisionHandler = new CollisionHandler(this);
 
     this.camera_x = -this.character.x + 100;
   }
@@ -103,164 +106,48 @@ class World {
     this.endboss.update();
 
     this.updateCollisions();
-    this.checkThrowObjects();
+    this.collisionHandler.checkThrowObjects();
     this.throwableObjects = this.throwableObjects.filter(
       (obj) => !obj.markedForRemoval
     );
   }
 
   updateCollisions() {
-    this.checkCollisionWithKey();
-    this.checkCollisionWithCollectableItem(
+    this.collisionHandler.checkCollisionWithKey();
+    this.collisionHandler.checkCollisionWithCollectableItem(
       'hearts',
       LOADED_SOUNDS.heart.collected,
       'energy',
       20
     );
 
-    this.checkCollisionWithCollectableItem(
+    this.collisionHandler.checkCollisionWithCollectableItem(
       'poisons',
       LOADED_SOUNDS.poison.collected,
       'poisonCollected',
       20
     );
-    this.checkCollisionWithKnight();
-    this.checkCollisionWithTrap();
-    this.checkBottleCollisionWithEndboss();
-    this.checkEndbossCollisionWithCharacter();
+    this.collisionHandler.checkCollisionWithKnight();
+    this.collisionHandler.checkCollisionWithTrap();
+    this.collisionHandler.checkBottleCollisionWithEndboss();
+    this.collisionHandler.checkEndbossCollisionWithCharacter();
+    this.collisionHandler.checkCollisionCharacterDoor();
   }
 
-  checkCollisionWithKey() {
-    if (!this.key) return;
-
-    if (this.character.isColliding(this.key)) {
-      this.character.keyCollected = true;
-      if (sounds) {
-        this.key.pingSound.pause();
-        this.key.pingSound.currentTime = 0;
-        this.key.pingSound.play();
-      }
-
-      this.key = null;
-    }
+  triggerVictory() {
+    const winSound = LOADED_SOUNDS.game.you_win;
+    winSound.volume = 0.5;
+    this.character.playSound(winSound);
+    this.running = false;
+    showEndScreen('winnerScreen');
   }
 
-  checkCollisionWithCollectableItem(
-    propertyName,
-    sound,
-    targetProperty,
-    change = 0
-  ) {
-    const array = this[propertyName];
-    if (!array || array.length === 0) return;
-
-    this[propertyName] = array.filter((item) => {
-      if (this.character.isColliding(item)) {
-        if (change !== 0 && targetProperty) {
-          this.character[targetProperty] = Math.min(
-            this.character[targetProperty] + change,
-            100
-          );
-        }
-        item.playSound(sound);
-        return false;
-      }
-      return true;
-    });
-  }
-
-  checkCollisionWithKnight() {
-    this.knights.forEach((knight) => {
-      if (this.character.isColliding(knight)) {
-        if (this.character.isAbove(knight)) {
-          this.knights = this.knights.filter((k) => k !== knight);
-          knight.playSound(LOADED_SOUNDS.knight.hurt);
-        } else if (!this.character.invulnerable) {
-          this.character.takeDamage(
-            20,
-            LOADED_SOUNDS.character.hurt,
-            LOADED_IMAGES.character.hurt
-          );
-        }
-      }
-    });
-  }
-
-  checkCollisionWithTrap() {
-    this.traps.forEach((trap) => {
-      if (this.character.isColliding(trap)) {
-        if (this.character.isAbove(trap, 30)) {
-          trap.shutTrap();
-          this.character.energy = 0;
-        } else if (!this.character.invulnerable) {
-          trap.playSound(LOADED_SOUNDS.trap.snap);
-          this.character.takeDamage(
-            20,
-            LOADED_SOUNDS.character.hurt,
-            LOADED_IMAGES.character.hurt
-          );
-        }
-      }
-    });
-  }
-
-  checkBottleCollisionWithEndboss() {
-    this.throwableObjects.forEach((bottle) => {
-      if (
-        !bottle.hasHit &&
-        this.endboss.isHitBy(bottle, bottle.offset, this.endboss.innerOffset)
-      ) {
-        bottle.registerHit();
-        this.endboss.takeDamage(
-          25,
-          LOADED_SOUNDS.troll.hurt,
-          LOADED_IMAGES.troll.hurt
-        );
-        console.log('Troll-Energie: ', this.endboss.energy);
-        if (this.endboss.energy === 0) {
-          this.endboss.die();
-        }
-      }
-    });
-  }
-
-  checkThrowObjects() {
-    if (
-      this.keyboard.D &&
-      this.character.poisonCollected > 0 &&
-      this.character.bottleReady
-    ) {
-      this.character.bottleReady = false;
-      let bottle = new ThrowableObject(
-        this.character.x + 150,
-        this.character.y + 80
-      );
-      this.throwableObjects.push(bottle);
-      this.character.poisonCollected = Math.max(
-        this.character.poisonCollected - 20,
-        0
-      );
-      bottle.playSound(LOADED_SOUNDS.poison.thrown);
-      this.character.poisonBar.setPercentage(this.character.poisonCollected);
-    }
-
-    if (!this.keyboard.D) {
-      this.character.bottleReady = true;
-    }
-  }
-
-  checkEndbossCollisionWithCharacter() {
-    if (
-      !this.endboss.isDead() &&
-      this.endboss.isHitBy(this.character) &&
-      !this.character.invulnerable
-    ) {
-      this.character.takeDamage(
-        10,
-        LOADED_SOUNDS.character.hurt,
-        LOADED_IMAGES.character.hurt
-      );
-    }
+  triggerFailure() {
+    const loseSound = LOADED_SOUNDS.game.you_lose;
+    loseSound.volume = 0.5;
+    this.character.playSound(loseSound);
+    this.running = false;
+    showEndScreen('loserScreen');
   }
 
   draw() {
@@ -283,6 +170,7 @@ class World {
     this.addObjectsToMap(this.traps);
     if (this.key) this.addToMap(this.key);
     this.addToMap(this.door);
+    if (this.door.isMessageActive) this.door.drawMessage(this.ctx);
     if (this.endboss) this.addToMap(this.endboss);
     if (this.character) this.addToMap(this.character);
     if (
@@ -293,6 +181,7 @@ class World {
     }
 
     this.character.drawFrame(this.ctx);
+    this.door.drawFrame(this.ctx);
     if (this.key) this.key.drawFrame(this.ctx);
     if (Array.isArray(this.knights) && this.knights.length > 0) {
       this.knights.forEach((knight) => knight.drawFrame(this.ctx));

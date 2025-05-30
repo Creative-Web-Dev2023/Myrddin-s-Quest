@@ -29,6 +29,7 @@ class StatusBar extends MovableObject {
 
   drawLabel(ctx) {
     if (!this.label) return;
+
     ctx.font = '22px MedievalSharp';
     ctx.fillStyle = '#821f09';
     ctx.textAlign = 'left';

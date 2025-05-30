@@ -10,10 +10,10 @@ class PoisonObject extends MovableObject {
     this.width = 70;
     this.height = 70;
   }
- 
+
   update() {
     this.handleAnimations();
-  this.handleFloating();
+    this.handleFloating();
   }
 
   handleAnimations() {

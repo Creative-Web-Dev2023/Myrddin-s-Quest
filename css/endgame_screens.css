@@ -1,0 +1,39 @@
+.winner-screen-wrapper,
+.loser-screen-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.winner-screen-wrapper {
+  background-color: #486b10;
+}
+
+.loser-screen-wrapper {
+  background-color: #0a0a5e;
+}
+
+.inner-winner-screen-wrapper,
+.inner-loser-screen-wrapper {
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10%;
+}
+
+.inner-winner-screen-wrapper p,
+.inner-loser-screen-wrapper p {
+  font-size: 2rem;
+}
+
+.retry-button-wrapper button {
+  padding: 0.3em;
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  color: inherit;
+  border: 4px ridge #e0a635;
+  box-shadow: inset 0 0 10px #ffd78a, 0 0 20px rgba(0, 0, 0, 0.4);
+}

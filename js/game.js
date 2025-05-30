@@ -5,8 +5,8 @@ let world;
 let IntervallIDs = [];
 let loopId = null;
 
-function init() {  
-  canvas = document.getElementById('canvas'); 
+function init() {
+  canvas = document.getElementById('canvas');
   preloadAssets();
 }
 
@@ -97,6 +97,7 @@ function extractAllSounds(obj) {
 function waitForAllSoundsToLoad(sounds, result) {
   return new Promise((resolve) => {
     let loaded = 0;
+
     sounds.forEach((audio) => {
       const onLoaded = () => {
         audio.removeEventListener('canplaythrough', onLoaded);
@@ -105,16 +106,19 @@ function waitForAllSoundsToLoad(sounds, result) {
           resolve(result);
         }
       };
+
       audio.addEventListener('canplaythrough', onLoaded);
       audio.addEventListener('error', onLoaded);
       audio.load();
     });
+
     if (sounds.length === 0) resolve(result);
   });
 }
 
 function preloadAssets() {
   document.getElementById('loadingMessage').classList.remove('d-none');
+
   Promise.all([
     preloadImagesStructured(IMAGE_PATHS),
     document.fonts.load('20px MedievalSharp'),
@@ -123,6 +127,8 @@ function preloadAssets() {
     .then(([loadedImages, _, loadedSounds]) => {
       window.LOADED_IMAGES = loadedImages;
       window.LOADED_SOUNDS = loadedSounds;
+      console.log('Geladene Bilder:', LOADED_IMAGES);
+      console.log('Geladene Sounds:', LOADED_SOUNDS);
       document.getElementById('loadingMessage').classList.add('d-none');
       showInfoBox();
     })
@@ -133,6 +139,7 @@ function preloadAssets() {
 
 function showInfoBox() {
   const startContainer = document.getElementById('start_container');
+
   startContainer.innerHTML += generateStartContentHTML();
 }
 
@@ -151,6 +158,10 @@ function showContent(content) {
     innerStartContainer.classList.add('d-none');
     instructionsBox.classList.remove('d-none');
     instructionsBox.innerHTML = generateImprintHtml();
+  } else if (content === 'winnerScreen') {
+    innerStartContainer.classList.add('d-none');
+    instructionsBox.classList.remove('d-none');
+    instructionsBox.innerHTML = generateWinnerScreen();
   }
 }
 
@@ -174,23 +185,44 @@ function startGame() {
   gameLoop();
 }
 
-
-  
 function gameLoop() {
-  if (world.loopID) cancelAnimationFrame(world.loopID);
+  if (world.running === false) {
+    cancelAnimationFrame(world.loopID);
+    return;
+  }
+
   world.update();
-  world.draw(); 
+  world.draw();
   world.loopID = requestAnimationFrame(gameLoop);
 }
 
+function restartGame() {
+  world = null;
+  cancelAnimationFrame(loopId);
+  loopId = null;
 
-function tryAgain() { 
-  clearAllIntervals(); 
-  setTimeout(() => world.endGame.resumeGame(), 100); 
+  startGame();
 }
 
+function showEndScreen(screenType) {
+  canvas = document.getElementById('canvas');
+  canvas.classList.add('d-none');
+  const startScreen = document.getElementById('startScreen');
+  const endScreen = document.getElementById('end_screen');
+  startScreen.classList.add('d-none');
+  endScreen.classList.remove('d-none');
+  if (screenType === 'winnerScreen') {
+    endScreen.innerHTML = generateWinnerScreenHTML();
+  } else if (screenType === 'loserScreen') {
+    endScreen.innerHTML = generateLoserScreenHTML();
+  } else {
+    console.error('Unknown screenType');
+  }
+}
 
-function clearAllIntervals() { 
-  IntervallIDs.forEach(clearInterval); 
-  IntervallIDs = []; 
+function showStartScreen() {
+  const startScreen = document.getElementById('startScreen');
+  const endScreen = document.getElementById('end_screen');
+  startScreen.classList.remove('d-none');
+  endScreen.classList.add('d-none');
 }
