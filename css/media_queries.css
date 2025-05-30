@@ -10,8 +10,6 @@
   .game-screen,
   .start-screen,
   .end-screen-container,
-  .game-buttons,
-  .btns-container,
   canvas {
     display: none !important;
   }

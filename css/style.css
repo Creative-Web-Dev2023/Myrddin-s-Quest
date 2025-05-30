@@ -70,7 +70,6 @@ h1.headline {
   text-align: center;
   padding: 0.5em 0;
   font-size: clamp(1rem, 1rem + 2.1vw, 2.5rem);
-  animation: textGlow 2s ease-in-out infinite;
 }
 
 .headline.active {
@@ -157,12 +156,6 @@ h2 {
   grid-template-areas:
     "banner"
     "content";
-  /* background-image: url('../assets/img/game_backgrounds/wood.png');
-  background-position: bottom;
-  background-size: cover;
-  background-repeat: no-repeat;
-  border: 10px ridge #e0a635;
-  box-shadow: inset 0 0 10px #ffd78a, 0 0 20px rgba(0, 0, 0, 0.4); */
 }
 
 svg.banner {
@@ -181,11 +174,13 @@ svg.banner {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-areas:
-    "upper-left middle right"
-    "lower-left middle right";
+    'upper-left middle upper-right'
+    'upper-left middle upper-right'
+    'lower-left middle upper-right'
+    'lower-left middle lower-right';
   color: #ffffff;
   overflow: auto;
-  /* border: orchid 4px solid; */
+ 
 }
 
 h2 {
@@ -203,12 +198,12 @@ h2 {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   background-color: transparent;
-  /* border: orange 2px solid; */
+
 }
 
 .start-button img {
   width: 80px;
-  /* border: red 2px solid; */
+
 }
 
 .start-button-content {
@@ -294,52 +289,6 @@ h2 {
     brightness(92%) contrast(92%);
 }
 
-#key-info p {
-  margin: 0;
-  padding: 5px;
-}
-
-.btns-container,
-#btnsContainer {
-  position: absolute !important;
-  left: 50%;
-  bottom: 30px;
-  transform: translateX(-50%);
-  display: none;
-  justify-content: space-between;
-  padding: 0 15px;
-  z-index: 12000;
-  width: 90%;
-  max-width: 600px;
-}
-
-.btns-container:not(.active),
-#btnsContainer:not(.active) {
-  pointer-events: none;
-}
-
-.btns-container.active,
-#btnsContainer.active {
-  display: flex !important;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.btns-container img {
-  touch-action: manipulation;
-  user-select: none;
-  pointer-events: auto;
-  width: 50px;
-  height: 50px;
-  opacity: 0.8;
-  transition: transform 0.1s;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
-}
-
-.btns-container img:active {
-  transform: scale(0.9);
-  opacity: 1;
-}
 
 .rotate-screen {
   display: none;
@@ -423,44 +372,5 @@ h2 {
   overflow: hidden;
 }
 
-.game-buttons {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  display: flex;
-  gap: 15px;
-  pointer-events: auto; /* <-- immer klickbar */
-}
 
-/* Entferne diese Regel komplett:
-.canvas:not(.d-none) + .game-buttons {
-  pointer-events: auto;
-}
-*/
 
-.game-buttons img {
-  width: 40px;
-  height: 40px;
-  transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
-  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 4px;
-}
-
-.game-buttons img:hover {
-  transform: scale(1.2);
-  filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.7));
-  box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
-  background-color: rgba(255, 165, 0, 0.2);
-}
-
-.game-buttons img:active {
-  transform: scale(1.1);
-  box-shadow: 0 0 5px rgba(255, 165, 0, 0.6);
-}
-
-.game-buttons img:hover {
-  transform: scale(1.1);
-}

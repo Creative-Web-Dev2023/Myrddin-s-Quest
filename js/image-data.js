@@ -10,12 +10,8 @@ const IMAGE_PATHS = {
   game_items: {
     candle: './assets/img/game_items/candle.png',
     skull: './assets/img/game_items/skull_000.png',
-    crystal: './assets/img/game_items/diamond.png',
     key: './assets/img/game_items/key.png',
-    hearts: [
-      './assets/img/game_ui/heart_empty.png',
-      './assets/img/game_ui/heart_full.png',
-    ],
+    heart: './assets/img/game_items/heart_full.png',
     poison: [
       './assets/img/poison/1.png',
       './assets/img/poison/2.png',
@@ -180,8 +176,10 @@ const IMAGE_PATHS = {
       ],
     },
     audio_icons: {
-      sound_on: './assets/img/app_icons/soundon.png',
-      sound_off: './assets/img/app_icons/sound_off_orange.png',
+      noise_on: './assets/img/game_ui/sounds/noise_on.png',
+      noise_off: './assets/img/game_ui/sounds/noise_off.png',
+      music_on: './assets/img/game_ui/sounds/music_on.png',
+      music_off: './assets/img/game_ui/sounds/music_off.png',
     },
     game_won: './assets/img/game_ui/victory/knight_win.png',
     game_lost: './assets/img/game_ui/failure/game_lost.png',

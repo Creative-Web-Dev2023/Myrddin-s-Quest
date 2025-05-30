@@ -182,6 +182,9 @@ function startGame() {
   world = new World(canvas, keyboard, level1);
   keyboard.setupControls();
   // keyboard.setupTouchControls(world);
+   if (music) {
+    LOADED_SOUNDS.game.background.play();
+  }
   gameLoop();
 }
 
@@ -225,4 +228,31 @@ function showStartScreen() {
   const endScreen = document.getElementById('end_screen');
   startScreen.classList.remove('d-none');
   endScreen.classList.add('d-none');
+}
+
+function toggleSound(soundType) {
+  const musicButton = document.getElementById('music_button');
+  const musicCaption = document.getElementById('music_caption');
+  const noiseButton = document.getElementById('noise_button');
+  const noiseCaption = document.getElementById('noise_caption');
+
+  if (soundType === 'music') {
+    music = !music;
+    localStorage.setItem('music', music);
+
+    musicButton.src = music
+      ? './assets/img/game_ui/sounds/music_on.png'
+      : './assets/img/game_ui/sounds/music_off.png';
+    musicCaption.innerText = music ? 'Music on' : 'Music off';
+  } else if (soundType === 'noise') {
+    noises = !noises;
+    localStorage.setItem('noises', noises);
+
+    noiseButton.src = noises
+      ? './assets/img/game_ui/sounds/noise_on.png'
+      : './assets/img/game_ui/sounds/noise_off.png';
+    noiseCaption.innerText = noises ? 'Noise on' : 'Noise off';
+  } else {
+    console.error('Unknown soundType', soundType);
+  }
 }
