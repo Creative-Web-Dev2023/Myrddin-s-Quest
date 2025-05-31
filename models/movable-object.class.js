@@ -163,7 +163,7 @@ class MovableObject extends DrawableObject {
   }
 
   playSound(sound) {
-    if (sounds) {
+    if (noises) {
       this.soundPause(sound);
       sound.currentTime = 0;
       sound.play();

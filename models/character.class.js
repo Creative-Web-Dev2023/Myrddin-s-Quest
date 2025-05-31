@@ -24,6 +24,7 @@ class Character extends MovableObject {
     this.addToImageCache('hurt', LOADED_IMAGES.character.hurt);
     this.img = this.imageCache['idle_0'];
     this.x = 0;
+    // this.x = 6176;
     this.y = 270;
     this.width = 200;
     this.height = 239;
@@ -77,7 +78,7 @@ class Character extends MovableObject {
       this.jump();
     }
 
-    if ((isMovingRight || isMovingLeft) && sounds) {
+    if ((isMovingRight || isMovingLeft) && noises) {
       this.startWalkingSound();
     } else {
       this.stopWalkingSound();
@@ -94,6 +95,8 @@ class Character extends MovableObject {
             this.stopWalkingSound();
           }
         );
+        LOADED_SOUNDS.game.background.pause();
+        LOADED_SOUNDS.game.background.currentTime = 0;
         setTimeout(() => {
           this.world.triggerFailure();
         }, 3000);
@@ -115,7 +118,7 @@ class Character extends MovableObject {
   jump() {
     if (!this.isAboveGround()) {
       this.speedY = 40;
-      if (sounds) {
+      if (noises) {
         this.soundJump.pause();
         this.soundJump.currentTime = 0;
         this.soundJump.play();

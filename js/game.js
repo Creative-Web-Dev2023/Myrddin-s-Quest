@@ -182,7 +182,7 @@ function startGame() {
   world = new World(canvas, keyboard, level1);
   keyboard.setupControls();
   // keyboard.setupTouchControls(world);
-   if (music) {
+  if (music) {
     LOADED_SOUNDS.game.background.play();
   }
   gameLoop();

@@ -1,3 +1,2 @@
-// let musicIsOn = localStorage.getItem('musicIsOn') === 'true';
-let music = true;
-let sounds = true;
+let music = localStorage.getItem('music') === 'false' ? false : true;
+let noises = localStorage.getItem('noises') === 'false' ? false : true;

@@ -18,7 +18,7 @@ class CollisionHandler {
 
     if (this.character.isColliding(this.key)) {
       this.character.keyCollected = true;
-      if (sounds) {
+      if (noises) {
         this.key.pingSound.pause();
         this.key.pingSound.currentTime = 0;
         this.key.pingSound.play();
@@ -158,6 +158,8 @@ class CollisionHandler {
     if (this.character.keyCollected && !this.world.victoryTriggered) {
       this.world.victoryTriggered = true;
       this.door.open(() => {
+        LOADED_SOUNDS.game.background.pause();
+        LOADED_SOUNDS.game.background.currentTime = 0;
         this.world.triggerVictory();
         this.world.character.stopWalkingSound();
       });
