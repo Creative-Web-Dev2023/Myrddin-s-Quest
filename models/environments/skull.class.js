@@ -1,4 +1,12 @@
+/**
+ * Represents a skull object in the game environment.
+ * @extends DrawableObject
+ */
 class Skull extends DrawableObject {
+  /**
+   * Creates a new Skull instance.
+   * @param {number} x - The X position of the skull.
+   */
   constructor(x) {
     super();
     this.img = LOADED_IMAGES.game_items.skull;

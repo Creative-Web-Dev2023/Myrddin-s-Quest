@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./css/style.css" />
     <link rel="stylesheet" href="./css/media_queries.css" />
     <link rel="stylesheet" href="./css/endgame_screens.css" />
-    <link rel="icon" href="./assets/img/game_items/magic.png" type="image/x-icon"/>
+    <link rel="icon" href="./assets/img/game_items/magic.png" type="image/x-icon" />
     <script src="./js/image-data.js" defer></script>
     <script src="./js/sound-data.js" defer></script>
     <script src="./js/sound.js" defer></script>
@@ -24,7 +24,7 @@
     <script src="./models/character.class.js" defer></script>
     <script src="./models/enemy/knight.class.js" defer></script>
     <script src="./models/enemy/endboss.class.js" defer></script>
-    <script src="./models/environments/background-object.class.js" defer></script>
+    <script src="./models/environments/background.class.js" defer></script>
     <script src="./models/environments/candle.class.js" defer></script>
     <script src="./models/environments/skull.class.js" defer></script>
     <script src="./models/environments/key.class.js" defer></script>
@@ -33,53 +33,58 @@
     <script src="./models/environments/trap.class.js" defer></script>
     <script src="./models/environments/tick-icon.class.js" defer></script>
     <script src="./js/level1.js" defer></script>
-    <script src="./models/endgame.class.js" defer></script>
     <script src="./models/keyboard.class.js" defer></script>
     <script src="./models/world.class.js" defer></script>
     <script src="./js/game.js" defer></script>
   </head>
-
   <body onload="init()">
     <div id="fullscreen" class="fullscreen">
       <div id="endScreen" class="end-screen"></div>
       <h1 class="headline">Myrddin&apos;s Quest</h1>
       <div class="game-screen">
-        <canvas
-          id="canvas"
-          width="960"
-          height="540"
-          class="canvas d-none"
-        ></canvas>
-        <div id="gameButtons" class="game-buttons d-none">
-<!--           <img
-            onclick="handleFullscreenToggle()"
-            id="fullscreenImg"
-            src="./assets/img/app_icons/arrow_up_orange.png"
-            height="50"
-          /> -->
-<!--           <img
-            onclick="toggleMuteImg()"
-            id="mute"
-            src="./assets/img/app_icons/sound_off_orange.png"
-            height="50"
-          /> -->
-        </div>
-        <div id="btnsContainer" class="btns-container d-none">
-          <div class="btns-left-side">
-            <!-- <img id="btnLeft" src="./assets/img/game_ui/arrow-left.png" width="60"/>
-            <img id="btnJump" src="./assets/img/game_ui/arrow-up.png" width="60"/> -->
-          </div>
-          <div class="btns-right-side">
-<!--             <img
-              id="btnPoison"
-              src="./assets/img/app_icons/poison-bottle.png"
-              width="60"
-            /> -->
-            <img
-              id="btnRight"
-              src="./assets/img/game_ui/arrow-right.png"
-              width="60"
-            />
+        <div id="canvas_wrapper" class="canvas-wrapper">
+          <canvas
+            id="canvas"
+            width="960"
+            height="540"
+            class="canvas d-none"
+          ></canvas>
+          <div id="game_buttons" class="game-buttons d-none"></div>
+          <div id="mobile_buttons" class="mobile-buttons d-none">
+            <div
+              id="left_mobile_buttons_wrapper"
+              class="left-mobile-buttons-wrapper"
+            >
+              <img
+                id="arrow_left"
+                class="arrow-left"
+                src="./assets/img/game_ui/arrow-left.png"
+                alt=""
+              />
+              <img
+                id="throw_poison"
+                class="throw-poison"
+                src="./assets/img/poison/1.png"
+                alt=""
+              />
+            </div>
+            <div
+              id="right_mobile_buttons_wrapper"
+              class="right-mobile-buttons-wrapper"
+            >
+              <img
+                id="arrow_up"
+                class="arrow-up"
+                src="./assets/img/game_ui/arrow-up.png"
+                alt=""
+              />
+              <img
+                id="arrow-right"
+                class="arrow-right"
+                src="./assets/img/game_ui/arrow-right.png"
+                alt=""
+              />
+            </div>
           </div>
         </div>
         <div id="startScreen" class="start-screen">

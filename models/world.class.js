@@ -1,3 +1,6 @@
+/**
+ * Represents the main game world, manages all game objects and rendering.
+ */
 class World {
   canvas;
   keyboard;
@@ -33,6 +36,12 @@ class World {
   quitButtonImage = LOADED_IMAGES.gameUI.quit_game;
   tryAgainButtonImage = LOADED_IMAGES.gameUI.try_again;
 
+  /**
+   * Creates a new World instance.
+   * @param {HTMLCanvasElement} canvas - The canvas element.
+   * @param {Keyboard} keyboard - The keyboard input handler.
+   * @param {Level} level1 - The level data.
+   */
   constructor(canvas, keyboard, level1) {
     this.canvas = canvas;
     this.level = level1;
@@ -40,12 +49,12 @@ class World {
     this.keyboard = keyboard;
     this.running = true;
     this.victoryTriggered = false;
-    // this.keyboard.linkButtonsToPressEvents();
-    // NICHT löschen! später wieder einkommentieren, wenn die IDs vorhanden sind.
-
     this.initializeGameObjects();
   }
 
+  /**
+   * Initializes all game objects for the world.
+   */
   initializeGameObjects() {
     this.initializeCharacter();
     this.backgrounds = this.level.backgrounds;
@@ -59,20 +68,15 @@ class World {
     this.traps = this.level.traps;
     this.initializeEndboss();
     this.collisionHandler = new CollisionHandler(this);
-
     this.camera_x = -this.character.x + 100;
   }
 
+  /**
+   * Initializes the main character and its UI elements.
+   */
   initializeCharacter() {
     this.character = new Character(this);
-    this.characterStatusBar = new StatusBar(
-      'health',
-      20,
-      20,
-      200,
-      40,
-      'Wizard'
-    );
+    this.characterStatusBar = new StatusBar('health', 20,20, 200,40,'Wizard');
     this.poisonStatusBar = new StatusBar('poison', 20, 70, 200, 40);
     this.character.setStatusBars(this.characterStatusBar, this.poisonStatusBar);
     this.character.healthBar.setPercentage(this.character.energy);
@@ -83,6 +87,9 @@ class World {
     this.character.setTickIcon(this.characterTickIcon);
   }
 
+  /**
+   * Initializes the endboss and its health bar.
+   */
   initializeEndboss() {
     this.endboss = this.level.endboss;
     this.endbossHealthBar = new StatusBar('endboss', 720, 20, 200, 40, 'Troll');
@@ -90,21 +97,20 @@ class World {
     this.endboss.healthBar.setPercentage(this.endboss.energy);
   }
 
+  /**
+   * Updates all game objects and handles collisions.
+   */
   update() {
     this.character.update();
     this.camera_x = -this.character.x + 100;
     if (Array.isArray(this.poisons) && this.poisons.length > 0)
       this.poisons.forEach((poison) => poison.update());
-
     if (Array.isArray(this.hearts) && this.hearts.length > 0)
       this.hearts.forEach((heart) => heart.handleFloating());
-
     if (Array.isArray(this.knights) && this.knights.length > 0)
       this.knights.forEach((knight) => knight.update());
-
     if (this.key) this.key.handleFloating();
     this.endboss.update();
-
     this.updateCollisions();
     this.collisionHandler.checkThrowObjects();
     this.throwableObjects = this.throwableObjects.filter(
@@ -112,6 +118,9 @@ class World {
     );
   }
 
+  /**
+   * Checks and handles all collisions in the world.
+   */
   updateCollisions() {
     this.collisionHandler.checkCollisionWithKey();
     this.collisionHandler.checkCollisionWithCollectableItem(
@@ -120,7 +129,6 @@ class World {
       'energy',
       20
     );
-
     this.collisionHandler.checkCollisionWithCollectableItem(
       'poisons',
       LOADED_SOUNDS.poison.collected,
@@ -134,6 +142,9 @@ class World {
     this.collisionHandler.checkCollisionCharacterDoor();
   }
 
+  /**
+   * Triggers the victory state, plays sound and shows end screen.
+   */
   triggerVictory() {
     const winSound = LOADED_SOUNDS.game.you_win;
     winSound.volume = 0.5;
@@ -142,6 +153,9 @@ class World {
     showEndScreen('winnerScreen');
   }
 
+  /**
+   * Triggers the failure state, plays sound and shows end screen.
+   */
   triggerFailure() {
     const loseSound = LOADED_SOUNDS.game.you_lose;
     loseSound.volume = 0.5;
@@ -150,11 +164,13 @@ class World {
     showEndScreen('loserScreen');
   }
 
+  /**
+   * Draws all game objects and UI elements to the canvas.
+   */
   draw() {
     this.clearCanvas();
     this.ctx.save();
     this.ctx.translate(this.camera_x, 0);
-
     this.addObjectsToMap(this.backgrounds);
     this.addObjectsToMap(this.candles);
     this.addObjectsToMap(this.skulls);
@@ -179,25 +195,7 @@ class World {
     ) {
       this.addObjectsToMap(this.throwableObjects);
     }
-
-    // this.character.drawFrame(this.ctx);
-    // this.door.drawFrame(this.ctx);
-    // if (this.key) this.key.drawFrame(this.ctx);
-    // if (Array.isArray(this.knights) && this.knights.length > 0) {
-    //   this.knights.forEach((knight) => knight.drawFrame(this.ctx));
-    // }
-    // if (Array.isArray(this.poisons) && this.poisons.length > 0) {
-    //   this.poisons.forEach((poison) => poison.drawFrame(this.ctx));
-    // }
-    // if (Array.isArray(this.hearts) && this.hearts.length > 0) {
-    //   this.hearts.forEach((heart) => heart.drawFrame(this.ctx));
-    // }
-    // this.traps.forEach((trap) => trap.drawFrame(this.ctx));
-    // if (this.endboss) this.endboss.drawInnerFrame(this.ctx);
-    // if (this.endboss) this.endboss.drawOuterFrame(this.ctx);
-
     this.ctx.restore();
-
     this.addToMap(this.character.healthBar);
     this.addToMap(this.character.poisonBar);
     this.addToMap(this.character.keyIcon);
@@ -209,23 +207,28 @@ class World {
     }
   }
 
+  /**
+   * Clears the canvas.
+   */
   clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+  /**
+   * Adds an array of objects to the map (draws them).
+   * @param {Array} objects - The objects to add.
+   */
   addObjectsToMap(objects) {
     if (!Array.isArray(objects)) {
       console.warn('[addObjectsToMap()] kein Array übergeben:', objects);
       return;
     }
-
     objects.forEach((object, i) => {
       if (!object) {
         console.warn(`[addObjectsToMap()] Objekt an Index ${i} ist undefined`);
       }
       this.addToMap(object);
     });
-
     if (
       this.backgrounds.length > 0 &&
       this.camera_x >= this.backgrounds[0].width
@@ -234,15 +237,17 @@ class World {
     }
   }
 
+  /**
+   * Adds a single object to the map (draws it).
+   * @param {DrawableObject} mo - The object to add.
+   */
   addToMap(mo) {
     if (!mo) {
       console.warn('[addToMap()] mo ist undefined oder null!');
       console.trace();
       return;
     }
-
     if (mo.otherDirection) this.flipImage(mo);
-
     if (mo.isActive !== false) {
       try {
         mo.draw(this.ctx);
@@ -253,10 +258,13 @@ class World {
         );
       }
     }
-
     if (mo.otherDirection) this.flipImageBack(mo);
   }
 
+  /**
+   * Flips the image horizontally for drawing in the other direction.
+   * @param {DrawableObject} mo - The object to flip.
+   */
   flipImage(mo) {
     this.ctx.save();
     this.ctx.translate(mo.width, 0);
@@ -264,6 +272,10 @@ class World {
     mo.x = mo.x * -1;
   }
 
+  /**
+   * Restores the image orientation after flipping.
+   * @param {DrawableObject} mo - The object to restore.
+   */
   flipImageBack(mo) {
     mo.x = mo.x * -1;
     this.ctx.restore();

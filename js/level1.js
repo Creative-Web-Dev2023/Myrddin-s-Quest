@@ -1,10 +1,4 @@
 /**
- * Initializes and returns the first level.
- * @returns {Level} The initialized level.
- */
-// const level1 = initLevel();
-
-/**
  * Initializes the level by generating enemies, environments, backgrounds, poison objects, and traps.
  * @returns {Level} The initialized level.
  */
@@ -23,6 +17,10 @@ function createLevel1() {
   );
 }
 
+/**
+ * Generates the background objects for the level.
+ * @returns {Background[]} An array of Background objects.
+ */
 function generateBackgroundsLvl() {
   return [
     new Background(LOADED_IMAGES.backgrounds.wood0, -960),
@@ -94,6 +92,10 @@ function generateBackgroundsLvl() {
   ];
 }
 
+/**
+ * Generates the candle objects for the level.
+ * @returns {Candle[]} An array of Candle objects.
+ */
 function generateCandlesLvl() {
   return [
     new Candle(-154),
@@ -106,6 +108,10 @@ function generateCandlesLvl() {
   ];
 }
 
+/**
+ * Generates the skull objects for the level.
+ * @returns {Skull[]} An array of Skull objects.
+ */
 function generateSkullsLvl() {
   return [
     new Skull(-200),
@@ -119,6 +125,10 @@ function generateSkullsLvl() {
   ];
 }
 
+/**
+ * Generates the knight enemies for the level.
+ * @returns {Knight[]} An array of Knight objects.
+ */
 function generateKnightsLvl() {
   return [
     new Knight(500),
@@ -132,7 +142,7 @@ function generateKnightsLvl() {
 
 /**
  * Generates the poison objects for the level.
- * @returns {Array} An array of poison objects.
+ * @returns {PoisonObject[]} An array of PoisonObject objects.
  */
 function generatePoisonsLvl() {
   return [
@@ -145,6 +155,10 @@ function generatePoisonsLvl() {
   ];
 }
 
+/**
+ * Generates the heart objects for the level.
+ * @returns {Heart[]} An array of Heart objects.
+ */
 function generateHeartsLvl() {
   return [
     new Heart(560),
@@ -158,24 +172,34 @@ function generateHeartsLvl() {
   ];
 }
 
+/**
+ * Generates the key object for the level.
+ * @returns {Key} The Key object.
+ */
 function generateKeyLvl() {
   return new Key();
 }
 
+/**
+ * Generates the door object for the level.
+ * @returns {Door} The Door object.
+ */
 function generateDoorLvl() {
   return new Door();
 }
 
 /**
  * Generates the traps for the level.
- * @returns {Array} An array of traps.
+ * @returns {Trap[]} An array of Trap objects.
  */
 function generateTrapsLvl() {
   return [new Trap(800), new Trap(2100), new Trap(3500), new Trap(4900)];
 }
 
-// new Trap(4800),
-
+/**
+ * Generates the endboss for the level.
+ * @returns {Endboss} The Endboss object.
+ */
 function generateEndboss() {
   return new Endboss();
 }

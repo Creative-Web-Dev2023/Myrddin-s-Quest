@@ -1,9 +1,22 @@
+/**
+ * Represents a poison collectible object in the game.
+ * @extends MovableObject
+ */
 class PoisonObject extends MovableObject {
+  /**
+   * The hitbox offset for the poison object.
+   * @type {{top: number, bottom: number, left: number, right: number}}
+   */
   offset = { top: 0, bottom: 0, left: 10, right: 10 };
+
+  /**
+   * Creates a new PoisonObject instance.
+   * @param {number} x - The X position of the poison object.
+   */
   constructor(x) {
     super();
-    this.addToImageCache('poison', LOADED_IMAGES.game_items.poison);
-    this.img = this.imageCache['poison_0'];
+    this.addToImageCache("poison", LOADED_IMAGES.game_items.poison);
+    this.img = this.imageCache["poison_0"];
     this.x = x;
     this.y = Math.floor(Math.random() * 220);
     this.startY = this.y;
@@ -11,25 +24,18 @@ class PoisonObject extends MovableObject {
     this.height = 70;
   }
 
+  /**
+   * Updates the poison object's animation and floating effect.
+   */
   update() {
     this.handleAnimations();
     this.handleFloating();
   }
 
+  /**
+   * Handles the poison object's animation.
+   */
   handleAnimations() {
     this.animate(LOADED_IMAGES.game_items.poison);
-  }
-
-  drawFrame() {
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-
-    const offsetX = this.x + this.offset.left;
-    const offsetY = this.y + this.offset.top;
-    const offsetWidth = this.width - this.offset.left - this.offset.right;
-    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
-
-    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
   }
 }

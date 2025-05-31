@@ -81,7 +81,10 @@ class CollisionHandler {
         if (this.character.isAbove(trap, 30)) {
           trap.shutTrap();
           this.character.energy = 0;
-        } else if (!this.character.invulnerable) {
+        } else if (
+          !this.character.invulnerable &&
+          !this.character.isDeadAlready
+        ) {
           trap.playSound(LOADED_SOUNDS.trap.snap);
           this.character.takeDamage(
             20,
@@ -94,20 +97,23 @@ class CollisionHandler {
   }
 
   checkBottleCollisionWithEndboss() {
-    this.throwableObjects.forEach((bottle) => {
+    this.world.throwableObjects.forEach((bottle) => {
       if (
         !bottle.hasHit &&
-        this.endboss.isHitBy(bottle, bottle.offset, this.endboss.innerOffset)
+        this.world.endboss.isHitBy(
+          bottle,
+          bottle.offset,
+          this.world.endboss.innerOffset
+        )
       ) {
         bottle.registerHit();
-        this.endboss.takeDamage(
+        this.world.endboss.takeDamage(
           25,
           LOADED_SOUNDS.troll.hurt,
           LOADED_IMAGES.troll.hurt
         );
-        console.log('Troll-Energie: ', this.endboss.energy);
-        if (this.endboss.energy === 0) {
-          this.endboss.die();
+        if (this.world.endboss.energy === 0) {
+          this.world.endboss.die();
         }
       }
     });
@@ -115,26 +121,28 @@ class CollisionHandler {
 
   checkThrowObjects() {
     if (
-      this.keyboard.D &&
-      this.character.poisonCollected > 0 &&
-      this.character.bottleReady
+      this.world.keyboard.D &&
+      this.world.character.poisonCollected > 0 &&
+      this.world.character.bottleReady
     ) {
-      this.character.bottleReady = false;
+      this.world.character.bottleReady = false;
       let bottle = new ThrowableObject(
         this.character.x + 150,
         this.character.y + 80
       );
-      this.throwableObjects.push(bottle);
-      this.character.poisonCollected = Math.max(
-        this.character.poisonCollected - 20,
+      this.world.throwableObjects.push(bottle);
+      this.world.character.poisonCollected = Math.max(
+        this.world.character.poisonCollected - 20,
         0
       );
       bottle.playSound(LOADED_SOUNDS.poison.thrown);
-      this.character.poisonBar.setPercentage(this.character.poisonCollected);
+      this.world.character.poisonBar.setPercentage(
+        this.character.poisonCollected
+      );
     }
 
     if (!this.keyboard.D) {
-      this.character.bottleReady = true;
+      this.world.character.bottleReady = true;
     }
   }
 
@@ -165,7 +173,6 @@ class CollisionHandler {
       });
     } else if (!this.character.keyCollected) {
       this.door.showMessage('You need to collect the key first!');
-      console.log('You need to collect the key first!');
     }
   }
 }

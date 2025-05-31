@@ -50,54 +50,48 @@ class Keyboard {
   }
 
   linkButtonsToPressEvents() {
-    document.getElementById('btn_left').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      this.LEFT = true;
-    });
+    document
+      .getElementById('arrow_left')
+      .addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        this.LEFT = true;
+      });
 
-    document.getElementById('btn_left').addEventListener('touchend', (e) => {
+    document.getElementById('arrow_left').addEventListener('touchend', (e) => {
       e.preventDefault();
       this.LEFT = false;
     });
 
-    document.getElementById('btn_right').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      this.RIGHT = true;
-    });
+    document
+      .getElementById('arrow-right')
+      .addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        this.RIGHT = true;
+      });
 
-    document.getElementById('btn_right').addEventListener('touchend', (e) => {
+    document.getElementById('arrow-right').addEventListener('touchend', (e) => {
       e.preventDefault();
       this.RIGHT = false;
     });
 
-    document.getElementById('btn_up').addEventListener('touchstart', (e) => {
+    document.getElementById('arrow_up').addEventListener('touchstart', (e) => {
       e.preventDefault();
       this.JUMP = true;
     });
 
-    document.getElementById('btn_up').addEventListener('touchend', (e) => {
+    document.getElementById('arrow_up').addEventListener('touchend', (e) => {
       e.preventDefault();
       this.JUMP = false;
     });
 
-    document.getElementById('btn_space').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      this.SPACE = true;
-    });
+    document.getElementById('throw_poison').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        this.D = true;
+      });
 
-    document.getElementById('btn_space').addEventListener('touchend', (e) => {
-      e.preventDefault();
-      this.SPACE = false;
-    });
-
-    document.getElementById('btn_space').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      this.D = true;
-    });
-
-    document.getElementById('btn_space').addEventListener('touchend', (e) => {
-      e.preventDefault();
-      this.D = false;
-    });
+    document.getElementById('throw_poison').addEventListener('touchend', (e) => {
+        e.preventDefault();
+        this.D = false;
+      });
   }
 }

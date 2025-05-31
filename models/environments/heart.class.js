@@ -1,3 +1,24 @@
+/**
+ * Represents a collectible heart object in the game environment.
+ * Inherits from MovableObject and is used to restore player health.
+ *
+ * @class Heart
+ * @extends MovableObject
+ *
+ * @property {{top: number, bottom: number, left: number, right: number}} offset - The offset for collision detection.
+ * @property {HTMLImageElement} img - The image representing the heart.
+ * @property {number} x - The horizontal position of the heart.
+ * @property {number} y - The vertical position of the heart (randomized on creation).
+ * @property {number} startY - The initial vertical position of the heart.
+ * @property {number} height - The height of the heart image.
+ * @property {number} width - The width of the heart image.
+ * @property {number} floatAmplitude - The amplitude of the floating animation.
+ * @property {number} floatSpeed - The speed of the floating animation.
+ * @property {HTMLAudioElement} collectingSound - The sound played when the heart is collected.
+ *
+ * @constructor
+ * @param {number} x - The initial horizontal position of the heart.
+ */
 class Heart extends MovableObject {
   offset = { top: 0, bottom: 0, left: 0, right: 0 };
   constructor(x) {
@@ -10,21 +31,8 @@ class Heart extends MovableObject {
     this.width = 50;
     this.floatAmplitude = 15;
     this.floatSpeed = 1.5;
-
     this.collectingSound = LOADED_SOUNDS.heart.collected;
     this.collectingSound.volume = 0.5;
   }
 
-  drawFrame() {
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = 'green';
-    ctx.lineWidth = 2;
-
-    const offsetX = this.x + this.offset.left;
-    const offsetY = this.y + this.offset.top;
-    const offsetWidth = this.width - this.offset.left - this.offset.right;
-    const offsetHeight = this.height - this.offset.top - this.offset.bottom;
-
-    ctx.strokeRect(offsetX, offsetY, offsetWidth, offsetHeight);
-  }
 }

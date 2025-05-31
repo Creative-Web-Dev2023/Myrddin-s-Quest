@@ -1,3 +1,7 @@
+/**
+ * Generates the HTML for the start content (main menu).
+ * @returns {string} The HTML string for the start content.
+ */
 function generateStartContentHTML() {
   return /* html */ `
         <div id="inner_start_container" class="inner-start-container">
@@ -23,7 +27,7 @@ function generateStartContentHTML() {
                     .banner-text {
                       font-family: 'MedievalSharp', 'Lucida Handwriting',
                         cursive;
-                      fill: #5b3c11; /* bleibt dunkel für Kontrast */
+                      fill: #5b3c11; 
                       font-size: 36px;
                       text-anchor: middle;
                       dominant-baseline: middle;
@@ -93,112 +97,131 @@ function generateStartContentHTML() {
                 <h2>Myrddin&apos;s <br> Quest</h2>
                 <div id="sound_button_wrapper" class="sound-button-wrapper">
                   <figure onclick="toggleSound('music')" class="music-button-wrapper">
-                    <img id="music_button" class="music-button" src="./assets/img/game_ui/sounds/music_on.png" alt="">
-                    <figcaption id="music_caption" class="music-caption">Music on</figcaption>
+                    <img id="music_button" class="music-button" src="${
+                      music
+                        ? "./assets/img/game_ui/sounds/music_on.png"
+                        : "./assets/img/game_ui/sounds/music_off.png"
+                    }"  alt="">
+                    <figcaption id="music_caption" class="music-caption">${
+                      music ? "Music on" : "Music off"
+                    }</figcaption>
                   </figure>
                   <figure onclick="toggleSound('noise')" class="noise-button-wrapper">
-                    <img id="noise_button" class="noise-button" src="./assets/img/game_ui/sounds/noise_on.png" alt="">
-                    <figcaption id="noise_caption" class="noise-caption">Noise on</figcaption>
+                    <img id="noise_button" class="noise-button" src="${
+                      noises
+                        ? "./assets/img/game_ui/sounds/noise_on.png"
+                        : "./assets/img/game_ui/sounds/noise_off.png"
+                    }" alt="">
+                    <figcaption id="noise_caption" class="noise-caption">${
+                      noises ? "Noise on" : "Noise off"
+                    }</figcaption>
                   </figure>
-                  </div>
+                </div>
               </div>
             </div>
             <div id="instructions_box" class="instructions-box d-none"></div>
     `;
 }
 
-
+/**
+ * Generates the HTML for the "How to play" instructions.
+ * @returns {string} The HTML string for the instructions.
+ */
 function generateAboutGameHtml() {
   return /*html*/ `
-                <div class="game-rules-wrapper styled-about-game">
-                  <button class="arrow-back" onclick="backToMainScreen()" >
-                    <img src="./assets/img/app_icons/arrow-left.png" alt="Back to main screen">
-                  </button>
-                  <div class="keyboard-instructions">
-                      <table>
-                        <thead>
-                            <tr>
-                                <th colspan="2">How to use the keyboard</th>
-                            </tr>
-                        </thead>
+              <div class="game-rules-wrapper">
+                <button class="arrow-back" onclick="backToMainScreen()" >
+                  <img src="./assets/img/game_ui/arrow-left.png" alt="Back to main screen">
+                </button>
+                <div class="game-rules">
+                <div class="keyboard-instructions">
+                    <table>
+                      <thead>
                           <tr>
-                              <td>Left</td>
-                              <td>Move left</td>
+                              <th colspan="2">How to use the keyboard</th>
                           </tr>
-                          <tr>
-                              <td>Right</td>
-                              <td>Move right</td>
-                          </tr>
-                          <tr>
-                              <td>Up</td>
-                              <td>Jump</td>
-                          </tr>
-                          <tr>
-                              <td>A</td>
-                              <td>Attack</td>
-                          </tr>
-                          <tr>
-                              <td>D</td>
-                              <td>Throw</td>
-                          </tr>
-                      </table>
-                  </div>
+                      </thead>
+                        <tr>
+                            <td class="first-column">Arrow left</td>
+                            <td>Move left</td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">Arrow right</td>
+                            <td>Move right</td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">Arrow up</td>
+                            <td>Jump</td>
+                        </tr>
+                        <tr>
+                            <td class="first-column">D</td>
+                            <td>Throw</td>
+                        </tr>
+                    </table>
                 </div>
-              `;
+                <div class="additional-rules">
+                    <p>Colliding with knights will reduce your character\'s energy. The same goes for traps if you hit them from the side, and for collisions with the troll.</p>
+                    <p>You can kill knights by jumping on them, but falling into a trap from above kills you instantly.</p>
+                    <p>Collect hearts to restore your energy, and poison bottles to refill your weapon stock.</p>
+                    <p>Four bottle hits will kill the troll. Don't forget the key, or you won\'t be able to open the door and win.</p>
+                </div>
+                </div>
+              </div>
+            `;
 }
 
+/**
+ * Generates the HTML for the imprint/legal notice.
+ * @returns {string} The HTML string for the imprint.
+ */
 function generateImprintHtml() {
   return /*html*/ `
-            <div class="imprint-wrapper styled-imprint">
+            <div class="imprint-wrapper">
               <button class="arrow-back" onclick="backToMainScreen()" >
-                <img src="./assets/img/app_icons/arrow-left.png" alt="Back to main screen">
+                <img src="./assets/img/game_ui/arrow-left.png" alt="Back to main screen">
               </button>
               <div id="imprintInformation" class="imprint-information">
                   <address>
                   Gabriela Ströbl<br>
                   Enzianstr. 15a<br>
-                  85247 Schabhausen
+                  85247 Schwabhausen
                   </address>
                   <p>
                       Images provided by craftpix.net.
                   </p>
                   <p>
-                     2025 Gabriela Ströbl
+                    &copy; 2025 Gabriela Ströbl
                   </p>
               </div>
             </div>
           `;
 }
 
-// function generateGameOverHTML() {
-//   return /*html*/ `
-//     <div id="game-over-container" class="end-screen-container hidden">
-//       <div class="end-screen-content">
-//         <div class="end-screen-image"></div>
-//         <div class="end-screen-buttons">
-//           <button class="end-screen-btn" id="tryAgainButton">
-//             <span>Try Again</span>
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   `;
-// }
+/**
+ * Generates the HTML for the game buttons (music/noise).
+ * @returns {string} The HTML string for the game buttons.
+ */
+function generateGameButtonsHTML() {
+  return /* html */ `
+    <div class="canvas-sound-button-wrapper">
+      <img id="music_button_on_canvas" onclick="toggleSound('music')" src="${
+        music
+          ? "./assets/img/game_ui/sounds/music_on.png"
+          : "./assets/img/game_ui/sounds/music_off.png"
+      }" alt="">
+      <img id="noise_button_on_canvas" onclick="toggleSound('noise')" src="${
+        noises
+          ? "./assets/img/game_ui/sounds/noise_on.png"
+          : "./assets/img/game_ui/sounds/noise_off.png"
+      }" alt="">
+    </div>
+  `;
+}
 
-// function generateWinScreenHTML() {
-//   return /*html*/ `
-//     <div id="win-screen" class="end-screen-container hidden">
-//       <div class="end-screen-content">
-//         <div class="end-screen-image"></div>
-//         <div class="end-screen-buttons">
-//           <button class="end-screen-btn" id="winTryAgainButton">
-//             <span>Play Again</span>
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   `;
-// }
+/**
+ * Generates the HTML for the winner screen.
+ * @returns {string} The HTML string for the winner screen.
+ */
 function generateWinnerScreenHTML() {
   return /* html */ `
   <div class="winner-screen-wrapper">
@@ -215,6 +238,10 @@ function generateWinnerScreenHTML() {
   `;
 }
 
+/**
+ * Generates the HTML for the loser screen.
+ * @returns {string} The HTML string for the loser screen.
+ */
 function generateLoserScreenHTML() {
   return /* html */ `
   <div class="loser-screen-wrapper">
@@ -222,7 +249,7 @@ function generateLoserScreenHTML() {
       <figure>
         <img src="../assets/img/game_ui/failure/game_lost.png" alt="">
       </figure>
-      <p>Sorry. You lost!</p>
+      <p>Sorry, you lost!</p>
       <div class="retry-button-wrapper">
         <button onclick="showStartScreen()">Play again</button>
       </div>
