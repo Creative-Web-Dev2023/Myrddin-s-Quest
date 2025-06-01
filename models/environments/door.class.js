@@ -71,7 +71,6 @@ class Door extends MovableObject {
     this.message = null;
     this.messageTimestamp = 0;
     this.isMessageActive = false;
-
     this.img = this.imageCache["door_0"];
   }
 
@@ -89,11 +88,9 @@ class Door extends MovableObject {
    */
   showMessage(text) {
     if (this.isMessageActive) return;
-
     this.message = text;
     this.messageTimestamp = Date.now();
     this.isMessageActive = true;
-
     setTimeout(() => {
       this.message = null;
       this.isMessageActive = false;
@@ -106,7 +103,6 @@ class Door extends MovableObject {
    */
   drawMessage(ctx) {
     if (!this.message) return;
-
     ctx.font = "32px MedievalSharp";
     ctx.fillStyle = "#ff0032";
     ctx.textAlign = "center";

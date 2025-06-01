@@ -34,5 +34,4 @@ class Heart extends MovableObject {
     this.collectingSound = LOADED_SOUNDS.heart.collected;
     this.collectingSound.volume = 0.5;
   }
-
 }

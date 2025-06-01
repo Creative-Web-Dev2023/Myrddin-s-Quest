@@ -115,6 +115,9 @@ function playWalkingSound() {
   }
 }
 
+/**
+ * Stops the walking sound if it is currently playing by pausing it and resetting its playback position to the start.
+ */
 function stopWalkingSound() {
   if (!walkingSound.paused) {
     walkingSound.pause();

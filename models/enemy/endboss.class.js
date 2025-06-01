@@ -59,7 +59,6 @@ class Endboss extends MovableObject {
     this.addToImageCache("walk", LOADED_IMAGES.troll.walk);
     this.addToImageCache("hurt", LOADED_IMAGES.troll.hurt);
     this.addToImageCache("dead", LOADED_IMAGES.troll.die);
-
     this.img = this.imageCache["walk_0"];
     this.deadAnimationPlayed = false;
     this.height = 409;
@@ -147,7 +146,6 @@ class Endboss extends MovableObject {
   isHitBy(otherObject, otherOffset = null, myOffset = this.outerOffset) {
     const a = otherObject.getHitbox(otherOffset);
     const b = this.getHitbox(myOffset);
-
     return (
       a.x + a.width > b.x &&
       a.x < b.x + b.width &&
