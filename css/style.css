@@ -305,7 +305,7 @@ h2 {
 }
 
 .game-rules-wrapper {
-  height: 80vh;
+  height: 100%;
   overflow-y: auto;
 }
 

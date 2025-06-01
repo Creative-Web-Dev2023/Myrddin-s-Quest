@@ -49,7 +49,6 @@ class DrawableObject {
    */
   draw(ctx) {
     let img = this.img || this.imageCache?.[this.currentImageKey];
-
     if (img instanceof HTMLImageElement) {
       ctx.drawImage(img, this.x, this.y, this.width, this.height);
     } else {
