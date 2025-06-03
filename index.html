@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="./css/style.css" />
     <link rel="stylesheet" href="./css/media_queries.css" />
     <link rel="stylesheet" href="./css/endgame_screens.css" />
-    <link rel="icon" href="./assets/img/game_items/magic.png" type="image/x-icon" />
+    <link
+      rel="icon"
+      href="./assets/img/game_items/magic.png"
+      type="image/x-icon"
+    />
     <script src="./js/image-data.js" defer></script>
     <script src="./js/sound-data.js" defer></script>
     <script src="./js/sound.js" defer></script>
@@ -18,25 +22,28 @@
     <script src="./models/drawable-object.class.js" defer></script>
     <script src="./models/movable-object.class.js" defer></script>
     <script src="./models/level.class.js" defer></script>
-    <script src="./models/environments/statusbar.class.js" defer></script>
+    <script src="./models/environment/statusbar.class.js" defer></script>
     <script src="./models/throwable-object.class.js" defer></script>
-    <script src="./models/environments/door.class.js" defer></script>
+    <script src="./models/environment/door.class.js" defer></script>
     <script src="./models/character.class.js" defer></script>
     <script src="./models/enemy/knight.class.js" defer></script>
     <script src="./models/enemy/endboss.class.js" defer></script>
-    <script src="./models/environments/background.class.js" defer></script>
-    <script src="./models/environments/candle.class.js" defer></script>
-    <script src="./models/environments/skull.class.js" defer></script>
-    <script src="./models/environments/key.class.js" defer></script>
-    <script src="./models/environments/poison.class.js" defer></script>
-    <script src="./models/environments/heart.class.js" defer></script>
-    <script src="./models/environments/trap.class.js" defer></script>
-    <script src="./models/environments/tick-icon.class.js" defer></script>
+    <script src="./models/environment/background.class.js" defer></script>
+    <script src="./models/environment/candle.class.js" defer></script>
+    <script src="./models/environment/skull.class.js" defer></script>
+    <script src="./models/environment/key.class.js" defer></script>
+    <script src="./models/environment/poison.class.js" defer></script>
+    <script src="./models/environment/heart.class.js" defer></script>
+    <script src="./models/environment/trap.class.js" defer></script>
+    <script src="./models/environment/tick-icon.class.js" defer></script>
     <script src="./js/level1.js" defer></script>
     <script src="./models/keyboard.class.js" defer></script>
+
     <script src="./models/world.class.js" defer></script>
+
     <script src="./js/game.js" defer></script>
   </head>
+
   <body onload="init()">
     <div id="fullscreen" class="fullscreen">
       <div id="endScreen" class="end-screen"></div>
@@ -58,13 +65,13 @@
               <img
                 id="arrow_left"
                 class="arrow-left"
-                src="./assets/img/game_ui/arrow-left.png"
+                src="./assets/img/game_ui/mobile_buttons/button_left.png"
                 alt=""
               />
               <img
                 id="throw_poison"
                 class="throw-poison"
-                src="./assets/img/poison/1.png"
+                src="./assets/img/game_ui/mobile_buttons/button_throw.png"
                 alt=""
               />
             </div>
@@ -75,13 +82,13 @@
               <img
                 id="arrow_up"
                 class="arrow-up"
-                src="./assets/img/game_ui/arrow-up.png"
+                src="./assets/img/game_ui/mobile_buttons/button_up.png"
                 alt=""
               />
               <img
                 id="arrow-right"
                 class="arrow-right"
-                src="./assets/img/game_ui/arrow-right.png"
+                src="./assets/img/game_ui/mobile_buttons/button_right.png"
                 alt=""
               />
             </div>

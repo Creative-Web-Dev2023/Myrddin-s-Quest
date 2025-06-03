@@ -5,12 +5,7 @@
 function generateStartContentHTML() {
   return /* html */ `
         <div id="inner_start_container" class="inner-start-container">
-              <svg
-                class="banner"
-                xmlns="http://www.w3.org/2000/svg"
-                id="Layer_1"
-                data-name="Layer 1"
-                viewBox="0 447 1024 130"
+              <svg class="banner" xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 447 1024 130"
               >
                 <defs>
                   <style>
@@ -23,7 +18,6 @@ function generateStartContentHTML() {
                     .cls-3 {
                       fill: #ffe9b8;
                     }
-
                     .banner-text {
                       font-family: 'MedievalSharp', 'Lucida Handwriting',
                         cursive;
@@ -52,12 +46,7 @@ function generateStartContentHTML() {
                     class="cls-2"
                     points="356.23 447.49 225.51 469.24 225.51 576.51 356.23 576.51 356.23 447.49"
                   />
-                  <rect
-                    class="cls-1"
-                    x="225.51"
-                    y="469.24"
-                    width="572.98"
-                    height="107.27"
+                  <rect class="cls-1" x="225.51" y="469.24" width="572.98" height="107.27"
                   />
                   <path
                     class="cls-3"
@@ -79,10 +68,7 @@ function generateStartContentHTML() {
               <div class="start-content">
                 <div id="h2_headline" class="headline">
                   <button class="arrow-back" onclick="backToMainScreen()">
-                    <img
-                      src="./assets/img/game_ui/arrow-left.png"
-                      alt="Back to main screen"
-                      class="d-none"
+                    <img src="./assets/img/game_ui/arrow-left.png" alt="Back to main screen" class="d-none"
                     />
                   </button>
                 </div>
@@ -244,16 +230,17 @@ function generateWinnerScreenHTML() {
  */
 function generateLoserScreenHTML() {
   return /* html */ `
-  <div class="loser-screen-wrapper">
-    <div class="inner-loser-screen-wrapper">
-      <figure>
-        <img src="../assets/img/game_ui/failure/game_lost.png" alt="">
-      </figure>
-      <p>Sorry, you lost!</p>
-      <div class="retry-button-wrapper">
-        <button onclick="showStartScreen()">Play again</button>
+    <div class="loser-screen-wrapper">
+      <div class="inner-loser-screen-wrapper">
+        <figure>
+          <img src="./assets/img/game_ui/failure/game_lost.png" alt="">
+        </figure>
+        <p>Sorry. You lost!</p>
+        <div class="retry-button-wrapper">
+          <button onclick="showStartScreen()">Play again</button>
+        </div>
       </div>
     </div>
-  </div>
   `;
 }
+

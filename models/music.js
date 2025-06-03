@@ -10,7 +10,6 @@ let level2Sound = new Audio("./assets/audio/level2_sound.mp3");
 let snakeAttackSound = new Audio("./assets/audio/snake.mp3");
 let enemyHitSound = new Audio("./assets/audio/knight-hurt.mp3");
 let snakeDeadSound = new Audio("./assets/audio/snake_dying.mp3");
-
 let allSounds = [
   backgroundMusic,
   walkingSound,

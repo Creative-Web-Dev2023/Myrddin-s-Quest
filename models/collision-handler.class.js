@@ -1,60 +1,21 @@
-/**
- * Handles all collision logic in the game world.
- */
 class CollisionHandler {
-  /**
-   * @param {Object} world - The game world instance.
-   */
   constructor(world) {
-    /**
-     * @type {Object}
-     */
     this.world = world;
-    /**
-     * @type {Object}
-     */
     this.character = this.world.character;
-    /**
-     * @type {Array}
-     */
     this.knights = this.world.knights;
-    /**
-     * @type {Array}
-     */
     this.traps = this.world.traps;
-    /**
-     * @type {Object}
-     */
     this.key = this.world.key;
-    /**
-     * @type {Array}
-     */
     this.hearts = this.world.hearts;
-    /**
-     * @type {Array}
-     */
     this.poisons = this.world.poisons;
-    /**
-     * @type {Array}
-     */
     this.throwableObjects = this.world.throwableObjects;
-    /**
-     * @type {Object}
-     */
     this.endboss = this.world.endboss;
-    /**
-     * @type {Object}
-     */
     this.door = this.world.door;
     this.keyboard = this.world.keyboard;
   }
 
-  /**
-   * Checks collision between character and key.
-   * If collision occurs, marks key as collected and plays sound.
-   */
   checkCollisionWithKey() {
     if (!this.key) return;
+
     if (this.character.isColliding(this.key)) {
       this.character.keyCollected = true;
       if (noises) {
@@ -62,17 +23,11 @@ class CollisionHandler {
         this.key.pingSound.currentTime = 0;
         this.key.pingSound.play();
       }
+
       this.world.key = null;
     }
   }
 
-  /**
-   * Checks collision between character and a collectable item array.
-   * @param {string} propertyName - The property name of the collectable array in world.
-   * @param {Object} sound - The sound to play on collection.
-   * @param {string} targetProperty - The character property to modify.
-   * @param {number} [change=0] - The value to add to the character property.
-   */
   checkCollisionWithCollectableItem(
     propertyName,
     sound,
@@ -81,6 +36,7 @@ class CollisionHandler {
   ) {
     const array = this.world[propertyName];
     if (!array || array.length === 0) return;
+
     this.world[propertyName] = array.filter((item) => {
       if (this.character.isColliding(item)) {
         if (change !== 0 && targetProperty) {
@@ -96,12 +52,9 @@ class CollisionHandler {
     });
   }
 
-  /**
-   * Checks collision between character and knights.
-   * Removes knight if character jumps on it, otherwise character takes damage.
-   */
   checkCollisionWithKnight() {
     const toRemove = [];
+
     this.world.knights.forEach((knight) => {
       if (this.character.isColliding(knight)) {
         if (this.character.isAbove(knight)) {
@@ -116,15 +69,12 @@ class CollisionHandler {
         }
       }
     });
+
     this.world.knights = this.world.knights.filter(
       (k) => !toRemove.includes(k)
     );
   }
 
-  /**
-   * Checks collision between character and traps.
-   * If above trap, shuts trap and sets energy to 0. Otherwise, character takes damage.
-   */
   checkCollisionWithTrap() {
     this.traps.forEach((trap) => {
       if (this.character.isColliding(trap)) {
@@ -146,10 +96,19 @@ class CollisionHandler {
     });
   }
 
-  /**
-   * Checks if any thrown bottle collides with the endboss.
-   * If so, endboss takes damage and may die.
-   */
+  checkCollisionWithTriggerZone() {
+    const triggerZone = this.world.endboss.getTriggerZone();
+    const wizardBox = this.world.character.getHitbox();
+
+    if (!this.world.endboss.isDead() && !this.world.character.isDead()) {
+      if (this.world.endboss.rectanglesOverlap(triggerZone, wizardBox)) {
+        this.world.endboss.isTriggered = true;
+      } else {
+        this.world.endboss.isTriggered = false;
+      }
+    }
+  }
+
   checkBottleCollisionWithEndboss() {
     this.world.throwableObjects.forEach((bottle) => {
       if (
@@ -173,10 +132,6 @@ class CollisionHandler {
     });
   }
 
-  /**
-   * Handles logic for throwing objects (bottles/poison).
-   * Checks if throw is possible and updates state accordingly.
-   */
   checkThrowObjects() {
     if (
       this.world.keyboard.D &&
@@ -198,15 +153,12 @@ class CollisionHandler {
         this.character.poisonCollected
       );
     }
+
     if (!this.keyboard.D) {
       this.world.character.bottleReady = true;
     }
   }
 
-  /**
-   * Checks collision between endboss and character.
-   * If collision and not invulnerable, character takes damage.
-   */
   checkEndbossCollisionWithCharacter() {
     if (
       !this.endboss.isDead() &&
@@ -221,12 +173,9 @@ class CollisionHandler {
     }
   }
 
-  /**
-   * Checks collision between character and door.
-   * If key is collected, triggers victory. Otherwise, shows message.
-   */
   checkCollisionCharacterDoor() {
     if (!this.character.isColliding(this.door)) return;
+
     if (this.character.keyCollected && !this.world.victoryTriggered) {
       this.world.victoryTriggered = true;
       this.door.open(() => {
@@ -236,7 +185,7 @@ class CollisionHandler {
         this.world.character.stopWalkingSound();
       });
     } else if (!this.character.keyCollected) {
-      this.door.showMessage("You need to collect the key first!");
+      this.door.showMessage('You need to collect the key first!');
     }
   }
 }

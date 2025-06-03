@@ -3,28 +3,9 @@
  * @extends MovableObject
  */
 class Background extends MovableObject {
-  /**
-   * The image of the background.
-   * @type {HTMLImageElement}
-   */
   img;
-
-  /**
-   * The X position of the background.
-   * @type {number}
-   */
   x;
-
-  /**
-   * The width of the background.
-   * @type {number}
-   */
   width;
-
-  /**
-   * The height of the background.
-   * @type {number}
-   */
   height;
 
   /**

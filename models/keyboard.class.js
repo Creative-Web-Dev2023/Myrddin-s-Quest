@@ -2,29 +2,11 @@
  * Class for managing keyboard and touch controls.
  */
 class Keyboard {
-  /**
-   * Indicates if the left arrow key is pressed.
-   * @type {boolean}
-   */
   LEFT = false;
-
-  /**
-   * Indicates if the right arrow key is pressed.
-   * @type {boolean}
-   */
   RIGHT = false;
-
-  /**
-   * Indicates if the jump key (arrow up) is pressed.
-   * @type {boolean}
-   */
   JUMP = false;
-
-  /**
-   * Indicates if the 'D' key (e.g., for throw) is pressed.
-   * @type {boolean}
-   */
   D = false;
+  A = false; // <-- Attack-Taste
 
   /**
    * Initializes keyboard controls for the game.
@@ -44,6 +26,9 @@ class Keyboard {
       if (e.key.toLowerCase() === "d" && !this.D) {
         this.D = true;
       }
+      if (e.key.toLowerCase() === "a" && !this.A) {
+        this.A = true;
+      }
     });
     window.addEventListener("keyup", (e) => {
       if (e.key === "ArrowLeft") {
@@ -58,6 +43,9 @@ class Keyboard {
       if (e.key.toLowerCase() === "d") {
         this.D = false;
       }
+      if (e.key.toLowerCase() === "a") {
+        this.A = false;
+      }
     });
   }
 
@@ -69,6 +57,7 @@ class Keyboard {
     this.RIGHT = false;
     this.JUMP = false;
     this.D = false;
+    this.A = false;
   }
 
   /**
@@ -76,7 +65,9 @@ class Keyboard {
    * Adds event listeners for touchstart and touchend.
    */
   linkButtonsToPressEvents() {
-    document.getElementById("arrow_left").addEventListener("touchstart", (e) => {
+    document
+      .getElementById("arrow_left")
+      .addEventListener("touchstart", (e) => {
         e.preventDefault();
         this.LEFT = true;
       });
@@ -86,7 +77,9 @@ class Keyboard {
       this.LEFT = false;
     });
 
-    document.getElementById("arrow-right").addEventListener("touchstart", (e) => {
+    document
+      .getElementById("arrow-right")
+      .addEventListener("touchstart", (e) => {
         e.preventDefault();
         this.RIGHT = true;
       });
@@ -106,14 +99,31 @@ class Keyboard {
       this.JUMP = false;
     });
 
-    document.getElementById("throw_poison").addEventListener("touchstart", (e) => {
+    document
+      .getElementById("throw_poison")
+      .addEventListener("touchstart", (e) => {
         e.preventDefault();
         this.D = true;
       });
 
-    document.getElementById("throw_poison").addEventListener("touchend", (e) => {
+    document
+      .getElementById("throw_poison")
+      .addEventListener("touchend", (e) => {
         e.preventDefault();
         this.D = false;
       });
+
+    // Optional: Touch-Button für Attacke, falls vorhanden
+    const attackBtn = document.getElementById("attack");
+    if (attackBtn) {
+      attackBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        this.A = true;
+      });
+      attackBtn.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        this.A = false;
+      });
+    }
   }
 }

@@ -1,65 +1,12 @@
-/**
- * Represents the endboss (troll) enemy in the game.
- * @extends MovableObject
- */
 class Endboss extends MovableObject {
-  /**
-   * The inner hitbox offset for the endboss.
-   * @type {{top: number, bottom: number, left: number, right: number}}
-   */
   innerOffset = { top: 10, bottom: 100, left: 250, right: 180 };
-
-  /**
-   * The outer hitbox offset for the endboss.
-   * @type {{top: number, bottom: number, left: number, right: number}}
-   */
   outerOffset = { top: 10, bottom: 100, left: 40, right: 50 };
-
-  /**
-   * The health bar for the endboss.
-   * @type {StatusBar}
-   */
-  healthBar;
-
-  /**
-   * Indicates if the death animation has already been played.
-   * @type {boolean}
-   */
-  isDeadAlready = false;
-
-  /**
-   * Indicates if the endboss is currently dead (animation played).
-   * @type {boolean}
-   */
-  deadAnimationPlayed = false;
-
-  /**
-   * The minimum X position for patrol.
-   * @type {number}
-   */
-  patrolMin = 5000;
-
-  /**
-   * The maximum X position for patrol.
-   * @type {number}
-   */
-  patrolMax = 5800;
-
-  /**
-   * The next X position where the endboss will turn around.
-   * @type {number}
-   */
-  nextTurnPoint;
-
-  /**
-   * Creates a new Endboss instance.
-   */
   constructor() {
     super();
-    this.addToImageCache("walk", LOADED_IMAGES.troll.walk);
-    this.addToImageCache("hurt", LOADED_IMAGES.troll.hurt);
-    this.addToImageCache("dead", LOADED_IMAGES.troll.die);
-    this.img = this.imageCache["walk_0"];
+    this.addToImageCache('walk', LOADED_IMAGES.troll.walk);
+    this.addToImageCache('hurt', LOADED_IMAGES.troll.hurt);
+    this.addToImageCache('dead', LOADED_IMAGES.troll.die);
+    this.img = this.imageCache['walk_0'];
     this.deadAnimationPlayed = false;
     this.height = 409;
     this.width = 700;
@@ -71,62 +18,76 @@ class Endboss extends MovableObject {
     this.isDeadAlready = false;
     this.patrolMin = 5000;
     this.patrolMax = 5800;
-    this.nextTurnPoint = this.getRandomTurnPoint("left");
+    this.nextTurnPoint = this.getRandomTurnPoint('left');
+    this.isTriggered = false;
+    this.isAnimating = false;
   }
 
-  /**
-   * Updates the endboss's animation, patrol, and health bar.
-   */
   update() {
     if (this.isDeadAlready) return;
     this.handleAnimations();
-    this.patrol();
+    if (this.isTriggered) {
+      this.chasePlayer();
+    } else {
+      this.patrol();
+    }
     this.healthBar.setPercentage(this.energy);
   }
 
-  /**
-   * Handles the endboss's walking animation.
-   */
   handleAnimations() {
+    if (this.isAnimating) return;
     this.animate(LOADED_IMAGES.troll.walk);
+    this.getTriggerZone();
   }
 
-  /**
-   * Returns a random X position for the next patrol turn point.
-   * @param {'left'|'right'} direction - The patrol direction.
-   * @returns {number} The X position for the next turn.
-   */
+  getTriggerZone() {
+    return {
+      x: this.x - 300,
+      y: this.y,
+      width: 300,
+      height: this.height,
+    };
+  }
+
   getRandomTurnPoint(direction) {
-    if (direction === "right") {
+    if (direction === 'right') {
       return this.patrolMax - Math.random() * 150;
     } else {
       return this.patrolMin + Math.random() * 200;
     }
   }
 
-  /**
-   * Moves the endboss left and right between patrol points.
-   */
   patrol() {
     if (this.isDead()) return;
     if (!this.otherDirection) {
       this.moveLeft();
       if (this.x <= this.nextTurnPoint) {
         this.otherDirection = true;
-        this.nextTurnPoint = this.getRandomTurnPoint("right");
+        this.nextTurnPoint = this.getRandomTurnPoint('right');
       }
     } else {
       this.moveRight();
       if (this.x >= this.nextTurnPoint) {
         this.otherDirection = false;
-        this.nextTurnPoint = this.getRandomTurnPoint("left");
+        this.nextTurnPoint = this.getRandomTurnPoint('left');
       }
     }
   }
 
-  /**
-   * Triggers the death animation and sound for the endboss.
-   */
+  chasePlayer() {
+    this.otherDirection = false;
+    console.log('Troll greift an: ', LOADED_IMAGES.troll.attack);
+    if (!this.isAnimating) {
+      this.isAnimating = true;
+      this.playAnimationOnce(LOADED_IMAGES.troll.attack, () => {
+        this.isAnimating = false;
+      });
+    }
+    // this.playSound(LOADED_SOUNDS.troll.hurt);
+    console.log('Troll reagiert auf den Zauberer!');
+    this.moveLeft();
+  }
+
   die() {
     if (this.isDeadAlready || !this.isDead()) return;
     this.playDeathAnimation(
@@ -136,13 +97,6 @@ class Endboss extends MovableObject {
     );
   }
 
-  /**
-   * Checks if the endboss is hit by another object.
-   * @param {MovableObject} otherObject - The object to check collision with.
-   * @param {Object} [otherOffset=null] - The hitbox offset for the other object.
-   * @param {Object} [myOffset=this.outerOffset] - The hitbox offset for the endboss.
-   * @returns {boolean} True if hit, otherwise false.
-   */
   isHitBy(otherObject, otherOffset = null, myOffset = this.outerOffset) {
     const a = otherObject.getHitbox(otherOffset);
     const b = this.getHitbox(myOffset);
@@ -152,5 +106,13 @@ class Endboss extends MovableObject {
       a.y + a.height > b.y &&
       a.y < b.y + b.height
     );
+  }
+
+  drawTriggerZone(ctx) {
+    const zone = this.getTriggerZone();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'orchid';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(zone.x, zone.y, zone.width, zone.height);
   }
 }

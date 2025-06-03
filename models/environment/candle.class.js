@@ -3,34 +3,10 @@
  * @extends DrawableObject
  */
 class Candle extends DrawableObject {
-  /**
-   * The image of the candle.
-   * @type {HTMLImageElement}
-   */
   img;
-
-  /**
-   * The X position of the candle.
-   * @type {number}
-   */
   x;
-
-  /**
-   * The Y position of the candle.
-   * @type {number}
-   */
   y;
-
-  /**
-   * The width of the candle.
-   * @type {number}
-   */
   width;
-
-  /**
-   * The height of the candle.
-   * @type {number}
-   */
   height;
 
   /**

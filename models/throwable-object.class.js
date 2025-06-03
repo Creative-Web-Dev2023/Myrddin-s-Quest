@@ -3,28 +3,9 @@
  * @extends MovableObject
  */
 class ThrowableObject extends MovableObject {
-  /**
-   * The hitbox offset for the throwable object.
-   * @type {{top: number, bottom: number, left: number, right: number}}
-   */
   offset = { top: 0, bottom: 0, left: 10, right: 10 };
-
-  /**
-   * Indicates if the bottle has already hit something.
-   * @type {boolean}
-   */
   hasHit;
-
-  /**
-   * The interval ID for the throw movement.
-   * @type {number}
-   */
   throwInterval;
-
-  /**
-   * The interval ID for the gravity effect.
-   * @type {number}
-   */
   gravityInterval;
 
   /**

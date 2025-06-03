@@ -8,53 +8,13 @@ class Door extends MovableObject {
    * @type {{top: number, bottom: number, left: number, right: number}}
    */
   offset = { top: 120, bottom: 100, left: 200, right: 200 };
-
-  /**
-   * The image of the door.
-   * @type {HTMLImageElement}
-   */
   img;
-
-  /**
-   * The X position of the door.
-   * @type {number}
-   */
   x;
-
-  /**
-   * The Y position of the door.
-   * @type {number}
-   */
   y;
-
-  /**
-   * The width of the door.
-   * @type {number}
-   */
   width;
-
-  /**
-   * The height of the door.
-   * @type {number}
-   */
   height;
-
-  /**
-   * The message to display above the door.
-   * @type {string|null}
-   */
   message;
-
-  /**
-   * The timestamp when the message was set.
-   * @type {number}
-   */
   messageTimestamp;
-
-  /**
-   * Whether a message is currently active.
-   * @type {boolean}
-   */
   isMessageActive;
 
   /**
