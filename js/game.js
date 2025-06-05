@@ -1,3 +1,7 @@
+/**
+ * Main game script for initializing, loading assets, and controlling the game loop.
+ */
+
 let canvas;
 let ctx;
 let keyboard = new Keyboard();
@@ -5,11 +9,17 @@ let world;
 let loopId = null;
 let gameStarted = false;
 
+/**
+ * Initializes the game by getting the canvas and preloading assets.
+ */
 function init() {
-  canvas = document.getElementById('canvas');
+  canvas = document.getElementById("canvas");
   preloadAssets();
 }
 
+/**
+ * Preloads all images from a structured path object.
+ */
 function preloadImagesStructured(paths) {
   const result = {};
   collectPathsAsImages(paths, result);
@@ -17,10 +27,13 @@ function preloadImagesStructured(paths) {
   return waitForAllImagesToLoad(allImages, result);
 }
 
+/**
+ * Recursively collects image paths and creates HTMLImageElements.
+ */
 function collectPathsAsImages(src, target) {
   for (const key in src) {
     const val = src[key];
-    if (typeof val === 'string') {
+    if (typeof val === "string") {
       const img = new Image();
       img.src = val;
       target[key] = img;
@@ -31,6 +44,9 @@ function collectPathsAsImages(src, target) {
   }
 }
 
+/**
+ * Extracts all HTMLImageElements from a nested object.
+ */
 function extractAllImages(obj) {
   const list = [];
   (function collect(o) {
@@ -38,7 +54,7 @@ function extractAllImages(obj) {
       const val = o[key];
       if (val instanceof HTMLImageElement) {
         list.push(val);
-      } else if (typeof val === 'object') {
+      } else if (typeof val === "object") {
         collect(val);
       }
     }
@@ -46,6 +62,9 @@ function extractAllImages(obj) {
   return list;
 }
 
+/**
+ * Waits for all images to finish loading.
+ */
 function waitForAllImagesToLoad(images, result) {
   return new Promise((resolve) => {
     let loaded = 0;
@@ -59,6 +78,9 @@ function waitForAllImagesToLoad(images, result) {
   });
 }
 
+/**
+ * Preloads all sounds from a structured path object.
+ */
 function preloadSoundsStructured(paths) {
   const result = {};
   collectPathsAsSounds(paths, result);
@@ -66,10 +88,13 @@ function preloadSoundsStructured(paths) {
   return waitForAllSoundsToLoad(allSounds, result);
 }
 
+/**
+ * Recursively collects sound paths and creates HTMLAudioElements.
+ */
 function collectPathsAsSounds(src, target) {
   for (const key in src) {
     const val = src[key];
-    if (typeof val === 'string') {
+    if (typeof val === "string") {
       const audio = new Audio(val);
       target[key] = audio;
     } else {
@@ -79,6 +104,9 @@ function collectPathsAsSounds(src, target) {
   }
 }
 
+/**
+ * Extracts all HTMLAudioElements from a nested object.
+ */
 function extractAllSounds(obj) {
   const list = [];
   (function collect(o) {
@@ -86,7 +114,7 @@ function extractAllSounds(obj) {
       const val = o[key];
       if (val instanceof HTMLAudioElement) {
         list.push(val);
-      } else if (typeof val === 'object') {
+      } else if (typeof val === "object") {
         collect(val);
       }
     }
@@ -94,125 +122,143 @@ function extractAllSounds(obj) {
   return list;
 }
 
+/**
+ * Waits for all sounds to finish loading.
+ */
 function waitForAllSoundsToLoad(sounds, result) {
   return new Promise((resolve) => {
     let loaded = 0;
-
     sounds.forEach((audio) => {
       const onLoaded = () => {
-        audio.removeEventListener('canplaythrough', onLoaded);
-        audio.removeEventListener('error', onLoaded);
+        audio.removeEventListener("canplaythrough", onLoaded);
+        audio.removeEventListener("error", onLoaded);
         if (++loaded === sounds.length) {
           resolve(result);
         }
       };
-
-      audio.addEventListener('canplaythrough', onLoaded);
-      audio.addEventListener('error', onLoaded);
+      audio.addEventListener("canplaythrough", onLoaded);
+      audio.addEventListener("error", onLoaded);
       audio.load();
     });
-
     if (sounds.length === 0) resolve(result);
   });
 }
 
+/**
+ * Preloads all assets (images, fonts, sounds) and shows the info box when done.
+ */
 function preloadAssets() {
-  document.getElementById('loadingMessage').classList.remove('d-none');
-
+  document.getElementById("loadingMessage").classList.remove("d-none");
   Promise.all([
     preloadImagesStructured(IMAGE_PATHS),
-    document.fonts.load('20px MedievalSharp'),
+    document.fonts.load("20px MedievalSharp"),
     preloadSoundsStructured(SOUND_PATHS),
   ])
     .then(([loadedImages, _, loadedSounds]) => {
       window.LOADED_IMAGES = loadedImages;
       window.LOADED_SOUNDS = loadedSounds;
-      document.getElementById('loadingMessage').classList.add('d-none');
+      document.getElementById("loadingMessage").classList.add("d-none");
       showInfoBox();
     })
     .catch((err) => {
-      console.error('Fehler beim Laden der Assets:', err);
+      console.error("Fehler beim Laden der Assets:", err);
     });
 }
 
+/**
+ * Shows the info box/start screen after assets are loaded.
+ */
 function showInfoBox() {
-  const startContainer = document.getElementById('start_container');
-
+  const startContainer = document.getElementById("start_container");
   startContainer.innerHTML += generateStartContentHTML();
 }
 
+/**
+ * Shows the selected content section (game, how to play, imprint).
+ * @param {string} content
+ */
 function showContent(content) {
   replaceBackgroundColorByImage();
-  const innerStartContainer = document.getElementById('inner_start_container');
-  const instructionsBox = document.getElementById('instructions_box');
-  innerStartContainer.classList.remove('d-none');
-  instructionsBox.classList.add('d-none');
+  const innerStartContainer = document.getElementById("inner_start_container");
+  const instructionsBox = document.getElementById("instructions_box");
+  innerStartContainer.classList.remove("d-none");
+  instructionsBox.classList.add("d-none");
   selectStartScreenSection(content, innerStartContainer, instructionsBox);
 }
 
-function selectStartScreenSection(
-  content,
-  innerStartContainer,
-  instructionsBox
-) {
-  if (content === 'startGame') {
+/**
+ * Selects and displays the correct start screen section.
+ */
+function selectStartScreenSection(content,innerStartContainer,instructionsBox) {
+  if (content === "startGame") {
     startGame();
-  } else if (content === 'howToPlay') {
+  } else if (content === "howToPlay") {
     replaceBackgroundImageByColor();
     showHowToPlaySection(innerStartContainer, instructionsBox);
-  } else if (content === 'imprint') {
+  } else if (content === "imprint") {
     replaceBackgroundImageByColor();
     showImprintSection(innerStartContainer, instructionsBox);
   }
 }
 
+/**
+ * Shows the "How to Play" section.
+ */
 function showHowToPlaySection(innerStartContainer, instructionsBox) {
-  innerStartContainer.classList.add('d-none');
-  instructionsBox.classList.remove('d-none');
+  innerStartContainer.classList.add("d-none");
+  instructionsBox.classList.remove("d-none");
   instructionsBox.innerHTML = generateAboutGameHtml();
 }
 
+/**
+ * Shows the imprint section.
+ */
 function showImprintSection(innerStartContainer, instructionsBox) {
-  innerStartContainer.classList.add('d-none');
-  instructionsBox.classList.remove('d-none');
+  innerStartContainer.classList.add("d-none");
+  instructionsBox.classList.remove("d-none");
   instructionsBox.innerHTML = generateImprintHtml();
 }
 
+/**
+ * Replaces the background image with a solid color.
+ */
 function replaceBackgroundImageByColor() {
-  const startContainer = document.getElementById('start_container');
-  startContainer.style.backgroundImage = 'none';
-  startContainer.style.backgroundColor = '#1f2e40';
+  const startContainer = document.getElementById("start_container");
+  startContainer.style.backgroundImage = "none";
+  startContainer.style.backgroundColor = "#1f2e40";
 }
 
+/**
+ * Replaces the background color with an image.
+ */
 function replaceBackgroundColorByImage() {
-  const startContainer = document.getElementById('start_container');
-  startContainer.style.backgroundColor = '';
-  startContainer.style.backgroundImage =
-    'url(../assets/img/game_backgrounds/wood.png)';
+  const startContainer = document.getElementById("start_container");
+  startContainer.style.backgroundColor = "";
+  startContainer.style.backgroundImage ="url(../assets/img/game_backgrounds/wood.png)";
 }
 
+/**
+ * Returns to the main start screen.
+ */
 function backToMainScreen() {
   replaceBackgroundColorByImage();
-  const innerStartContainer = document.getElementById('inner_start_container');
-  const instructionsBox = document.getElementById('instructions_box');
-  innerStartContainer.classList.remove('d-none');
-  instructionsBox.classList.add('d-none');
+  const innerStartContainer = document.getElementById("inner_start_container");
+  const instructionsBox = document.getElementById("instructions_box");
+  innerStartContainer.classList.remove("d-none");
+  instructionsBox.classList.add("d-none");
 }
 
+/**
+ * Starts the game, initializes world and keyboard, and begins the game loop.
+ */
 function startGame() {
-  const startScreen = document.getElementById('startScreen');
-  const canvas = document.getElementById('canvas');
-  const canvasWrapper = document.getElementById('canvas_wrapper');
-  const gameButtons = document.getElementById('game_buttons');
-  const mobileButtons = document.getElementById('mobile_buttons');
-
-  showOrHideStartScreenElement(
-    startScreen,
-    canvasWrapper,
-    gameButtons,
-    mobileButtons
-  );
-  ctx = canvas.getContext('2d');
+  const startScreen = document.getElementById("startScreen");
+  const canvas = document.getElementById("canvas");
+  const canvasWrapper = document.getElementById("canvas_wrapper");
+  const gameButtons = document.getElementById("game_buttons");
+  const mobileButtons = document.getElementById("mobile_buttons");
+  showOrHideStartScreenElement(startScreen,canvasWrapper,gameButtons,mobileButtons);
+  ctx = canvas.getContext("2d");
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
   keyboard.setupControls();
@@ -224,31 +270,34 @@ function startGame() {
   gameLoop();
 }
 
-function showOrHideStartScreenElement(
-  startScreen,
-  canvasWrapper,
-  gameButtons,
-  mobileButtons
-) {
-  gameButtons.classList.remove('d-none');
+/**
+ * Shows or hides start screen elements and displays the canvas.
+ */
+function showOrHideStartScreenElement(startScreen,canvasWrapper,gameButtons,mobileButtons) {
+  gameButtons.classList.remove("d-none");
   gameButtons.innerHTML = generateGameButtonsHTML();
-  mobileButtons.classList.remove('d-none');
-  startScreen.classList.add('d-none');
-  canvasWrapper.classList.remove('d-none');
-  canvas.classList.remove('d-none');
+  mobileButtons.classList.remove("d-none");
+  startScreen.classList.add("d-none");
+  canvasWrapper.classList.remove("d-none");
+  canvas.classList.remove("d-none");
 }
 
+/**
+ * The main game loop, updates and draws the world.
+ */
 function gameLoop() {
   if (world.running === false) {
     cancelAnimationFrame(world.loopID);
     return;
   }
-
   world.update();
   world.draw();
   world.loopID = requestAnimationFrame(gameLoop);
 }
 
+/**
+ * Restarts the game by resetting world and animation frame.
+ */
 function restartGame() {
   world = null;
   cancelAnimationFrame(loopId);
@@ -257,53 +306,64 @@ function restartGame() {
   startGame();
 }
 
+/**
+ * Shows the end screen (winner or loser).
+ */
 function showEndScreen(screenType) {
-  canvasWrapper = document.getElementById('canvas_wrapper');
-  canvasWrapper.classList.add('d-none');
-  const startScreen = document.getElementById('startScreen');
-  const endScreen = document.getElementById('end_screen');
-  startScreen.classList.add('d-none');
-  endScreen.classList.remove('d-none');
-  if (screenType === 'winnerScreen') {
+  canvasWrapper = document.getElementById("canvas_wrapper");
+  canvasWrapper.classList.add("d-none");
+  const startScreen = document.getElementById("startScreen");
+  const endScreen = document.getElementById("end_screen");
+  startScreen.classList.add("d-none");
+  endScreen.classList.remove("d-none");
+  if (screenType === "winnerScreen") {
     endScreen.innerHTML = generateWinnerScreenHTML();
-  } else if (screenType === 'loserScreen') {
+  } else if (screenType === "loserScreen") {
     endScreen.innerHTML = generateLoserScreenHTML();
   } else {
-    console.error('Unknown screenType');
+    console.error("Unknown screenType");
   }
 }
 
+/**
+ * Shows the start screen and hides the end screen.
+ */
 function showStartScreen() {
-  const startScreen = document.getElementById('startScreen');
-  const endScreen = document.getElementById('end_screen');
-  startScreen.classList.remove('d-none');
-  endScreen.classList.add('d-none');
+  const startScreen = document.getElementById("startScreen");
+  const endScreen = document.getElementById("end_screen");
+  startScreen.classList.remove("d-none");
+  endScreen.classList.add("d-none");
 }
 
+/**
+ * Toggles music or noise sound settings and updates UI.
+ */
 function toggleSound(soundType) {
-  const musicButton = document.getElementById('music_button');
-  const musicButtonOnCanvas = document.getElementById('music_button_on_canvas');
-  const musicCaption = document.getElementById('music_caption');
-  const noiseButton = document.getElementById('noise_button');
-  const noiseButtonOnCanvas = document.getElementById('noise_button_on_canvas');
-  const noiseCaption = document.getElementById('noise_caption');
-
-  if (soundType === 'music') {
+  const musicButton = document.getElementById("music_button");
+  const musicButtonOnCanvas = document.getElementById("music_button_on_canvas");
+  const musicCaption = document.getElementById("music_caption");
+  const noiseButton = document.getElementById("noise_button");
+  const noiseButtonOnCanvas = document.getElementById("noise_button_on_canvas");
+  const noiseCaption = document.getElementById("noise_caption");
+  if (soundType === "music") {
     music = !music;
-    localStorage.setItem('music', music);
+    localStorage.setItem("music", music);
     checkIfMusic();
     checkIfMusicButtonOnStartScreen(musicButton, musicCaption);
     checkIfMusicButtonOnCanvas(musicButtonOnCanvas);
-  } else if (soundType === 'noise') {
+  } else if (soundType === "noise") {
     noises = !noises;
-    localStorage.setItem('noises', noises);
+    localStorage.setItem("noises", noises);
     checkIfNoiseButtonOnStartScreen(noiseButton, noiseCaption);
     checkIfNoiseButtonOnCanvas(noiseButtonOnCanvas);
   } else {
-    console.error('Unknown soundType', soundType);
+    console.error("Unknown soundType", soundType);
   }
 }
 
+/**
+ * Checks if music should be played or paused.
+ */
 function checkIfMusic() {
   if (music) {
     if (gameStarted) {
@@ -314,6 +374,9 @@ function checkIfMusic() {
   }
 }
 
+/**
+ * Updates the music button and caption on the start screen.
+ */
 function checkIfMusicButtonOnStartScreen(musicButton, musicCaption) {
   if (musicButton) {
     musicButton.src = setMusicButtonImages();
@@ -321,12 +384,18 @@ function checkIfMusicButtonOnStartScreen(musicButton, musicCaption) {
   }
 }
 
+/**
+ * Updates the music button on the canvas.
+ */
 function checkIfMusicButtonOnCanvas(musicButtonOnCanvas) {
   if (musicButtonOnCanvas) {
     musicButtonOnCanvas.src = setMusicButtonImages();
   }
 }
 
+/**
+ * Updates the noise button and caption on the start screen.
+ */
 function checkIfNoiseButtonOnStartScreen(noiseButton, noiseCaption) {
   if (noiseButton) {
     noiseButton.src = setNoiseButtonImages();
@@ -334,28 +403,43 @@ function checkIfNoiseButtonOnStartScreen(noiseButton, noiseCaption) {
   }
 }
 
+/**
+ * Updates the noise button on the canvas.
+ */
 function checkIfNoiseButtonOnCanvas(noiseButtonOnCanvas) {
   if (noiseButtonOnCanvas) {
     noiseButtonOnCanvas.src = setNoiseButtonImages();
   }
 }
 
+/**
+ * Returns the correct music button image path.
+ */
 function setMusicButtonImages() {
   return music
-    ? './assets/img/game_ui/sounds/music_on.png'
-    : './assets/img/game_ui/sounds/music_off.png';
+    ? "./assets/img/game_ui/sounds/music_on.png"
+    : "./assets/img/game_ui/sounds/music_off.png";
 }
 
+/**
+ * Returns the correct music caption.
+ */
 function setMusicCaption() {
-  return music ? 'Music on' : 'Music off';
+  return music ? "Music on" : "Music off";
 }
 
+/**
+ * Returns the correct noise button image path.
+ */
 function setNoiseButtonImages() {
   return noises
-    ? './assets/img/game_ui/sounds/noise_on.png'
-    : './assets/img/game_ui/sounds/noise_off.png';
+    ? "./assets/img/game_ui/sounds/noise_on.png"
+    : "./assets/img/game_ui/sounds/noise_off.png";
 }
 
+/**
+ * Returns the correct noise caption.
+ */
 function setNoiseCaption() {
-  return noises ? 'Noise on' : 'Noise off';
+  return noises ? "Noise on" : "Noise off";
 }

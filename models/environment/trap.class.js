@@ -1,23 +1,12 @@
 /**
  * Represents a trap in the game that can snap shut.
- * @extends MovableObject
  */
 class Trap extends MovableObject {
-  /**
-   * The hitbox offset for the trap.
-   * @type {{top: number, bottom: number, left: number, right: number}}
-   */
   offset = { top: 55, bottom: 50, left: 30, right: 30 };
-
-  /**
-   * Indicates whether the trap is shut.
-   * @type {boolean}
-   */
   isShut;
 
   /**
    * Creates a new Trap instance.
-   * @param {number} x - The x-coordinate position of the trap.
    */
   constructor(x) {
     super();

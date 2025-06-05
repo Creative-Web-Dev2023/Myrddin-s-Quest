@@ -16,16 +16,6 @@ class Level {
 
   /**
    * Creates a new Level instance.
-   * @param {Background[]} backgrounds - The background objects.
-   * @param {Candle[]} candles - The candle objects.
-   * @param {Skull[]} skulls - The skull objects.
-   * @param {Knight[]} knights - The knight enemy objects.
-   * @param {PoisonObject[]} poisons - The poison collectible objects.
-   * @param {Heart[]} hearts - The heart collectible objects.
-   * @param {Key} key - The key collectible object.
-   * @param {Door} door - The door object.
-   * @param {Trap[]} traps - The trap objects.
-   * @param {Endboss} endboss - The endboss enemy.
    */
   constructor(
     backgrounds,

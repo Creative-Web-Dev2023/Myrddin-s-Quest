@@ -1,6 +1,5 @@
 /**
  * Initializes the level by generating enemies, environments, backgrounds, poison objects, and traps.
- * @returns {Level} The initialized level.
  */
 function createLevel1() {
   return new Level(
@@ -17,6 +16,9 @@ function createLevel1() {
   );
 }
 
+/**
+ * Generates the background objects for the level.
+ */
 function generateBackgroundsLvl() {
   return [
     new Background(LOADED_IMAGES.backgrounds.wood0, -960),
@@ -88,6 +90,9 @@ function generateBackgroundsLvl() {
   ];
 }
 
+/**
+ * Generates the candle objects for the level.
+ */
 function generateCandlesLvl() {
   return [
     new Candle(-154),
@@ -100,6 +105,9 @@ function generateCandlesLvl() {
   ];
 }
 
+/**
+ * Generates the skull objects for the level.
+ */
 function generateSkullsLvl() {
   return [
     new Skull(-200),
@@ -113,6 +121,9 @@ function generateSkullsLvl() {
   ];
 }
 
+/**
+ * Generates the knight enemies for the level.
+ */
 function generateKnightsLvl() {
   return [
     new Knight(500),
@@ -126,19 +137,23 @@ function generateKnightsLvl() {
 
 /**
  * Generates the poison objects for the level.
- * @returns {Array} An array of poison objects.
  */
 function generatePoisonsLvl() {
   return [
     new PoisonObject(400),
     new PoisonObject(800),
+    new PoisonObject(1100),
     new PoisonObject(1600),
+    new PoisonObject(2200),
     new PoisonObject(3300),
     new PoisonObject(3700),
     new PoisonObject(4400),
   ];
 }
 
+/**
+ * Generates the heart objects for the level.
+ */
 function generateHeartsLvl() {
   return [
     new Heart(560),
@@ -152,24 +167,30 @@ function generateHeartsLvl() {
   ];
 }
 
+/**
+ * Generates the key object for the level.
+ */
 function generateKeyLvl() {
   return new Key();
 }
 
+/**
+ * Generates the door object for the level.
+ */
 function generateDoorLvl() {
   return new Door();
 }
 
 /**
  * Generates the traps for the level.
- * @returns {Array} An array of traps.
  */
 function generateTrapsLvl() {
-  return [new Trap(800), new Trap(2100), new Trap(3500), ];
+  return [new Trap(800), new Trap(2100), new Trap(3500), new Trap(4900)];
 }
 
-// new Trap(4900)
-
+/**
+ * Generates the endboss for the level.
+ */
 function generateEndboss() {
   return new Endboss();
 }

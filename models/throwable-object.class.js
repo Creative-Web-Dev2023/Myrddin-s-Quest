@@ -10,8 +10,6 @@ class ThrowableObject extends MovableObject {
 
   /**
    * Creates a new ThrowableObject instance.
-   * @param {number} x - The X position where the bottle is thrown.
-   * @param {number} y - The Y position where the bottle is thrown.
    */
   constructor(x, y) {
     super();

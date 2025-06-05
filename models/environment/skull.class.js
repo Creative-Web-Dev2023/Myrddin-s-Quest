@@ -5,7 +5,6 @@
 class Skull extends DrawableObject {
   /**
    * Creates a new Skull instance.
-   * @param {number} x - The X position of the skull.
    */
   constructor(x) {
     super();

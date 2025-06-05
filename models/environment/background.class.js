@@ -10,8 +10,6 @@ class Background extends MovableObject {
 
   /**
    * Creates a new Background instance.
-   * @param {HTMLImageElement} imageObject - The image to use for the background.
-   * @param {number} x - The X position of the background.
    */
   constructor(imageObject, x) {
     super();

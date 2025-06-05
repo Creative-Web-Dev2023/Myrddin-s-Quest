@@ -371,12 +371,6 @@ thead {
   height: 40px;
 }
 
-.arrow-left,
-.arrow-right,
-.arrow-up {
-  filter: invert(1);
-}
-
 .rotate-screen {
   display: none;
   position: fixed;

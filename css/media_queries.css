@@ -1,4 +1,4 @@
-@media (orientation: portrait) {
+@media (max-aspect-ratio: 3/4), (max-height: 24em) {
   .rotate-screen {
     display: flex !important;
     flex-direction: column;
@@ -10,6 +10,8 @@
   .game-screen,
   .start-screen,
   .end-screen-container,
+  .game-buttons,
+  .btns-container,
   canvas {
     display: none !important;
   }

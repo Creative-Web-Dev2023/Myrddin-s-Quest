@@ -2,13 +2,6 @@
  * Base class for all drawable objects in the game.
  */
 class DrawableObject {
-  /**
-   * Creates a new DrawableObject.
-   * @param {number} [x=0] - The X position.
-   * @param {number} [y=0] - The Y position.
-   * @param {number} [width=100] - The width.
-   * @param {number} [height=100] - The height.
-   */
   constructor(x = 0, y = 0, width = 100, height = 100) {
     this.x = x;
     this.y = y;
@@ -19,9 +12,7 @@ class DrawableObject {
   }
 
   /**
-   * Sets the status bars for the object.
-   * @param {StatusBar} healthBar
-   * @param {StatusBar|null} [poisonBar=null]
+   * Sets the health and poison status bars for the object.
    */
   setStatusBars(healthBar, poisonBar = null) {
     this.healthBar = healthBar;
@@ -29,8 +20,7 @@ class DrawableObject {
   }
 
   /**
-   * Loads an image into the object.
-   * @param {HTMLImageElement} imageObject
+   * Loads an image for the object.
    */
   loadImage(imageObject) {
     if (imageObject instanceof HTMLImageElement) {
@@ -44,8 +34,7 @@ class DrawableObject {
   }
 
   /**
-   * Draws the object on the canvas.
-   * @param {CanvasRenderingContext2D} ctx
+   * Draws the object on the given canvas context.
    */
   draw(ctx) {
     let img = this.img || this.imageCache?.[this.currentImageKey];
@@ -53,7 +42,7 @@ class DrawableObject {
       ctx.drawImage(img, this.x, this.y, this.width, this.height);
     } else {
       console.warn(
-        `[draw()] Kein Bild für ${this.constructor.name}:`,
+        `[draw()] No image for ${this.constructor.name}:`,
         this.currentImageKey
       );
     }

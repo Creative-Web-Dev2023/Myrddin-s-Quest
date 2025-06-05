@@ -11,7 +11,6 @@ class Candle extends DrawableObject {
 
   /**
    * Creates a new Candle instance.
-   * @param {number} x - The X position of the candle.
    */
   constructor(x) {
     super();

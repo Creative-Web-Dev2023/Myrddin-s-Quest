@@ -1,17 +1,14 @@
 /**
  * Represents a poison collectible object in the game.
- * @extends MovableObject
  */
 class PoisonObject extends MovableObject {
   /**
    * The hitbox offset for the poison object.
-   * @type {{top: number, bottom: number, left: number, right: number}}
    */
   offset = { top: 0, bottom: 0, left: 10, right: 10 };
 
   /**
    * Creates a new PoisonObject instance.
-   * @param {number} x - The X position of the poison object.
    */
   constructor(x) {
     super();

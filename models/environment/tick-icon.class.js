@@ -1,36 +1,11 @@
 /**
  * Represents the tick icon shown when the key is collected.
- * @extends DrawableObject
  */
 class TickIcon extends DrawableObject {
-  /**
-   * The image representing the tick icon.
-   * @type {HTMLImageElement}
-   */
   img;
-
-  /**
-   * The x-coordinate position of the tick icon.
-   * @type {number}
-   */
   x;
-
-  /**
-   * The y-coordinate position of the tick icon.
-   * @type {number}
-   */
   y;
-
-  /**
-   * The width of the tick icon.
-   * @type {number}
-   */
   width;
-
-  /**
-   * The height of the tick icon.
-   * @type {number}
-   */
   height;
 
   /**

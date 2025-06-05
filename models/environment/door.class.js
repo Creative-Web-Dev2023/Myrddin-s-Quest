@@ -5,7 +5,6 @@
 class Door extends MovableObject {
   /**
    * The hitbox offset for the door object.
-   * @type {{top: number, bottom: number, left: number, right: number}}
    */
   offset = { top: 120, bottom: 100, left: 200, right: 200 };
   img;
@@ -36,7 +35,6 @@ class Door extends MovableObject {
 
   /**
    * Opens the door and plays the animation.
-   * @param {Function} afterAnimation - Callback to execute after the animation.
    */
   open(afterAnimation) {
     this.playAnimationOnce(LOADED_IMAGES.game_items.door, afterAnimation);
@@ -44,7 +42,6 @@ class Door extends MovableObject {
 
   /**
    * Shows a message above the door for a short time.
-   * @param {string} text - The message to display.
    */
   showMessage(text) {
     if (this.isMessageActive) return;
@@ -59,7 +56,6 @@ class Door extends MovableObject {
 
   /**
    * Draws the message above the door if active.
-   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
    */
   drawMessage(ctx) {
     if (!this.message) return;
