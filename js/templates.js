@@ -84,22 +84,22 @@ function generateStartContentHTML() {
                 <div id="sound_button_wrapper" class="sound-button-wrapper">
                   <figure onclick="toggleSound('music')" class="music-button-wrapper">
                     <img id="music_button" class="music-button" src="${
-                      music
+                     window.flags.music
                         ? "./assets/img/game_ui/sounds/music_on.png"
                         : "./assets/img/game_ui/sounds/music_off.png"
                     }"  alt="">
-                    <figcaption id="music_caption" class="music-caption">${
-                      music ? "Music on" : "Music off"
+                     <figcaption id="music_caption" class="music-caption">${
+                      window.flags.music ? 'Music on' : 'Music off'
                     }</figcaption>
                   </figure>
                   <figure onclick="toggleSound('noise')" class="noise-button-wrapper">
                     <img id="noise_button" class="noise-button" src="${
-                      noises
+                      window.flags.noises
                         ? "./assets/img/game_ui/sounds/noise_on.png"
                         : "./assets/img/game_ui/sounds/noise_off.png"
                     }" alt="">
                     <figcaption id="noise_caption" class="noise-caption">${
-                      noises ? "Noise on" : "Noise off"
+                      window.flags.noises ? 'Noise on' : 'Noise off'
                     }</figcaption>
                   </figure>
                 </div>
@@ -191,12 +191,12 @@ function generateGameButtonsHTML() {
   return /* html */ `
     <div class="canvas-sound-button-wrapper">
       <img id="music_button_on_canvas" onclick="toggleSound('music')" src="${
-        music
+        window.flags.music
           ? "./assets/img/game_ui/sounds/music_on.png"
           : "./assets/img/game_ui/sounds/music_off.png"
       }" alt="">
       <img id="noise_button_on_canvas" onclick="toggleSound('noise')" src="${
-        noises
+        window.flags.noises
           ? "./assets/img/game_ui/sounds/noise_on.png"
           : "./assets/img/game_ui/sounds/noise_off.png"
       }" alt="">

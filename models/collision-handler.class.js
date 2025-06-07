@@ -28,7 +28,7 @@ class CollisionHandler {
     if (!this.key) return;
     if (this.character.isColliding(this.key)) {
       this.character.keyCollected = true;
-      if (noises) {
+      if (window.flags.noises) {
         this.key.pingSound.pause();
         this.key.pingSound.currentTime = 0;
         this.key.pingSound.play();

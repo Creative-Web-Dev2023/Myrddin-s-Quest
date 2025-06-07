@@ -12,7 +12,7 @@ class Character extends MovableObject {
   keyIcon;
   tickIcon;
   bottleReady = true;
-  poisonCollected = 100;
+  poisonCollected = 0;
   keyCollected = false;
   hasPassedDoor = false;
   offset = { top: 40, bottom: 10, left: 5, right: 30 };
@@ -97,7 +97,7 @@ class Character extends MovableObject {
     if (this.world.keyboard.JUMP && !this.isAboveGround()) {
       this.jump();
     }
-    if ((isMovingRight || isMovingLeft) && noises) {
+     if ((isMovingRight || isMovingLeft) && window.flags.noises) {
       this.startWalkingSound();
     } else {
       this.stopWalkingSound();
@@ -141,7 +141,7 @@ class Character extends MovableObject {
   jump() {
     if (!this.isAboveGround()) {
       this.speedY = 40;
-      if (noises) {
+      if (window.flags.noises) {
         this.soundJump.pause();
         this.soundJump.currentTime = 0;
         this.soundJump.play();

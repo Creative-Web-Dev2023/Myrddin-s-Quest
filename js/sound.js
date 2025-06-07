@@ -1,11 +1,10 @@
 /**
- * Indicates if background music is enabled.
- * @type {boolean}
+ * Global flags for controlling music and noise settings.
+ * @type {Object}
+ * @property {boolean} music - Indicates if music is enabled.
+ * @property {boolean} noises - Indicates if noises are enabled.
  */
-let music = localStorage.getItem("music") === "false" ? false : true;
-
-/**
- * Indicates if sound effects are enabled.
- * @type {boolean}
- */
-let noises = localStorage.getItem("noises") === "false" ? false : true;
+window.flags = {
+  music: localStorage.getItem("music") !== "false",
+  noises: localStorage.getItem("noises") !== "false",
+};

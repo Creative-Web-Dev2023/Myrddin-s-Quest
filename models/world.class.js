@@ -71,7 +71,14 @@ class World {
    */
   initializeCharacter() {
     this.character = new Character(this);
-    this.characterStatusBar = new StatusBar( "health", 20, 20, 200, 40, "Wizard");
+    this.characterStatusBar = new StatusBar(
+      "health",
+      20,
+      20,
+      200,
+      40,
+      "Wizard"
+    );
     this.poisonStatusBar = new StatusBar("poison", 20, 70, 200, 40);
     this.character.setStatusBars(this.characterStatusBar, this.poisonStatusBar);
     this.character.healthBar.setPercentage(this.character.energy);
@@ -153,8 +160,18 @@ class World {
    */
   updateCollisions() {
     this.collisionHandler.checkCollisionWithKey();
-    this.collisionHandler.checkCollisionWithCollectableItem("hearts",LOADED_SOUNDS.heart.collected,"energy",20);
-    this.collisionHandler.checkCollisionWithCollectableItem("poisons",LOADED_SOUNDS.poison.collected,"poisonCollected",12.5 );
+    this.collisionHandler.checkCollisionWithCollectableItem(
+      "hearts",
+      LOADED_SOUNDS.heart.collected,
+      "energy",
+      20
+    );
+    this.collisionHandler.checkCollisionWithCollectableItem(
+      "poisons",
+      LOADED_SOUNDS.poison.collected,
+      "poisonCollected",
+      12.5
+    );
     this.collisionHandler.checkCollisionWithKnight();
     this.collisionHandler.checkCollisionWithTrap();
     this.collisionHandler.checkBottleCollisionWithEndboss();
@@ -192,9 +209,26 @@ class World {
     this.clearCanvas();
     this.ctx.save();
     this.ctx.translate(this.camera_x, 0);
+    this.drawBackgroundObjects();
+    this.drawGameObjects();
+    this.drawSpecialObjects();
+    this.ctx.restore();
+    this.drawStatusAndIcons();
+  }
+
+  /**
+   * Draws background objects (backgrounds, candles, skulls).
+   */
+  drawBackgroundObjects() {
     this.addObjectsToMap(this.backgrounds);
     this.addObjectsToMap(this.candles);
     this.addObjectsToMap(this.skulls);
+  }
+
+  /**
+   * Draws main game objects (knights, poisons, hearts, traps, key, door, endboss, character, throwable objects).
+   */
+  drawGameObjects() {
     if (Array.isArray(this.knights) && this.knights.length > 0) {
       this.addObjectsToMap(this.knights);
     }
@@ -207,7 +241,6 @@ class World {
     this.addObjectsToMap(this.traps);
     if (this.key) this.addToMap(this.key);
     this.addToMap(this.door);
-    if (this.door.isMessageActive) this.door.drawMessage(this.ctx);
     if (this.endboss) this.addToMap(this.endboss);
     if (this.character) this.addToMap(this.character);
     if (
@@ -216,7 +249,22 @@ class World {
     ) {
       this.addObjectsToMap(this.throwableObjects);
     }
-    this.ctx.restore();
+  }
+
+  /**
+   * Draws special objects like door messages or debug hitboxes.
+   */
+  drawSpecialObjects() {
+    if (this.door && this.door.isMessageActive) {
+      this.door.drawMessage(this.ctx);
+    }
+    // Add debug or special drawing here if needed (e.g. hitboxes)
+  }
+
+  /**
+   * Draws status bars and icons (UI layer).
+   */
+  drawStatusAndIcons() {
     this.addToMap(this.character.healthBar);
     this.addToMap(this.character.poisonBar);
     this.addToMap(this.character.keyIcon);
@@ -224,7 +272,7 @@ class World {
     this.character.healthBar.drawLabel(this.ctx);
     this.endbossHealthBar.drawLabel(this.ctx);
     if (this.character.keyCollected) {
-      this.character.tickIcon.draw(ctx);
+      this.character.tickIcon.draw(this.ctx);
     }
   }
 
@@ -237,7 +285,6 @@ class World {
 
   /**
    * Adds an array of objects to the map (draws them).
-   * @param {Array} objects
    */
   addObjectsToMap(objects) {
     if (!Array.isArray(objects)) {
@@ -250,14 +297,16 @@ class World {
       }
       this.addToMap(object);
     });
-    if (this.backgrounds.length > 0 &&this.camera_x >= this.backgrounds[0].width) {
+    if (
+      this.backgrounds.length > 0 &&
+      this.camera_x >= this.backgrounds[0].width
+    ) {
       this.camera_x = 0;
     }
   }
 
   /**
    * Adds a single object to the map (draws it).
-   * @param {DrawableObject} mo
    */
   addToMap(mo) {
     if (!mo) {

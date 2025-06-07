@@ -1,109 +1,79 @@
 <!DOCTYPE html>
 <html translate="no">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zaubererspiel</title>
-    <link rel="stylesheet" href="./css/reset_stylesheet.css" />
-    <link rel="stylesheet" href="./css/fonts.css" />
-    <link rel="stylesheet" href="./css/style.css" />
-    <link rel="stylesheet" href="./css/media_queries.css" />
-    <link rel="stylesheet" href="./css/endgame_screens.css" />
-    <link
-      rel="icon"
-      href="./assets/img/game_items/magic.png"
-      type="image/x-icon"
-    />
-    <script src="./js/image-data.js" defer></script>
-    <script src="./js/sound-data.js" defer></script>
-    <script src="./js/sound.js" defer></script>
-    <script src="./js/templates.js" defer></script>
-    <script src="./models/collision-handler.class.js" defer></script>
-    <script src="./models/drawable-object.class.js" defer></script>
-    <script src="./models/movable-object.class.js" defer></script>
-    <script src="./models/level.class.js" defer></script>
-    <script src="./models/environment/statusbar.class.js" defer></script>
-    <script src="./models/throwable-object.class.js" defer></script>
-    <script src="./models/environment/door.class.js" defer></script>
-    <script src="./models/character.class.js" defer></script>
-    <script src="./models/enemy/knight.class.js" defer></script>
-    <script src="./models/enemy/endboss.class.js" defer></script>
-    <script src="./models/environment/background.class.js" defer></script>
-    <script src="./models/environment/candle.class.js" defer></script>
-    <script src="./models/environment/skull.class.js" defer></script>
-    <script src="./models/environment/key.class.js" defer></script>
-    <script src="./models/environment/poison.class.js" defer></script>
-    <script src="./models/environment/heart.class.js" defer></script>
-    <script src="./models/environment/trap.class.js" defer></script>
-    <script src="./models/environment/tick-icon.class.js" defer></script>
-    <script src="./js/level1.js" defer></script>
-    <script src="./models/keyboard.class.js" defer></script>
 
-    <script src="./models/world.class.js" defer></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zaubererspiel</title>
+  <link rel="stylesheet" href="./css/reset_stylesheet.css" />
+  <link rel="stylesheet" href="./css/fonts.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/media_queries.css" />
+  <link rel="stylesheet" href="./css/endgame_screens.css" />
+  <link rel="icon" href="./assets/img/game_items/magic.png" type="image/x-icon" />
+  <script src="./js/image-data.js" defer></script>
+  <script src="./js/sound-data.js" defer></script>
+  <script src="./js/sound.js" defer></script>
+  <script src="./js/preload-utils.js" defer></script>
+  <script src="./js/templates.js" defer></script>
+  <script src="./models/collision-handler.class.js" defer></script>
+  <script src="./models/drawable-object.class.js" defer></script>
+  <script src="./models/movable-object.class.js" defer></script>
+  <script src="./models/level.class.js" defer></script>
+  <script src="./models/environment/statusbar.class.js" defer></script>
+  <script src="./models/throwable-object.class.js" defer></script>
+  <script src="./models/environment/door.class.js" defer></script>
+  <script src="./models/character.class.js" defer></script>
+  <script src="./models/enemy/knight.class.js" defer></script>
+  <script src="./models/enemy/endboss.class.js" defer></script>
+  <script src="./models/environment/background.class.js" defer></script>
+  <script src="./models/environment/candle.class.js" defer></script>
+  <script src="./models/environment/skull.class.js" defer></script>
+  <script src="./models/environment/key.class.js" defer></script>
+  <script src="./models/environment/poison.class.js" defer></script>
+  <script src="./models/environment/heart.class.js" defer></script>
+  <script src="./models/environment/trap.class.js" defer></script>
+  <script src="./models/environment/tick-icon.class.js" defer></script>
+  <script src="./js/level1.js" defer></script>
+  <script src="./models/keyboard.class.js" defer></script>
+  <script src="./models/world.class.js" defer></script>
+  <script src="./js/game-data.js" defer></script>
+  <script src="./js/helpers.js" defer></script>
+  <script src="./js/game.js" defer></script>
+</head>
 
-    <script src="./js/game.js" defer></script>
-  </head>
-
-  <body onload="init()">
-    <div id="fullscreen" class="fullscreen">
-      <div id="endScreen" class="end-screen"></div>
-      <h1 class="headline">Myrddin&apos;s Quest</h1>
-      <div class="game-screen">
-        <div id="canvas_wrapper" class="canvas-wrapper">
-          <canvas
-            id="canvas"
-            width="960"
-            height="540"
-            class="canvas d-none"
-          ></canvas>
-          <div id="game_buttons" class="game-buttons d-none"></div>
-          <div id="mobile_buttons" class="mobile-buttons d-none">
-            <div
-              id="left_mobile_buttons_wrapper"
-              class="left-mobile-buttons-wrapper"
-            >
-              <img
-                id="arrow_left"
-                class="arrow-left"
-                src="./assets/img/game_ui/mobile_buttons/button_left.png"
-                alt=""
-              />
-              <img
-                id="throw_poison"
-                class="throw-poison"
-                src="./assets/img/game_ui/mobile_buttons/button_throw.png"
-                alt=""
-              />
-            </div>
-            <div
-              id="right_mobile_buttons_wrapper"
-              class="right-mobile-buttons-wrapper"
-            >
-              <img
-                id="arrow_up"
-                class="arrow-up"
-                src="./assets/img/game_ui/mobile_buttons/button_up.png"
-                alt=""
-              />
-              <img
-                id="arrow-right"
-                class="arrow-right"
-                src="./assets/img/game_ui/mobile_buttons/button_right.png"
-                alt=""
-              />
-            </div>
+<body onload="init()">
+  <div id="fullscreen" class="fullscreen">
+    <div id="endScreen" class="end-screen"></div>
+    <h1 class="headline">Myrddin&apos;s Quest</h1>
+    <div class="game-screen">
+      <div id="canvas_wrapper" class="canvas-wrapper">
+        <canvas id="canvas" width="960" height="540" class="canvas d-none"></canvas>
+        <div id="game_buttons" class="game-buttons d-none"></div>
+        <div id="mobile_buttons" class="mobile-buttons d-none">
+          <div id="left_mobile_buttons_wrapper" class="left-mobile-buttons-wrapper">
+            <img id="arrow_left" class="arrow-left" src="./assets/img/game_ui/mobile_buttons/button_left.png" alt="" />
+            <img id="throw_poison" class="throw-poison" src="./assets/img/game_ui/mobile_buttons/button_throw.png"
+              alt="" />
+          </div>
+          <div id="right_mobile_buttons_wrapper" class="right-mobile-buttons-wrapper">
+            <img id="arrow_up" class="arrow-up" src="./assets/img/game_ui/mobile_buttons/button_up.png" alt="" />
+            <img id="arrow-right" class="arrow-right" src="./assets/img/game_ui/mobile_buttons/button_right.png"
+              alt="" />
           </div>
         </div>
-        <div id="startScreen" class="start-screen">
-          <div id="start_container" class="start-container"></div>
-        </div>
-        <div id="end_screen"></div>
       </div>
-      <div class="rotate-screen">
-        <img src="./assets/img/game_ui/device-mobile-phone.png" alt="" />
-        <p>Please rotate your device.</p>
+      <div id="startScreen" class="start-screen">
+        <div id="start_container" class="start-container"></div>
       </div>
-      <div id="loadingMessage" class="loading-message">Loading ...</div>
+      <div id="end_screen"></div>
     </div>
-  </body>
+    <div class="rotate-screen">
+      <img src="./assets/img/game_ui/device-mobile-phone.png" alt="" />
+      <p>Please rotate your device.</p>
+    </div>
+    <div id="loadingMessage" class="loading-message">Loading ...</div>
+  </div>
+</body>
+
 </html>

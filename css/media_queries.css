@@ -1,4 +1,4 @@
-@media (max-aspect-ratio: 3/4), (max-height: 24em) {
+@media (max-width: 853px) and (orientation: portrait) {
   .rotate-screen {
     display: flex !important;
     flex-direction: column;

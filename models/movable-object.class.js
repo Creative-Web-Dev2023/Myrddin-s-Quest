@@ -223,12 +223,16 @@ class MovableObject extends DrawableObject {
 
   /**
    * Plays a sound if noises are enabled.
+   * Prevents AbortError by only playing if not already playing.
+   * @param {HTMLAudioElement} sound - The sound to play.
    */
   playSound(sound) {
-    if (noises) {
-      this.soundPause(sound);
-      sound.currentTime = 0;
-      sound.play();
+    if (window.flags.noises && sound) {
+      // Only play if not already playing
+      if (sound.paused || sound.ended) {
+        sound.currentTime = 0;
+        sound.play().catch(() => {});
+      }
     }
   }
 
